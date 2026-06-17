@@ -497,8 +497,13 @@ body.drawer-open{overflow:hidden}
 .reviews__scene .cloud--b{top:24%;width:230px;height:80px;opacity:.5;animation:rv-cloud-b 140s linear infinite}
 @keyframes rv-cloud-a{from{transform:translateX(-30vw)}to{transform:translateX(120vw)}}
 @keyframes rv-cloud-b{from{transform:translateX(-40vw)}to{transform:translateX(120vw)}}
-.reviews__scene .tline{position:absolute;left:0;bottom:0;display:flex;width:200%;will-change:transform}
-.reviews__scene .tline svg{flex:0 0 50%;width:50%;height:100%;display:block}
+/* Duas cópias por faixa, posicionadas em absoluto (não flex). O iOS Safari
+   antigo não resolve height:100% em <svg> que é flex item e colapsa a faixa
+   para zero -> as árvores somem. Com top:0/bottom:0 a altura vem das âncoras
+   e renderiza em qualquer versão. */
+.reviews__scene .tline{position:absolute;left:0;bottom:0;width:200%}
+.reviews__scene .tline svg{position:absolute;top:0;bottom:0;left:0;width:50%;height:100%;display:block}
+.reviews__scene .tline svg:nth-child(2){left:50%}
 .reviews__scene .tline--1{height:30vh;opacity:.85;animation:rv-drift 140s linear infinite}
 .reviews__scene .tline--2{height:34vh;animation:rv-drift 95s  linear infinite}
 .reviews__scene .tline--3{height:40vh;animation:rv-drift 60s  linear infinite}
@@ -728,12 +733,9 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 @media(max-width:760px){
   .nav__links,.nav__cta{display:none}
   .nav__burger{display:flex}
-  /* Hero no mobile: sem scrub (iOS/Android não renderizam seek sem play).
-     Vídeo em autoplay loop ao fundo + os dois beats empilhados estáticos. */
-  .hero__track{height:auto}
-  .hero__pin{position:relative;height:auto;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:120px 20px 90px}
-  .hero__beat{position:static;transform:none!important;opacity:1!important;max-width:none}
-  .hero__status,.hero__hint{display:none}
+  /* Hero no mobile: MESMO scrub do desktop (pin fixo + trilha alta).
+     O vídeo é all-intra, então o seek por scroll renderiza no iOS Safari. */
+  .hero__hint{display:none}
   .proof__inner{grid-template-columns:1fr 1fr;gap:24px}
   .cta-band__inner{flex-direction:column;align-items:flex-start}
 }

@@ -2,9 +2,10 @@
 (function () {
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Mobile: o scrub por currentTime não renderiza frames sem play() em iOS/Android.
-  // Nesses casos o hero usa o vídeo em autoplay loop e os beats estáticos.
-  var heroMobile = window.matchMedia('(max-width: 760px)').matches;
+  // O scrub por currentTime roda igual no desktop e no mobile. O vídeo é
+  // codificado all-intra (todo frame é keyframe), então o seek é O(1) e o
+  // iOS Safari renderiza cada frame sem precisar de play() — mesmo padrão
+  // usado no projeto Quarezemin.
 
   function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
 
@@ -115,7 +116,7 @@
     else hero.classList.remove('is-scrolled');
   }
 
-  if (heroTrack && heroVideo && !reduce && !heroMobile) {
+  if (heroTrack && heroVideo && !reduce) {
     var vReady = false;
     var vDur = 6;
     var targetT = 0, curT = 0, lastSeek = -1;
@@ -162,18 +163,9 @@
     requestAnimationFrame(tick);
     applyBeats(scrubProgress());
   } else if (heroTrack) {
-    // Mobile / reduced motion: ambos os beats visíveis, sem scrub.
+    // Reduced motion: ambos os beats visíveis, sem scrub.
     if (beatOne) { beatOne.style.opacity = 1; beatOne.classList.add('is-active'); }
     if (beatTwo) { beatTwo.style.opacity = 1; beatTwo.classList.add('is-active'); }
-    // No mobile (movimento permitido) o vídeo roda em loop ao fundo.
-    if (heroVideo && heroMobile && !reduce) {
-      heroVideo.loop = true;
-      heroVideo.muted = true;
-      heroVideo.setAttribute('muted', '');
-      heroVideo.setAttribute('playsinline', '');
-      var playPromise = heroVideo.play();
-      if (playPromise && playPromise.catch) playPromise.catch(function () {});
-    }
   }
 
   /* ---------- Contadores ---------- */
@@ -218,18 +210,37 @@
   var steps = document.querySelectorAll('.process__step');
   var figs = document.querySelectorAll('.process__media-fig');
   var counter = document.getElementById('processCounter');
+  var activeStepIdx = -1;
   function setActiveStep(idx) {
+    if (idx === activeStepIdx) return;
+    activeStepIdx = idx;
     steps.forEach(function (s) { s.classList.toggle('is-active', s.getAttribute('data-step') == idx); });
     figs.forEach(function (f) { f.classList.toggle('is-active', f.getAttribute('data-step') == idx); });
     if (counter) counter.innerHTML = '<span>0' + (Number(idx) + 1) + '</span> / 05';
   }
-  if (steps.length && !reduce && 'IntersectionObserver' in window) {
-    var so = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) setActiveStep(e.target.getAttribute('data-step'));
+  if (steps.length && !reduce) {
+    // Dirigido pelo scroll (não por IntersectionObserver): a cada frame escolhe
+    // o passo cujo centro está mais perto do centro da viewport. No iOS o scroll
+    // por inércia pula centenas de px entre amostras do IO e a banda fina de
+    // detecção era ignorada, travando a imagem no passo 01. Amostrar por scroll
+    // é à prova de pulos e funciona igual em todos os dispositivos.
+    var stepArr = Array.prototype.slice.call(steps);
+    var stepTick = false;
+    function pickStep() {
+      stepTick = false;
+      var mid = window.innerHeight / 2;
+      var best = stepArr[0].getAttribute('data-step'), bestDist = Infinity;
+      stepArr.forEach(function (s) {
+        var r = s.getBoundingClientRect();
+        var d = Math.abs((r.top + r.bottom) / 2 - mid);
+        if (d < bestDist) { bestDist = d; best = s.getAttribute('data-step'); }
       });
-    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
-    steps.forEach(function (s) { so.observe(s); });
+      setActiveStep(best);
+    }
+    function onStepScroll() { if (!stepTick) { stepTick = true; requestAnimationFrame(pickStep); } }
+    window.addEventListener('scroll', onStepScroll, { passive: true });
+    window.addEventListener('resize', onStepScroll);
+    pickStep();
   }
 
   /* ---------- Carrossel de avaliações ---------- */
