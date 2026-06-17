@@ -13,3 +13,6 @@ qa-*.png
 # Notas internas (não publicar)
 CLAUDE.md
 avaliacoes/
+
+# Screenshots QA jpeg
+qa-*.jpeg

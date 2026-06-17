@@ -3,13 +3,22 @@
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- Nav: estado rolado ---------- */
+  /* ---------- Nav: rolado + esconde ao descer ---------- */
   var nav = document.getElementById('nav');
   var hero = document.getElementById('topo');
+  var lastY = window.scrollY;
 
   function onScroll() {
-    if (window.scrollY > 40) nav.classList.add('is-scrolled');
+    var y = window.scrollY;
+    if (y > 40) nav.classList.add('is-scrolled');
     else nav.classList.remove('is-scrolled');
+
+    // esconde ao descer (depois do hero), mostra ao subir — nunca com drawer aberto
+    if (!document.body.classList.contains('drawer-open')) {
+      if (y > 640 && y > lastY + 6) nav.classList.add('is-hidden');
+      else if (y < lastY - 6) nav.classList.remove('is-hidden');
+    }
+    lastY = y;
   }
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -26,7 +35,7 @@
     burger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     burger.setAttribute('aria-label', willOpen ? 'Fechar menu' : 'Abrir menu');
     drawer.setAttribute('aria-hidden', willOpen ? 'false' : 'true');
-    if (willOpen) { backdrop.hidden = false; requestAnimationFrame(function () { backdrop.classList.add('is-open'); }); }
+    if (willOpen) { nav.classList.remove('is-hidden'); backdrop.hidden = false; requestAnimationFrame(function () { backdrop.classList.add('is-open'); }); }
     else { backdrop.classList.remove('is-open'); setTimeout(function () { backdrop.hidden = true; }, 300); }
   }
   burger.addEventListener('click', function () { toggleDrawer(); });
@@ -47,7 +56,6 @@
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           var el = entry.target;
-          // stagger entre irmãos do mesmo grid
           var sibs = Array.prototype.slice.call(el.parentNode.children).filter(function (c) {
             return c.classList.contains('reveal');
           });
@@ -89,7 +97,11 @@
     var decimals = (raw.split('.')[1] || '').length;
     var suffix = el.getAttribute('data-suffix') || '';
     var prefix = el.getAttribute('data-prefix') || '';
-    var start = null, dur = 1200;
+    if (reduce) {
+      el.textContent = prefix + target.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+      return;
+    }
+    var start = null, dur = 1300;
     function step(ts) {
       if (!start) start = ts;
       var prog = Math.min((ts - start) / dur, 1);
@@ -104,7 +116,7 @@
   }
   var counters = document.querySelectorAll('[data-count]');
   if (counters.length) {
-    if (reduce || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
       counters.forEach(animateCount);
     } else {
       var co = new IntersectionObserver(function (entries) {
@@ -114,6 +126,24 @@
       }, { threshold: 0.6 });
       counters.forEach(function (el) { co.observe(el); });
     }
+  }
+
+  /* ---------- Scrollytelling: do terreno à chave ---------- */
+  var steps = document.querySelectorAll('.process__step');
+  var figs = document.querySelectorAll('.process__media-fig');
+  var counter = document.getElementById('processCounter');
+  function setActiveStep(idx) {
+    steps.forEach(function (s) { s.classList.toggle('is-active', s.getAttribute('data-step') == idx); });
+    figs.forEach(function (f) { f.classList.toggle('is-active', f.getAttribute('data-step') == idx); });
+    if (counter) counter.innerHTML = '<span>0' + (Number(idx) + 1) + '</span> / 05';
+  }
+  if (steps.length && !reduce && 'IntersectionObserver' in window) {
+    var so = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) setActiveStep(e.target.getAttribute('data-step'));
+      });
+    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+    steps.forEach(function (s) { so.observe(s); });
   }
 
   /* ---------- Float WhatsApp: aparece após o hero ---------- */
