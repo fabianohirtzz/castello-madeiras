@@ -133,6 +133,11 @@
     }
 
     function seek(t) {
+      // Não dispara um novo seek enquanto o anterior não terminou. Em load
+      // frio (vídeo não decodificado), um seek por frame empilha e trava o
+      // vídeo em seeking=true — o frame congela. Esperar o seek concluir
+      // faz o scrub coalescer sempre para a posição de scroll mais recente.
+      if (heroVideo.seeking) return;
       if (Math.abs(t - lastSeek) < 0.012) return;
       try { heroVideo.currentTime = t; } catch (e) {}
       lastSeek = t;
