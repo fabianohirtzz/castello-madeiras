@@ -244,7 +244,8 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    FACETA — divisória de telhado entre seções (assinatura)
    ============================================================ */
-.facet{position:relative;height:clamp(56px,8vw,104px);margin-top:calc(-1 * clamp(56px,8vw,104px));z-index:3;pointer-events:none}
+/* margin-bottom:-1px fecha o fio do fundo --bone que vazava na emenda faceta→próxima seção */
+.facet{position:relative;height:clamp(56px,8vw,104px);margin-top:calc(-1 * clamp(56px,8vw,104px));margin-bottom:-1px;z-index:3;pointer-events:none}
 .facet::before{content:"";position:absolute;inset:0;clip-path:var(--facet-roof)}
 .facet--bone::before{background:var(--bone)}
 .facet--sand::before{background:var(--sand)}
@@ -393,6 +394,9 @@ body.drawer-open{overflow:hidden}
    DEPOIMENTOS — carrossel
    ============================================================ */
 .g-logo{width:22px;height:22px;flex:none;display:block}
+/* folga extra embaixo: a faceta de telhado (preta, z-index 3) cobre os ~104px finais
+   da seção — sem isso ela corta as sombras longas e a base branca dos cards */
+.reviews{padding-bottom:clamp(150px,15vh,190px)}
 .reviews__head{display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:space-between;margin-bottom:clamp(36px,5vh,56px)}
 .reviews__score{display:flex;flex-direction:column;align-items:flex-start;background:#fff;border-radius:var(--r-lg);padding:24px 34px;box-shadow:var(--shadow-soft);border:1px solid var(--line)}
 .reviews__g{width:30px;height:30px;margin-bottom:12px}
@@ -403,7 +407,8 @@ body.drawer-open{overflow:hidden}
 .reviews__head .section__lead{font-size:1.02rem;margin-top:14px}
 
 /* trilho */
-.reviews__carousel{position:relative;max-width:var(--container);margin-inline:auto;padding-inline:clamp(20px,5vw,48px)}
+/* gutter largo o bastante p/ as setas (50px) ficarem fora dos cards com folga */
+.reviews__carousel{position:relative;max-width:var(--container);margin-inline:auto;padding-inline:clamp(64px,7vw,88px)}
 .reviews__track{
   display:flex;gap:clamp(16px,2vw,24px);
   overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
@@ -448,8 +453,8 @@ body.drawer-open{overflow:hidden}
 .reviews__arrow svg{width:24px;height:24px;fill:none;stroke:var(--red);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .reviews__arrow:hover{background:var(--red);transform:translateY(-50%) scale(1.06);box-shadow:var(--shadow-card)}
 .reviews__arrow:hover svg{stroke:#fff}
-.reviews__arrow--prev{left:4px}
-.reviews__arrow--next{right:4px}
+.reviews__arrow--prev{left:8px}
+.reviews__arrow--next{right:8px}
 .reviews__arrow[disabled]{opacity:.32;pointer-events:none}
 
 /* ============================================================
