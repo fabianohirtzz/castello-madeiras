@@ -23,6 +23,10 @@
   --shadow-card:0 30px 70px -34px rgba(20,20,20,.45);
   --ease:cubic-bezier(.16,1,.3,1);
   --container:1220px;
+  /* Padding padrão de seção (100px) + altura da faceta de telhado entre seções */
+  --sec-pad:100px;            /* vertical padrão (seções encaixotadas) */
+  --sec-pad-x:100px;          /* lateral (seções largura total) */
+  --facet-h:clamp(56px,8vw,104px);
   /* Faceta — silhuetas de telhado reutilizáveis (assimétricas) */
   --facet-roof:polygon(0 100%,18% 34%,40% 72%,62% 22%,82% 60%,100% 30%,100% 100%);
   /* telhado da marca (M facetado) — recorta o topo da faixa de CTA */
@@ -245,7 +249,7 @@ body.drawer-open{overflow:hidden}
    FACETA — divisória de telhado entre seções (assinatura)
    ============================================================ */
 /* margin-bottom:-1px fecha o fio do fundo --bone que vazava na emenda faceta→próxima seção */
-.facet{position:relative;height:clamp(56px,8vw,104px);margin-top:calc(-1 * clamp(56px,8vw,104px));margin-bottom:-1px;z-index:3;pointer-events:none}
+.facet{position:relative;height:var(--facet-h);margin-top:calc(-1 * var(--facet-h));margin-bottom:-1px;z-index:3;pointer-events:none}
 .facet::before{content:"";position:absolute;inset:0;clip-path:var(--facet-roof)}
 .facet--bone::before{background:var(--bone)}
 .facet--sand::before{background:var(--sand)}
@@ -255,12 +259,14 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    SECTIONS base
    ============================================================ */
-.section{padding-block:clamp(80px,12vh,148px);position:relative}
+.section{padding-block:var(--sec-pad);position:relative}
 .section--sand{background:var(--sand)}
 .section--dark{background:var(--ink);color:#fff}
 .section--dark .section__lead{color:rgba(255,255,255,.74)}
 .section--dark .section__title{color:#fff}
 .section__head{max-width:780px;margin-bottom:clamp(44px,6vh,72px)}
+/* vantagens precede a faceta de telhado: folga extra embaixo p/ não ser coberta */
+.vantagens{padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
 
 .grid{display:grid;gap:clamp(16px,2.2vw,28px)}
 .grid--models{grid-template-columns:repeat(auto-fit,minmax(248px,1fr))}
@@ -269,7 +275,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    PROVA SOCIAL (faixa)
    ============================================================ */
-.proof{background:var(--red);color:#fff;padding-block:clamp(48px,7vh,84px) calc(clamp(48px,7vh,84px) + clamp(56px,8vw,104px))}
+.proof{background:var(--red);color:#fff;padding-block:var(--sec-pad) calc(var(--sec-pad) + var(--facet-h))}
 .proof__wrap{display:grid;gap:clamp(28px,4vh,44px)}
 .proof__lead{max-width:46ch;color:#fff;font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.25;letter-spacing:-.01em}
 .proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);padding-top:clamp(20px,3vh,32px);border-top:1px solid rgba(255,255,255,.22)}
@@ -345,7 +351,7 @@ body.drawer-open{overflow:hidden}
    PORTFÓLIO — galeria editorial assimétrica
    ============================================================ */
 /* respiro extra no fim para a galeria não colar na faceta escura seguinte */
-.portfolio{padding-bottom:clamp(120px,17vh,200px)}
+.portfolio{padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
 /* accordion interativo de imagens: painéis que expandem no hover/clique */
 .accordion{display:flex;gap:10px;height:clamp(440px,58vh,600px)}
 .accordion__item{
@@ -398,7 +404,7 @@ body.drawer-open{overflow:hidden}
    --rev-pad: respiro lateral (igual no head e no trilho → bordas alinhadas).
    --rev-cards: quantos cards aparecem por vez (ajustado nos breakpoints).
    folga extra embaixo: a faceta de telhado (preta, z-index 3) cobre os ~104px finais. */
-.reviews{padding-bottom:clamp(150px,15vh,190px);--rev-pad:clamp(22px,6vw,96px);--rev-gap:clamp(16px,1.6vw,24px);--rev-cards:4}
+.reviews{padding-bottom:calc(var(--sec-pad) + var(--facet-h));--rev-pad:var(--sec-pad-x);--rev-gap:clamp(16px,1.6vw,24px);--rev-cards:4}
 /* head acompanha a largura total e o mesmo padding do trilho */
 .reviews .container{max-width:none;padding-inline:var(--rev-pad)}
 .reviews__head{display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:space-between;margin-bottom:clamp(36px,5vh,56px);max-width:1180px}
@@ -521,7 +527,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    CTA BAND — faixa vermelha facetada (assinatura)
    ============================================================ */
-.cta-band{position:relative;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;padding-top:clamp(116px,16vh,184px);padding-bottom:clamp(72px,11vh,124px)}
+.cta-band{position:relative;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;padding-top:calc(var(--sec-pad) + clamp(58px,7.5vw,108px));padding-bottom:var(--sec-pad)}
 .cta-band::before{content:"";position:absolute;left:0;right:0;top:-1px;height:clamp(58px,7.5vw,108px);background:var(--sand);clip-path:var(--facet-cta-top)}
 .cta-band__inner{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px}
 .cta-band h2{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.025em;line-height:1.03;max-width:18ch}
@@ -530,7 +536,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    FOOTER
    ============================================================ */
-.footer{background:var(--ink);color:#fff;padding-top:clamp(60px,8vh,92px)}
+.footer{background:var(--ink);color:#fff;padding-top:var(--sec-pad)}
 .footer__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.4fr;gap:40px}
 .footer__logo{height:152px;width:auto;margin-bottom:24px}
 .footer__brand p{color:rgba(255,255,255,.64);font-size:.95rem;max-width:34ch}
@@ -554,7 +560,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    INSTAGRAM — galeria de vídeos (reels verticais espalhados)
    ============================================================ */
-.insta{background:var(--ink);color:#fff;position:relative;overflow:hidden;padding-bottom:clamp(40px,7vh,84px)}
+.insta{background:var(--ink);color:#fff;position:relative;overflow:hidden;padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
 .insta__grid-bg{
   position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
@@ -578,7 +584,7 @@ body.drawer-open{overflow:hidden}
 .insta__rail{
   display:flex;gap:clamp(14px,2.2vw,28px);
   margin-top:clamp(34px,5vh,56px);
-  padding:42px clamp(20px,5vw,48px) 30px;
+  padding:42px var(--sec-pad-x) 30px;
   overflow-x:auto;scroll-snap-type:x proximity;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;
 }
