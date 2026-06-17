@@ -215,6 +215,104 @@
     steps.forEach(function (s) { so.observe(s); });
   }
 
+  /* ---------- Carrossel de avaliações ---------- */
+  var revTrack = document.getElementById('reviewsTrack');
+  var revPrev = document.getElementById('revPrev');
+  var revNext = document.getElementById('revNext');
+  if (revTrack && revPrev && revNext) {
+    var autoTimer = null, autoEnabled = !reduce, inView = false, hovering = false;
+
+    function cardStep() {
+      var card = revTrack.querySelector('.review');
+      if (!card) return revTrack.clientWidth;
+      var gap = parseFloat(getComputedStyle(revTrack).columnGap) || 20;
+      return card.getBoundingClientRect().width + gap;
+    }
+    function updateArrows() {
+      var max = revTrack.scrollWidth - revTrack.clientWidth - 2;
+      revPrev.disabled = revTrack.scrollLeft <= 2;
+      revNext.disabled = revTrack.scrollLeft >= max;
+    }
+    function pauseAuto() { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
+    function maybeStart() { if (autoEnabled && inView && !hovering && !autoTimer) autoTimer = setInterval(autoTick, 4800); }
+    function killAuto() { autoEnabled = false; pauseAuto(); }   // usuário assumiu o controle
+    function autoTick() {
+      var max = revTrack.scrollWidth - revTrack.clientWidth - 2;
+      if (revTrack.scrollLeft >= max) revTrack.scrollTo({ left: 0, behavior: 'smooth' });
+      else revTrack.scrollBy({ left: cardStep(), behavior: 'smooth' });
+    }
+
+    revPrev.addEventListener('click', function () { killAuto(); revTrack.scrollBy({ left: -cardStep(), behavior: 'smooth' }); });
+    revNext.addEventListener('click', function () { killAuto(); revTrack.scrollBy({ left: cardStep(), behavior: 'smooth' }); });
+    revTrack.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+    updateArrows();
+
+    // arrastar para rolar (pointer)
+    var down = false, startX = 0, startScroll = 0;
+    revTrack.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      down = true; startX = e.clientX; startScroll = revTrack.scrollLeft;
+      revTrack.classList.add('is-dragging');
+    });
+    revTrack.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) killAuto();
+      revTrack.scrollLeft = startScroll - dx;
+    });
+    function endDrag() { if (!down) return; down = false; revTrack.classList.remove('is-dragging'); }
+    revTrack.addEventListener('pointerup', endDrag);
+    revTrack.addEventListener('pointercancel', endDrag);
+    revTrack.addEventListener('pointerleave', endDrag);
+
+    // parar autoplay em interação direta; pausar em hover/foco
+    ['wheel', 'touchstart', 'keydown'].forEach(function (ev) {
+      revTrack.addEventListener(ev, killAuto, { passive: true });
+    });
+    revTrack.addEventListener('mouseenter', function () { hovering = true; pauseAuto(); });
+    revTrack.addEventListener('mouseleave', function () { hovering = false; maybeStart(); });
+    revTrack.addEventListener('focusin', pauseAuto);
+
+    if ('IntersectionObserver' in window) {
+      var rvo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { inView = e.isIntersecting; if (inView) maybeStart(); else pauseAuto(); });
+      }, { threshold: 0.35 });
+      rvo.observe(revTrack);
+    } else { inView = true; maybeStart(); }
+  }
+
+  /* ---------- Scroll-spy: destaca o link da seção atual ---------- */
+  var spyLinks = Array.prototype.slice.call(document.querySelectorAll('.nav__links a[href^="#"]'));
+  var spyMap = {};
+  var spyTargets = [];
+  spyLinks.forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    var sec = document.getElementById(id);
+    if (sec) { spyMap[id] = a; spyTargets.push(sec); }
+  });
+  if (spyTargets.length && 'IntersectionObserver' in window) {
+    var current = null;
+    function setCurrent(id) {
+      if (id === current) return;
+      current = id;
+      spyLinks.forEach(function (a) {
+        a.classList.toggle('is-current', a.getAttribute('href') === '#' + id);
+      });
+    }
+    var spyObs = new IntersectionObserver(function (entries) {
+      // escolhe a seção mais visível no centro da viewport
+      var best = null, bestRatio = 0;
+      entries.forEach(function (e) {
+        if (e.isIntersecting && e.intersectionRatio > bestRatio) {
+          bestRatio = e.intersectionRatio; best = e.target;
+        }
+      });
+      if (best) setCurrent(best.id);
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.25, 0.5, 1] });
+    spyTargets.forEach(function (s) { spyObs.observe(s); });
+  }
+
   /* ---------- Float WhatsApp: aparece após o hero ---------- */
   var wpp = document.getElementById('wppFloat');
   if (wpp && 'IntersectionObserver' in window) {
