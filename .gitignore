@@ -1,0 +1,11 @@
+# OS / editor
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# QA artifacts
+.playwright-mcp/
+qa-*.png
+
+# Notas internas (não publicar)
+CLAUDE.md

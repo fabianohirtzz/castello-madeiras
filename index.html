@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- PROTÓTIPO: noindex enquanto não for produção -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <title>Castello Casas de Madeira | Sua casa pronta em até 120 dias</title>
+  <meta name="description" content="Casas de madeira chave na mão em Tubarão e região. Projeto, montagem e acabamento completos em 90 a 120 dias. 5,0 estrelas no Google." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Castello Casas de Madeira | Sua casa pronta em até 120 dias" />
+  <meta property="og:description" content="Casas de madeira chave na mão. Projeto, montagem e acabamento completos em 90 a 120 dias. 5,0 estrelas no Google." />
+  <meta property="og:image" content="fotos-casas/Screenshot_69.png" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <link rel="icon" type="image/png" href="images/icone-colorido.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="#topo" class="nav__logo" aria-label="Castello Casas de Madeira">
+        <img src="images/logo-horizontal-branco.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--light" />
+        <img src="images/logo-horizontal-colorido.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--dark" />
+      </a>
+
+      <nav class="nav__links" aria-label="Navegação principal">
+        <a href="#vantagens">Vantagens</a>
+        <a href="#modelos">Modelos</a>
+        <a href="#portfolio">Portfólio</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#contato">Contato</a>
+      </nav>
+
+      <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary nav__cta" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+        Pedir orçamento
+      </a>
+
+      <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- mobile drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <a href="#vantagens">Vantagens</a>
+    <a href="#modelos">Modelos</a>
+    <a href="#portfolio">Portfólio</a>
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#contato">Contato</a>
+    <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary" target="_blank" rel="noopener">Pedir orçamento no WhatsApp</a>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="topo">
+    <div class="hero__media" id="heroMedia">
+      <!-- Para produção: trocar a imagem por <video autoplay muted loop playsinline> com reel da Castello -->
+      <img src="fotos-casas/Screenshot_69.png" alt="Casa de madeira Castello à beira do lago em Santa Catarina" />
+    </div>
+    <div class="hero__overlay"></div>
+
+    <div class="hero__content container" id="heroContent">
+      <span class="eyebrow eyebrow--light reveal">Casas de madeira chave na mão</span>
+      <h1 class="hero__title reveal">A casa dos seus sonhos pronta em até <span class="hl">120 dias</span></h1>
+      <p class="hero__lead reveal">Projeto exclusivo, montagem completa e acabamento fino. Você sai do aluguel e entra direto no seu lar, sem dor de cabeça.</p>
+      <div class="hero__actions reveal">
+        <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary btn--lg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+          Pedir orçamento no WhatsApp
+        </a>
+        <a href="#modelos" class="btn btn--ghost-light btn--lg">Ver modelos e preços</a>
+      </div>
+
+      <div class="hero__proof reveal">
+        <div class="hero__proof-item">
+          <strong>5,0 <span class="star">★</span></strong>
+          <span>no Google</span>
+        </div>
+        <div class="hero__proof-item"><strong>56</strong><span>avaliações</span></div>
+        <div class="hero__proof-item"><strong>12 anos</strong><span>de mercado</span></div>
+        <div class="hero__proof-item"><strong>+18.000 m²</strong><span>construídos</span></div>
+      </div>
+    </div>
+
+    <a href="#vantagens" class="hero__scroll" aria-label="Rolar para baixo"><span></span></a>
+  </section>
+
+  <!-- ============ VANTAGENS ============ -->
+  <section class="section vantagens" id="vantagens">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Por que casa de madeira</span>
+        <h2 class="section__title reveal">Mais rápido de construir. Melhor de morar.</h2>
+        <p class="section__lead reveal">A casa de madeira une obra ágil, conforto de verdade e um patrimônio que valoriza com o tempo. Veja o que muda quando você constrói com a Castello.</p>
+      </div>
+
+      <div class="grid grid--benefits">
+        <article class="benefit reveal">
+          <div class="benefit__ico">
+            <svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+          </div>
+          <h3>Pronta em 90 a 120 dias</h3>
+          <p>Enquanto a obra convencional leva anos, sua casa Castello fica pronta em poucos meses, organizada do início ao fim.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit__ico">
+            <svg viewBox="0 0 24 24"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <h3>100% personalizável</h3>
+          <p>Planta, acabamentos, revestimentos, janelas, portas e piso escolhidos do seu jeito, do seu gosto e da sua rotina.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit__ico">
+            <svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M17.7 6.3l1.4-1.4M4.9 19.1l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+          </div>
+          <h3>Conforto térmico</h3>
+          <p>A madeira mantém o ambiente fresco no calor e aconchegante no frio, com bem-estar em todas as estações do ano.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit__ico">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>
+          </div>
+          <h3>Patrimônio pra vida toda</h3>
+          <p>Uma casa de madeira bem construída valoriza, atravessa gerações e ainda vira fonte de renda em aluguel, revenda ou hospedagem.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit__ico">
+            <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <h3>Zero dor de cabeça</h3>
+          <p>A Castello cuida de projeto, materiais, prazos e acabamento. Você acompanha tudo e no fim só pega a chave.</p>
+        </article>
+
+        <article class="benefit reveal">
+          <div class="benefit__ico">
+            <svg viewBox="0 0 24 24"><path d="m14 7 3 3M5 19l1.5-5.5L16 4l4 4-9.5 9.5L5 19Z"/></svg>
+          </div>
+          <h3>Estrutura que dura</h3>
+          <p>Prego galvanizado e madeira de qualidade em todas as construções, com carpinteiros e pedreiros experientes na obra todo dia.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODELOS ============ -->
+  <section class="section section--sand modelos" id="modelos">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Modelos chave na mão</span>
+        <h2 class="section__title reveal">Escolha o tamanho. A gente entrega completa.</h2>
+        <p class="section__lead reveal">Todos os modelos saem prontos pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas.</p>
+      </div>
+
+      <div class="grid grid--models">
+        <article class="model reveal">
+          <div class="model__media">
+            <img src="fotos-casas/Screenshot_68.png" alt="Casa de madeira compacta de dois pavimentos da Castello" />
+            <span class="model__badge">Chave na mão</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Parede vertical</span>
+            <h3 class="model__name">Compacta</h3>
+            <p class="model__area">39,00 m² de área construída</p>
+            <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 69.900</span></div>
+            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Compacta%20de%2039m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+          </div>
+        </article>
+
+        <article class="model reveal">
+          <div class="model__media">
+            <img src="fotos-casas/Screenshot_67.png" alt="Casa de madeira Castello com varanda ampla e jardim" />
+            <span class="model__badge">Chave na mão</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Parede dupla</span>
+            <h3 class="model__name">Conforto</h3>
+            <p class="model__area">42,75 m² de área construída</p>
+            <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 79.988</span></div>
+            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Conforto%20de%2042%2C75m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+          </div>
+        </article>
+
+        <article class="model model--featured reveal">
+          <span class="model__flag">Mais escolhida</span>
+          <div class="model__media">
+            <img src="fotos-casas/Screenshot_73.png" alt="Casa de madeira Castello com telhado vermelho e amplo jardim" />
+            <span class="model__badge">Chave na mão</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Parede dupla</span>
+            <h3 class="model__name">Família</h3>
+            <p class="model__area">51,00 m² de área construída</p>
+            <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 87.997</span></div>
+            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Fam%C3%ADlia%20de%2051m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+          </div>
+        </article>
+
+        <article class="model reveal">
+          <div class="model__media">
+            <img src="fotos-casas/Screenshot_74.png" alt="Casa de madeira Castello ampla com pergolado e céu azul" />
+            <span class="model__badge">Chave na mão</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Parede dupla</span>
+            <h3 class="model__name">Ampla</h3>
+            <p class="model__area">59,75 m² de área construída</p>
+            <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 97.776</span></div>
+            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Ampla%20de%2059%2C75m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+          </div>
+        </article>
+      </div>
+
+      <p class="modelos__note reveal">Valores de referência para casa completa. O orçamento final varia conforme a personalização, o terreno e a região. Fale com a gente e receba uma proposta sob medida.</p>
+    </div>
+  </section>
+
+  <!-- ============ PORTFÓLIO ============ -->
+  <section class="section portfolio" id="portfolio">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Casas reais entregues</span>
+        <h2 class="section__title reveal">Projetos que já viraram lar.</h2>
+        <p class="section__lead reveal">Cada casa abaixo foi projetada, construída e entregue pela Castello para famílias de Santa Catarina e região.</p>
+      </div>
+
+      <div class="gallery">
+        <figure class="gallery__item gallery__item--tall reveal"><img src="fotos-casas/Screenshot_69.png" alt="Casa de madeira de dois pavimentos à beira do lago" loading="lazy" /><figcaption>Sobrado à beira do lago</figcaption></figure>
+        <figure class="gallery__item reveal"><img src="fotos-casas/Screenshot_74.png" alt="Casa de madeira com pergolado e varanda" loading="lazy" /><figcaption>Casa térrea com varanda</figcaption></figure>
+        <figure class="gallery__item reveal"><img src="fotos-casas/Screenshot_75.png" alt="Sobrado de madeira em área urbana" loading="lazy" /><figcaption>Sobrado urbano</figcaption></figure>
+        <figure class="gallery__item reveal"><img src="fotos-casas/Screenshot_77.png" alt="Casa de madeira com varanda e guarda-corpo branco" loading="lazy" /><figcaption>Casa de campo</figcaption></figure>
+        <figure class="gallery__item gallery__item--wide reveal"><img src="fotos-casas/Screenshot_76.png" alt="Casa de madeira ampla com garagem coberta" loading="lazy" /><figcaption>Residência com garagem</figcaption></figure>
+        <figure class="gallery__item reveal"><img src="fotos-casas/Screenshot_67.png" alt="Chalé de madeira com jardim plantado" loading="lazy" /><figcaption>Chalé com jardim</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMO FUNCIONA ============ -->
+  <section class="section section--dark como" id="como-funciona">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Do projeto à chave</span>
+        <h2 class="section__title reveal">Simples do começo ao fim.</h2>
+        <p class="section__lead reveal">Você conta o sonho, a Castello cuida de cada etapa. Sem surpresa, sem retrabalho, sem dor de cabeça.</p>
+      </div>
+
+      <ol class="steps">
+        <li class="step reveal"><span class="step__num">01</span><h3>Conversa e projeto</h3><p>Entendemos seu sonho, seu terreno e seu orçamento, e desenhamos a planta ideal pra você.</p></li>
+        <li class="step reveal"><span class="step__num">02</span><h3>Fundação</h3><p>Preparamos a base da casa com técnica e segurança, prontos para receber a estrutura.</p></li>
+        <li class="step reveal"><span class="step__num">03</span><h3>Estrutura e montagem</h3><p>Montamos a casa com madeira de qualidade e prego galvanizado, no padrão Castello.</p></li>
+        <li class="step reveal"><span class="step__num">04</span><h3>Acabamento</h3><p>Elétrica, hidráulica, revestimentos, vidros e os detalhes finos que fazem do seu jeito.</p></li>
+        <li class="step reveal"><span class="step__num">05</span><h3>Chave na mão</h3><p>Você recebe a casa pronta pra morar, completa, em 90 a 120 dias.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ DEPOIMENTOS ============ -->
+  <section class="section section--sand reviews" id="depoimentos">
+    <div class="container">
+      <div class="reviews__head">
+        <div class="reviews__score reveal">
+          <span class="reviews__num">5,0</span>
+          <span class="reviews__stars">★★★★★</span>
+          <span class="reviews__meta">56 avaliações no Google</span>
+        </div>
+        <div class="reveal">
+          <span class="eyebrow">Quem já construiu</span>
+          <h2 class="section__title">A confiança de quem já tem a chave na mão.</h2>
+        </div>
+      </div>
+
+      <!-- PROTÓTIPO: depoimentos representativos. Substituir pelos reviews reais do Google antes de produção. -->
+      <div class="grid grid--reviews">
+        <article class="review reveal">
+          <div class="review__stars">★★★★★</div>
+          <p>Realizamos o sonho da casa própria e saímos do aluguel. A obra foi rápida e a equipe cuidou de tudo do começo ao fim.</p>
+          <footer><strong>Marcelo A.</strong><span>Tubarão, SC</span></footer>
+        </article>
+        <article class="review reveal">
+          <div class="review__stars">★★★★★</div>
+          <p>Casa entregue no prazo, com acabamento impecável. O conforto térmico é outra coisa, fresco no verão e aconchegante no frio.</p>
+          <footer><strong>Patrícia M.</strong><span>Laguna, SC</span></footer>
+        </article>
+        <article class="review reveal">
+          <div class="review__stars">★★★★★</div>
+          <p>Personalizamos cada detalhe do projeto. Atendimento atencioso e sem dor de cabeça. Recomendo a Castello de olhos fechados.</p>
+          <footer><strong>Anderson R.</strong><span>Capivari de Baixo, SC</span></footer>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA BAND ============ -->
+  <section class="cta-band">
+    <div class="container cta-band__inner">
+      <div class="reveal">
+        <h2>Pronto pra sair do aluguel?</h2>
+        <p>Peça seu orçamento sem compromisso. A Castello te acompanha do primeiro passo até a chave na mão.</p>
+      </div>
+      <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--light btn--lg reveal" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+        Falar no WhatsApp agora
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER / CONTATO ============ -->
+  <footer class="footer" id="contato">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="images/logo-vertical-branco.png" alt="Castello Casas de Madeira" class="footer__logo" />
+        <p>Casas de madeira chave na mão. Projeto, execução e pós-venda numa empresa só, há 12 anos em Tubarão e região.</p>
+        <a href="https://www.instagram.com/castellocasasdemadeira/" class="footer__ig" target="_blank" rel="noopener">@castellocasasdemadeira</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>Contato</h4>
+        <ul>
+          <li><a href="https://wa.me/5548998244494" target="_blank" rel="noopener">WhatsApp (48) 99824-4494</a></li>
+          <li><a href="tel:+554836328743">Telefone (48) 3632-8743</a></li>
+          <li>Av. Patrício Lima, 843<br>Tubarão, Santa Catarina</li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4>Atendimento</h4>
+        <ul>
+          <li>Segunda a sexta<br>8h às 12h e 13h30 às 18h</li>
+          <li>Sábado<br>8h30 às 12h</li>
+        </ul>
+      </div>
+
+      <div class="footer__map">
+        <iframe
+          src="https://www.google.com/maps?q=Av.%20Patr%C3%ADcio%20Lima%20843%20Tubar%C3%A3o%20SC&output=embed"
+          title="Localização da Castello Casas de Madeira em Tubarão, SC"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+
+    <div class="footer__bottom container">
+      <span>© 2026 Castello Casas de Madeira. Todos os direitos reservados.</span>
+      <span>Protótipo desenvolvido por Freela In Home.</span>
+    </div>
+  </footer>
+
+  <!-- Float WhatsApp -->
+  <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="wpp-float" id="wppFloat" aria-label="Falar no WhatsApp" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+  </a>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
