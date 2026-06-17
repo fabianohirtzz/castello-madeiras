@@ -432,6 +432,26 @@
     });
   }
 
+  /* ---------- FAQ: accordion (abre um, fecha os outros) ---------- */
+  var faqList = document.getElementById('faqList');
+  if (faqList) {
+    var faqItems = [].slice.call(faqList.querySelectorAll('.faq__item'));
+    faqItems.forEach(function (item) {
+      var btn = item.querySelector('.faq__q');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var willOpen = !item.classList.contains('is-open');
+        faqItems.forEach(function (it) {
+          it.classList.remove('is-open');
+          var b = it.querySelector('.faq__q');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        item.classList.toggle('is-open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
+    });
+  }
+
   /* ---------- Galeria de vídeos do Instagram ---------- */
   var instaRail = document.getElementById('instaRail');
   if (instaRail) {

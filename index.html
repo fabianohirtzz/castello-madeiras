@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/style.css?v=4" />
 </head>
 <body>
 
@@ -534,6 +534,114 @@
     </div>
   </section>
 
+  <!-- ============ FAQ (accordion com ícone) ============ -->
+  <section class="section faq section--dark" id="faq" aria-label="Perguntas frequentes">
+    <div class="container">
+      <div class="section__head faq__head">
+        <span class="eyebrow eyebrow--light reveal">Perguntas frequentes</span>
+        <h2 class="section__title reveal">Tudo que você precisa<br>saber antes de construir.</h2>
+        <p class="section__lead reveal">Reunimos as dúvidas que mais ouvimos de quem está prestes a realizar o sonho da casa de madeira. Ficou com outra pergunta? É só chamar no WhatsApp.</p>
+      </div>
+
+      <div class="faq__list reveal" id="faqList">
+        <div class="faq__item is-open">
+          <button class="faq__q" type="button" aria-expanded="true" aria-controls="faq-a1">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
+            <span class="faq__q-text">Quanto tempo leva pra minha casa ficar pronta?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a1" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">Entre 90 e 120 dias, do projeto à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-a2">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="9" r="4"/><path d="m12 12-8 8M8 16l2 2M6 18l1.6 1.6"/></svg></span>
+            <span class="faq__q-text">O que está incluso no chave na mão?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a2" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">Sua casa sai pronta pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas. Você cuida da mudança, a Castello cuida de projeto, materiais, prazos e acabamento.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-a3">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h2M10 12h10M4 18h9M17 18h3"/><circle cx="13" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="2" fill="currentColor" stroke="none"/></svg></span>
+            <span class="faq__q-text">Posso personalizar a planta e os acabamentos?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a3" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">Sim, 100% personalizável. Planta, acabamentos, revestimentos, janelas, portas e piso são escolhidos do seu jeito. Cada projeto Castello é exclusivo e desenhado pra sua rotina e o seu gosto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-a4">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M17.7 6.3l1.4-1.4M4.9 19.1l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg></span>
+            <span class="faq__q-text">Casa de madeira é confortável o ano todo?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a4" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">É um dos maiores diferenciais. A madeira mantém o ambiente fresco no calor e aconchegante no frio, com um conforto térmico bem acima da alvenaria comum em todas as estações.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-a5">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span class="faq__q-text">A casa é resistente e dura com o tempo?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a5" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">Construímos com madeira de qualidade e prego galvanizado em toda a estrutura, com equipe experiente na obra todo dia. Bem cuidada, a casa atravessa gerações e ainda valoriza como patrimônio.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-a6">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></span>
+            <span class="faq__q-text">Vocês cuidam da fundação e do terreno?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a6" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">A fundação faz parte do processo. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança em cada etapa, do primeiro passo até a chave na mão.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false" aria-controls="faq-a7">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 1.5 2.6-.2.9 2.4 2.3 1.3-.6 2.5.6 2.5-2.3 1.3-.9 2.4-2.6-.2L12 21l-2.1-1.5-2.6.2-.9-2.4-2.3-1.3.6-2.5-.6-2.5 2.3-1.3.9-2.4 2.6.2L12 3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <span class="faq__q-text">Que garantias eu tenho com a Castello?</span>
+            <span class="faq__sign" aria-hidden="true"></span>
+          </button>
+          <div class="faq__panel" id="faq-a7" role="region">
+            <div class="faq__panel-inner">
+              <p class="faq__a">Você tem a garantia da construção, o compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo com uma empresa só.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="faq__foot reveal">A Castello fica em Tubarão e atende toda a região, com casas já entregues em diversas cidades de Santa Catarina.
+        <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20as%20casas%20de%20madeira%20da%20Castello." target="_blank" rel="noopener">Tirar uma dúvida no WhatsApp</a>
+      </p>
+    </div>
+  </section>
+
   <!-- ============ CTA BAND (faceta vermelha) ============ -->
   <section class="cta-band">
     <div class="container cta-band__inner">
@@ -593,6 +701,6 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
   </a>
 
-  <script src="js/main.js?v=3"></script>
+  <script src="js/main.js?v=4"></script>
 </body>
 </html>
