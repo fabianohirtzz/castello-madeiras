@@ -19,3 +19,6 @@ qa-*.jpeg
 
 # Backup do video original do hero (pre all-intra)
 video-hero/video-hero.original.mp4
+
+# Backups de vídeos brutos (pre otimização web)
+videos-instagram/web/*.original.mp4
