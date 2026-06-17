@@ -432,22 +432,36 @@
     });
   }
 
-  /* ---------- FAQ: accordion (abre um, fecha os outros) ---------- */
-  var faqList = document.getElementById('faqList');
-  if (faqList) {
-    var faqItems = [].slice.call(faqList.querySelectorAll('.faq__item'));
-    faqItems.forEach(function (item) {
-      var btn = item.querySelector('.faq__q');
-      if (!btn) return;
-      btn.addEventListener('click', function () {
-        var willOpen = !item.classList.contains('is-open');
-        faqItems.forEach(function (it) {
-          it.classList.remove('is-open');
-          var b = it.querySelector('.faq__q');
-          if (b) b.setAttribute('aria-expanded', 'false');
-        });
-        item.classList.toggle('is-open', willOpen);
-        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+  /* ---------- FAQ: tabs verticais (uma aba ativa por vez) ---------- */
+  var faqTabs = document.getElementById('faqTabs');
+  if (faqTabs) {
+    var tabs = [].slice.call(faqTabs.querySelectorAll('.faq__tab'));
+    var panels = [].slice.call(faqTabs.querySelectorAll('.faq__content'));
+
+    function selectTab(idx, focus) {
+      tabs.forEach(function (tab, i) {
+        var on = i === idx;
+        tab.classList.toggle('is-active', on);
+        tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        tab.setAttribute('tabindex', on ? '0' : '-1');
+        if (panels[i]) {
+          panels[i].classList.toggle('is-active', on);
+          if (on) { panels[i].removeAttribute('hidden'); }
+          else { panels[i].setAttribute('hidden', ''); }
+        }
+      });
+      if (focus && tabs[idx]) tabs[idx].focus();
+    }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { selectTab(i, false); });
+      tab.addEventListener('keydown', function (e) {
+        var n = tabs.length, next = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (i + 1) % n;
+        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (i - 1 + n) % n;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = n - 1;
+        if (next !== null) { e.preventDefault(); selectTab(next, true); }
       });
     });
   }
