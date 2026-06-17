@@ -427,4 +427,108 @@
     });
   }
 
+  /* ---------- Galeria de vídeos do Instagram ---------- */
+  var instaRail = document.getElementById('instaRail');
+  if (instaRail) {
+    var ICO_PLAY  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+    var ICO_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+    var ICO_VOL   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a3.5 3.5 0 0 0-2-3.16v6.32A3.5 3.5 0 0 0 16.5 12zM14 3.23v2.06a6 6 0 0 1 0 13.42v2.06a8 8 0 0 0 0-17.54z"/></svg>';
+    var ICO_MUTE  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm17.3.3-1.4-1.4L17.5 10.3 15.1 7.9l-1.4 1.4L16.1 11.7l-2.4 2.4 1.4 1.4 2.4-2.4 2.4 2.4 1.4-1.4-2.4-2.4z"/></svg>';
+
+    var cards = Array.prototype.slice.call(instaRail.querySelectorAll('.ivid'));
+    var videos = [];
+
+    cards.forEach(function (card) {
+      var frame = card.querySelector('.ivid__frame');
+      var video = card.querySelector('.ivid__video');
+      if (!frame || !video) return;
+      videos.push(video);
+      video.volume = 1;
+
+      // botão central
+      var big = document.createElement('button');
+      big.type = 'button';
+      big.className = 'ivid__big';
+      big.setAttribute('aria-label', 'Reproduzir vídeo');
+      big.innerHTML = '<span class="ivid__big-ico">' + ICO_PLAY + '</span>';
+
+      // barra de controles
+      var bar = document.createElement('div');
+      bar.className = 'ivid__bar';
+      var toggle = document.createElement('button');
+      toggle.type = 'button'; toggle.className = 'ivid__ctrl ivid__toggle';
+      toggle.setAttribute('aria-label', 'Reproduzir'); toggle.innerHTML = ICO_PLAY;
+      var mute = document.createElement('button');
+      mute.type = 'button'; mute.className = 'ivid__ctrl ivid__mute';
+      mute.setAttribute('aria-label', 'Desativar som'); mute.innerHTML = ICO_VOL;
+      var vol = document.createElement('input');
+      vol.type = 'range'; vol.className = 'ivid__vol';
+      vol.min = '0'; vol.max = '1'; vol.step = '0.05'; vol.value = '1';
+      vol.setAttribute('aria-label', 'Volume');
+      bar.appendChild(toggle); bar.appendChild(mute); bar.appendChild(vol);
+
+      frame.appendChild(big);
+      frame.appendChild(bar);
+
+      function playThis() {
+        videos.forEach(function (v) { if (v !== video && !v.paused) v.pause(); });
+        var p = video.play();
+        if (p && p.catch) p.catch(function () {});
+      }
+      function refresh() {
+        var playing = !video.paused && !video.ended;
+        card.classList.toggle('is-playing', playing);
+        toggle.innerHTML = playing ? ICO_PAUSE : ICO_PLAY;
+        toggle.setAttribute('aria-label', playing ? 'Pausar' : 'Reproduzir');
+        big.querySelector('.ivid__big-ico').innerHTML = playing ? ICO_PAUSE : ICO_PLAY;
+        big.setAttribute('aria-label', playing ? 'Pausar vídeo' : 'Reproduzir vídeo');
+      }
+      function refreshMute() {
+        var muted = video.muted || video.volume === 0;
+        mute.innerHTML = muted ? ICO_MUTE : ICO_VOL;
+        mute.setAttribute('aria-label', muted ? 'Ativar som' : 'Desativar som');
+        if (!muted) vol.value = String(video.volume);
+      }
+
+      function togglePlay() { if (video.paused) playThis(); else video.pause(); }
+      big.addEventListener('click', togglePlay);
+      toggle.addEventListener('click', togglePlay);
+
+      mute.addEventListener('click', function () {
+        if (video.muted || video.volume === 0) {
+          video.muted = false;
+          if (video.volume === 0) { video.volume = 1; }
+        } else {
+          video.muted = true;
+        }
+        refreshMute();
+      });
+      vol.addEventListener('input', function () {
+        var v = parseFloat(vol.value);
+        video.volume = v;
+        video.muted = v === 0;
+        refreshMute();
+      });
+
+      video.addEventListener('play', refresh);
+      video.addEventListener('pause', refresh);
+      video.addEventListener('ended', refresh);
+      refresh();
+      refreshMute();
+    });
+
+    // pausa vídeos que saem da viewport
+    if ('IntersectionObserver' in window) {
+      var ivo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (!e.isIntersecting) {
+            var v = e.target.querySelector('.ivid__video');
+            if (v && !v.paused) v.pause();
+          }
+        });
+      }, { threshold: 0.2 });
+      cards.forEach(function (c) { ivo.observe(c); });
+    }
+  }
+
 })();

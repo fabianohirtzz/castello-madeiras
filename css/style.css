@@ -128,7 +128,7 @@ ul,ol{list-style:none}
 
 .nav__links{display:flex;gap:clamp(4px,.8vw,12px)}
 .nav__links a{
-  display:inline-flex;align-items:center;gap:7px;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
   font-family:var(--font-display);font-weight:600;font-size:.92rem;color:#fff;
   padding:9px 13px;border-radius:999px;position:relative;
   transition:background .22s var(--ease),color .22s var(--ease),transform .22s var(--ease);
@@ -217,7 +217,7 @@ body.drawer-open{overflow:hidden}
 
 /* Indicador de etapa (01/02) */
 .hero__status{
-  position:absolute;left:50%;bottom:32px;transform:translateX(-50%);z-index:3;
+  position:absolute;left:50%;bottom:calc(clamp(56px,8vw,104px) + clamp(22px,4vh,38px));transform:translateX(-50%);z-index:4;
   display:inline-flex;align-items:center;gap:13px;
   font-family:var(--font-display);font-weight:600;font-size:.62rem;
   letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.82);
@@ -268,7 +268,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    PROVA SOCIAL (faixa)
    ============================================================ */
-.proof{background:linear-gradient(160deg,var(--red),var(--red-deep));color:#fff;padding-block:clamp(48px,7vh,84px)}
+.proof{background:var(--red);color:#fff;padding-block:clamp(48px,7vh,84px) calc(clamp(48px,7vh,84px) + clamp(56px,8vw,104px))}
 .proof__wrap{display:grid;gap:clamp(28px,4vh,44px)}
 .proof__lead{max-width:46ch;color:#fff;font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.25;letter-spacing:-.01em}
 .proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);padding-top:clamp(20px,3vh,32px);border-top:1px solid rgba(255,255,255,.22)}
@@ -456,7 +456,7 @@ body.drawer-open{overflow:hidden}
    CTA BAND — faixa vermelha facetada (assinatura)
    ============================================================ */
 .cta-band{position:relative;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;padding-top:clamp(116px,16vh,184px);padding-bottom:clamp(72px,11vh,124px)}
-.cta-band::before{content:"";position:absolute;left:0;right:0;top:-1px;height:clamp(58px,7.5vw,108px);background:var(--sand);clip-path:var(--facet-cta-top)}
+.cta-band::before{content:"";position:absolute;left:0;right:0;top:-1px;height:clamp(58px,7.5vw,108px);background:var(--ink);clip-path:var(--facet-cta-top)}
 .cta-band__inner{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px}
 .cta-band h2{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.025em;line-height:1.03;max-width:18ch}
 .cta-band p{margin-top:14px;max-width:46ch;opacity:.94;font-size:1.08rem}
@@ -484,6 +484,92 @@ body.drawer-open{overflow:hidden}
 .wpp-float.is-visible{opacity:1;visibility:visible;transform:translateY(0) scale(1);animation:wppPulse 3s ease-in-out infinite 1s}
 .wpp-float svg{width:32px;height:32px;fill:#fff}
 @keyframes wppPulse{0%,100%{box-shadow:0 12px 30px -8px rgba(37,211,102,.7)}50%{box-shadow:0 12px 30px -8px rgba(37,211,102,.7),0 0 0 12px rgba(37,211,102,0)}}
+
+/* ============================================================
+   INSTAGRAM — galeria de vídeos (reels verticais espalhados)
+   ============================================================ */
+.insta{background:var(--ink);color:#fff;position:relative;overflow:hidden;padding-bottom:clamp(40px,7vh,84px)}
+.insta__grid-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 56% at 50% 26%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(ellipse 78% 56% at 50% 26%,#000 35%,transparent 100%);
+}
+.insta .container,.insta__rail{position:relative;z-index:1}
+.insta .section__title{color:#fff}
+.insta .section__lead{color:rgba(255,255,255,.74)}
+.insta__head{max-width:760px;margin-inline:auto;text-align:center;margin-bottom:0}
+.insta__head .eyebrow{justify-content:center}
+.insta__head .section__lead{margin-inline:auto}
+
+/* botão Instagram (gradiente da marca IG) */
+.btn--ig{margin-top:28px;color:#fff;border:0;background:linear-gradient(105deg,#feda75,#fa7e1e 28%,#d62976 58%,#962fbf 80%,#4f5bd5);box-shadow:0 14px 34px -14px rgba(214,41,118,.7)}
+.btn--ig:hover{transform:translateY(-2px);box-shadow:0 22px 50px -16px rgba(214,41,118,.9)}
+.btn--ig svg{width:21px;height:21px;fill:currentColor;flex:none}
+
+/* rail horizontal com snap */
+.insta__rail{
+  display:flex;gap:clamp(14px,2.2vw,28px);
+  margin-top:clamp(34px,5vh,56px);
+  padding:42px clamp(20px,5vw,48px) 30px;
+  overflow-x:auto;scroll-snap-type:x proximity;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.insta__rail::-webkit-scrollbar{display:none}
+
+/* card de vídeo — tilt "polaroid espalhada" */
+.ivid{flex:0 0 auto;scroll-snap-align:center;--tilt:0deg;--ty:0px;--sc:1}
+.ivid:nth-child(odd){--tilt:-2.4deg;--ty:14px}
+.ivid:nth-child(even){--tilt:2.2deg;--ty:-8px}
+.ivid:nth-child(3n){--tilt:-1.4deg;--ty:22px}
+.ivid:nth-child(4n){--tilt:2.8deg;--ty:0px}
+.ivid.is-playing{--tilt:0deg;--ty:-6px;--sc:1.025}
+.ivid__frame{
+  position:relative;width:clamp(230px,23vw,290px);aspect-ratio:9/16;
+  border-radius:var(--r-lg);overflow:hidden;background:#000;
+  box-shadow:var(--shadow-card);
+  transform:rotate(var(--tilt)) translateY(var(--ty)) scale(var(--sc));
+  transition:transform .55s var(--ease),box-shadow .4s var(--ease);
+}
+.ivid__frame:hover,.ivid__frame:focus-within{--tilt:0deg;--ty:-8px;--sc:1.035;box-shadow:0 44px 88px -34px rgba(0,0,0,.8);z-index:3}
+.ivid__video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#000}
+/* scrim inferior para legibilidade dos controles */
+.ivid__frame::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(to top,rgba(0,0,0,.62),transparent);opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
+.ivid__frame:hover::after,.ivid__frame:focus-within::after,.ivid.is-playing .ivid__frame::after{opacity:1}
+
+/* botão central play */
+.ivid__big{
+  position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;border:0;
+  display:grid;place-items:center;cursor:pointer;color:#fff;
+  background:rgba(20,20,20,.46);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+  box-shadow:0 10px 28px -8px rgba(0,0,0,.7);
+  transition:opacity .3s var(--ease),transform .3s var(--ease),background .25s;
+}
+.ivid__big-ico{width:26px;height:26px;fill:#fff;margin-left:3px}
+.ivid__big:hover{background:var(--red);transform:scale(1.08)}
+.ivid.is-playing .ivid__big{opacity:0;transform:scale(.65);pointer-events:none}
+
+/* barra de controles */
+.ivid__bar{
+  position:absolute;left:10px;right:10px;bottom:10px;z-index:2;
+  display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;
+  background:rgba(18,18,18,.55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.12);
+  opacity:0;transform:translateY(10px);transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.ivid__frame:hover .ivid__bar,.ivid__frame:focus-within .ivid__bar,.ivid.is-playing .ivid__bar{opacity:1;transform:none}
+.ivid__ctrl{flex:none;width:30px;height:30px;border-radius:50%;border:0;background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s var(--ease),transform .2s var(--ease)}
+.ivid__ctrl:hover{background:rgba(255,255,255,.2)}
+.ivid__ctrl:active{transform:scale(.9)}
+.ivid__ctrl svg{width:17px;height:17px;fill:#fff}
+.ivid__vol{
+  flex:1 1 auto;min-width:34px;height:4px;margin:0 4px;
+  -webkit-appearance:none;appearance:none;cursor:pointer;
+  border-radius:3px;background:rgba(255,255,255,.28);accent-color:var(--red-bright);
+}
+.ivid__vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.ivid__vol::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:#fff;cursor:pointer}
 
 /* ============================================================
    Reveal on scroll
@@ -555,4 +641,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .process__step{opacity:1}
   .process__media-fig{opacity:0}
   .process__media-fig:first-child,.process__media-fig.is-active{opacity:1}
+  /* galeria de vídeos: sem tilt/scale, controles sempre visíveis */
+  .ivid{--tilt:0deg!important;--ty:0px!important;--sc:1!important}
+  .ivid__bar{opacity:1;transform:none}
 }
