@@ -571,3 +571,41 @@
   }
 
 })();
+
+/* ---------- Fundo floresta (parallax) da seção de avaliações ----------
+   Gera fileiras de coníferas escalonadas (formato de pinheiro com "galhos").
+   Determinístico: as duas cópias de cada faixa ficam idênticas -> loop sem emenda. */
+(function () {
+  var scene = document.querySelector('.reviews__scene');
+  if (!scene) return;
+
+  function r(v) { return Math.round(v); }
+
+  function conifer(cx, By, Ty, HW) {
+    var H = By - Ty, t1 = Ty + 0.32 * H, t2 = Ty + 0.60 * H;
+    var w1 = 0.40 * HW, w2 = 0.68 * HW, n1 = 0.22 * HW, n2 = 0.42 * HW;
+    return 'M' + r(cx) + ',' + r(Ty)
+      + 'L' + r(cx + w1) + ',' + r(t1) + 'L' + r(cx + n1) + ',' + r(t1)
+      + 'L' + r(cx + w2) + ',' + r(t2) + 'L' + r(cx + n2) + ',' + r(t2)
+      + 'L' + r(cx + HW) + ',' + r(By)
+      + 'L' + r(cx - HW) + ',' + r(By)
+      + 'L' + r(cx - n2) + ',' + r(t2) + 'L' + r(cx - w2) + ',' + r(t2)
+      + 'L' + r(cx - n1) + ',' + r(t1) + 'L' + r(cx - w1) + ',' + r(t1) + 'Z';
+  }
+
+  var layers = [
+    { sel: '.tline--2', n: 11, hw: 44, apex: 132, jitter: 16 },
+    { sel: '.tline--3', n: 8,  hw: 60, apex: 100, jitter: 22 },
+    { sel: '.tline--4', n: 6,  hw: 82, apex: 66,  jitter: 26 }
+  ];
+
+  layers.forEach(function (L) {
+    var span = 1200 / L.n, d = '';
+    for (var i = 0; i < L.n; i++) {
+      var cx = span * (i + 0.5);
+      var Ty = L.apex + (i % 3) * L.jitter;
+      d += conifer(cx, 400, Ty, L.hw);
+    }
+    scene.querySelectorAll(L.sel + ' path').forEach(function (p) { p.setAttribute('d', d); });
+  });
+})();

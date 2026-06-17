@@ -477,6 +477,43 @@ body.drawer-open{overflow:hidden}
 /* mobile: reduz --rev-pad (head + trilho juntos) e mostra ~1 card espiando o próximo */
 @media(max-width:620px){.reviews{--rev-cards:1.12;--rev-pad:clamp(18px,5vw,32px)}}
 
+/* ── Fundo floresta animado (parallax) atrás dos depoimentos ───────────────
+   Cena decorativa em z-index:0; o conteúdo da seção fica em z-index:1.
+   Classes todas escopadas em .reviews__scene para não vazar pro resto do site. */
+.reviews{position:relative;overflow:hidden;isolation:isolate}
+.reviews>.container,.reviews__carousel{position:relative;z-index:1}
+.reviews__scene{
+  position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:linear-gradient(180deg,#FFFFFF 0%,#FDF6F2 46%,#FBE9E9 76%,#F4D6D7 100%);
+  --t1:#F6D2D3;--t2:#EC9DA0;--t3:#D75A60;--t4:#A6171D;
+  --grass-top:#F3C9CB;--grass-bottom:#E0989C;--grass-fringe:#F9DCDD;
+}
+.reviews__scene .sun{position:absolute;top:8%;right:12%;width:clamp(180px,22vw,360px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,rgba(255,254,250,1) 0%,rgba(255,250,246,.95) 26%,rgba(252,236,236,.42) 52%,rgba(252,236,236,0) 72%)}
+.reviews__scene .cloud{position:absolute;border-radius:100px;
+  background:radial-gradient(circle at 30% 60%,rgba(255,255,255,.95),rgba(255,252,247,.6) 60%,rgba(255,252,247,0) 75%);
+  filter:blur(2px);opacity:.8;will-change:transform}
+.reviews__scene .cloud--a{top:12%;width:320px;height:104px;animation:rv-cloud-a 95s linear infinite}
+.reviews__scene .cloud--b{top:24%;width:230px;height:80px;opacity:.5;animation:rv-cloud-b 140s linear infinite}
+@keyframes rv-cloud-a{from{transform:translateX(-30vw)}to{transform:translateX(120vw)}}
+@keyframes rv-cloud-b{from{transform:translateX(-40vw)}to{transform:translateX(120vw)}}
+.reviews__scene .tline{position:absolute;left:0;bottom:0;display:flex;width:200%;will-change:transform}
+.reviews__scene .tline svg{flex:0 0 50%;width:50%;height:100%;display:block}
+.reviews__scene .tline--1{height:30vh;opacity:.85;animation:rv-drift 140s linear infinite}
+.reviews__scene .tline--2{height:34vh;animation:rv-drift 95s  linear infinite}
+.reviews__scene .tline--3{height:40vh;animation:rv-drift 60s  linear infinite}
+.reviews__scene .tline--4{height:46vh;animation:rv-drift 34s  linear infinite}
+.reviews__scene .tline--1 path{fill:var(--t1)}
+.reviews__scene .tline--2 path{fill:var(--t2)}
+.reviews__scene .tline--3 path{fill:var(--t3)}
+.reviews__scene .tline--4 path{fill:var(--t4)}
+@keyframes rv-drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.reviews__scene .ground{position:absolute;left:0;bottom:0;width:100%;height:15vh}
+.reviews__scene .ground svg{width:100%;height:100%;display:block}
+.reviews__scene .ground .g-fill{fill:url(#rvGrass)}
+.reviews__scene .ground .g-fringe{fill:var(--grass-fringe)}
+@media (prefers-reduced-motion:reduce){.reviews__scene .tline,.reviews__scene .cloud{animation:none!important}}
+
 /* ============================================================
    FAQ — tabs verticais: lista lateral + painel (bloco creme)
    ============================================================ */

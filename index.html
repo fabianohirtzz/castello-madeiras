@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=5" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
 </head>
 <body>
 
@@ -387,6 +387,37 @@
 
   <!-- ============ DEPOIMENTOS (carrossel) ============ -->
   <section class="section section--sand reviews" id="depoimentos">
+    <!-- Fundo floresta com parallax (decorativo). Conteúdo da seção fica acima (z-index). -->
+    <div class="reviews__scene" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="cloud cloud--a"></div>
+      <div class="cloud cloud--b"></div>
+
+      <!-- massa de mata distante (vermelho claro, enevoado) -->
+      <div class="tline tline--1">
+        <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d="M0,400L0,250Q50,205,100,250Q150,200,200,250Q250,210,300,250Q350,200,400,250Q450,208,500,250Q550,200,600,250Q650,210,700,250Q750,202,800,250Q850,208,900,250Q950,200,1000,250Q1050,210,1100,250Q1150,203,1200,250L1200,400Z"/></svg>
+        <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d="M0,400L0,250Q50,205,100,250Q150,200,200,250Q250,210,300,250Q350,200,400,250Q450,208,500,250Q550,200,600,250Q650,210,700,250Q750,202,800,250Q850,208,900,250Q950,200,1000,250Q1050,210,1100,250Q1150,203,1200,250L1200,400Z"/></svg>
+      </div>
+      <!-- coníferas escalonadas (preenchidas via JS, claro -> escuro) -->
+      <div class="tline tline--2"><svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg><svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg></div>
+      <div class="tline tline--3"><svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg><svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg></div>
+      <div class="tline tline--4"><svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg><svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg></div>
+
+      <!-- gramado -->
+      <div class="ground">
+        <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="rvGrass" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="var(--grass-top)"/>
+              <stop offset="1" stop-color="var(--grass-bottom)"/>
+            </linearGradient>
+          </defs>
+          <path class="g-fringe" d="M0,200L0,46Q150,24,300,44Q450,62,600,40Q750,20,900,44Q1050,62,1200,42L1200,200Z"/>
+          <path class="g-fill"   d="M0,200L0,60Q150,40,300,58Q450,74,600,54Q750,36,900,58Q1050,74,1200,56L1200,200Z"/>
+        </svg>
+      </div>
+    </div>
+
     <div class="container">
       <div class="reviews__head">
         <div class="reviews__score reveal">
@@ -668,6 +699,6 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
   </a>
 
-  <script src="js/main.js?v=5"></script>
+  <script src="js/main.js?v=6"></script>
 </body>
 </html>
