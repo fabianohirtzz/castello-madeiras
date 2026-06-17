@@ -379,7 +379,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    DO TERRENO À CHAVE — scrollytelling sticky (o momento)
    ============================================================ */
-.process{background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.process{background:var(--ink);color:#fff;position:relative}
 .process::before{
   content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
