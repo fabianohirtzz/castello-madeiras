@@ -3,19 +3,29 @@
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
+
   /* ---------- Nav: rolado + esconde ao descer ---------- */
   var nav = document.getElementById('nav');
   var hero = document.getElementById('topo');
+  var heroTrack = document.getElementById('heroTrack');
   var lastY = window.scrollY;
+
+  // A nav fica clara/transparente durante todo o scrub do hero e só
+  // solidifica depois que a trilha do hero é ultrapassada.
+  function navThreshold() {
+    return heroTrack ? heroTrack.offsetHeight - window.innerHeight - 80 : 40;
+  }
 
   function onScroll() {
     var y = window.scrollY;
-    if (y > 40) nav.classList.add('is-scrolled');
+    var th = navThreshold();
+    if (y > th) nav.classList.add('is-scrolled');
     else nav.classList.remove('is-scrolled');
 
     // esconde ao descer (depois do hero), mostra ao subir — nunca com drawer aberto
     if (!document.body.classList.contains('drawer-open')) {
-      if (y > 640 && y > lastY + 6) nav.classList.add('is-hidden');
+      if (y > th + 60 && y > lastY + 6) nav.classList.add('is-hidden');
       else if (y < lastY - 6) nav.classList.remove('is-hidden');
     }
     lastY = y;
@@ -69,25 +79,84 @@
     reveals.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- Hero: parallax + fade no scroll ---------- */
-  var heroMedia = document.getElementById('heroMedia');
-  var heroContent = document.getElementById('heroContent');
-  if (!reduce && heroMedia) {
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var h = hero.offsetHeight;
-        var p = Math.min(Math.max(window.scrollY / h, 0), 1);
-        heroMedia.style.transform = 'translateY(' + (p * 60) + 'px)';
-        if (heroContent) {
-          heroContent.style.opacity = String(1 - p * 1.1);
-          heroContent.style.transform = 'translateY(' + (p * -30) + 'px)';
+  /* ---------- Hero: scrub de vídeo dirigido pelo scroll ----------
+     A trilha (.hero__track) tem ~280vh; o pin fica fixo. O progresso
+     do scroll através da trilha dirige video.currentTime, e dois beats
+     de texto cruzam no playhead (split em ~50% = ~3s de 6s).
+     Implementação vanilla (sem libs): progresso pelo bounding rect +
+     lerp em rAF para suavizar o seek do vídeo. */
+  var heroVideo = document.getElementById('heroVideo');
+  var beatOne = document.getElementById('heroBeatOne');
+  var beatTwo = document.getElementById('heroBeatTwo');
+  var statusFill = document.getElementById('heroStatusFill');
+  var statusCurrent = document.getElementById('heroStatusCurrent');
+  var SPLIT = 0.5;   // fração do scrub onde o texto troca
+  var HALF = 0.07;   // meia janela do crossfade
+
+  function applyBeats(p) {
+    // beat 1 já visível no carregamento (p=0) e cruza para o beat 2 no split
+    var cross = clamp((p - (SPLIT - HALF)) / (2 * HALF), 0, 1); // 0 antes do split, 1 depois
+    var oneOp = 1 - cross;
+    var twoOp = cross;
+    if (beatOne) {
+      beatOne.style.opacity = oneOp.toFixed(3);
+      beatOne.classList.toggle('is-active', oneOp > 0.5);
+    }
+    if (beatTwo) {
+      beatTwo.style.opacity = twoOp.toFixed(3);
+      beatTwo.classList.toggle('is-active', twoOp > 0.5);
+    }
+    if (statusFill) statusFill.style.width = (p * 100).toFixed(1) + '%';
+    if (statusCurrent) statusCurrent.textContent = p < SPLIT ? '01' : '02';
+    if (p > 0.02) hero.classList.add('is-scrolled');
+    else hero.classList.remove('is-scrolled');
+  }
+
+  if (heroTrack && heroVideo && !reduce) {
+    var vReady = false;
+    var vDur = 6;
+    var targetT = 0, curT = 0, lastSeek = -1;
+
+    heroVideo.addEventListener('loadedmetadata', function () { vDur = heroVideo.duration || 6; });
+    heroVideo.addEventListener('loadeddata', function () {
+      vReady = true;
+      try { heroVideo.currentTime = 0.001; } catch (e) {}
+      applyBeats(scrubProgress());
+    });
+    heroVideo.load();
+
+    function scrubProgress() {
+      var scrollable = heroTrack.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return 0;
+      var top = heroTrack.getBoundingClientRect().top;
+      return clamp(-top / scrollable, 0, 1);
+    }
+
+    function seek(t) {
+      if (Math.abs(t - lastSeek) < 0.012) return;
+      try { heroVideo.currentTime = t; } catch (e) {}
+      lastSeek = t;
+    }
+
+    function tick() {
+      var p = scrubProgress();
+      targetT = p * vDur;
+      applyBeats(p);
+      if (vReady) {
+        var delta = targetT - curT;
+        if (Math.abs(delta) > 0.001) {
+          curT += delta * 0.35;            // lerp: alcança o alvo em ~3 frames
+          seek(clamp(curT, 0, vDur - 0.001));
         }
-        ticking = false;
-      });
-    }, { passive: true });
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    applyBeats(scrubProgress());
+  } else if (heroTrack) {
+    // Reduced motion: ambos os beats visíveis, sem scrub.
+    if (beatOne) { beatOne.style.opacity = 1; beatOne.classList.add('is-active'); }
+    if (beatTwo) { beatTwo.style.opacity = 1; beatTwo.classList.add('is-active'); }
   }
 
   /* ---------- Contadores ---------- */
@@ -159,15 +228,4 @@
     wpp.classList.add('is-visible');
   }
 
-  /* ---------- Pausar vídeo do hero fora da viewport (quando houver) ---------- */
-  var heroVideo = heroMedia ? heroMedia.querySelector('video') : null;
-  if (heroVideo && 'IntersectionObserver' in window) {
-    var vo = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) heroVideo.play().catch(function () {});
-        else heroVideo.pause();
-      });
-    }, { threshold: 0.1 });
-    vo.observe(hero);
-  }
 })();

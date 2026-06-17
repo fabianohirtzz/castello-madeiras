@@ -160,34 +160,68 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    HERO
    ============================================================ */
-.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden;color:#fff}
-.hero__media{position:absolute;inset:0;z-index:0;will-change:transform}
-.hero__media img,.hero__media video{width:100%;height:100%;object-fit:cover;transform:scale(1.06);animation:heroZoom 20s ease-out forwards}
-@keyframes heroZoom{to{transform:scale(1.15)}}
+/* O hero é uma trilha alta (~280vh); o pin fica fixo enquanto o vídeo é
+   "scrubado" pelo scroll. Dois beats de texto cruzam no playhead. */
+.hero{position:relative;background:var(--ink);color:#fff}
+.hero__track{position:relative;height:280vh}
+.hero__pin{position:sticky;top:0;height:100svh;width:100%;overflow:hidden;isolation:isolate;background:var(--ink)}
+.hero__media{position:absolute;inset:0;z-index:0}
+.hero__video{width:100%;height:100%;object-fit:cover;background:var(--ink)}
 .hero__overlay{
   position:absolute;inset:0;z-index:1;
-  background:linear-gradient(180deg,rgba(20,20,20,.18) 0%,rgba(20,20,20,.32) 45%,rgba(20,20,20,.86) 100%);
+  background:
+    radial-gradient(ellipse at center,transparent 38%,rgba(20,20,20,.5) 100%),
+    linear-gradient(180deg,rgba(20,20,20,.28) 0%,rgba(20,20,20,.22) 42%,rgba(20,20,20,.85) 100%);
 }
-.hero__content{position:relative;z-index:2;padding-bottom:clamp(80px,13vh,150px);padding-top:120px;max-width:var(--container)}
-.hero__title{
+
+/* Beats — blocos de texto centralizados que cruzam no scroll */
+.hero__beat{
+  position:absolute;left:50%;top:54%;z-index:2;
+  width:100%;max-width:var(--container);padding-inline:clamp(20px,5vw,48px);
+  text-align:center;
+  opacity:0;transform:translate(-50%,-50%) translateY(26px);
+  will-change:opacity,transform;pointer-events:none;
+}
+.hero__beat.is-active{transform:translate(-50%,-50%) translateY(0);pointer-events:auto}
+.hero__beat .eyebrow{justify-content:center}
+.hero__headline{
   font-family:var(--font-display);font-weight:800;
-  font-size:clamp(2.7rem,6.4vw,5.4rem);line-height:.99;letter-spacing:-.035em;
-  max-width:16ch;text-shadow:0 2px 40px rgba(0,0,0,.3);
+  font-size:clamp(2.7rem,8vw,6.4rem);line-height:.98;letter-spacing:-.04em;
+  text-shadow:0 2px 50px rgba(0,0,0,.45);
 }
-.hero__title .hl{color:var(--red-bright)}
-.hero__lead{margin-top:22px;max-width:50ch;font-size:clamp(1.06rem,1.5vw,1.34rem);opacity:.94}
-.hero__actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.hero__headline-sub{
+  font-family:var(--font-display);font-weight:800;
+  font-size:clamp(2.4rem,7vw,5.6rem);line-height:1;letter-spacing:-.035em;
+  text-shadow:0 2px 50px rgba(0,0,0,.45);
+}
+.hero__headline-sub .hl{color:var(--red-bright)}
+.hero__beat--two .hero__actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:36px}
 
-.hero__proof{display:flex;flex-wrap:wrap;gap:clamp(22px,4vw,54px);margin-top:48px;padding-top:30px;border-top:1px solid rgba(255,255,255,.22)}
-.hero__proof-item{display:flex;flex-direction:column}
-.hero__proof-item strong{font-family:var(--font-display);font-weight:800;font-size:clamp(1.5rem,2.6vw,2.2rem);line-height:1}
-.hero__proof-item span{font-size:.82rem;opacity:.82;margin-top:6px;text-transform:uppercase;letter-spacing:.05em}
-.hero__proof-item .star{color:#FFC83A}
+/* Indicador de etapa (01/02) */
+.hero__status{
+  position:absolute;left:50%;bottom:32px;transform:translateX(-50%);z-index:3;
+  display:inline-flex;align-items:center;gap:13px;
+  font-family:var(--font-display);font-weight:600;font-size:.62rem;
+  letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.82);
+  text-shadow:0 1px 12px rgba(0,0,0,.7);
+}
+.hero__status-label{color:rgba(255,255,255,.55)}
+.hero__status-current{color:#fff}
+.hero__status-track{position:relative;display:inline-block;width:108px;height:2px;background:rgba(255,255,255,.24);border-radius:2px;overflow:hidden}
+.hero__status-fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(to right,var(--red-bright),var(--red-deep));box-shadow:0 0 12px rgba(241,47,55,.55)}
+.hero__status-total{color:rgba(255,255,255,.5)}
 
-.hero__scroll{position:absolute;left:50%;bottom:40px;z-index:2;transform:translateX(-50%)}
-.hero__scroll span{display:block;width:24px;height:40px;border:2px solid rgba(255,255,255,.6);border-radius:14px;position:relative}
-.hero__scroll span::after{content:"";position:absolute;left:50%;top:8px;width:4px;height:8px;background:#fff;border-radius:2px;transform:translateX(-50%);animation:scrollBob 1.8s ease-in-out infinite}
-@keyframes scrollBob{0%,100%{opacity:0;transform:translate(-50%,0)}50%{opacity:1;transform:translate(-50%,8px)}}
+/* Hint de scroll */
+.hero__hint{
+  position:absolute;left:50%;bottom:70px;transform:translateX(-50%);z-index:3;
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--font-display);font-weight:500;font-size:.7rem;
+  letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.9);
+  text-shadow:0 1px 12px rgba(0,0,0,.7);transition:opacity .4s var(--ease);
+}
+.hero__hint-arrow{font-size:1rem;color:var(--red-bright);animation:hintBob 1.8s ease-in-out infinite}
+@keyframes hintBob{0%,100%{transform:translateY(0);opacity:.8}50%{transform:translateY(5px);opacity:1}}
+.hero.is-scrolled .hero__hint{opacity:0;pointer-events:none}
 
 /* ============================================================
    FACETA — divisória de telhado entre seções (assinatura)
@@ -215,8 +249,10 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    PROVA SOCIAL (faixa)
    ============================================================ */
-.proof{background:var(--bone);padding-block:clamp(40px,6vh,72px)}
-.proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px)}
+.proof{background:var(--bone);padding-block:clamp(48px,7vh,84px)}
+.proof__wrap{display:grid;gap:clamp(28px,4vh,44px)}
+.proof__lead{max-width:46ch;color:var(--ink);font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.25;letter-spacing:-.01em}
+.proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);padding-top:clamp(20px,3vh,32px);border-top:1px solid var(--line)}
 .proof__item{position:relative;padding-left:22px}
 .proof__item::before{content:"";position:absolute;left:0;top:6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:9px solid var(--red)}
 .proof__num{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.1rem);line-height:1;letter-spacing:-.02em;color:var(--ink)}
@@ -398,7 +434,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 @media(max-width:760px){
   .nav__links,.nav__cta{display:none}
   .nav__burger{display:flex}
-  .hero__proof{gap:22px}
+  .hero__track{height:240vh}
   .proof__inner{grid-template-columns:1fr 1fr;gap:24px}
   .cta-band__inner{flex-direction:column;align-items:flex-start}
 }
@@ -406,7 +442,8 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .footer__grid{grid-template-columns:1fr}
   .gallery{grid-template-columns:1fr;grid-auto-rows:220px}
   .gallery__item{grid-column:1/-1 !important;grid-row:auto !important}
-  .hero__actions .btn{width:100%}
+  .hero__beat--two .hero__actions{flex-direction:column}
+  .hero__beat--two .hero__actions .btn{width:100%}
   .proof__inner{grid-template-columns:1fr 1fr;gap:18px}
 }
 
@@ -414,7 +451,11 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   *{animation:none!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none;transition:none}
   .reveal--mask{clip-path:none}
-  .hero__media img,.hero__media video{transform:none}
+  /* Hero sem scrub: pin vira bloco estático com os dois beats empilhados */
+  .hero__track{height:auto}
+  .hero__pin{position:relative;height:auto;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:120px 20px 80px}
+  .hero__beat{position:static;transform:none!important;opacity:1!important;max-width:none}
+  .hero__status,.hero__hint{display:none}
   .process__step{opacity:1}
   .process__media-fig{opacity:0}
   .process__media-fig:first-child,.process__media-fig.is-active{opacity:1}

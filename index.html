@@ -65,43 +65,79 @@
     <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary" target="_blank" rel="noopener">Pedir orçamento no WhatsApp</a>
   </div>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero" id="topo">
-    <div class="hero__media" id="heroMedia">
-      <video autoplay muted loop playsinline preload="auto" poster="fotos-casas/Screenshot_69.webp" aria-hidden="true">
-        <source src="video-hero/video-hero.mp4" type="video/mp4" />
-      </video>
-    </div>
-    <div class="hero__overlay"></div>
-
-    <div class="hero__content container" id="heroContent">
-      <span class="eyebrow eyebrow--light reveal">Casas de madeira chave na mão · Tubarão SC</span>
-      <h1 class="hero__title reveal">A casa dos seus sonhos pronta em até <span class="hl">120 dias</span></h1>
-      <p class="hero__lead reveal">Projeto exclusivo, montagem completa e acabamento fino. Você sai do aluguel e entra direto no seu lar, sem dor de cabeça.</p>
-      <div class="hero__actions reveal">
-        <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary btn--lg" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
-          Pedir orçamento no WhatsApp
-        </a>
-        <a href="#modelos" class="btn btn--ghost-light btn--lg">Ver modelos e preços</a>
-      </div>
-
-      <div class="hero__proof reveal">
-        <div class="hero__proof-item">
-          <strong><span data-count="5.0">0</span> <span class="star">★</span></strong>
-          <span>no Google</span>
+  <!-- ============ HERO (cinematográfico — scrub de vídeo no scroll) ============ -->
+  <section class="hero" id="topo" aria-label="Castello Casas de Madeira">
+    <div class="hero__track" id="heroTrack">
+      <div class="hero__pin">
+        <div class="hero__media" id="heroMedia">
+          <video id="heroVideo" class="hero__video" muted playsinline preload="auto" disableremoteplayback poster="fotos-casas/Screenshot_69.webp" aria-hidden="true">
+            <source src="video-hero/video-hero.mp4" type="video/mp4" />
+          </video>
         </div>
-        <div class="hero__proof-item"><strong data-count="56">0</strong><span>avaliações</span></div>
-        <div class="hero__proof-item"><strong data-count="12" data-suffix=" anos">0</strong><span>de mercado</span></div>
-        <div class="hero__proof-item"><strong data-count="18000" data-prefix="+" data-suffix=" m²">0</strong><span>construídos</span></div>
+        <div class="hero__overlay" aria-hidden="true"></div>
+
+        <!-- Beat 1 — 0 a ~3s -->
+        <div class="hero__beat hero__beat--one" id="heroBeatOne">
+          <span class="eyebrow eyebrow--light">Casas de madeira chave na mão · Tubarão SC</span>
+          <h1 class="hero__headline">A casa dos seus sonhos</h1>
+        </div>
+
+        <!-- Beat 2 — ~3s ao fim -->
+        <div class="hero__beat hero__beat--two" id="heroBeatTwo">
+          <p class="hero__headline-sub">pronta em até <span class="hl">120 dias</span></p>
+          <div class="hero__actions">
+            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary btn--lg" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+              Pedir orçamento no WhatsApp
+            </a>
+            <a href="#modelos" class="btn btn--ghost-light btn--lg">Ver modelos e preços</a>
+          </div>
+        </div>
+
+        <!-- Indicador de etapa -->
+        <div class="hero__status" aria-hidden="true">
+          <span class="hero__status-label">Etapa</span>
+          <span class="hero__status-current" id="heroStatusCurrent">01</span>
+          <span class="hero__status-track"><span class="hero__status-fill" id="heroStatusFill"></span></span>
+          <span class="hero__status-total">02</span>
+        </div>
+
+        <!-- Hint de scroll (primeiro frame) -->
+        <div class="hero__hint" id="heroHint" aria-hidden="true">
+          <span>Role para ver</span>
+          <span class="hero__hint-arrow">↓</span>
+        </div>
       </div>
     </div>
-
-    <a href="#vantagens" class="hero__scroll" aria-label="Rolar para baixo"><span></span></a>
   </section>
 
   <!-- faceta: telhado recorta a transição do hero -->
   <div class="facet facet--bone" aria-hidden="true"></div>
+
+  <!-- ============ PROVA SOCIAL RÁPIDA (movida do hero) ============ -->
+  <section class="proof" id="prova" aria-label="Prova social">
+    <div class="container proof__wrap">
+      <p class="proof__lead reveal">Projeto exclusivo, montagem completa e acabamento fino. Você sai do aluguel e entra direto no seu lar, sem dor de cabeça.</p>
+      <div class="proof__inner">
+        <div class="proof__item reveal">
+          <div class="proof__num"><span data-count="5.0">0</span> <span class="star">★</span></div>
+          <div class="proof__label">no Google</div>
+        </div>
+        <div class="proof__item reveal">
+          <div class="proof__num" data-count="56">0</div>
+          <div class="proof__label">avaliações</div>
+        </div>
+        <div class="proof__item reveal">
+          <div class="proof__num" data-count="12" data-suffix=" anos">0</div>
+          <div class="proof__label">de mercado</div>
+        </div>
+        <div class="proof__item reveal">
+          <div class="proof__num" data-count="18000" data-prefix="+" data-suffix=" m²">0</div>
+          <div class="proof__label">construídos</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->
   <section class="section vantagens" id="vantagens">
