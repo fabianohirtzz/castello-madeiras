@@ -140,7 +140,7 @@ ul,ol{list-style:none}
 .nav__links a.is-current{background:rgba(255,255,255,.18)}
 .nav__links a.is-current .nav__ico{stroke:#fff;transform:scale(1.1)}
 .nav:not(.is-scrolled) .nav__links a{text-shadow:0 1px 10px rgba(0,0,0,.4)}
-.nav__cta{padding:12px 20px;font-size:.92rem}
+.nav__cta{padding:12px 22px;font-size:.92rem;border-radius:999px}
 
 /* estado rolado — vidro claro */
 .nav.is-scrolled .nav__inner{background:rgba(250,247,242,.9);border-color:var(--line);box-shadow:var(--shadow-soft);height:66px}
@@ -434,7 +434,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    CTA BAND — faixa vermelha facetada (assinatura)
    ============================================================ */
-.cta-band{position:relative;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;padding-block:clamp(72px,11vh,124px)}
+.cta-band{position:relative;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;padding-top:clamp(116px,16vh,184px);padding-bottom:clamp(72px,11vh,124px)}
 .cta-band::before{content:"";position:absolute;left:0;right:0;top:-1px;height:clamp(58px,7.5vw,108px);background:var(--sand);clip-path:var(--facet-cta-top)}
 .cta-band__inner{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px}
 .cta-band h2{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.025em;line-height:1.03;max-width:18ch}

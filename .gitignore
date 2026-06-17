@@ -16,3 +16,6 @@ avaliacoes/
 
 # Screenshots QA jpeg
 qa-*.jpeg
+
+# Backup do video original do hero (pre all-intra)
+video-hero/video-hero.original.mp4
