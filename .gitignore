@@ -7,6 +7,9 @@ desktop.ini
 .playwright-mcp/
 qa-*.png
 
+# Brainstorm companion (efêmero)
+.superpowers/
+
 # Notas internas (não publicar)
 CLAUDE.md
 avaliacoes/
