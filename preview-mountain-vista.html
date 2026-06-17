@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>Preview — Fundo Floresta (cores Castello)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --red:#ED2128; --red-deep:#B3141B;
+    --ink:#141414; --bone:#FAF7F2; --line:rgba(20,20,20,.10); --muted:#6B645C;
+    --font-display:'Sora',system-ui,sans-serif; --font-body:'Inter',system-ui,sans-serif;
+    --r-lg:22px; --r-md:14px;
+    --shadow-soft:0 18px 50px -24px rgba(20,20,20,.35);
+    --shadow-card:0 24px 60px -30px rgba(20,20,20,.40);
+    --ease:cubic-bezier(.16,1,.3,1);
+
+    /* céu creme com leve toque de vermelho no horizonte */
+    --sky-top:#FFFFFF; --sky-mid:#FDF6F2; --sky-low:#FBE9E9;
+
+    /* floresta: vermelho claro/enevoado (fundo) -> vermelho escuro (frente) */
+    --t1:#F6D2D3;  /* massa distante, claro e enevoado */
+    --t2:#EC9DA0;
+    --t3:#D75A60;
+    --t4:#A6171D;  /* árvores da frente, vermelho escuro */
+
+    /* gramado em vermelho claro (tom da marca, mais claro que as árvores) */
+    --grass-top:#F3C9CB; --grass-bottom:#E0989C; --grass-fringe:#F9DCDD;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);color:var(--ink);background:var(--bone);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+  /* ============ CENA / FUNDO ANIMADO ============ */
+  .scene{position:fixed;inset:0;z-index:0;overflow:hidden;
+    background:linear-gradient(180deg,var(--sky-top) 0%,var(--sky-mid) 46%,var(--sky-low) 76%,#F4D6D7 100%);}
+
+  /* sol em branco/creme */
+  .sun{position:absolute;top:12%;right:14%;width:clamp(200px,24vw,400px);aspect-ratio:1;
+    border-radius:50%;z-index:1;
+    background:radial-gradient(circle at 50% 50%,
+      rgba(255,254,250,1) 0%,
+      rgba(255,250,246,.95) 26%,
+      rgba(252,236,236,.42) 52%,
+      rgba(252,236,236,0) 72%);}
+
+  /* nuvens creme/branco */
+  .cloud{position:absolute;z-index:2;border-radius:100px;
+    background:radial-gradient(circle at 30% 60%,rgba(255,255,255,.95),rgba(255,252,247,.6) 60%,rgba(255,252,247,0) 75%);
+    filter:blur(2px);opacity:.85;will-change:transform}
+  .cloud--a{top:17%;width:360px;height:120px;animation:cloud-a 95s linear infinite}
+  .cloud--b{top:29%;width:250px;height:90px;opacity:.55;animation:cloud-b 140s linear infinite}
+  @keyframes cloud-a{from{transform:translateX(-30vw)}to{transform:translateX(120vw)}}
+  @keyframes cloud-b{from{transform:translateX(-40vw)}to{transform:translateX(120vw)}}
+
+  /* camadas de floresta: cada faixa tem 2 SVGs iguais lado a lado (200%) e desliza -50% (loop sem emenda) */
+  .tline{position:absolute;left:0;bottom:0;display:flex;width:200%;will-change:transform}
+  .tline svg{flex:0 0 50%;width:50%;height:100%;display:block}
+  .tline--1{height:32vh;z-index:3;opacity:.85;animation:drift 140s linear infinite}
+  .tline--2{height:36vh;z-index:4;animation:drift 95s  linear infinite}
+  .tline--3{height:42vh;z-index:5;animation:drift 60s  linear infinite}
+  .tline--4{height:48vh;z-index:6;animation:drift 34s  linear infinite}
+  .tline--1 path{fill:var(--t1)}
+  .tline--2 path{fill:var(--t2)}
+  .tline--3 path{fill:var(--t3)}
+  .tline--4 path{fill:var(--t4)}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* gramado na frente (foreground fixo) */
+  .ground{position:absolute;left:0;bottom:0;width:100%;height:16vh;z-index:7}
+  .ground svg{width:100%;height:100%;display:block}
+  .ground .g-fill{fill:url(#grassgrad)}
+  .ground .g-fringe{fill:var(--grass-fringe)}
+
+  .scene::after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,0) 60%,rgba(250,247,242,.4) 100%)}
+
+  /* ============ CONTEÚDO POR CIMA ============ */
+  .page{position:relative;z-index:10}
+
+  .note{position:relative;z-index:20;max-width:880px;margin:22px auto 0;
+    background:#fff;border:1px solid var(--line);border-radius:var(--r-md);
+    box-shadow:var(--shadow-soft);padding:16px 22px;font-size:.9rem;color:var(--muted)}
+  .note strong{color:var(--ink);font-family:var(--font-display)}
+
+  .hero{min-height:78vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;padding:clamp(40px,9vh,120px) 24px 40px}
+  .hero__kicker{font-family:var(--font-display);font-weight:700;text-transform:uppercase;
+    letter-spacing:.14em;font-size:.78rem;color:var(--red-deep);margin-bottom:18px}
+  .hero h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;line-height:1.04;
+    font-size:clamp(2.2rem,6vw,4.6rem);max-width:14ch;color:var(--ink);
+    text-shadow:0 2px 22px rgba(255,255,255,.7)}
+  .hero p{margin-top:22px;max-width:52ch;font-size:clamp(1rem,1.4vw,1.18rem);color:#3a352f}
+  .btn{display:inline-flex;align-items:center;gap:10px;margin-top:30px;
+    background:var(--red);color:#fff;font-family:var(--font-display);font-weight:700;
+    text-decoration:none;padding:16px 30px;border-radius:60px;font-size:1.02rem;
+    box-shadow:0 14px 34px -14px rgba(179,20,27,.7);transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+  .btn:hover{transform:translateY(-3px);box-shadow:0 20px 44px -14px rgba(179,20,27,.8)}
+
+  .reviews{padding:clamp(48px,8vh,90px) clamp(18px,5vw,64px) 120px}
+  .reviews__head{display:flex;flex-wrap:wrap;gap:28px;align-items:center;justify-content:space-between;
+    max-width:1180px;margin:0 auto clamp(28px,4vh,44px)}
+  .reviews__score{display:flex;flex-direction:column;align-items:flex-start;background:#fff;
+    border-radius:var(--r-lg);padding:22px 32px;box-shadow:var(--shadow-soft);border:1px solid var(--line)}
+  .reviews__num{font-family:var(--font-display);font-weight:800;font-size:3rem;line-height:1;color:var(--ink)}
+  .reviews__stars{color:#E7A400;font-size:1.2rem;letter-spacing:2px;margin:6px 0}
+  .reviews__meta{color:var(--muted);font-size:.88rem}
+  .reviews__head .h{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;
+    font-size:clamp(1.7rem,3vw,2.4rem);line-height:1.08}
+  .reviews__head .lead{font-size:1.02rem;margin-top:12px;color:#3a352f;max-width:46ch}
+
+  .reviews__track{display:flex;gap:clamp(16px,1.6vw,24px);max-width:1180px;margin:0 auto;
+    overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;scrollbar-width:none}
+  .reviews__track::-webkit-scrollbar{display:none}
+  .review{flex:0 0 clamp(260px,30%,320px);scroll-snap-align:start;background:#fff;
+    border-radius:var(--r-lg);padding:26px 26px 22px;box-shadow:var(--shadow-card);border:1px solid var(--line)}
+  .review__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .review__stars{color:#E7A400;letter-spacing:2px;font-size:1.05rem}
+  .review__g{font-size:.72rem;font-weight:700;color:var(--muted);font-family:var(--font-display)}
+  .review p{font-size:.96rem;color:#332f2a}
+  .review footer{margin-top:20px;display:flex;align-items:center;gap:12px}
+  .review__avatar{width:42px;height:42px;border-radius:50%;background:var(--red);color:#fff;
+    display:grid;place-items:center;font-family:var(--font-display);font-weight:700}
+  .review__who{display:flex;flex-direction:column}
+  .review__who strong{font-family:var(--font-display);font-weight:700;font-size:.98rem}
+  .review__who span{color:var(--muted);font-size:.8rem}
+
+  @media (prefers-reduced-motion:reduce){
+    .tline,.cloud{animation:none!important}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ====== FUNDO ANIMADO: FLORESTA ====== -->
+  <div class="scene" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud cloud--a"></div>
+    <div class="cloud cloud--b"></div>
+
+    <!-- Camada 1 — massa de mata distante (vermelho claro, enevoado): copas arredondadas -->
+    <div class="tline tline--1">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d="M0,400L0,250Q50,205,100,250Q150,200,200,250Q250,210,300,250Q350,200,400,250Q450,208,500,250Q550,200,600,250Q650,210,700,250Q750,202,800,250Q850,208,900,250Q950,200,1000,250Q1050,210,1100,250Q1150,203,1200,250L1200,400Z"/></svg>
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d="M0,400L0,250Q50,205,100,250Q150,200,200,250Q250,210,300,250Q350,200,400,250Q450,208,500,250Q550,200,600,250Q650,210,700,250Q750,202,800,250Q850,208,900,250Q950,200,1000,250Q1050,210,1100,250Q1150,203,1200,250L1200,400Z"/></svg>
+    </div>
+
+    <!-- Camadas 2 a 4 — coníferas escalonadas (preenchidas via script, claro -> escuro) -->
+    <div class="tline tline--2">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg>
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg>
+    </div>
+    <div class="tline tline--3">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg>
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg>
+    </div>
+    <div class="tline tline--4">
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg>
+      <svg viewBox="0 0 1200 400" preserveAspectRatio="none"><path d=""/></svg>
+    </div>
+
+    <!-- Gramado na frente -->
+    <div class="ground">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="grassgrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--grass-top)"/>
+            <stop offset="1" stop-color="var(--grass-bottom)"/>
+          </linearGradient>
+        </defs>
+        <path class="g-fringe" d="M0,200L0,46Q150,24,300,44Q450,62,600,40Q750,20,900,44Q1050,62,1200,42L1200,200Z"/>
+        <path class="g-fill"   d="M0,200L0,60Q150,40,300,58Q450,74,600,54Q750,36,900,58Q1050,74,1200,56L1200,200Z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ====== CONTEÚDO DE TESTE ====== -->
+  <div class="page">
+    <div class="note">
+      <strong>Preview isolado.</strong> Fundo de floresta com parallax recriado em SVG vanilla nas cores da marca:
+      céu creme, fileiras de coníferas em degradê de vermelho (claro e enevoado ao fundo, escuro na frente) e
+      gramado vermelho claro embaixo. Sem ciclistas. Esta página é só para visualização, ainda não está no site.
+    </div>
+
+    <header class="hero">
+      <p class="hero__kicker">Casas de madeira chave na mão</p>
+      <h1>A casa dos seus sonhos, do projeto à chave na mão</h1>
+      <p>12 anos de mercado, mais de 18.000 m² construídos e nota 5,0 no Google. A Castello cuida de tudo: projeto, materiais, prazos e acabamento.</p>
+      <a class="btn" href="#">Pedir orçamento no WhatsApp</a>
+    </header>
+
+    <section class="reviews">
+      <div class="reviews__head">
+        <div class="reviews__score">
+          <span class="reviews__num">5,0</span>
+          <span class="reviews__stars">★★★★★</span>
+          <span class="reviews__meta">56 avaliações no Google</span>
+        </div>
+        <div>
+          <h2 class="h">Quem construiu com a Castello recomenda</h2>
+          <p class="lead">Avaliações reais de clientes no Google Meu Negócio. Conteúdo sobre o fundo animado para testar a legibilidade.</p>
+        </div>
+      </div>
+
+      <div class="reviews__track">
+        <article class="review">
+          <div class="review__top"><div class="review__stars">★★★★★</div><span class="review__g">Google</span></div>
+          <p>Empresa séria e comprometida. A casa ficou pronta no prazo e o acabamento superou nossas expectativas.</p>
+          <footer><span class="review__avatar">J</span><span class="review__who"><strong>Joana Lazzaris</strong><span>Avaliação no Google</span></span></footer>
+        </article>
+        <article class="review">
+          <div class="review__top"><div class="review__stars">★★★★★</div><span class="review__g">Google</span></div>
+          <p>Atendimento excelente do começo ao fim. Recomendo de olhos fechados para quem quer sair do aluguel.</p>
+          <footer><span class="review__avatar">F</span><span class="review__who"><strong>Franciely Silva</strong><span>Avaliação no Google</span></span></footer>
+        </article>
+        <article class="review">
+          <div class="review__top"><div class="review__stars">★★★★★</div><span class="review__g">Google</span></div>
+          <p>Casa confortável, fresca no verão e aconchegante no inverno. Equipe organizada e prazo cumprido.</p>
+          <footer><span class="review__avatar">L</span><span class="review__who"><strong>Luiz Flores</strong><span>Avaliação no Google</span></span></footer>
+        </article>
+        <article class="review">
+          <div class="review__top"><div class="review__stars">★★★★★</div><span class="review__g">Google</span></div>
+          <p>Do projeto à entrega, tudo impecável. Realizamos o sonho da casa própria com tranquilidade.</p>
+          <footer><span class="review__avatar">A</span><span class="review__who"><strong>Ana Paula Oliveira</strong><span>Avaliação no Google</span></span></footer>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Gera fileiras de coníferas escalonadas (formato de pinheiro com "galhos"),
+    // determinístico (as duas cópias de cada faixa são idênticas -> loop sem emenda).
+    (function () {
+      var r = function (v) { return Math.round(v); };
+
+      // Uma conífera estilizada: 3 tiers com recortes nas laterais (lê como árvore, não pirâmide).
+      function conifer(cx, By, Ty, HW) {
+        var H = By - Ty, t1 = Ty + 0.32 * H, t2 = Ty + 0.60 * H;
+        var w1 = 0.40 * HW, w2 = 0.68 * HW, n1 = 0.22 * HW, n2 = 0.42 * HW;
+        return 'M' + r(cx) + ',' + r(Ty)
+          + 'L' + r(cx + w1) + ',' + r(t1) + 'L' + r(cx + n1) + ',' + r(t1)
+          + 'L' + r(cx + w2) + ',' + r(t2) + 'L' + r(cx + n2) + ',' + r(t2)
+          + 'L' + r(cx + HW) + ',' + r(By)
+          + 'L' + r(cx - HW) + ',' + r(By)
+          + 'L' + r(cx - n2) + ',' + r(t2) + 'L' + r(cx - w2) + ',' + r(t2)
+          + 'L' + r(cx - n1) + ',' + r(t1) + 'L' + r(cx - w1) + ',' + r(t1) + 'Z';
+      }
+
+      // n = nº de árvores na faixa, hw = meia-largura da base, apex = topo (menor = mais alta),
+      // jitter = variação de altura por árvore (em unidades de viewBox).
+      var layers = [
+        { sel: '.tline--2', n: 11, hw: 44, apex: 132, jitter: 16 },
+        { sel: '.tline--3', n: 8,  hw: 60, apex: 100, jitter: 22 },
+        { sel: '.tline--4', n: 6,  hw: 82, apex: 66,  jitter: 26 }
+      ];
+
+      layers.forEach(function (L) {
+        var span = 1200 / L.n, d = '';
+        for (var i = 0; i < L.n; i++) {
+          var cx = span * (i + 0.5);
+          var Ty = L.apex + (i % 3) * L.jitter; // jitter determinístico
+          d += conifer(cx, 400, Ty, L.hw);
+        }
+        document.querySelectorAll(L.sel + ' path').forEach(function (p) {
+          p.setAttribute('d', d);
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>

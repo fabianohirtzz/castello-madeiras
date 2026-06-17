@@ -379,8 +379,18 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    DO TERRENO À CHAVE — scrollytelling sticky (o momento)
    ============================================================ */
-.process{background:var(--ink);color:#fff}
+.process{background:var(--ink);color:#fff;position:relative;overflow:hidden}
+.process::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 56% at 50% 26%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(ellipse 78% 56% at 50% 26%,#000 35%,transparent 100%);
+}
+.process .container{position:relative;z-index:1}
 .process__head{max-width:780px;margin-bottom:clamp(36px,5vh,56px)}
+.process__head .section__title{color:#fff;margin-top:10px}
+.process__head .section__lead{margin-top:12px}
 .process__inner{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,90px);align-items:start}
 .process__media{position:sticky;top:14vh;height:72vh;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card)}
 .process__media-fig{position:absolute;inset:0;opacity:0;transition:opacity .6s var(--ease);transform:scale(1.05)}
