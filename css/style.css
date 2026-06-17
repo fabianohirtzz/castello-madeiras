@@ -583,6 +583,13 @@ body.drawer-open{overflow:hidden}
 .footer__logo{height:152px;width:auto;margin-bottom:24px}
 .footer__brand p{color:rgba(255,255,255,.64);font-size:.95rem;max-width:34ch}
 .footer__ig{display:inline-block;margin-top:16px;color:var(--red-bright);font-weight:600}
+.footer__social{display:flex;gap:12px;margin-top:20px}
+.footer__social-btn{
+  display:grid;place-items:center;width:44px;height:44px;border-radius:12px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  color:#fff;transition:.3s var(--ease)}
+.footer__social-btn svg{width:21px;height:21px;fill:currentColor}
+.footer__social-btn:hover{background:var(--red);border-color:var(--red);color:#fff;transform:translateY(-2px)}
 .footer__col h4{font-family:var(--font-display);font-weight:700;font-size:1.05rem;margin-bottom:18px}
 .footer__col li{color:rgba(255,255,255,.68);font-size:.94rem;margin-bottom:14px;line-height:1.5}
 .footer__col a:hover{color:#fff}
@@ -710,15 +717,23 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .footer__grid{grid-template-columns:1fr 1fr}
   .footer__map{grid-column:1/-1;min-height:240px}
   .accordion{height:clamp(380px,50vh,460px)}
-  /* scrollytelling vira lista simples no mobile */
-  .process__inner{grid-template-columns:1fr;gap:24px}
-  .process__media{position:relative;top:0;height:clamp(280px,42vh,380px)}
-  .process__step{min-height:0;opacity:1;padding-block:18px;border-bottom:1px solid rgba(255,255,255,.12)}
+  /* scrollytelling no mobile: imagem fixa no topo, passos rolam por baixo.
+     display:block (não grid) para o sticky abranger toda a seção, não só a célula. */
+  .process__inner{display:block}
+  .process__media{position:sticky;top:76px;height:clamp(220px,34vh,300px);margin-bottom:20px}
+  .process__steps{display:flex;flex-direction:column}
+  .process__step{min-height:48vh;opacity:.32;padding-block:0;justify-content:center}
+  .process__step.is-active{opacity:1}
 }
 @media(max-width:760px){
   .nav__links,.nav__cta{display:none}
   .nav__burger{display:flex}
-  .hero__track{height:240vh}
+  /* Hero no mobile: sem scrub (iOS/Android não renderizam seek sem play).
+     Vídeo em autoplay loop ao fundo + os dois beats empilhados estáticos. */
+  .hero__track{height:auto}
+  .hero__pin{position:relative;height:auto;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:120px 20px 90px}
+  .hero__beat{position:static;transform:none!important;opacity:1!important;max-width:none}
+  .hero__status,.hero__hint{display:none}
   .proof__inner{grid-template-columns:1fr 1fr;gap:24px}
   .cta-band__inner{flex-direction:column;align-items:flex-start}
 }
@@ -739,12 +754,12 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .hero__beat--two .hero__actions{flex-direction:column}
   .hero__beat--two .hero__actions .btn{width:100%}
   .proof__inner{grid-template-columns:1fr 1fr;gap:18px}
-  /* FAQ: rail de ícones vira faixa horizontal em cima do painel */
+  /* FAQ: rail de ícones vira faixa horizontal (uma linha só, responsiva) */
   .faq__board{grid-template-columns:1fr;gap:16px}
-  .faq__tablist{flex-direction:row;flex-wrap:wrap;justify-content:center}
-  .faq__tab{width:52px;height:52px}
-  .faq__ico{width:42px;height:42px;border-radius:11px}
-  .faq__ico svg{width:21px;height:21px}
+  .faq__tablist{flex-direction:row;flex-wrap:nowrap;justify-content:space-between;gap:clamp(5px,1.6vw,9px);padding:8px}
+  .faq__tab{flex:1 1 0;min-width:0;width:auto;height:auto;aspect-ratio:1;max-width:58px}
+  .faq__ico{width:100%;height:100%;max-width:46px;max-height:46px;border-radius:11px}
+  .faq__ico svg{width:46%;height:46%}
 }
 
 @media(prefers-reduced-motion:reduce){

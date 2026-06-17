@@ -2,6 +2,9 @@
 (function () {
   'use strict';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Mobile: o scrub por currentTime não renderiza frames sem play() em iOS/Android.
+  // Nesses casos o hero usa o vídeo em autoplay loop e os beats estáticos.
+  var heroMobile = window.matchMedia('(max-width: 760px)').matches;
 
   function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
 
@@ -112,7 +115,7 @@
     else hero.classList.remove('is-scrolled');
   }
 
-  if (heroTrack && heroVideo && !reduce) {
+  if (heroTrack && heroVideo && !reduce && !heroMobile) {
     var vReady = false;
     var vDur = 6;
     var targetT = 0, curT = 0, lastSeek = -1;
@@ -159,9 +162,18 @@
     requestAnimationFrame(tick);
     applyBeats(scrubProgress());
   } else if (heroTrack) {
-    // Reduced motion: ambos os beats visíveis, sem scrub.
+    // Mobile / reduced motion: ambos os beats visíveis, sem scrub.
     if (beatOne) { beatOne.style.opacity = 1; beatOne.classList.add('is-active'); }
     if (beatTwo) { beatTwo.style.opacity = 1; beatTwo.classList.add('is-active'); }
+    // No mobile (movimento permitido) o vídeo roda em loop ao fundo.
+    if (heroVideo && heroMobile && !reduce) {
+      heroVideo.loop = true;
+      heroVideo.muted = true;
+      heroVideo.setAttribute('muted', '');
+      heroVideo.setAttribute('playsinline', '');
+      var playPromise = heroVideo.play();
+      if (playPromise && playPromise.catch) playPromise.catch(function () {});
+    }
   }
 
   /* ---------- Contadores ---------- */
