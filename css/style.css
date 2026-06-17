@@ -249,6 +249,7 @@ body.drawer-open{overflow:hidden}
 .facet--bone::before{background:var(--bone)}
 .facet--sand::before{background:var(--sand)}
 .facet--ink::before{background:var(--ink)}
+.facet--red::before{background:var(--red)}
 
 /* ============================================================
    SECTIONS base
@@ -267,15 +268,15 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    PROVA SOCIAL (faixa)
    ============================================================ */
-.proof{background:var(--bone);padding-block:clamp(48px,7vh,84px)}
+.proof{background:linear-gradient(160deg,var(--red),var(--red-deep));color:#fff;padding-block:clamp(48px,7vh,84px)}
 .proof__wrap{display:grid;gap:clamp(28px,4vh,44px)}
-.proof__lead{max-width:46ch;color:var(--ink);font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.25;letter-spacing:-.01em}
-.proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);padding-top:clamp(20px,3vh,32px);border-top:1px solid var(--line)}
+.proof__lead{max-width:46ch;color:#fff;font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.25;letter-spacing:-.01em}
+.proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);padding-top:clamp(20px,3vh,32px);border-top:1px solid rgba(255,255,255,.22)}
 .proof__item{position:relative;padding-left:22px}
-.proof__item::before{content:"";position:absolute;left:0;top:6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:9px solid var(--red)}
-.proof__num{font-family:var(--font-display);font-weight:800;font-size:clamp(1.9rem,3.6vw,3.1rem);line-height:1;letter-spacing:-.02em;color:var(--ink);white-space:nowrap}
-.proof__num .star{color:#E7A400}
-.proof__label{margin-top:8px;color:var(--muted);font-size:.92rem;line-height:1.4}
+.proof__item::before{content:"";position:absolute;left:0;top:6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:9px solid #FFC23D}
+.proof__num{font-family:var(--font-display);font-weight:800;font-size:clamp(1.9rem,3.6vw,3.1rem);line-height:1;letter-spacing:-.02em;color:#fff;white-space:nowrap}
+.proof__num .star{color:#FFC23D}
+.proof__label{margin-top:8px;color:rgba(255,255,255,.78);font-size:.92rem;line-height:1.4}
 
 /* ============================================================
    POR QUE MADEIRA — editorial assimétrico
@@ -285,13 +286,30 @@ body.drawer-open{overflow:hidden}
 .why__intro .why__lead{margin-top:18px}
 .why__intro .btn{margin-top:28px}
 .why__lead{color:var(--muted);font-size:clamp(1.05rem,1.4vw,1.28rem);max-width:42ch}
-.why__cards{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(14px,1.6vw,20px)}
-.why__card{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(22px,2.2vw,30px);box-shadow:var(--shadow-soft);display:flex;flex-direction:column;gap:14px;transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
-.why__card:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
-.why__card-ico{flex:none;width:46px;height:46px;border-radius:12px;background:var(--red-tint);display:grid;place-items:center}
-.why__card-ico svg{width:24px;height:24px;fill:none;stroke:var(--red);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.why__card h3{font-family:var(--font-display);font-weight:700;font-size:1.12rem;letter-spacing:-.01em;line-height:1.15}
-.why__card p{color:var(--muted);font-size:.96rem;line-height:1.5}
+/* Carrossel de vantagens — um card por vez */
+.why__carousel{position:relative}
+.why__viewport{position:relative}
+.why__slide{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);padding:clamp(34px,4.4vw,60px);display:flex;flex-direction:column;justify-content:center;gap:20px;min-height:clamp(420px,52vh,540px)}
+.why__slide:not(.is-active){position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateX(28px) scale(.985);pointer-events:none;transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s linear .55s}
+.why__slide.is-active{position:relative;opacity:1;visibility:visible;transform:none;transition:opacity .55s var(--ease),transform .55s var(--ease)}
+.why__slide .why__card-ico{flex:none;width:62px;height:62px;border-radius:16px;background:var(--red-tint);display:grid;place-items:center}
+.why__slide .why__card-ico svg{width:30px;height:30px;fill:none;stroke:var(--red);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.why__slide h3{font-family:var(--font-display);font-weight:800;font-size:clamp(1.55rem,2.6vw,2.15rem);letter-spacing:-.02em;line-height:1.04}
+.why__slide p{color:var(--muted);font-size:clamp(1.05rem,1.3vw,1.2rem);line-height:1.55;max-width:42ch}
+/* setas */
+.why__nav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:52px;height:52px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(6px);display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow-soft);transition:transform .35s var(--ease),background .25s,border-color .25s}
+.why__nav svg{width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.why__nav:hover{background:var(--red);border-color:var(--red);transform:translateY(-50%) scale(1.06)}
+.why__nav:hover svg{stroke:#fff}
+.why__nav:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.why__nav--prev{left:-22px}
+.why__nav--next{right:-22px}
+/* dots */
+.why__dots{display:flex;justify-content:center;gap:9px;margin-top:24px}
+.why__dot{width:9px;height:9px;border-radius:50%;border:0;padding:0;background:var(--line);cursor:pointer;transition:transform .3s var(--ease),background .3s,width .3s var(--ease)}
+.why__dot:hover{background:var(--muted)}
+.why__dot.is-active{background:var(--red);width:26px;border-radius:5px}
+.why__dot:focus-visible{outline:2px solid var(--red);outline-offset:3px}
 
 /* ============================================================
    MODELOS — preço herói
@@ -325,24 +343,31 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    PORTFÓLIO — galeria editorial assimétrica
    ============================================================ */
-.gallery{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:clamp(150px,15vw,210px);gap:clamp(12px,1.6vw,20px)}
-.gallery__item{position:relative;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-soft)}
-.gallery__item img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
-.gallery__item:hover img{transform:scale(1.06)}
-/* composição assimétrica: uma foto dominante */
-.gallery__item--hero{grid-column:span 7;grid-row:span 2}
-.gallery__item--portrait{grid-column:span 5;grid-row:span 2}
-.gallery__item--wide{grid-column:span 5}
-.gallery__item--std{grid-column:span 4}
-.gallery__item--std-lg{grid-column:span 8}
-/* máscara facetada no destaque (assinatura) */
-.gallery__item--hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30px;background:var(--bone);clip-path:polygon(0 100%,16% 30%,38% 80%,60% 24%,82% 70%,100% 36%,100% 100%);z-index:2}
-.gallery__item figcaption{
-  position:absolute;left:0;right:0;bottom:0;padding:34px 20px 18px;color:#fff;font-weight:600;font-size:.98rem;z-index:3;
-  background:linear-gradient(transparent,rgba(20,20,20,.82));
-  transform:translateY(8px);opacity:0;transition:.3s var(--ease);
+/* respiro extra no fim para a galeria não colar na faceta escura seguinte */
+.portfolio{padding-bottom:clamp(120px,17vh,200px)}
+/* accordion interativo de imagens: painéis que expandem no hover/clique */
+.accordion{display:flex;gap:10px;height:clamp(440px,58vh,600px)}
+.accordion__item{
+  position:relative;flex:1 1 0;min-width:0;padding:0;border:0;background:none;cursor:pointer;
+  border-radius:var(--r-md);overflow:hidden;box-shadow:var(--shadow-soft);
+  transition:flex-grow .7s var(--ease);outline:none;-webkit-tap-highlight-color:transparent;
 }
-.gallery__item:hover figcaption{transform:translateY(0);opacity:1}
+.accordion__item.is-active{flex-grow:6.5}
+.accordion__item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.accordion__item.is-active img{transform:scale(1.05)}
+.accordion__veil{position:absolute;inset:0;z-index:1;background:linear-gradient(transparent 38%,rgba(20,20,20,.30) 62%,rgba(20,20,20,.82))}
+.accordion__item:focus-visible{box-shadow:0 0 0 3px var(--red-bright),var(--shadow-card)}
+/* legenda */
+.accordion__cap{position:absolute;left:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:7px;padding:20px;color:#fff;width:100%}
+.accordion__eyebrow{
+  font:600 .68rem/1 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--red-bright);
+  opacity:0;transform:translateY(6px);transition:.35s var(--ease) .08s;white-space:nowrap;
+}
+.accordion__title{font:700 1.18rem/1.08 var(--font-display);letter-spacing:-.02em;white-space:nowrap;transition:.4s var(--ease)}
+/* colapsado: título vira rótulo vertical na borda */
+.accordion__item:not(.is-active) .accordion__cap{padding:18px 0;justify-content:flex-end;align-items:center}
+.accordion__item:not(.is-active) .accordion__title{writing-mode:vertical-rl;transform:rotate(180deg);font-size:1rem;opacity:.92}
+.accordion__item.is-active .accordion__eyebrow{opacity:1;transform:none}
 
 /* ============================================================
    DO TERRENO À CHAVE — scrollytelling sticky (o momento)
@@ -484,12 +509,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .why__intro{position:static}
   .footer__grid{grid-template-columns:1fr 1fr}
   .footer__map{grid-column:1/-1;min-height:240px}
-  .gallery{grid-template-columns:repeat(6,1fr);grid-auto-rows:190px}
-  .gallery__item--hero{grid-column:span 6}
-  .gallery__item--portrait{grid-column:span 3}
-  .gallery__item--wide{grid-column:span 3}
-  .gallery__item--std{grid-column:span 3}
-  .gallery__item--std-lg{grid-column:span 6}
+  .accordion{height:clamp(380px,50vh,460px)}
   /* scrollytelling vira lista simples no mobile */
   .process__inner{grid-template-columns:1fr;gap:24px}
   .process__media{position:relative;top:0;height:clamp(280px,42vh,380px)}
@@ -503,10 +523,19 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .cta-band__inner{flex-direction:column;align-items:flex-start}
 }
 @media(max-width:560px){
-  .why__cards{grid-template-columns:1fr}
+  .why__carousel{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px}
+  .why__viewport{flex:0 0 100%;order:1}
+  .why__nav{position:static;transform:none;width:46px;height:46px;box-shadow:none}
+  .why__nav:hover{transform:scale(1.06)}
+  .why__nav--prev{order:2}
+  .why__dots{order:3;margin-top:0}
+  .why__nav--next{order:4}
   .footer__grid{grid-template-columns:1fr}
-  .gallery{grid-template-columns:1fr;grid-auto-rows:220px}
-  .gallery__item{grid-column:1/-1 !important;grid-row:auto !important}
+  /* accordion vira vertical no mobile */
+  .accordion{flex-direction:column;height:clamp(440px,76vh,560px);gap:8px}
+  .accordion__item.is-active{flex-grow:7}
+  .accordion__item:not(.is-active) .accordion__cap{padding:0 18px 14px;justify-content:flex-end;align-items:flex-start}
+  .accordion__item:not(.is-active) .accordion__title{writing-mode:horizontal-tb;transform:none;font-size:1.02rem}
   .hero__beat--two .hero__actions{flex-direction:column}
   .hero__beat--two .hero__actions .btn{width:100%}
   .proof__inner{grid-template-columns:1fr 1fr;gap:18px}
@@ -515,6 +544,8 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none;transition:none}
+  .why__slide{transition:none}
+  .why__slide:not(.is-active){transform:none}
   .reveal--mask{clip-path:none}
   /* Hero sem scrub: pin vira bloco estático com os dois beats empilhados */
   .hero__track{height:auto}

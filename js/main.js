@@ -282,6 +282,89 @@
     } else { inView = true; maybeStart(); }
   }
 
+  /* ---------- Carrossel de vantagens (um card por vez) ---------- */
+  var whyCar = document.getElementById('whyCarousel');
+  if (whyCar) {
+    var whySlides = Array.prototype.slice.call(whyCar.querySelectorAll('.why__slide'));
+    var whyPrev = document.getElementById('whyPrev');
+    var whyNext = document.getElementById('whyNext');
+    var whyDots = document.getElementById('whyDots');
+    var whyIdx = 0;
+    var whyN = whySlides.length;
+    var whyTimer = null, whyAuto = !reduce, whyInView = false, whyHover = false;
+
+    // monta os indicadores (dots)
+    var dotEls = whySlides.map(function (s, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'why__dot' + (i === 0 ? ' is-active' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-label', 'Vantagem ' + (i + 1) + ' de ' + whyN);
+      b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      b.addEventListener('click', function () { stopWhyAuto(); goWhy(i); });
+      whyDots.appendChild(b);
+      return b;
+    });
+
+    function renderWhy() {
+      whySlides.forEach(function (s, i) { s.classList.toggle('is-active', i === whyIdx); });
+      dotEls.forEach(function (d, i) {
+        var on = i === whyIdx;
+        d.classList.toggle('is-active', on);
+        d.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+    }
+    function goWhy(i) { whyIdx = (i + whyN) % whyN; renderWhy(); }
+    function nextWhy() { goWhy(whyIdx + 1); }
+    function prevWhy() { goWhy(whyIdx - 1); }
+
+    function whyTick() { goWhy(whyIdx + 1); }
+    function startWhyAuto() { if (whyAuto && whyInView && !whyHover && !whyTimer) whyTimer = setInterval(whyTick, 5200); }
+    function pauseWhyAuto() { if (whyTimer) { clearInterval(whyTimer); whyTimer = null; } }
+    function stopWhyAuto() { whyAuto = false; pauseWhyAuto(); }   // usuário assumiu o controle
+
+    whyNext.addEventListener('click', function () { stopWhyAuto(); nextWhy(); });
+    whyPrev.addEventListener('click', function () { stopWhyAuto(); prevWhy(); });
+
+    // teclado: setas quando o carrossel está focado
+    whyCar.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { stopWhyAuto(); nextWhy(); }
+      else if (e.key === 'ArrowLeft') { stopWhyAuto(); prevWhy(); }
+    });
+
+    // swipe / arrastar
+    var wDown = false, wX = 0, wMoved = false;
+    whyCar.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      wDown = true; wX = e.clientX; wMoved = false;
+    });
+    whyCar.addEventListener('pointermove', function (e) {
+      if (wDown && Math.abs(e.clientX - wX) > 8) wMoved = true;
+    });
+    function whyEnd(e) {
+      if (!wDown) return; wDown = false;
+      var dx = e.clientX - wX;
+      if (Math.abs(dx) > 45) { stopWhyAuto(); dx < 0 ? nextWhy() : prevWhy(); }
+    }
+    whyCar.addEventListener('pointerup', whyEnd);
+    whyCar.addEventListener('pointercancel', function () { wDown = false; });
+
+    // pausa em hover/foco
+    whyCar.addEventListener('mouseenter', function () { whyHover = true; pauseWhyAuto(); });
+    whyCar.addEventListener('mouseleave', function () { whyHover = false; startWhyAuto(); });
+    whyCar.addEventListener('focusin', pauseWhyAuto);
+    whyCar.addEventListener('focusout', function () { if (!whyHover) startWhyAuto(); });
+
+    if ('IntersectionObserver' in window) {
+      var whyObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { whyInView = e.isIntersecting; if (whyInView) startWhyAuto(); else pauseWhyAuto(); });
+      }, { threshold: 0.4 });
+      whyObs.observe(whyCar);
+    } else { whyInView = true; startWhyAuto(); }
+
+    renderWhy();
+  }
+
   /* ---------- Scroll-spy: destaca o link da seção atual ---------- */
   var spyLinks = Array.prototype.slice.call(document.querySelectorAll('.nav__links a[href^="#"]'));
   var spyMap = {};
@@ -324,6 +407,24 @@
     wo.observe(hero);
   } else if (wpp) {
     wpp.classList.add('is-visible');
+  }
+
+  /* ---------- Accordion de imagens (portfólio) ---------- */
+  var accordion = document.getElementById('accordion');
+  if (accordion) {
+    var accItems = [].slice.call(accordion.querySelectorAll('.accordion__item'));
+    function setAccActive(el) {
+      accItems.forEach(function (it) {
+        var on = it === el;
+        it.classList.toggle('is-active', on);
+        it.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    accItems.forEach(function (it) {
+      it.addEventListener('mouseenter', function () { setAccActive(it); });
+      it.addEventListener('focus', function () { setAccActive(it); });
+      it.addEventListener('click', function () { setAccActive(it); });
+    });
   }
 
 })();

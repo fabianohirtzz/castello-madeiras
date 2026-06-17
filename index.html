@@ -124,8 +124,8 @@
     </div>
   </section>
 
-  <!-- faceta: telhado recorta a transição do hero -->
-  <div class="facet facet--bone" aria-hidden="true"></div>
+  <!-- faceta: telhado recorta a transição do hero para a faixa vermelha -->
+  <div class="facet facet--red" aria-hidden="true"></div>
 
   <!-- ============ PROVA SOCIAL RÁPIDA (movida do hero) ============ -->
   <section class="proof" id="prova" aria-label="Prova social">
@@ -152,6 +152,9 @@
     </div>
   </section>
 
+  <!-- faceta: telhado recorta a saída da faixa vermelha -->
+  <div class="facet facet--bone" aria-hidden="true"></div>
+
   <!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->
   <section class="section vantagens" id="vantagens">
     <div class="container">
@@ -163,37 +166,48 @@
           <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20as%20casas%20de%20madeira%20da%20Castello." class="btn btn--primary reveal" target="_blank" rel="noopener">Pedir orçamento no WhatsApp</a>
         </div>
 
-        <div class="why__cards">
-          <article class="why__card reveal">
-            <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
-            <h3>Pronta em 90 a 120 dias</h3>
-            <p>Enquanto a obra convencional leva anos, sua casa Castello fica pronta em poucos meses, organizada do início ao fim.</p>
-          </article>
-          <article class="why__card reveal">
-            <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-            <h3>100% personalizável</h3>
-            <p>Planta, acabamentos, revestimentos, janelas, portas e piso escolhidos do seu jeito, do seu gosto e da sua rotina.</p>
-          </article>
-          <article class="why__card reveal">
-            <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M17.7 6.3l1.4-1.4M4.9 19.1l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg></span>
-            <h3>Conforto térmico</h3>
-            <p>A madeira mantém o ambiente fresco no calor e aconchegante no frio, com bem-estar em todas as estações do ano.</p>
-          </article>
-          <article class="why__card reveal">
-            <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span>
-            <h3>Patrimônio pra vida toda</h3>
-            <p>Bem construída, valoriza, atravessa gerações e ainda vira fonte de renda em aluguel, revenda ou hospedagem.</p>
-          </article>
-          <article class="why__card reveal">
-            <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
-            <h3>Zero dor de cabeça</h3>
-            <p>A Castello cuida de projeto, materiais, prazos e acabamento. Você acompanha tudo e no fim só pega a chave.</p>
-          </article>
-          <article class="why__card reveal">
-            <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="m14 7 3 3M5 19l1.5-5.5L16 4l4 4-9.5 9.5L5 19Z"/></svg></span>
-            <h3>Estrutura que dura</h3>
-            <p>Prego galvanizado e madeira de qualidade em todas as construções, com equipe experiente na obra todo dia.</p>
-          </article>
+        <div class="why__carousel reveal" id="whyCarousel" aria-roledescription="carrossel" aria-label="Vantagens da casa de madeira">
+          <div class="why__viewport">
+            <article class="why__slide is-active" role="group" aria-roledescription="slide" aria-label="1 de 6">
+              <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
+              <h3>Pronta em 90 a 120 dias</h3>
+              <p>Enquanto a obra convencional leva anos, sua casa Castello fica pronta em poucos meses, organizada do início ao fim.</p>
+            </article>
+            <article class="why__slide" role="group" aria-roledescription="slide" aria-label="2 de 6">
+              <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <h3>100% personalizável</h3>
+              <p>Planta, acabamentos, revestimentos, janelas, portas e piso escolhidos do seu jeito, do seu gosto e da sua rotina.</p>
+            </article>
+            <article class="why__slide" role="group" aria-roledescription="slide" aria-label="3 de 6">
+              <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M17.7 6.3l1.4-1.4M4.9 19.1l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg></span>
+              <h3>Conforto térmico</h3>
+              <p>A madeira mantém o ambiente fresco no calor e aconchegante no frio, com bem-estar em todas as estações do ano.</p>
+            </article>
+            <article class="why__slide" role="group" aria-roledescription="slide" aria-label="4 de 6">
+              <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span>
+              <h3>Patrimônio pra vida toda</h3>
+              <p>Bem construída, valoriza, atravessa gerações e ainda vira fonte de renda em aluguel, revenda ou hospedagem.</p>
+            </article>
+            <article class="why__slide" role="group" aria-roledescription="slide" aria-label="5 de 6">
+              <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+              <h3>Zero dor de cabeça</h3>
+              <p>A Castello cuida de projeto, materiais, prazos e acabamento. Você acompanha tudo e no fim só pega a chave.</p>
+            </article>
+            <article class="why__slide" role="group" aria-roledescription="slide" aria-label="6 de 6">
+              <span class="why__card-ico"><svg viewBox="0 0 24 24"><path d="m14 7 3 3M5 19l1.5-5.5L16 4l4 4-9.5 9.5L5 19Z"/></svg></span>
+              <h3>Estrutura que dura</h3>
+              <p>Prego galvanizado e madeira de qualidade em todas as construções, com equipe experiente na obra todo dia.</p>
+            </article>
+          </div>
+
+          <button class="why__nav why__nav--prev" id="whyPrev" type="button" aria-label="Vantagem anterior">
+            <svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button class="why__nav why__nav--next" id="whyNext" type="button" aria-label="Próxima vantagem">
+            <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+
+          <div class="why__dots" id="whyDots" role="tablist" aria-label="Selecionar vantagem"></div>
         </div>
       </div>
     </div>
@@ -283,12 +297,55 @@
         <p class="section__lead reveal">Cada casa abaixo foi projetada, construída e entregue pela Castello para famílias de Santa Catarina e região.</p>
       </div>
 
-      <div class="gallery">
-        <figure class="gallery__item gallery__item--hero reveal"><img src="fotos-casas/casa3.png" alt="Sobrado de madeira à beira da água com vista para a ponte" loading="lazy" /><figcaption>Sobrado à beira da água</figcaption></figure>
-        <figure class="gallery__item gallery__item--portrait reveal"><img src="fotos-casas/casa4.png" alt="Sobrado de madeira compacto de dois pavimentos" loading="lazy" /><figcaption>Sobrado compacto</figcaption></figure>
-        <figure class="gallery__item gallery__item--std reveal"><img src="fotos-casas/casa1.png" alt="Casa de madeira com pergolado e varanda ao sol" loading="lazy" /><figcaption>Varanda com pergolado</figcaption></figure>
-        <figure class="gallery__item gallery__item--std reveal"><img src="fotos-casas/casa2.png" alt="Casa de madeira térrea com telhado de telhas e jardim" loading="lazy" /><figcaption>Térrea com jardim</figcaption></figure>
-        <figure class="gallery__item gallery__item--std reveal"><img src="fotos-casas/casa5.png" alt="Casa de madeira com varanda em volta e mata ao fundo" loading="lazy" /><figcaption>Chalé com varanda</figcaption></figure>
+      <div class="accordion reveal" id="accordion">
+        <button class="accordion__item is-active" type="button" aria-pressed="true">
+          <img src="fotos-casas/casa3.png" alt="Sobrado de madeira à beira da água com vista para a ponte" loading="lazy" />
+          <span class="accordion__veil" aria-hidden="true"></span>
+          <span class="accordion__cap">
+            <span class="accordion__eyebrow">Beira da água</span>
+            <span class="accordion__title">Sobrado à beira da água</span>
+          </span>
+        </button>
+        <button class="accordion__item" type="button" aria-pressed="false">
+          <img src="fotos-casas/casa7.png" alt="Sobrado de madeira com sacada e fachada de réguas" loading="lazy" />
+          <span class="accordion__veil" aria-hidden="true"></span>
+          <span class="accordion__cap">
+            <span class="accordion__eyebrow">Dois pavimentos</span>
+            <span class="accordion__title">Sobrado com sacada</span>
+          </span>
+        </button>
+        <button class="accordion__item" type="button" aria-pressed="false">
+          <img src="fotos-casas/casa6.png" alt="Casa de madeira térrea com varanda ampla e garagem coberta" loading="lazy" />
+          <span class="accordion__veil" aria-hidden="true"></span>
+          <span class="accordion__cap">
+            <span class="accordion__eyebrow">Térrea</span>
+            <span class="accordion__title">Varanda ampla e garagem</span>
+          </span>
+        </button>
+        <button class="accordion__item" type="button" aria-pressed="false">
+          <img src="fotos-casas/casa-8.png" alt="Casa de madeira de campo com varanda e cerca branca" loading="lazy" />
+          <span class="accordion__veil" aria-hidden="true"></span>
+          <span class="accordion__cap">
+            <span class="accordion__eyebrow">No campo</span>
+            <span class="accordion__title">Casa de campo com varanda</span>
+          </span>
+        </button>
+        <button class="accordion__item" type="button" aria-pressed="false">
+          <img src="fotos-casas/casa1.png" alt="Casa de madeira com pergolado e varanda ao sol" loading="lazy" />
+          <span class="accordion__veil" aria-hidden="true"></span>
+          <span class="accordion__cap">
+            <span class="accordion__eyebrow">Área externa</span>
+            <span class="accordion__title">Varanda com pergolado</span>
+          </span>
+        </button>
+        <button class="accordion__item" type="button" aria-pressed="false">
+          <img src="fotos-casas/casa5.png" alt="Casa de madeira com varanda em volta e mata ao fundo" loading="lazy" />
+          <span class="accordion__veil" aria-hidden="true"></span>
+          <span class="accordion__cap">
+            <span class="accordion__eyebrow">Na natureza</span>
+            <span class="accordion__title">Chalé com varanda</span>
+          </span>
+        </button>
       </div>
     </div>
   </section>
