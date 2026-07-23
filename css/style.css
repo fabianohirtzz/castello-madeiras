@@ -34,15 +34,24 @@
 }
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+/* Trava o arrasto lateral: clip (e não hidden) porque clip não cria um
+   scroll container — o position:sticky do scrollytelling e da nav continua
+   preso à viewport. Precisa estar no html E no body: com clip no html, o
+   overflow do body deixa de propagar pra viewport. */
+html{scroll-behavior:smooth;overflow-x:clip}
 body{
   font-family:var(--font-body);
   color:var(--ink);
   background:var(--bone);
   line-height:1.65;
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  overflow-x:clip;
+  max-width:100%;
   position:relative;
+}
+/* fallback p/ navegadores sem overflow:clip (Safari < 16) */
+@supports not (overflow:clip){
+  html,body{overflow-x:hidden}
 }
 /* Grão sutil — tira o "chapado" das seções claras */
 body::after{
@@ -753,13 +762,14 @@ body.drawer-open .wpp-float,body.modal-open .wpp-float{opacity:0;visibility:hidd
   position:relative;width:min(560px,100%);max-height:min(92svh,92vh);overflow-y:auto;
   background:var(--bone);border-radius:var(--r-lg);box-shadow:0 50px 110px -40px rgba(20,20,20,.75);
   padding:clamp(26px,4vw,38px);
+  padding-top:calc(clamp(26px,4vw,38px) + 28px);
   opacity:0;transform:translateY(26px) scale(.97);transition:opacity .35s var(--ease),transform .45s var(--ease);
 }
 .qmodal.is-open .qmodal__panel{opacity:1;transform:none}
 /* topo facetado — assinatura do telhado da marca */
-.qmodal__panel::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));clip-path:polygon(0 0,100% 0,100% 100%,82% 40%,62% 100%,50% 30%,38% 100%,18% 40%,0 100%)}
+.qmodal__panel::before{content:"";position:absolute;left:0;right:0;top:0;height:30px;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));clip-path:polygon(0 0,100% 0,100% 100%,82% 40%,62% 100%,50% 30%,38% 100%,18% 40%,0 100%)}
 .qmodal__close{
-  position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;cursor:pointer;
+  position:absolute;top:42px;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;cursor:pointer;
   display:grid;place-items:center;background:rgba(20,20,20,.06);border:1px solid var(--line);color:var(--ink);
   transition:.25s var(--ease);
 }
@@ -811,7 +821,7 @@ body.drawer-open .wpp-float,body.modal-open .wpp-float{opacity:0;visibility:hidd
 
 @media(max-width:560px){
   .qform__row{grid-template-columns:1fr;gap:14px}
-  .qmodal__panel{padding:24px 20px 26px}
+  .qmodal__panel{padding:52px 20px 26px}
   .qmodal__head{padding-right:38px}
 }
 
@@ -893,8 +903,10 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .process__media{position:sticky;top:76px;z-index:2;height:clamp(220px,34vh,300px);margin-bottom:20px}
   /* faixa de tinta acima da imagem: o texto desaparece antes de encostar nela */
   .process__veil{display:block;position:sticky;top:0;height:0;z-index:3;pointer-events:none}
+  /* -20px = o padding mínimo do container: cobre a largura da tela sem passar dela
+     (right negativo maior que isso criava rolagem horizontal no celular) */
   .process__veil::after{
-    content:"";position:absolute;top:0;left:-50vw;right:-50vw;height:88px;
+    content:"";position:absolute;top:0;left:-20px;right:-20px;height:88px;
     background:linear-gradient(180deg,var(--ink) 0%,var(--ink) 62%,rgba(20,20,20,0) 100%);
   }
   .process__steps{display:flex;flex-direction:column}
