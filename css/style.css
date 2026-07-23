@@ -181,9 +181,12 @@ ul,ol{list-style:none}
   position:fixed;inset:0 0 0 auto;width:min(82vw,340px);z-index:60;
   background:var(--ink);padding:96px 32px 32px;
   display:flex;flex-direction:column;gap:6px;
-  transform:translateX(100%);transition:transform .35s var(--ease);
+  /* visibility:hidden enquanto fechado: fora da tela ele ainda contava como
+     área rolável no iOS e os links continuavam alcançáveis pelo teclado */
+  transform:translateX(100%);visibility:hidden;
+  transition:transform .35s var(--ease),visibility 0s linear .35s;
 }
-.drawer.is-open{transform:translateX(0)}
+.drawer.is-open{transform:translateX(0);visibility:visible;transition:transform .35s var(--ease),visibility 0s}
 .drawer a{color:#fff;font-family:var(--font-display);font-weight:600;font-size:1.3rem;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1)}
 .drawer .btn{margin-top:20px;border:0;white-space:normal;text-align:center}
 body.drawer-open{overflow:hidden}
@@ -306,7 +309,9 @@ body.drawer-open{overflow:hidden}
 .why__carousel{position:relative}
 .why__viewport{position:relative}
 .why__slide{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);padding:clamp(34px,4.4vw,60px);display:flex;flex-direction:column;justify-content:center;gap:20px;min-height:clamp(420px,52vh,540px)}
-.why__slide:not(.is-active){position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateX(28px) scale(.985);pointer-events:none;transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s linear .55s}
+/* translateX NEGATIVO de propósito: deslocamento para a direita vira área
+   rolável horizontal (o card inativo passava 28px da tela no mobile) */
+.why__slide:not(.is-active){position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateX(-28px) scale(.985);pointer-events:none;transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s linear .55s}
 .why__slide.is-active{position:relative;opacity:1;visibility:visible;transform:none;transition:opacity .55s var(--ease),transform .55s var(--ease)}
 .why__slide .why__card-ico{flex:none;width:62px;height:62px;border-radius:16px;background:var(--red-tint);display:grid;place-items:center}
 .why__slide .why__card-ico svg{width:30px;height:30px;fill:none;stroke:var(--red);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
