@@ -95,7 +95,7 @@ ul,ol{list-style:none}
 }
 .btn--lg{padding:17px 30px;font-size:1.04rem}
 .btn--block{display:flex;width:100%}
-.btn .ico-wpp{width:20px;height:20px;fill:currentColor;flex:none}
+.btn .ico-wpp,.btn .ico-quote{width:20px;height:20px;fill:currentColor;flex:none}
 
 .btn--primary{background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;box-shadow:0 12px 28px -12px rgba(179,20,27,.7)}
 .btn--primary:hover{transform:translateY(-2px);box-shadow:0 20px 44px -14px rgba(179,20,27,.85)}
@@ -399,7 +399,8 @@ body.drawer-open{overflow:hidden}
 .process__media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(20,20,20,.55));pointer-events:none}
 .process__counter{position:absolute;left:22px;bottom:18px;z-index:2;font-family:var(--font-display);font-weight:800;font-size:2.4rem;letter-spacing:-.02em}
 .process__counter span{color:var(--red-bright)}
-.process__steps{display:flex;flex-direction:column}
+.process__veil{display:none}
+.process__steps{display:flex;flex-direction:column;position:relative;z-index:0}
 .process__step{min-height:64vh;display:flex;flex-direction:column;justify-content:center;opacity:.3;transition:opacity .45s var(--ease)}
 .process__step.is-active{opacity:1}
 .process__step-num{font-family:var(--font-display);font-weight:800;font-size:.9rem;color:var(--red-bright);letter-spacing:.08em}
@@ -578,8 +579,9 @@ body.drawer-open{overflow:hidden}
   max-width:920px;margin:clamp(28px,4vh,44px) 0 0;
   color:var(--muted);font-size:1rem;line-height:1.6;
 }
-.faq__foot a{color:var(--red);font-weight:600;white-space:nowrap}
-.faq__foot a:hover{text-decoration:underline}
+.faq__foot a,.faq__foot-link{color:var(--red);font-weight:600;white-space:nowrap}
+.faq__foot a:hover,.faq__foot-link:hover{text-decoration:underline}
+.faq__foot-link{background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:inherit}
 
 /* ============================================================
    CTA BAND — faixa vermelha facetada (assinatura)
@@ -608,18 +610,39 @@ body.drawer-open{overflow:hidden}
 .footer__col h4{font-family:var(--font-display);font-weight:700;font-size:1.05rem;margin-bottom:18px}
 .footer__col li{color:rgba(255,255,255,.68);font-size:.94rem;margin-bottom:14px;line-height:1.5}
 .footer__col a:hover{color:#fff}
+/* itens com ícone (contato e atendimento) */
+.footer__list li{display:flex;align-items:flex-start;gap:11px}
+.footer__ico{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;
+  background:rgba(237,33,40,.14);color:var(--red-bright);margin-top:1px}
+.footer__ico svg{width:15px;height:15px;fill:currentColor}
+.footer__list li:hover .footer__ico{background:var(--red);color:#fff;transition:.25s var(--ease)}
+.nowrap{white-space:nowrap}
 .footer__map iframe{width:100%;height:100%;min-height:180px;border:0;border-radius:var(--r-md);filter:grayscale(.2) contrast(1.05)}
-.footer__bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:48px;padding-block:24px;border-top:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);font-size:.84rem}
+.footer__bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 10px;margin-top:48px;padding-block:24px;border-top:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);font-size:.84rem}
+/* quebra sempre antes de "Todos os direitos", nunca no meio do nome da marca */
+.footer__copy{max-width:100%}
+/* folga no fim da página para o botão flutuante não cobrir a assinatura */
+.footer__bottom{padding-bottom:92px}
 
-/* ---------- Float WhatsApp ---------- */
+/* ---------- Botão flutuante (abre o formulário de orçamento) ---------- */
 .wpp-float{
-  position:fixed;right:22px;bottom:22px;z-index:70;width:60px;height:60px;border-radius:50%;
-  background:var(--wpp);display:grid;place-items:center;box-shadow:0 12px 30px -8px rgba(37,211,102,.7);
+  position:fixed;right:22px;bottom:22px;z-index:70;width:60px;height:60px;border-radius:999px;border:0;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;color:#fff;
+  background:linear-gradient(135deg,var(--red-bright),var(--red-deep));box-shadow:0 12px 30px -8px rgba(179,20,27,.75);
   opacity:0;visibility:hidden;transform:translateY(20px) scale(.8);transition:.35s var(--ease);
 }
 .wpp-float.is-visible{opacity:1;visibility:visible;transform:translateY(0) scale(1);animation:wppPulse 3s ease-in-out infinite 1s}
-.wpp-float svg{width:32px;height:32px;fill:#fff}
-@keyframes wppPulse{0%,100%{box-shadow:0 12px 30px -8px rgba(37,211,102,.7)}50%{box-shadow:0 12px 30px -8px rgba(37,211,102,.7),0 0 0 12px rgba(37,211,102,0)}}
+.wpp-float:hover{transform:translateY(-2px) scale(1.04)}
+/* com o drawer aberto o float cobriria o CTA do menu — some junto com o overlay */
+body.drawer-open .wpp-float,body.modal-open .wpp-float{opacity:0;visibility:hidden;transform:translateY(20px) scale(.8);animation:none;pointer-events:none}
+.wpp-float svg{width:28px;height:28px;fill:#fff;flex:none}
+.wpp-float__label{display:none;font-family:var(--font-display);font-weight:600;font-size:.95rem;white-space:nowrap}
+/* desktop: vira pílula com rótulo */
+@media(min-width:761px){
+  .wpp-float{width:auto;height:58px;padding:0 24px}
+  .wpp-float__label{display:inline}
+}
+@keyframes wppPulse{0%,100%{box-shadow:0 12px 30px -8px rgba(179,20,27,.75)}50%{box-shadow:0 12px 30px -8px rgba(179,20,27,.75),0 0 0 12px rgba(237,33,40,0)}}
 
 /* ============================================================
    INSTAGRAM — galeria de vídeos (reels verticais espalhados)
@@ -707,6 +730,137 @@ body.drawer-open{overflow:hidden}
 .ivid__vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.5)}
 .ivid__vol::-moz-range-thumb{width:13px;height:13px;border:0;border-radius:50%;background:#fff;cursor:pointer}
 
+/* botão de tela cheia — sempre visível (descoberta no toque) */
+.ivid__expand{
+  position:absolute;top:10px;right:10px;z-index:3;width:36px;height:36px;border-radius:50%;border:0;
+  display:grid;place-items:center;cursor:pointer;color:#fff;
+  background:rgba(18,18,18,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.14);
+  opacity:.9;transition:background .25s var(--ease),transform .25s var(--ease),opacity .25s var(--ease);
+}
+.ivid__expand svg{width:16px;height:16px;fill:#fff}
+.ivid__expand:hover{background:var(--red);opacity:1;transform:scale(1.08)}
+
+/* ============================================================
+   MODAL DE ORÇAMENTO — formulário de contato
+   ============================================================ */
+.qmodal{position:fixed;inset:0;z-index:130;display:flex;align-items:center;justify-content:center;padding:clamp(12px,3vw,32px)}
+/* display:flex venceria o atributo hidden — sem isso o overlay bloqueia a página */
+.qmodal[hidden],.reelbox[hidden]{display:none}
+.qmodal__backdrop{position:absolute;inset:0;background:rgba(12,10,8,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .32s var(--ease)}
+.qmodal.is-open .qmodal__backdrop{opacity:1}
+.qmodal__panel{
+  position:relative;width:min(560px,100%);max-height:min(92svh,92vh);overflow-y:auto;
+  background:var(--bone);border-radius:var(--r-lg);box-shadow:0 50px 110px -40px rgba(20,20,20,.75);
+  padding:clamp(26px,4vw,38px);
+  opacity:0;transform:translateY(26px) scale(.97);transition:opacity .35s var(--ease),transform .45s var(--ease);
+}
+.qmodal.is-open .qmodal__panel{opacity:1;transform:none}
+/* topo facetado — assinatura do telhado da marca */
+.qmodal__panel::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));clip-path:polygon(0 0,100% 0,100% 100%,82% 40%,62% 100%,50% 30%,38% 100%,18% 40%,0 100%)}
+.qmodal__close{
+  position:absolute;top:14px;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;background:rgba(20,20,20,.06);border:1px solid var(--line);color:var(--ink);
+  transition:.25s var(--ease);
+}
+.qmodal__close svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.qmodal__close:hover{background:var(--red);border-color:var(--red);color:#fff;transform:rotate(90deg)}
+
+.qmodal__head{margin-bottom:22px;padding-right:44px}
+.qmodal__head h2{font-family:var(--font-display);font-weight:800;font-size:clamp(1.5rem,3.6vw,1.95rem);letter-spacing:-.025em;line-height:1.05;margin:10px 0 8px}
+.qmodal__head p{color:var(--muted);font-size:.96rem;line-height:1.55}
+.qmodal__trust{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted)}
+.qmodal__trust strong{font-family:var(--font-display);font-weight:700;color:var(--ink)}
+
+.qform__hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.qform__row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.qform__group{margin-bottom:14px;position:relative}
+.qform__row .qform__group{margin-bottom:0}
+.qform__row{margin-bottom:14px}
+.qform__label{display:block;font-family:var(--font-display);font-weight:600;font-size:.82rem;margin-bottom:6px;color:var(--ink)}
+.qform__label .req{color:var(--red)}
+.qform__label .opt{color:var(--muted);font-weight:500}
+.qform__input,.qform__select select{
+  width:100%;font-family:var(--font-body);font-size:.96rem;color:var(--ink);
+  background:#fff;border:1.6px solid var(--line);border-radius:var(--r-md);
+  padding:13px 15px;transition:border-color .22s var(--ease),box-shadow .22s var(--ease),background .22s;
+}
+.qform__input::placeholder{color:#A79E93}
+.qform__input:focus,.qform__select select:focus{outline:0;border-color:var(--red);box-shadow:0 0 0 4px rgba(237,33,40,.12)}
+.qform__input.is-error,.qform__select select.is-error{border-color:var(--red);background:var(--red-tint)}
+.qform__textarea{resize:vertical;min-height:88px;line-height:1.55}
+.qform__select{position:relative}
+.qform__select select{appearance:none;-webkit-appearance:none;padding-right:44px;cursor:pointer}
+.qform__select svg{position:absolute;right:15px;top:50%;transform:translateY(-50%);width:18px;height:18px;pointer-events:none;fill:none;stroke:var(--red);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.qform__group--modelo{animation:qFieldIn .4s var(--ease)}
+@keyframes qFieldIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.qform__submit{margin-top:6px}
+.qform__status{margin-top:12px;font-size:.88rem;color:var(--red-deep);font-weight:500;min-height:0}
+.qform__status:empty{display:none}
+.qform__note{margin-top:12px;font-size:.79rem;color:var(--muted);text-align:center;line-height:1.5}
+
+/* estado enviado */
+.qmodal__done{text-align:center;padding:14px 0 6px}
+.qmodal__done-ico{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:rgba(37,211,102,.14)}
+.qmodal__done-ico svg{width:30px;height:30px;fill:none;stroke:var(--wpp);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.qmodal__done h3{font-family:var(--font-display);font-weight:800;font-size:1.5rem;letter-spacing:-.02em;margin-bottom:10px}
+.qmodal__done p{color:var(--muted);font-size:.96rem;max-width:38ch;margin:0 auto 22px}
+.qmodal__done-cta{display:inline-flex;background:linear-gradient(135deg,#2FE070,#12A54A);box-shadow:0 14px 34px -14px rgba(37,211,102,.8)}
+.qmodal__done-back{display:block;margin:16px auto 0;background:none;border:0;cursor:pointer;font-family:var(--font-body);font-size:.86rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.qmodal__done-back:hover{color:var(--ink)}
+
+@media(max-width:560px){
+  .qform__row{grid-template-columns:1fr;gap:14px}
+  .qmodal__panel{padding:24px 20px 26px}
+  .qmodal__head{padding-right:38px}
+}
+
+/* ============================================================
+   LIGHTBOX DOS REELS — tela cheia com setas
+   ============================================================ */
+.reelbox{
+  position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+  gap:clamp(10px,3vw,34px);padding:clamp(14px,3vw,32px);
+  background:rgba(8,8,8,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  opacity:0;transition:opacity .3s var(--ease);
+}
+.reelbox.is-open{opacity:1}
+.reelbox__stage{
+  position:relative;height:min(84svh,84vh);aspect-ratio:9/16;max-width:100%;
+  border-radius:var(--r-lg);overflow:hidden;background:#000;box-shadow:0 40px 90px -30px rgba(0,0,0,.9);
+}
+.reelbox__video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.reelbox__nav{
+  flex:none;width:clamp(46px,5vw,58px);height:clamp(46px,5vw,58px);border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  transition:background .25s var(--ease),transform .25s var(--ease),border-color .25s var(--ease);
+}
+.reelbox__nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.reelbox__nav:hover{background:var(--red);border-color:var(--red);transform:scale(1.07)}
+.reelbox__close{
+  position:absolute;top:clamp(14px,2.4vw,26px);right:clamp(14px,2.4vw,26px);z-index:2;
+  width:46px;height:46px;border-radius:50%;cursor:pointer;display:grid;place-items:center;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);transition:.25s var(--ease);
+}
+.reelbox__close svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.reelbox__close:hover{background:var(--red);border-color:var(--red);transform:rotate(90deg)}
+.reelbox__count{
+  position:absolute;left:0;right:0;bottom:clamp(12px,2vw,22px);text-align:center;pointer-events:none;
+  font-family:var(--font-display);font-weight:600;font-size:.86rem;color:rgba(255,255,255,.62);letter-spacing:.06em;
+}
+body.modal-open{overflow:hidden}
+
+/* mobile: o vídeo ocupa a largura, as setas descem para a base */
+@media(max-width:760px){
+  .reelbox{flex-direction:column;gap:14px;padding:64px 12px 84px}
+  .reelbox__stage{width:auto;height:min(calc(100svh - 168px),calc((100vw - 24px) * 16 / 9));flex:0 0 auto}
+  .reelbox__nav{position:absolute;bottom:18px;z-index:2;width:52px;height:52px;background:rgba(20,20,20,.72)}
+  .reelbox__nav--prev{left:calc(50% - 96px)}
+  .reelbox__nav--next{right:calc(50% - 96px)}
+  .reelbox__count{bottom:36px}
+}
+
 /* ============================================================
    Reveal on scroll
    ============================================================ */
@@ -734,8 +888,15 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .accordion{height:clamp(380px,50vh,460px)}
   /* scrollytelling no mobile: imagem fixa no topo, passos rolam por baixo.
      display:block (não grid) para o sticky abranger toda a seção, não só a célula. */
-  .process__inner{display:block}
-  .process__media{position:sticky;top:76px;height:clamp(220px,34vh,300px);margin-bottom:20px}
+  .process__inner{display:block;position:relative}
+  /* z-index acima dos passos: o texto passa POR TRÁS da imagem e some de vez */
+  .process__media{position:sticky;top:76px;z-index:2;height:clamp(220px,34vh,300px);margin-bottom:20px}
+  /* faixa de tinta acima da imagem: o texto desaparece antes de encostar nela */
+  .process__veil{display:block;position:sticky;top:0;height:0;z-index:3;pointer-events:none}
+  .process__veil::after{
+    content:"";position:absolute;top:0;left:-50vw;right:-50vw;height:88px;
+    background:linear-gradient(180deg,var(--ink) 0%,var(--ink) 62%,rgba(20,20,20,0) 100%);
+  }
   .process__steps{display:flex;flex-direction:column}
   .process__step{min-height:48vh;opacity:.32;padding-block:0;justify-content:center}
   .process__step.is-active{opacity:1}
@@ -758,6 +919,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .why__dots{order:3;margin-top:0}
   .why__nav--next{order:4}
   .footer__grid{grid-template-columns:1fr}
+  .footer__bottom{justify-content:center;text-align:center}
   /* accordion vira vertical no mobile */
   .accordion{flex-direction:column;height:clamp(440px,76vh,560px);gap:8px}
   .accordion__item.is-active{flex-grow:7}

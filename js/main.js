@@ -497,10 +497,85 @@
     var ICO_VOL   = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a3.5 3.5 0 0 0-2-3.16v6.32A3.5 3.5 0 0 0 16.5 12zM14 3.23v2.06a6 6 0 0 1 0 13.42v2.06a8 8 0 0 0 0-17.54z"/></svg>';
     var ICO_MUTE  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm17.3.3-1.4-1.4L17.5 10.3 15.1 7.9l-1.4 1.4L16.1 11.7l-2.4 2.4 1.4 1.4 2.4-2.4 2.4 2.4 1.4-1.4-2.4-2.4z"/></svg>';
 
+    var ICO_FULL  = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v2H6v4H4V4Zm10 0h6v6h-2V6h-4V4ZM4 14h2v4h4v2H4v-6Zm14 0h2v6h-6v-2h4v-4Z"/></svg>';
+
     var cards = Array.prototype.slice.call(instaRail.querySelectorAll('.ivid'));
     var videos = [];
 
-    cards.forEach(function (card) {
+    /* ---- tela cheia (lightbox) com navegação entre os reels ---- */
+    var rbox = document.getElementById('reelbox');
+    var rboxVideo = document.getElementById('reelboxVideo');
+    var rboxCount = document.getElementById('reelboxCount');
+    var rboxIdx = 0, rboxLast = null;
+
+    function srcOf(i) {
+      var s = cards[i] && cards[i].querySelector('source');
+      return s ? s.getAttribute('src') : '';
+    }
+    function posterOf(i) {
+      var v = cards[i] && cards[i].querySelector('.ivid__video');
+      return v ? v.getAttribute('poster') : '';
+    }
+    function loadReel(i) {
+      rboxIdx = (i + cards.length) % cards.length;
+      rboxVideo.setAttribute('poster', posterOf(rboxIdx));
+      rboxVideo.src = srcOf(rboxIdx);
+      rboxVideo.muted = false;
+      rboxVideo.volume = 1;
+      if (rboxCount) rboxCount.textContent = (rboxIdx + 1) + ' / ' + cards.length;
+      var p = rboxVideo.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+    function openReel(i, trigger) {
+      if (!rbox) return;
+      rboxLast = trigger || null;
+      videos.forEach(function (v) { if (!v.paused) v.pause(); });   // pausa o rail
+      rbox.hidden = false;
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(function () { rbox.classList.add('is-open'); });
+      loadReel(i);
+    }
+    function closeReel() {
+      if (!rbox || rbox.hidden) return;
+      rbox.classList.remove('is-open');
+      rboxVideo.pause();
+      document.body.classList.remove('modal-open');
+      setTimeout(function () {
+        rbox.hidden = true;
+        rboxVideo.removeAttribute('src');
+        rboxVideo.load();
+      }, 300);
+      if (rboxLast) rboxLast.focus();
+    }
+
+    if (rbox) {
+      document.getElementById('reelboxClose').addEventListener('click', closeReel);
+      document.getElementById('reelboxPrev').addEventListener('click', function () { loadReel(rboxIdx - 1); });
+      document.getElementById('reelboxNext').addEventListener('click', function () { loadReel(rboxIdx + 1); });
+      rbox.addEventListener('click', function (e) { if (e.target === rbox) closeReel(); });
+      document.addEventListener('keydown', function (e) {
+        if (rbox.hidden) return;
+        if (e.key === 'Escape') closeReel();
+        else if (e.key === 'ArrowRight') loadReel(rboxIdx + 1);
+        else if (e.key === 'ArrowLeft') loadReel(rboxIdx - 1);
+      });
+      // swipe horizontal no palco
+      var sx = 0, sy = 0, sTracking = false;
+      var stage = rbox.querySelector('.reelbox__stage');
+      stage.addEventListener('touchstart', function (e) {
+        if (e.touches.length !== 1) return;
+        sTracking = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+      }, { passive: true });
+      stage.addEventListener('touchend', function (e) {
+        if (!sTracking) return;
+        sTracking = false;
+        var t = e.changedTouches[0];
+        var dx = t.clientX - sx, dy = t.clientY - sy;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) loadReel(rboxIdx + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+    }
+
+    cards.forEach(function (card, cardIdx) {
       var frame = card.querySelector('.ivid__frame');
       var video = card.querySelector('.ivid__video');
       if (!frame || !video) return;
@@ -529,8 +604,20 @@
       vol.setAttribute('aria-label', 'Volume');
       bar.appendChild(toggle); bar.appendChild(mute); bar.appendChild(vol);
 
+      // botão de tela cheia (abre o lightbox no vídeo deste card)
+      var expand = document.createElement('button');
+      expand.type = 'button';
+      expand.className = 'ivid__expand';
+      expand.setAttribute('aria-label', 'Ver em tela cheia');
+      expand.innerHTML = ICO_FULL;
+      expand.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openReel(cardIdx, expand);
+      });
+
       frame.appendChild(big);
       frame.appendChild(bar);
+      if (rbox) frame.appendChild(expand);
 
       function playThis() {
         videos.forEach(function (v) { if (v !== video && !v.paused) v.pause(); });
@@ -579,7 +666,7 @@
       refreshMute();
     });
 
-    // pausa vídeos que saem da viewport
+    // pausa vídeos que saem da viewport (e nunca toca por trás do lightbox)
     if ('IntersectionObserver' in window) {
       var ivo = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
@@ -593,10 +680,172 @@
     }
   }
 
+  /* ---------- Modal de orçamento ----------
+     Mesmo modelo do projeto NOX: honeypot + time-trap, status acessível e
+     WhatsApp como caminho de envio. O endpoint fica em FORM_ENDPOINT: com o
+     site em GitHub Pages (sem backend) ele fica vazio e o envio monta a
+     mensagem pro WhatsApp. Quando existir backend, basta apontar a URL. */
+  var qModal = document.getElementById('quoteModal');
+  if (qModal) {
+    var WA_PHONE = '5548998244494';
+    var FORM_ENDPOINT = '';                      // ex.: 'enviar.php' quando houver backend
+    var qForm = document.getElementById('quoteForm');
+    var qPanelForm = qForm;
+    var qDone = document.getElementById('quoteDone');
+    var qDoneMsg = document.getElementById('quoteDoneMsg');
+    var qWppLink = document.getElementById('quoteWppLink');
+    var qStatus = document.getElementById('quoteStatus');
+    var qSubmit = document.getElementById('quoteSubmit');
+    var qBusca = document.getElementById('q-busca');
+    var qModeloGroup = document.getElementById('qGroupModelo');
+    var qModelo = document.getElementById('q-modelo');
+    var qWpp = document.getElementById('q-whatsapp');
+    var qLastFocus = null, qOpenedAt = 0;
+
+    function qSetStatus(msg) { if (qStatus) qStatus.textContent = msg || ''; }
+
+    function qToggleModelo() {
+      var on = qBusca.value === 'Modelo pronto do catálogo';
+      qModeloGroup.hidden = !on;
+    }
+    qBusca.addEventListener('change', function () { qToggleModelo(); qBusca.classList.remove('is-error'); });
+
+    // máscara de telefone: (48) 99999-9999
+    qWpp.addEventListener('input', function () {
+      var d = qWpp.value.replace(/\D/g, '').slice(0, 11);
+      var out = d;
+      if (d.length > 2) out = '(' + d.slice(0, 2) + ') ' + d.slice(2);
+      if (d.length > 7) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, d.length > 10 ? 7 : 6) + '-' + d.slice(d.length > 10 ? 7 : 6);
+      qWpp.value = out;
+      qWpp.classList.remove('is-error');
+    });
+
+    function qOpen(trigger) {
+      qLastFocus = trigger || null;
+      if (drawer && drawer.classList.contains('is-open')) toggleDrawer(false);
+      // reabriu depois de enviar: volta pro formulário (mantendo o que foi digitado)
+      if (!qDone.hidden) {
+        qDone.hidden = true; qPanelForm.hidden = false;
+        qSetStatus(''); qSubmit.disabled = false;
+      }
+      // pré-seleção vinda do card de modelo
+      if (trigger) {
+        var m = trigger.getAttribute('data-modelo');
+        if (m) { qBusca.value = 'Modelo pronto do catálogo'; qToggleModelo(); qModelo.value = m; }
+      }
+      qModal.hidden = false;
+      document.body.classList.add('modal-open');
+      qOpenedAt = new Date().getTime();
+      requestAnimationFrame(function () { qModal.classList.add('is-open'); });
+      setTimeout(function () {
+        var first = qDone.hidden ? document.getElementById('q-nome') : qWppLink;
+        if (first) first.focus({ preventScroll: true });
+      }, 320);
+    }
+    function qClose() {
+      if (qModal.hidden) return;
+      qModal.classList.remove('is-open');
+      document.body.classList.remove('modal-open');
+      setTimeout(function () { qModal.hidden = true; }, 340);
+      if (qLastFocus) { try { qLastFocus.focus({ preventScroll: true }); } catch (e) {} }
+    }
+
+    document.addEventListener('click', function (e) {
+      var opener = e.target.closest('[data-quote-open]');
+      if (opener) { e.preventDefault(); qOpen(opener); return; }
+      if (e.target.closest('[data-quote-close]')) { e.preventDefault(); qClose(); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !qModal.hidden) qClose();
+    });
+
+    // foco preso dentro do painel enquanto o modal está aberto
+    qModal.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var f = qModal.querySelectorAll('button, input, select, textarea, a[href]');
+      var vis = Array.prototype.filter.call(f, function (el) { return el.offsetParent !== null; });
+      if (!vis.length) return;
+      var first = vis[0], last = vis[vis.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
+    function qResumo(fd) {
+      var L = [['nome', 'Nome'], ['whatsapp', 'WhatsApp'], ['busca', 'O que busca'],
+               ['modelo', 'Modelo de interesse'], ['cidade', 'Cidade/região'], ['mensagem', 'Mensagem']];
+      return L.map(function (p) {
+        var v = (fd.get(p[0]) || '').toString().trim();
+        return v ? p[1] + ': ' + v : null;
+      }).filter(Boolean).join('\n');
+    }
+
+    function qShowDone(sent, fd) {
+      qPanelForm.hidden = true;
+      qDone.hidden = false;
+      if (sent) {
+        qDone.querySelector('h3').textContent = 'Pedido enviado';
+        qDoneMsg.textContent = 'Recebemos seu pedido. A Castello responde em até 1 dia útil. Se preferir adiantar, chame no WhatsApp.';
+        qWppLink.lastChild.textContent = ' Falar no WhatsApp';
+      }
+      qWppLink.href = 'https://wa.me/' + WA_PHONE + '?text=' +
+        encodeURIComponent('Olá! Quero um orçamento de casa de madeira.\n\n' + qResumo(fd));
+      qWppLink.focus({ preventScroll: true });
+    }
+
+    document.getElementById('quoteBack').addEventListener('click', function () {
+      qDone.hidden = true;
+      qPanelForm.hidden = false;
+      qSetStatus('');
+      qSubmit.disabled = false;
+      document.getElementById('q-nome').focus({ preventScroll: true });
+    });
+
+    qForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fd = new FormData(qForm);
+      if ((fd.get('_gotcha') || '').toString().trim()) return;             // robô
+      if (new Date().getTime() - qOpenedAt < 2500) return;                 // time-trap
+
+      var nome = (fd.get('nome') || '').toString().trim();
+      var tel = (fd.get('whatsapp') || '').toString().replace(/\D/g, '');
+      var busca = (fd.get('busca') || '').toString().trim();
+      var bad = null;
+      document.getElementById('q-nome').classList.remove('is-error');
+      qWpp.classList.remove('is-error');
+      qBusca.classList.remove('is-error');
+      if (!nome) { document.getElementById('q-nome').classList.add('is-error'); bad = 'Preencha seu nome.'; }
+      else if (tel.length < 10) { qWpp.classList.add('is-error'); bad = 'Informe um WhatsApp com DDD.'; }
+      else if (!busca) { qBusca.classList.add('is-error'); bad = 'Escolha o que você busca.'; }
+      if (bad) { qSetStatus(bad); return; }
+
+      if (!FORM_ENDPOINT) { qShowDone(false, fd); return; }                // sem backend ainda
+
+      qSubmit.disabled = true;
+      var original = qSubmit.textContent;
+      qSubmit.textContent = 'Enviando...';
+      qSetStatus('');
+      fetch(FORM_ENDPOINT, { method: 'POST', body: fd, headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.ok ? r.json().catch(function () { return { ok: true }; }) : Promise.reject(r); })
+        .then(function (data) {
+          if (data && data.ok === false) return Promise.reject(data);
+          qShowDone(true, fd);
+        })
+        .catch(function () {
+          qSubmit.disabled = false;
+          qSubmit.textContent = original;
+          qSetStatus('Não deu pra enviar pelo site agora. Vamos pelo WhatsApp:');
+          qShowDone(false, fd);
+        });
+    });
+  }
+
 })();
 
 /* ---------- Fundo floresta (parallax) da seção de avaliações ----------
    Gera fileiras de coníferas escalonadas (formato de pinheiro com "galhos").
+   O viewBox de cada faixa é montado em PIXELS reais (largura x altura medidas),
+   então preserveAspectRatio="none" não distorce nada: os pinheiros mantêm a
+   mesma proporção em qualquer tela (no mobile ficavam esticados pra cima).
    Determinístico: as duas cópias de cada faixa ficam idênticas -> loop sem emenda. */
 (function () {
   var scene = document.querySelector('.reviews__scene');
@@ -616,19 +865,63 @@
       + 'L' + r(cx - n1) + ',' + r(t1) + 'L' + r(cx - w1) + ',' + r(t1) + 'Z';
   }
 
+  // hFrac: altura do pinheiro sobre a altura da faixa. k: altura / meia-largura
+  // (proporção do pinheiro, ~3,5 a 3,9). jFrac: degrau de altura entre vizinhos.
   var layers = [
-    { sel: '.tline--2', n: 11, hw: 44, apex: 132, jitter: 16 },
-    { sel: '.tline--3', n: 8,  hw: 60, apex: 100, jitter: 22 },
-    { sel: '.tline--4', n: 6,  hw: 82, apex: 66,  jitter: 26 }
+    { sel: '.tline--2', hFrac: 0.67,  k: 3.88, jFrac: 0.040 },
+    { sel: '.tline--3', hFrac: 0.75,  k: 3.75, jFrac: 0.055 },
+    { sel: '.tline--4', hFrac: 0.835, k: 3.51, jFrac: 0.065 }
   ];
 
-  layers.forEach(function (L) {
-    var span = 1200 / L.n, d = '';
-    for (var i = 0; i < L.n; i++) {
-      var cx = span * (i + 0.5);
-      var Ty = L.apex + (i % 3) * L.jitter;
-      d += conifer(cx, 400, Ty, L.hw);
+  function build() {
+    // faixa distante (massa enevoada): ondas com amplitude proporcional ao vão
+    var far = scene.querySelector('.tline--1 svg');
+    if (far) {
+      var fw = far.getBoundingClientRect().width;
+      var fh = far.getBoundingClientRect().height;
+      if (fw > 0 && fh > 0) {
+        var nb = Math.max(3, Math.round(fw / 120));
+        var bs = fw / nb, base = fh * 0.625, d1 = 'M0,' + r(fh) + 'L0,' + r(base);
+        for (var b = 0; b < nb; b++) {
+          d1 += 'Q' + r(bs * (b + 0.5)) + ',' + r(base - bs * 0.45) + ',' + r(bs * (b + 1)) + ',' + r(base);
+        }
+        d1 += 'L' + r(fw) + ',' + r(fh) + 'Z';
+        scene.querySelectorAll('.tline--1 svg').forEach(function (s) {
+          s.setAttribute('viewBox', '0 0 ' + r(fw) + ' ' + r(fh));
+          s.querySelector('path').setAttribute('d', d1);
+        });
+      }
     }
-    scene.querySelectorAll(L.sel + ' path').forEach(function (p) { p.setAttribute('d', d); });
+
+    layers.forEach(function (L) {
+      var svgs = scene.querySelectorAll(L.sel + ' svg');
+      if (!svgs.length) return;
+      var box = svgs[0].getBoundingClientRect();
+      var W = box.width, H = box.height;
+      if (W <= 0 || H <= 0) return;
+
+      var treeH = L.hFrac * H;
+      var hw = treeH / L.k;                                  // meia-largura proporcional
+      var n = Math.max(2, Math.round(W / (2.5 * hw)));        // quantos cabem sem distorcer
+      var span = W / n, jitter = L.jFrac * H, d = '';
+      for (var i = 0; i < n; i++) {
+        d += conifer(span * (i + 0.5), H, H - treeH + (i % 3) * jitter, hw);
+      }
+      svgs.forEach(function (s) {
+        s.setAttribute('viewBox', '0 0 ' + r(W) + ' ' + r(H));
+        s.querySelector('path').setAttribute('d', d);
+      });
+    });
+  }
+
+  build();
+  var rebuildT = null, lastW = window.innerWidth;
+  window.addEventListener('resize', function () {
+    // no mobile a barra de endereço muda só a altura: rebuild apenas em mudança real
+    if (Math.abs(window.innerWidth - lastW) < 2) return;
+    lastW = window.innerWidth;
+    clearTimeout(rebuildT);
+    rebuildT = setTimeout(build, 180);
   });
+  window.addEventListener('orientationchange', function () { setTimeout(build, 250); });
 })();

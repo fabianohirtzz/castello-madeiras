@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=7" />
+  <link rel="stylesheet" href="css/style.css?v=8" />
 </head>
 <body>
 
@@ -57,10 +57,10 @@
         <a href="#contato"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>Contato</a>
       </nav>
 
-      <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary nav__cta" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+      <button type="button" class="btn btn--primary nav__cta" data-quote-open>
+        <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
         Pedir orçamento
-      </a>
+      </button>
 
       <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -77,7 +77,7 @@
     <a href="#instagram">Instagram</a>
     <a href="#como-funciona">Como funciona</a>
     <a href="#contato">Contato</a>
-    <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary" target="_blank" rel="noopener">Pedir orçamento no WhatsApp</a>
+    <button type="button" class="btn btn--primary" data-quote-open>Fale Conosco</button>
   </div>
 
   <!-- ============ HERO (cinematográfico — scrub de vídeo no scroll) ============ -->
@@ -101,10 +101,10 @@
         <div class="hero__beat hero__beat--two" id="heroBeatTwo">
           <p class="hero__headline-sub">pronta em até <span class="hl">120 dias</span></p>
           <div class="hero__actions">
-            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--primary btn--lg" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
-              Pedir orçamento no WhatsApp
-            </a>
+            <button type="button" class="btn btn--primary btn--lg" data-quote-open>
+              <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+              Pedir orçamento
+            </button>
             <a href="#modelos" class="btn btn--ghost-light btn--lg">Ver modelos e preços</a>
           </div>
         </div>
@@ -165,7 +165,7 @@
           <span class="eyebrow reveal">Por que casa de madeira</span>
           <h2 class="section__title reveal">Mais rápido de construir.<br>Melhor de morar.</h2>
           <p class="why__lead reveal">A casa de madeira une obra ágil, conforto de verdade e um patrimônio que valoriza com o tempo. Veja o que muda quando você constrói com a Castello.</p>
-          <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20as%20casas%20de%20madeira%20da%20Castello." class="btn btn--primary reveal" target="_blank" rel="noopener">Pedir orçamento no WhatsApp</a>
+          <button type="button" class="btn btn--primary reveal" data-quote-open>Pedir orçamento</button>
         </div>
 
         <div class="why__carousel reveal" id="whyCarousel" aria-roledescription="carrossel" aria-label="Vantagens da casa de madeira">
@@ -238,7 +238,7 @@
             <h3 class="model__name">Compacta</h3>
             <p class="model__area">39,00 m² de área construída</p>
             <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 69.900</span></div>
-            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Compacta%20de%2039m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Compacta · 39 m² · R$ 69.900">Pedir orçamento</button>
           </div>
         </article>
 
@@ -252,7 +252,7 @@
             <h3 class="model__name">Conforto</h3>
             <p class="model__area">42,75 m² de área construída</p>
             <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 79.988</span></div>
-            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Conforto%20de%2042%2C75m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Conforto · 42,75 m² · R$ 79.988">Pedir orçamento</button>
           </div>
         </article>
 
@@ -267,7 +267,7 @@
             <h3 class="model__name">Família</h3>
             <p class="model__area">51,00 m² de área construída</p>
             <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 87.997</span></div>
-            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Fam%C3%ADlia%20de%2051m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Família · 51 m² · R$ 87.997">Pedir orçamento</button>
           </div>
         </article>
 
@@ -281,7 +281,7 @@
             <h3 class="model__name">Ampla</h3>
             <p class="model__area">59,75 m² de área construída</p>
             <div class="price"><span class="price__label">A partir de</span><span class="price__val"><span class="price__cur">R$</span> 97.776</span></div>
-            <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20or%C3%A7ar%20o%20modelo%20Ampla%20de%2059%2C75m%C2%B2." class="btn btn--primary btn--block" target="_blank" rel="noopener">Pedir orçamento</a>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Ampla · 59,75 m² · R$ 97.776">Pedir orçamento</button>
           </div>
         </article>
       </div>
@@ -365,6 +365,8 @@
       </div>
 
       <div class="process__inner">
+        <!-- véu (mobile): apaga o texto do passo antes dele encostar na imagem sticky -->
+        <div class="process__veil" aria-hidden="true"></div>
         <div class="process__media" id="processMedia">
           <div class="process__media-fig is-active" data-step="0"><img src="passos/passo-1.jpg" alt="Maquete do projeto da casa de madeira sobre a planta" loading="lazy" /></div>
           <div class="process__media-fig" data-step="1"><img src="passos/passo-2.jpg" alt="Início da estrutura de madeira sobre a fundação" loading="lazy" /></div>
@@ -635,7 +637,7 @@
       </div>
 
       <p class="faq__foot reveal">A Castello fica em Tubarão e atende toda a região, com casas já entregues em diversas cidades de Santa Catarina.
-        <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Tenho%20uma%20d%C3%BAvida%20sobre%20as%20casas%20de%20madeira%20da%20Castello." target="_blank" rel="noopener">Tirar uma dúvida no WhatsApp</a>
+        <button type="button" class="faq__foot-link" data-quote-open>Tirar uma dúvida com a gente</button>
       </p>
     </div>
   </section>
@@ -647,10 +649,10 @@
         <h2>Pronto pra sair do aluguel?</h2>
         <p>Peça seu orçamento sem compromisso. A Castello te acompanha do primeiro passo até a chave na mão.</p>
       </div>
-      <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="btn btn--light btn--lg reveal" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
-        Falar no WhatsApp agora
-      </a>
+      <button type="button" class="btn btn--light btn--lg reveal" data-quote-open>
+        <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+        Pedir orçamento agora
+      </button>
     </div>
   </section>
 
@@ -675,18 +677,33 @@
 
       <div class="footer__col">
         <h4>Contato</h4>
-        <ul>
-          <li><a href="https://wa.me/5548998244494" target="_blank" rel="noopener">WhatsApp (48) 99824-4494</a></li>
-          <li><a href="tel:+554836328743">Telefone (48) 3632-8743</a></li>
-          <li>Av. Patrício Lima, 843<br>Tubarão, Santa Catarina</li>
+        <ul class="footer__list">
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg></span>
+            <a href="https://wa.me/5548998244494" target="_blank" rel="noopener">WhatsApp (48) 99824-4494</a>
+          </li>
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2Z"/></svg></span>
+            <a href="tel:+554836328743">Telefone (48) 3632-8743</a>
+          </li>
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
+            <span>Av. Patrício Lima, 843<br>Tubarão, Santa Catarina</span>
+          </li>
         </ul>
       </div>
 
       <div class="footer__col">
         <h4>Atendimento</h4>
-        <ul>
-          <li>Segunda a sexta<br>8h às 12h e 13h30 às 18h</li>
-          <li>Sábado<br>8h30 às 12h</li>
+        <ul class="footer__list">
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2Zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8Zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7Z"/></svg></span>
+            <span>Segunda a sexta<br>8h às 12h e 13h30 às 18h</span>
+          </li>
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h1.5A2.5 2.5 0 0 1 21 6.5v12A2.5 2.5 0 0 1 18.5 21h-13A2.5 2.5 0 0 1 3 18.5v-12A2.5 2.5 0 0 1 5.5 4H7V2ZM5 9v9.5c0 .3.2.5.5.5h13c.3 0 .5-.2.5-.5V9H5Z"/></svg></span>
+            <span>Sábado<br>8h30 às 12h</span>
+          </li>
         </ul>
       </div>
 
@@ -699,16 +716,131 @@
     </div>
 
     <div class="footer__bottom container">
-      <span>© 2026 Castello Casas de Madeira. Todos os direitos reservados.</span>
-      <span>Protótipo desenvolvido por Freela In Home.</span>
+      <span class="footer__copy">© 2026 Castello Casas de Madeira. <span class="nowrap">Todos os direitos reservados.</span></span>
+      <span class="nowrap">Desenvolvido por Freela In Home.</span>
     </div>
   </footer>
 
-  <!-- Float WhatsApp -->
-  <a href="https://wa.me/5548998244494?text=Ol%C3%A1!%20Quero%20um%20or%C3%A7amento%20de%20casa%20de%20madeira." class="wpp-float" id="wppFloat" aria-label="Falar no WhatsApp" target="_blank" rel="noopener">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
-  </a>
+  <!-- ============ MODAL DE ORÇAMENTO ============ -->
+  <div class="qmodal" id="quoteModal" hidden role="dialog" aria-modal="true" aria-labelledby="qmodalTitle">
+    <div class="qmodal__backdrop" data-quote-close></div>
 
-  <script src="js/main.js?v=7"></script>
+    <div class="qmodal__panel">
+      <button class="qmodal__close" type="button" data-quote-close aria-label="Fechar formulário">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+
+      <div class="qmodal__head">
+        <span class="eyebrow">Orçamento sem compromisso</span>
+        <h2 id="qmodalTitle">Vamos falar da sua casa</h2>
+        <p>Conta pra gente o que você procura. A Castello volta com uma proposta sob medida.</p>
+        <div class="qmodal__trust">
+          <span><strong>5,0 ★</strong> no Google</span>
+          <span><strong>56</strong> avaliações</span>
+          <span><strong>12 anos</strong> de mercado</span>
+        </div>
+      </div>
+
+      <form class="qform" id="quoteForm" novalidate>
+        <!-- honeypot anti-spam: humanos não veem, não preencher -->
+        <input type="text" name="_gotcha" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <div class="qform__row">
+          <div class="qform__group">
+            <label class="qform__label" for="q-nome">Nome completo <span class="req">*</span></label>
+            <input class="qform__input" type="text" id="q-nome" name="nome" placeholder="Como podemos te chamar" autocomplete="name" required />
+          </div>
+          <div class="qform__group">
+            <label class="qform__label" for="q-whatsapp">WhatsApp <span class="req">*</span></label>
+            <input class="qform__input" type="tel" id="q-whatsapp" name="whatsapp" placeholder="(48) 99999-9999" autocomplete="tel" inputmode="tel" required />
+          </div>
+        </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-busca">O que você busca? <span class="req">*</span></label>
+          <div class="qform__select">
+            <select id="q-busca" name="busca" required>
+              <option value="" selected disabled>Selecione uma opção</option>
+              <option value="Modelo pronto do catálogo">Modelo pronto do catálogo</option>
+              <option value="Projeto exclusivo (planta sob medida)">Projeto exclusivo (planta sob medida)</option>
+              <option value="Já tenho o projeto, quero orçar a execução">Já tenho o projeto, quero orçar a execução</option>
+              <option value="Ainda estou pesquisando">Ainda estou pesquisando</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="qform__group qform__group--modelo" id="qGroupModelo" hidden>
+          <label class="qform__label" for="q-modelo">Modelo de interesse</label>
+          <div class="qform__select">
+            <select id="q-modelo" name="modelo">
+              <option value="">Ainda não sei</option>
+              <option value="Compacta · 39 m² · R$ 69.900">Compacta · 39 m² · R$ 69.900</option>
+              <option value="Conforto · 42,75 m² · R$ 79.988">Conforto · 42,75 m² · R$ 79.988</option>
+              <option value="Família · 51 m² · R$ 87.997">Família · 51 m² · R$ 87.997</option>
+              <option value="Ampla · 59,75 m² · R$ 97.776">Ampla · 59,75 m² · R$ 97.776</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-cidade">Cidade / região do terreno</label>
+          <input class="qform__input" type="text" id="q-cidade" name="cidade" placeholder="Ex: Tubarão / SC" />
+        </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-mensagem">Mensagem <span class="opt">(opcional)</span></label>
+          <textarea class="qform__input qform__textarea" id="q-mensagem" name="mensagem" rows="3" placeholder="Conte o tamanho que imagina, se já tem terreno, prazo desejado..."></textarea>
+        </div>
+
+        <button class="btn btn--primary btn--block btn--lg qform__submit" type="submit" id="quoteSubmit">Enviar meu pedido</button>
+        <p class="qform__status" id="quoteStatus" role="status" aria-live="polite"></p>
+        <p class="qform__note">Resposta em até 1 dia útil. Seus dados são usados só para responder ao seu pedido.</p>
+      </form>
+
+      <div class="qmodal__done" id="quoteDone" hidden>
+        <span class="qmodal__done-ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg>
+        </span>
+        <h3>Pedido pronto pra enviar</h3>
+        <p id="quoteDoneMsg">Toque no botão abaixo para mandar seu pedido no WhatsApp da Castello. É só apertar enviar.</p>
+        <a class="btn btn--primary btn--lg qmodal__done-cta" id="quoteWppLink" href="https://wa.me/5548998244494" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+          Enviar no WhatsApp
+        </a>
+        <button class="qmodal__done-back" type="button" id="quoteBack">Voltar e revisar os dados</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ LIGHTBOX DOS REELS (tela cheia) ============ -->
+  <div class="reelbox" id="reelbox" hidden role="dialog" aria-modal="true" aria-label="Vídeos do Instagram em tela cheia">
+    <button class="reelbox__close" id="reelboxClose" type="button" aria-label="Fechar tela cheia">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+
+    <button class="reelbox__nav reelbox__nav--prev" id="reelboxPrev" type="button" aria-label="Vídeo anterior">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+
+    <div class="reelbox__stage">
+      <video class="reelbox__video" id="reelboxVideo" playsinline controls loop preload="auto"></video>
+    </div>
+
+    <button class="reelbox__nav reelbox__nav--next" id="reelboxNext" type="button" aria-label="Próximo vídeo">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+    </button>
+
+    <div class="reelbox__count"><span id="reelboxCount">1 / 11</span></div>
+  </div>
+
+  <!-- Botão flutuante: abre o formulário de orçamento -->
+  <button type="button" class="wpp-float" id="wppFloat" aria-label="Pedir orçamento" data-quote-open>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+    <span class="wpp-float__label">Pedir orçamento</span>
+  </button>
+
+  <script src="js/main.js?v=8"></script>
 </body>
 </html>
