@@ -370,4 +370,75 @@ if ($servidor !== null) {
     t_igual('CRM fora do ar: erro crm_conexao', 'crm_conexao', $r['erro']);
 }
 
+require_once __DIR__ . '/../public_html/lib/email.php';
+
+t_secao('lib/email.php: aviso de lead novo');
+teste_banco_limpar();
+
+$pastaEmail = sys_get_temp_dir() . '/castello-emails';
+if (!is_dir($pastaEmail)) {
+    mkdir($pastaEmail, 0777, true);
+}
+foreach ((array) glob($pastaEmail . '/*.txt') as $velho) {
+    @unlink($velho);
+}
+putenv('CASTELLO_EMAIL_DIR=' . $pastaEmail);
+
+$leadEmail = [
+    'id'           => 42,
+    'nome'         => 'Fabiano Hirtz',
+    'whatsapp'     => '(48) 99824-4494',
+    'busca'        => 'Modelo pronto do catalogo',
+    'modelo'       => 'Compacta 39 m2',
+    'cidade'       => 'Tubarao / SC',
+    'mensagem'     => 'Tenho terreno em Tubarao.',
+    'pagina'       => '/index.php',
+    'referrer'     => 'https://www.google.com/',
+    'utm_source'   => 'instagram',
+    'utm_campaign' => 'flex-setembro',
+    'criado_em'    => '2026-09-09 14:30:00',
+];
+
+/* corpo do e-mail com CRM entregue */
+$corpoOk = email_corpo_lead($leadEmail, ['ok' => true, 'http' => 200, 'resposta' => '{"id":"CRM-1"}', 'erro' => null]);
+t_ok('corpo traz o nome', strpos($corpoOk, 'Fabiano Hirtz') !== false);
+t_ok('corpo traz o whatsapp', strpos($corpoOk, '(48) 99824-4494') !== false);
+t_ok('corpo traz a cidade', strpos($corpoOk, 'Tubarao / SC') !== false);
+t_ok('corpo traz a origem utm', strpos($corpoOk, 'instagram') !== false);
+t_ok('corpo traz o id do lead', strpos($corpoOk, '42') !== false);
+t_ok('corpo diz que o CRM recebeu', strpos($corpoOk, 'CRM: entregue') !== false, $corpoOk);
+t_ok('corpo traz o link de resposta no whatsapp', strpos($corpoOk, 'wa.me/5548998244494') !== false, $corpoOk);
+
+/* corpo do e-mail com CRM falhando */
+$corpoErro = email_corpo_lead($leadEmail, ['ok' => false, 'http' => 500, 'resposta' => 'interno', 'erro' => 'crm_http']);
+t_ok('corpo diz que o CRM falhou', strpos($corpoErro, 'CRM: falhou') !== false, $corpoErro);
+t_ok('corpo mostra o codigo do erro', strpos($corpoErro, 'crm_http') !== false);
+t_ok('corpo mostra o http do erro', strpos($corpoErro, '500') !== false);
+
+/* corpo do e-mail com CRM desligado */
+$corpoOff = email_corpo_lead($leadEmail, ['ok' => false, 'http' => 0, 'resposta' => '', 'erro' => 'crm_desativado']);
+t_ok('corpo diz que o CRM esta desligado', strpos($corpoOff, 'CRM: desligado') !== false, $corpoOff);
+
+/* modo de arquivo grava em vez de enviar */
+config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+$enviou = email_lead_novo($leadEmail, ['ok' => true, 'http' => 200, 'resposta' => '{}', 'erro' => null]);
+t_ok('email_lead_novo devolve true no modo de arquivo', $enviou === true);
+$arquivos = (array) glob($pastaEmail . '/*.txt');
+t_igual('gravou exatamente um arquivo', 1, count($arquivos));
+$gravado = $arquivos ? (string) file_get_contents($arquivos[0]) : '';
+t_ok('arquivo tem o destinatario', strpos($gravado, 'contato@castellomadeiras.com.br') !== false, $gravado);
+t_ok('arquivo tem o assunto com o nome', strpos($gravado, 'Lead novo no site: Fabiano Hirtz') !== false, $gravado);
+t_ok('arquivo declara charset UTF-8', strpos($gravado, 'charset=UTF-8') !== false, $gravado);
+
+/* e-mail de destino invalido nao tenta enviar */
+config_gravar('email_aviso', 'isso-nao-e-email');
+t_ok('destino invalido devolve false', email_lead_novo($leadEmail, ['ok' => true, 'http' => 200, 'resposta' => '{}', 'erro' => null]) === false);
+t_igual('destino invalido nao grava arquivo novo', 1, count((array) glob($pastaEmail . '/*.txt')));
+
+/* remetente sai de um dominio limpo */
+config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+t_ok('remetente e um e-mail valido', (bool) filter_var(email_remetente(), FILTER_VALIDATE_EMAIL), email_remetente());
+
+putenv('CASTELLO_EMAIL_DIR');
+
 exit(t_resumo());

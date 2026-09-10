@@ -1161,7 +1161,7 @@ O e-mail é a garantia de que a Castello vê o contato mesmo quando o CRM falha.
   - `email_corpo_lead(array $lead, array $resultado_crm): string` (usada pelo teste para conferir o texto)
   - `email_remetente(): string`
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -1238,7 +1238,7 @@ t_ok('remetente e um e-mail valido', (bool) filter_var(email_remetente(), FILTER
 putenv('CASTELLO_EMAIL_DIR');
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1247,7 +1247,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/lib/email.php'`.
 
-- [ ] **Passo 3: escrever `public_html/lib/email.php`**
+- [x] **Passo 3: escrever `public_html/lib/email.php`**
 
 ```php
 <?php
@@ -1391,7 +1391,7 @@ function email_remetente(): string
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -1399,7 +1399,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: toda a seção `lib/email.php: aviso de lead novo` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: conferir o e-mail gravado com os próprios olhos**
+- [x] **Passo 5: conferir o e-mail gravado com os próprios olhos**
 
 ```bash
 CASTELLO_EMAIL_DIR="$(php -r 'echo sys_get_temp_dir();')/castello-emails"
@@ -1409,7 +1409,7 @@ cat "$CASTELLO_EMAIL_DIR/$(ls -1 "$CASTELLO_EMAIL_DIR" | tail -1)"
 
 Conferir que o texto está legível, com acento correto, sem travessão e sem emoji. O envio real por `mail()` fica pendente de validação no servidor da EreHost.
 
-- [ ] **Passo 6: commitar**
+- [x] **Passo 6: commitar**
 
 ```bash
 git add public_html/lib/email.php testes/smoke-f3.php
