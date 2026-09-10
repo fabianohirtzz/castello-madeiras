@@ -26,7 +26,7 @@
 - Status válidos de `leads.crm_status`: `pendente`, `enviado`, `erro`, `desativado`. Nada além disso.
 - Resposta do `enviar.php`: sempre JSON, sempre `Content-Type: application/json; charset=utf-8`.
 - `mail()` não funciona na máquina local. O modo de arquivo (variável de ambiente `CASTELLO_EMAIL_DIR`) é o caminho de teste; o envio real só se valida no servidor.
-- Ciclo de teste: `php testes/smoke-f3.php` (funde-se em `php testes/smoke.php` na Tarefa 9).
+- Ciclo de teste: `php testes/smoke-f3.php`, que na Tarefa 9 vira o caso `testes/casos/85-crm.php` do runner da frente 1. **Nunca acrescentar `require` no topo de `testes/smoke.php`:** ele despacha cada caso num processo separado e não carrega `lib/` nenhuma.
 - Mensagens de commit em português, terminando com a linha `Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>`.
 
 ---
@@ -43,7 +43,7 @@
 | `public_html/js/formulario.js` | UTM, campos ocultos, máscara, validação e envio. Expõe as funções puras em `window.CastelloFormulario` para teste. |
 | `testes/crm-falso.php` | Servidor de teste que finge ser o CRM: sucesso, erro HTTP, resposta inválida, demora, eco. |
 | `testes/apoio-f1.php` | Apoio temporário: define `db()`, `e()`, `agora()`, `config_ler()`, `config_gravar()`, `csrf_token()` e `csrf_validar()` enquanto a lib da frente 1 não existe. **Removido na Tarefa 9.** |
-| `testes/smoke-f3.php` | Runner por linha de comando. Funde-se em `testes/smoke.php` na Tarefa 9. |
+| `testes/smoke-f3.php` | Runner por linha de comando. Vira `testes/casos/85-crm.php` na Tarefa 9. |
 | `testes/formulario.test.js` | Testes das funções puras do JS, executados por Node. |
 
 ---
@@ -58,7 +58,7 @@
 6. `enviar.php` — o caminho completo do lead
 7. Reenvio dos pendentes
 8. `js/formulario.js` — UTM, campos ocultos e envio
-9. Costura: remover o apoio e fundir o runner
+9. Costura: virar caso do runner (`testes/casos/85-crm.php`) e remover o apoio
 
 ---
 
@@ -2175,10 +2175,21 @@ Move para um arquivo próprio a lógica que hoje vive no `js/main.js` e completa
   - `validar({nome, whatsapp, busca}): string[]`
   - `mensagemDeErro(campos: string[]): string`
   - `resumoWhatsapp(dados: object): string`
+  - `tokenDaResposta(dados: object): string`
+  - `obterToken(buscar: function): Promise<string>`
+  - `esquecerToken(): void`
   
   e, em Node, o mesmo objeto por `module.exports`.
 
-**Depende da frente 1 para o CSRF:** o token é lido de `<meta name="csrf-token" content="...">`. Esse `<meta>` é impresso pelo PHP e mora no `index.php` e no `flex.php`, que são da frente 1. Sem ele, o `enviar.php` responde 419 e o JS mostra a mensagem de página velha, com o WhatsApp como saída. Está anotado em "Pontos em que o contrato ficou curto".
+**De onde vem o CSRF, conforme a seção 6.1 do contrato:** de `public_html/csrf.php`, um endereço próprio escrito pela **frente 1**, que responde `{"token":"..."}` com `Cache-Control: private, no-store`. Não existe metatag no `<head>`: token em HTML obrigaria `no-store` em toda página do site, e a Castello vai investir em tráfego pago, então página de destino incacheável é custo permanente.
+
+Três consequências para este arquivo:
+
+- A busca acontece **quando o visitante abre o modal**, nunca no carregamento da página. Quem só lê o site não faz requisição nenhuma e não recebe cookie de sessão.
+- O `fetch` do token e o `fetch` do envio usam `credentials: 'same-origin'`. Sem isso o cookie de sessão não acompanha e o token não bate na hora do envio.
+- Falha na busca mostra erro no formulário **antes** de deixar enviar, em vez de mandar e tomar 419. Modal aberto, fechado e reaberto não busca de novo: o token fica guardado em memória pela sessão de página.
+
+Este é o acoplamento entre as frentes 1 e 3. Sem o `csrf.php`, todo envio volta 419.
 
 - [ ] **Passo 1: escrever os testes que falham**
 
@@ -2342,15 +2353,93 @@ teste('resumoWhatsapp monta o texto so com o que foi preenchido', function () {
   assert.equal(/Mensagem/.test(texto), false);
 });
 
+teste('tokenDaResposta aceita o que o csrf.php devolve', function () {
+  assert.equal(api.tokenDaResposta({ token: 'a1b2c3d4e5f6' }), 'a1b2c3d4e5f6');
+});
+
+teste('tokenDaResposta recusa resposta sem token util', function () {
+  assert.equal(api.tokenDaResposta({}), '');
+  assert.equal(api.tokenDaResposta({ token: 'curto' }), '');
+  assert.equal(api.tokenDaResposta({ token: 123456789 }), '');
+  assert.equal(api.tokenDaResposta(null), '');
+  assert.equal(api.tokenDaResposta('a1b2c3d4e5f6'), '');
+});
+
+/* Os tres testes abaixo sao assincronos e mexem no mesmo token guardado em
+   memoria, entao rodam EM FILA, um depois do outro, no fim do arquivo. Se
+   forem disparados juntos, o token que um guarda vaza para o outro. */
+var assincronos = [];
+
+function testeAssincrono(nome, corpo) {
+  total++;
+  assincronos.push(function () {
+    return Promise.resolve()
+      .then(corpo)
+      .then(function () { console.log('  ok    ' + nome); })
+      .catch(function (erro) { falhas++; console.log('  FALHA ' + nome + '  ->  ' + erro.message); });
+  });
+}
+
+testeAssincrono('obterToken busca uma vez e guarda em memoria', function () {
+  api.esquecerToken();
+  var chamadas = 0;
+  var buscar = function () { chamadas++; return Promise.resolve({ token: 'a1b2c3d4e5f6' }); };
+  return api.obterToken(buscar)
+    .then(function (t) {
+      assert.equal(t, 'a1b2c3d4e5f6');
+      return api.obterToken(buscar);
+    })
+    .then(function (t) {
+      assert.equal(t, 'a1b2c3d4e5f6');
+      assert.equal(chamadas, 1, 'reabrir o modal nao pode buscar o token de novo');
+    });
+});
+
+testeAssincrono('obterToken devolve vazio quando o csrf.php esta fora do ar', function () {
+  api.esquecerToken();
+  var buscar = function () { return Promise.reject(new Error('http 500')); };
+  return api.obterToken(buscar).then(function (t) {
+    assert.equal(t, '', 'falha no csrf.php nao pode virar token');
+  });
+});
+
+testeAssincrono('obterToken nao guarda a falha e tenta de novo depois', function () {
+  api.esquecerToken();
+  var vezes = 0;
+  var buscar = function () {
+    vezes++;
+    return vezes === 1 ? Promise.reject(new Error('caiu')) : Promise.resolve({ token: 'a1b2c3d4e5f6' });
+  };
+  return api.obterToken(buscar)
+    .then(function (t) {
+      assert.equal(t, '');
+      return api.obterToken(buscar);
+    })
+    .then(function (t) {
+      assert.equal(t, 'a1b2c3d4e5f6');
+      assert.equal(vezes, 2);
+    });
+});
+
 teste('sem emoji e sem travessao na copy do arquivo', function () {
   var fonte = require('node:fs').readFileSync(caminho, 'utf8');
   assert.equal(/[\u2014\u2013]/.test(fonte), false, 'achou travessao');
   assert.equal(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(fonte), false, 'achou emoji');
 });
 
-console.log('');
-console.log((total - falhas) + '/' + total + ' passaram');
-process.exit(falhas > 0 ? 1 : 0);
+teste('o token nunca e buscado no carregamento, so na abertura do modal', function () {
+  var fonte = require('node:fs').readFileSync(caminho, 'utf8');
+  assert.equal(/csrf-token/.test(fonte), false, 'nao pode ler metatag de csrf');
+  assert.match(fonte, /credentials: 'same-origin'/);
+});
+
+assincronos.reduce(function (fila, passo) {
+  return fila.then(passo);
+}, Promise.resolve()).then(function () {
+  console.log('');
+  console.log((total - falhas) + '/' + total + ' passaram');
+  process.exit(falhas > 0 ? 1 : 0);
+});
 ```
 
 - [ ] **Passo 2: rodar e ver falhar**
@@ -2379,6 +2468,7 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
   'use strict';
 
   var ENDPOINT = 'enviar.php';
+  var CSRF_ENDPOINT = 'csrf.php';
   var CHAVE_UTM = 'castello_utm';
   var CAMPOS_UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
   var TEMPO_MINIMO_MS = 3000;
@@ -2483,6 +2573,35 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
     }).filter(Boolean).join('\n');
   };
 
+  /* ---------- token de CSRF ---------- */
+
+  var tokenGuardado = '';
+
+  api.tokenDaResposta = function (dados) {
+    if (!dados || typeof dados !== 'object') return '';
+    var t = dados.token;
+    return (typeof t === 'string' && t.length >= 8) ? t : '';
+  };
+
+  api.esquecerToken = function () {
+    tokenGuardado = '';
+  };
+
+  /* buscar devolve uma promessa com o objeto que o csrf.php respondeu.
+     O token vale pela sessao de pagina inteira: abrir, fechar e reabrir o
+     modal nao busca de novo. Falha nao e guardada, para a proxima abertura
+     tentar outra vez. */
+  api.obterToken = function (buscar) {
+    if (tokenGuardado) return Promise.resolve(tokenGuardado);
+    return Promise.resolve()
+      .then(function () { return buscar(); })
+      .then(function (dados) {
+        tokenGuardado = api.tokenDaResposta(dados);
+        return tokenGuardado;
+      })
+      .catch(function () { return ''; });
+  };
+
   if (typeof window !== 'undefined') window.CastelloFormulario = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 
@@ -2522,18 +2641,37 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
     return el;
   }
 
-  function tokenCsrf() {
-    var meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? (meta.getAttribute('content') || '') : '';
-  }
-
   function preencherOcultos() {
     var utm = api.utmResolver(window.location.search, window.sessionStorage);
     campoOculto('pagina', window.location.pathname || '/');
     campoOculto('referrer', document.referrer || '');
     CAMPOS_UTM.forEach(function (c) { campoOculto(c, utm[c] || ''); });
     campoOculto('ts', String(abertoEm));
-    campoOculto('csrf', tokenCsrf());
+  }
+
+  /* credentials same-origin e obrigatorio: sem o cookie de sessao o token que
+     volta nao bate com o que o enviar.php espera. */
+  function buscarTokenNoServidor() {
+    return fetch(CSRF_ENDPOINT, {
+      headers: { Accept: 'application/json' },
+      credentials: 'same-origin',
+      cache: 'no-store'
+    }).then(function (resposta) {
+      if (!resposta.ok) throw new Error('http ' + resposta.status);
+      return resposta.json();
+    });
+  }
+
+  /* Chamada na abertura do modal, nunca no carregamento da pagina: quem so le
+     o site nao faz requisicao nem recebe cookie de sessao. */
+  function garantirToken() {
+    return api.obterToken(buscarTokenNoServidor).then(function (token) {
+      campoOculto('csrf', token);
+      if (!token) {
+        dizer('Nao deu pra preparar o envio agora. Tente de novo em alguns segundos ou chame no WhatsApp.');
+      }
+      return token;
+    });
   }
 
   function limparErros() {
@@ -2619,8 +2757,12 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
           return;
         }
         if (r.http === 419) {
+          /* A sessao virou. Joga fora o token guardado, busca outro e pede
+             para o visitante mandar de novo. */
           restaurar(rotulo);
-          dizer('A pagina ficou aberta tempo demais. Atualize e envie de novo.');
+          api.esquecerToken();
+          garantirToken();
+          dizer('A pagina ficou aberta tempo demais. Toque em enviar de novo.');
           return;
         }
         restaurar(rotulo);
@@ -2648,6 +2790,14 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
     if (ruins.length) {
       marcarErros(ruins);
       dizer(api.mensagemDeErro(ruins));
+      return;
+    }
+
+    /* Sem token o envio voltaria 419. Mostra o erro aqui e tenta buscar de
+       novo, para o visitante entender e poder repetir. */
+    if (!String(fd.get('csrf') || '')) {
+      dizer('Nao deu pra preparar o envio agora. Tente de novo em alguns segundos ou chame no WhatsApp.');
+      garantirToken();
       return;
     }
 
@@ -2684,7 +2834,10 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
     var abridor = ev.target && ev.target.closest ? ev.target.closest('[data-quote-open]') : null;
     if (!abridor) return;
     abertoEm = Date.now();
-    setTimeout(preencherOcultos, 0);
+    setTimeout(function () {
+      preencherOcultos();
+      garantirToken();
+    }, 0);
   }, true);
 
   /* Mascara do WhatsApp. O main.js tambem aplica a dele; a transformacao e
@@ -2708,7 +2861,7 @@ cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
 node testes/formulario.test.js; echo "codigo de saida: $?"
 ```
 
-Esperado: `23/23 passaram` e `codigo de saida: 0`.
+Esperado: `29/29 passaram` e `codigo de saida: 0`.
 
 - [ ] **Passo 5: pendurar o teste do JS no smoke**
 
@@ -2759,13 +2912,23 @@ document.querySelector('#quoteForm [name=ts]').value        // um numero grande
 window.CastelloFormulario.mascaraWhatsapp('48998244494')    // '(48) 99824-4494'
 ```
 
+Como o `csrf.php` é da frente 1 e ainda não existe, esta é a hora de conferir o **caminho de falha**: na aba Rede do navegador deve aparecer uma chamada a `csrf.php` disparada só na abertura do modal (nenhuma antes disso), voltando 404, e o formulário deve mostrar `Nao deu pra preparar o envio agora.` no lugar do status. Tentar enviar assim mesmo não pode disparar requisição para `enviar.php`: a mensagem repete e nada é postado. Conferir também que o valor de `document.querySelector('#quoteForm [name=csrf]').value` fica vazio.
+
+Para ver o caminho feliz antes da frente 1 entregar, criar um `csrf.php` de mentira **fora do repositório** e servir a pasta por cima, ou simular no console:
+
+```js
+window.CastelloFormulario.esquecerToken();
+window.CastelloFormulario.obterToken(function () { return Promise.resolve({ token: 'a1b2c3d4e5f6' }); })
+  .then(function (t) { console.log('token:', t); });
+```
+
 Depois abrir `http://localhost:8000/index.html?utm_source=instagram&utm_campaign=flex`, repetir a injeção e conferir:
 
 ```js
 sessionStorage.getItem('castello_utm')   // {"utm_source":"instagram","utm_campaign":"flex"}
 ```
 
-Navegar para `http://localhost:8000/index.html` sem parâmetro, injetar de novo, abrir o modal e conferir que `document.querySelector('#quoteForm [name=utm_source]').value` continua `instagram`. O envio em si só fecha o ciclo quando a frente 1 entregar `index.php` com o `<meta name="csrf-token">`, e isso é conferido na Tarefa 9.
+Navegar para `http://localhost:8000/index.html` sem parâmetro, injetar de novo, abrir o modal e conferir que `document.querySelector('#quoteForm [name=utm_source]').value` continua `instagram`. O envio em si só fecha o ciclo quando a frente 1 entregar o `csrf.php`, e isso é conferido na Tarefa 9.
 
 - [ ] **Passo 8: commitar**
 
@@ -2787,68 +2950,93 @@ MSG
 
 ---
 
-### Tarefa 9: costura — remover o apoio e fundir o runner
+### Tarefa 9: costura — virar caso do runner e remover o apoio
 
-Só rodar depois que a frente 1 tiver entregue `public_html/lib/db.php`, `public_html/lib/auth.php` e `testes/smoke.php`. Enquanto isso não acontecer, esta tarefa fica parada e as Tarefas 1 a 8 já entregam a frente 3 funcionando sozinha.
+Só rodar depois que a frente 1 tiver entregue `public_html/lib/db.php`, `public_html/lib/auth.php`, `public_html/csrf.php` e `testes/smoke.php` com `testes/casos/`. Enquanto isso não acontecer, esta tarefa fica parada e as Tarefas 1 a 8 já entregam a frente 3 funcionando sozinha.
+
+**O runner da frente 1 não aceita `require` no topo.** Ele varre `testes/casos/*.php`, ordena por nome e roda **cada caso num processo PHP separado**, com pasta de configuração e de uploads temporárias próprias, e não carrega `lib/` nenhuma: quem carrega é cada arquivo de caso. Um `require` no topo do `smoke.php` não teria efeito nenhum e daria a impressão de estar funcionando. A fusão certa é o `testes/smoke-f3.php` virar `testes/casos/85-crm.php`.
 
 **Files:**
-- Modify: `testes/smoke.php` (arquivo da frente 1; a costura é o único momento em que a frente 3 encosta nele, e sob acordo)
+- Create: `testes/casos/85-crm.php` (a partir de `testes/smoke-f3.php`)
 - Delete: `testes/apoio-f1.php`, `testes/smoke-f3.php`
 - Modify: `public_html/enviar.php`, `public_html/reenviar.php` (requires diretos)
+- Não modificar: `testes/smoke.php`, que é da frente 1 e não precisa de mudança nenhuma
 
 **Interfaces:**
-- Consumes: `db()`, `e()`, `agora()`, `config_ler()`, `config_gravar()`, `csrf_token()`, `csrf_validar()` reais, da frente 1.
-- Produces: `php testes/smoke.php` verde com as seções da frente 3 dentro, e nenhum arquivo de apoio sobrando.
+- Consumes: `db()`, `e()`, `agora()`, `config_ler()`, `config_gravar()`, `csrf_token()`, `csrf_validar()` reais da frente 1; os helpers do runner: `site()`, `teste(string, callable)`, `igual($esperado, $obtido)`, `verdade(bool, string)`, `contem(string, string)`, `nao_contem(string, string)`, `pular(string)`.
+- Produces: `php testes/smoke.php` verde com o caso `85-crm.php` dentro, e nenhum arquivo de apoio sobrando.
 
 - [ ] **Passo 1: confirmar que a frente 1 entregou**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
-ls -1 public_html/lib/db.php public_html/lib/auth.php testes/smoke.php
-grep -n "function csrf_validar" public_html/lib/auth.php
-grep -n "CASTELLO_CONFIG" public_html/lib/db.php
-grep -rn 'name="csrf-token"' public_html/index.php public_html/flex.php
+ls -1 public_html/lib/db.php public_html/lib/auth.php public_html/csrf.php testes/smoke.php testes/executar-caso.php
+ls -1 testes/casos/
+php testes/smoke.php; echo "saida f1: $?"
+php testes/smoke-f3.php; echo "saida f3: $?"
 ```
 
-Os cinco precisam existir. Se `lib/db.php` definir `CASTELLO_CONFIG` sem guarda, pedir à frente 1 para trocar por `if (!defined('CASTELLO_CONFIG')) { define(...); }`, porque o smoke precisa apontar o banco para uma pasta temporária antes de carregar a lib. Se o `<meta name="csrf-token">` não estiver no `index.php` e no `flex.php`, pedir à frente 1 para incluir; sem ele o `enviar.php` responde 419 em todo envio.
+As duas suítes precisam passar antes de fundir. Se alguma falhar, corrigir na frente de origem primeiro. Conferir também qual é o nome exato dos helpers de asserção lendo `testes/casos/00-runner.php`: o Passo 2 depende deles.
 
-- [ ] **Passo 2: apontar o smoke para um banco temporário e colar as seções da frente 3**
-
-No topo de `testes/smoke.php`, **antes** de qualquer `require` de `lib/db.php`, acrescentar:
-
-```php
-/* O smoke nunca escreve no banco de producao. */
-if (!defined('CASTELLO_CONFIG')) {
-    define('CASTELLO_CONFIG', sys_get_temp_dir() . '/castello-smoke');
-}
-if (!is_dir(CASTELLO_CONFIG)) {
-    mkdir(CASTELLO_CONFIG, 0777, true);
-}
-foreach (glob(CASTELLO_CONFIG . '/castello.db*') as $velho) {
-    @unlink($velho);
-}
-```
-
-Depois, copiar de `testes/smoke-f3.php` para dentro de `testes/smoke.php`, antes da chamada de resumo que a frente 1 usa:
-
-- os helpers do CRM falso (`crm_falso_url`, `crm_falso_arquivo`, `crm_falso_ultima`, `crm_falso_subir`, `crm_falso_derrubar`, `crm_falso_pedir`) a constante `CRM_FALSO_ULTIMA` e o global `crm_falso_porta`;
-- as funções auxiliares `post_valido()`, `contar_leads()` e `semear_lead()`;
-- as seções `lib/leads.php: gravacao e marcacao`, `testes/crm-falso.php`, `lib/crm.php: o conector`, `lib/email.php: aviso de lead novo`, `enviar.php: o caminho do lead`, `leads_pendentes e leads_reenviar`, `reenviar.php` e `js/formulario.js pelo Node`;
-- os `require_once` de `public_html/lib/leads.php`, `public_html/lib/crm.php`, `public_html/lib/email.php` e `public_html/enviar.php`.
-
-**Não** copiar o bloco de helpers `t_ok`/`t_igual`/`t_secao`/`t_resumo`: o runner da frente 1 já os tem. Se os nomes forem diferentes, trocar as chamadas pelos nomes do runner da frente 1 em vez de duplicar helpers.
-
-**Não** copiar `teste_banco_apagar()` nem `teste_banco_limpar()`: substituir cada `teste_banco_limpar();` por dois `db()->exec(...)` diretos:
-
-```php
-db()->exec('DELETE FROM leads');
-db()->exec("DELETE FROM config WHERE chave LIKE 'crm_%' OR chave IN ('email_aviso','email_dominio','reenvio_chave')");
-```
-
-- [ ] **Passo 3: apagar os arquivos de apoio**
+- [ ] **Passo 2: converter o smoke da frente 3 em caso do runner**
 
 ```bash
-git rm testes/apoio-f1.php testes/smoke-f3.php
+git mv testes/smoke-f3.php testes/casos/85-crm.php
+```
+
+No `testes/casos/85-crm.php`:
+
+1. Apagar o `require_once __DIR__ . '/apoio-f1.php';` e o bloco inteiro de helpers guardado por `if (!function_exists('t_ok'))`, junto com `teste_banco_apagar()` e a chamada a ele. O runner já traz os helpers e já dá banco limpo por processo.
+2. Trocar os `require_once __DIR__ . '/../public_html/...'` pelos caminhos do runner:
+
+```php
+<?php
+declare(strict_types=1);
+
+require_once site() . '/lib/db.php';
+require_once site() . '/lib/auth.php';
+require_once site() . '/lib/leads.php';
+require_once site() . '/lib/crm.php';
+require_once site() . '/lib/email.php';
+require_once site() . '/enviar.php';
+```
+
+3. Envolver cada seção num `teste(...)`, trocando os helpers da frente 3 pelos do runner: `t_secao('X')` vira o nome do `teste`, `t_igual($a, $b)` vira `igual($a, $b)` e `t_ok($nome, $cond, $detalhe)` vira `verdade($cond, $detalhe !== '' ? $detalhe : $nome)`. Exemplo do que sai e do que entra:
+
+```php
+// antes
+t_secao('lib/leads.php: gravacao e marcacao');
+teste_banco_limpar();
+$id = lead_gravar([...]);
+t_ok('lead_gravar devolve um id positivo', $id > 0, 'id = ' . var_export($id, true));
+
+// depois
+teste('lead_gravar grava o lead com status pendente', function (): void {
+    limpar_leads();
+    $id = lead_gravar([...]);
+    verdade($id > 0, 'lead_gravar devolveu id = ' . var_export($id, true));
+});
+```
+
+4. Trocar `teste_banco_limpar()` por uma função local no próprio caso, já que o apoio some:
+
+```php
+function limpar_leads(): void
+{
+    db()->exec('DELETE FROM leads');
+    db()->exec("DELETE FROM config WHERE chave LIKE 'crm_%'
+                   OR chave IN ('email_aviso','email_dominio','reenvio_chave')");
+}
+```
+
+5. Trocar `csrf_token()` de mentira pelo real: o `post_valido()` já chama `csrf_token()`, e agora ele vem do `lib/auth.php`. Como o caso roda em CLI e `csrf_validar()` compara com o token da sessão, chamar `auth_iniciar()` uma vez no topo do caso, antes do primeiro `post_valido()`.
+6. Manter intactos os helpers do CRM falso (`crm_falso_porta`, `crm_falso_url`, `crm_falso_arquivo`, `crm_falso_ultima`, `crm_falso_subir`, `crm_falso_derrubar`, `crm_falso_pedir`), a constante `CRM_FALSO_ULTIMA`, o global `crm_falso_porta` e as funções `post_valido()`, `contar_leads()` e `semear_lead()`. Trocar `__DIR__ . '/crm-falso.php'` por `__DIR__ . '/../crm-falso.php'`, porque o caso desceu um nível.
+7. Apagar a linha `exit(t_resumo());` do fim: quem soma e sai é o runner.
+
+- [ ] **Passo 3: apagar o apoio**
+
+```bash
+git rm testes/apoio-f1.php
 ```
 
 - [ ] **Passo 4: trocar os requires guardados por requires diretos**
@@ -2871,7 +3059,7 @@ require_once __DIR__ . '/lib/db.php';
 require_once __DIR__ . '/lib/auth.php';
 ```
 
-E, logo abaixo do bloco de `foreach (['db', 'agora', 'config_ler', 'csrf_validar'] ...)`, apagar esse `foreach` inteiro: com o require direto, a falta de qualquer uma delas já vira erro fatal registrado no log, e a checagem passa a ser ruído.
+E apagar o `foreach (['db', 'agora', 'config_ler', 'csrf_validar'] as $obrigatoria) { ... }` inteiro: com o require direto, a falta de qualquer uma delas já vira erro fatal registrado no log, e a checagem passa a ser ruído.
 
 Em `public_html/reenviar.php`, trocar:
 
@@ -2892,15 +3080,17 @@ require_once __DIR__ . '/lib/db.php';
 
 e apagar o bloco `if (!function_exists('db') || !function_exists('config_ler')) { ... }` inteiro.
 
-- [ ] **Passo 5: rodar o smoke fundido e ver passar**
+- [ ] **Passo 5: rodar a suíte fundida e ver passar**
 
 ```bash
 php testes/smoke.php; echo "codigo de saida: $?"
+php testes/smoke.php 85; echo "so o caso da frente 3: $?"
 php -l public_html/enviar.php
 php -l public_html/reenviar.php
+node testes/formulario.test.js
 ```
 
-Esperado: todas as seções da frente 1 e da frente 3 com `ok`, `codigo de saida: 0`, e `No syntax errors detected` nos dois arquivos.
+Esperado: `85-crm.php` na listagem, `todos os casos passaram`, `codigo de saida: 0`, `No syntax errors detected` nos dois arquivos e `29/29 passaram` no Node.
 
 - [ ] **Passo 6: fechar o ciclo no navegador, ponta a ponta**
 
@@ -2911,31 +3101,32 @@ php -S localhost:8000 -t public_html
 Com o site rodando, no navegador:
 
 1. Abrir `http://localhost:8000/?utm_source=instagram&utm_campaign=flex-setembro`.
-2. No console, conferir `sessionStorage.getItem('castello_utm')`.
-3. Navegar para `http://localhost:8000/flex.php` sem parâmetro nenhum.
-4. Abrir o formulário, esperar mais de 3 segundos, preencher nome, WhatsApp e o que busca, e enviar.
-5. Conferir que a tela de sucesso diz `Pedido enviado`.
-6. No terminal, conferir o lead e a utm que sobreviveram à navegação:
+2. Na aba Rede, conferir que **não houve** chamada a `csrf.php` só por carregar a página, e que nenhum cookie de sessão foi entregue.
+3. No console, conferir `sessionStorage.getItem('castello_utm')`.
+4. Navegar para `http://localhost:8000/flex.php` sem parâmetro nenhum.
+5. Abrir o formulário. Agora sim deve aparecer uma chamada a `csrf.php` respondendo 200 com `{"token":"..."}` e `Cache-Control: private, no-store`. Conferir que `document.querySelector('#quoteForm [name=csrf]').value` está preenchido.
+6. Fechar e reabrir o modal: **nenhuma** chamada nova a `csrf.php`.
+7. Esperar mais de 3 segundos, preencher nome, WhatsApp e o que busca, e enviar. A tela de sucesso deve dizer `Pedido enviado`.
+8. No terminal, conferir o lead e a utm que sobreviveram à navegação:
 
 ```bash
-php -r "define('CASTELLO_CONFIG', sys_get_temp_dir() . '/castello-smoke'); require 'public_html/lib/db.php'; var_dump(db()->query('SELECT id, nome, pagina, utm_source, utm_campaign, crm_status FROM leads ORDER BY id DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC));"
+php -r "define('CASTELLO_CONFIG', __DIR__ . '/config'); require 'public_html/lib/db.php'; var_dump(db()->query('SELECT id, nome, pagina, utm_source, utm_campaign, crm_status FROM leads ORDER BY id DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC));"
 ```
 
 Esperado: `pagina` igual a `/flex.php`, `utm_source` igual a `instagram`, `utm_campaign` igual a `flex-setembro`, `crm_status` igual a `desativado` (porque `crm_ativo` ainda é `0`).
 
-7. Enviar de novo, agora clicando no botão em menos de 3 segundos. A tela de sucesso deve aparecer do mesmo jeito, porque o JS espera o tempo faltante antes de postar, e um lead novo deve ter sido gravado.
+9. Enviar de novo, agora clicando em menos de 3 segundos. A tela de sucesso deve aparecer do mesmo jeito, porque o JS espera o tempo faltante antes de postar, e um lead novo deve ter sido gravado.
+10. Renomear `public_html/csrf.php` por um minuto, recarregar, abrir o modal e conferir o caminho de falha: mensagem de erro no formulário, `enviar.php` não chamado. Devolver o nome depois.
 
-- [ ] **Passo 7: pedir à frente 1 as três configurações que faltam**
+- [ ] **Passo 7: conferir as três configurações do conector**
 
-Abrir um item na costura para que `migrar.php` semeie estas chaves em `config`, além das da tabela 2.1 do contrato:
+O contrato já traz `crm_timeout`, `reenvio_chave` e `email_dominio`. Confirmar que o `migrar.php` da frente 1 semeou as três:
 
-| Chave | Valor inicial | Para que serve |
-|---|---|---|
-| `crm_timeout` | `10` | Segundos antes de desistir do CRM |
-| `reenvio_chave` | vazio | Chave do `reenviar.php` por URL. Vazia mantém o caminho web fechado |
-| `email_dominio` | `castellomadeiras.com.br` | Domínio do remetente do aviso |
+```bash
+php -r "define('CASTELLO_CONFIG', __DIR__ . '/config'); require 'public_html/lib/db.php'; foreach (['crm_timeout','reenvio_chave','email_dominio'] as \$c) { echo \$c, ' = ', var_export(config_ler(\$c), true), PHP_EOL; }"
+```
 
-Nenhuma delas bloqueia: o código funciona com o padrão quando a chave não existe.
+Esperado: `crm_timeout = '10'`, `reenvio_chave = ''` (caminho web fechado, que é o padrão seguro) e `email_dominio = 'castellomadeiras.com.br'`. Nenhuma delas bloqueia: o código funciona com o padrão quando a chave não existe.
 
 - [ ] **Passo 8: validar o e-mail de verdade no servidor**
 
@@ -2946,12 +3137,13 @@ Na EreHost, com o site publicado, enviar um lead pelo formulário e confirmar qu
 ```bash
 git add -A testes public_html/enviar.php public_html/reenviar.php
 git commit -F - <<'MSG'
-chore(f3): funde o smoke da frente 3 e remove o apoio temporario
+chore(f3): vira caso do runner e remove o apoio temporario
 
-As secoes de leads, CRM, e-mail, enviar.php, reenvio e JS passam a rodar
-dentro de testes/smoke.php, contra a lib real da frente 1 e um banco em pasta
-temporaria. testes/apoio-f1.php e testes/smoke-f3.php saem do repositorio e os
-requires guardados de enviar.php e reenviar.php viram requires diretos.
+O smoke da frente 3 passa a ser testes/casos/85-crm.php, no formato do runner
+da frente 1, que roda cada caso em processo separado com banco proprio. Nada
+e acrescentado ao topo de testes/smoke.php, que nao carrega lib nenhuma.
+testes/apoio-f1.php sai do repositorio e os requires guardados de enviar.php e
+reenviar.php viram requires diretos.
 
 Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>
 MSG
@@ -2969,6 +3161,7 @@ php testes/smoke-f3.php
 
 # ciclo de teste depois da costura
 php testes/smoke.php
+php testes/smoke.php 85   # so o caso da frente 3
 
 # so os testes do JS
 node testes/formulario.test.js
@@ -3003,22 +3196,20 @@ php -S localhost:8000 -t public_html
 
 ## Pontos em que o contrato ou a spec ficaram curtos
 
-Nada aqui muda o contrato por conta própria. São perguntas para a sessão de costura.
+Os nove pontos levantados na primeira versão deste plano foram todos respondidos. Oito viraram texto no contrato; um foi resolvido de outro jeito, melhor que o proposto; dois seguem em aberto por escolha.
 
-1. **O `csrf` precisa de um lugar na página e o contrato não deu.** A seção 6.1 diz que o `csrf` é "campo oculto impresso pelo PHP", mas quem escreve `index.php` e `flex.php` é a frente 1, e a frente 3 não pode tocar neles. O plano resolve lendo o token de `<meta name="csrf-token" content="...">` e injetando o campo pelo JS. A frente 1 precisa imprimir esse `<meta>` nas duas páginas. Sem ele, todo envio volta 419.
+**Resolvidos no contrato, seção 6.1 e seção 7**
 
-2. **O nome do honeypot mudou e a marcação não sabe.** O contrato chama o campo de `empresa`; o `index.html` atual usa `_gotcha` (linha 746). O plano aceita os dois no servidor e manda os dois pelo JS. A costura deve escolher um nome e deixar só ele.
+1. **De onde vem o `csrf`.** A proposta original era uma metatag no `<head>`. A frente 1 apontou o problema: token no HTML obriga `Cache-Control: private, no-store` em toda página do site, senão um cache compartilhado (LiteSpeed ou CDN) entrega o token de um visitante para outro. Com tráfego pago, página de destino incacheável é custo permanente. A solução que ficou é um endereço próprio, `public_html/csrf.php`, da frente 1, buscado pelo JS **só na abertura do modal**. As páginas seguem cacheáveis, ninguém recebe cookie de sessão só por ler o site, e o custo é uma requisição pequena para quem realmente abre o formulário. Segue sendo o acoplamento entre as frentes 1 e 3: sem o `csrf.php`, todo envio volta 419.
+2. **Honeypot com dois nomes.** O contrato aceita `empresa` e `_gotcha` até a costura unificar. Depois dela, só `empresa`.
+3. **Três chaves novas em `config`:** `crm_timeout`, `reenvio_chave` e `email_dominio`, todas com padrão no código.
+4. **`reenviar.php`** entrou na divisão de arquivos da frente 3.
+5. **Recusa silenciosa** responde `{"ok":true,"id":0}`.
+6. **Time-trap com relógio adiantado** passa, e o contrato diz por quê.
+7. **O runner de teste é da frente 1** e roda cada caso em processo separado. A fusão é o `smoke-f3.php` virar `testes/casos/85-crm.php`, não um `require` no topo do `smoke.php`. A Tarefa 9 está escrita assim.
 
-3. **Faltam três chaves em `config`.** `crm_timeout` (sem ela, o teste de tempo esgotado esperaria 10 segundos), `reenvio_chave` (sem ela o `reenviar.php` por URL fica fechado, que é o padrão seguro) e `email_dominio` (para o `From` do aviso). Todas com padrão no código, nenhuma bloqueia.
+**Segue em aberto, por escolha**
 
-4. **O `reenviar.php` não está na divisão de arquivos.** A seção 7 do contrato lista `enviar.php` para a frente 3, mas não um arquivo para a rotina de reenvio, que a seção 6 da spec exige ("disparada por cron da hospedagem ou por uma chamada protegida por chave"). O plano cria `public_html/reenviar.php` como arquivo da frente 3. Nenhuma outra frente escreve nele.
-
-5. **O contrato não diz o que responder no sucesso falso.** A seção 6.2 manda responder "sucesso falso" para honeypot e time-trap, e a 6.3 define o sucesso como `{"ok":true,"id":42}`. O plano responde `{"ok":true,"id":0}`. O `id` zero é a única marca, e ela não vaza nada para o robô.
-
-6. **O contrato não diz o que é resposta inválida do CRM.** A tarefa fala em tratar "resposta inválida" mas o contrato não define. O plano trata como inválido todo corpo que não seja JSON válido em resposta 2xx, devolvendo `crm_resposta_invalida` com `ok = false`. Se o CRM escolhido responder texto puro em caso de sucesso, isso vira falso negativo e a regra precisa virar configuração.
-
-7. **O time-trap depende do relógio do visitante.** O contrato manda comparar o `Date.now()` do navegador com a hora do envio. Relógio adiantado dá diferença negativa. O plano deixa passar nesse caso, porque perder lead real é pior que aceitar um robô que já passou pelo honeypot. Vale confirmar a escolha.
-
-8. **Não há limite de envios por IP.** Nem o contrato nem a spec pedem, e o honeypot com o time-trap dá conta do robô comum, mas um envio repetido de propósito enche a tabela `leads` e a caixa de e-mail da Castello. Fica registrado como candidato para depois do lançamento, não como escopo desta frente.
-
-9. **A spec manda o e-mail sair "na hora", em linha com o envio.** Com `mail()` lento, o visitante espera. Na EreHost isso costuma ser instantâneo. Se no servidor o envio passar de um segundo, a saída é passar o e-mail para a rotina do cron, o que muda o passo 5 da seção 6 da spec.
+8. **O contrato não define o que é resposta inválida do CRM.** O plano trata como inválido todo corpo que não seja JSON válido em resposta 2xx, devolvendo `crm_resposta_invalida` com `ok = false`. Se o CRM escolhido responder texto puro no sucesso, isso vira falso negativo e a regra precisa virar configuração. Só dá para fechar quando a Castello disser qual é o CRM.
+9. **Não há limite de envios por IP.** O honeypot com o time-trap dá conta do robô comum, mas envio repetido de propósito enche a tabela `leads` e a caixa de e-mail da Castello. Fica como candidato para depois do lançamento, fora do escopo desta frente.
+10. **A spec manda o e-mail sair em linha com o envio.** Com `mail()` lento, o visitante espera. Na EreHost costuma ser instantâneo. Se no servidor passar de um segundo, a saída é passar o e-mail para a rotina do cron, o que muda o passo 5 da seção 6 da spec.
