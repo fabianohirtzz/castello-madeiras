@@ -134,13 +134,14 @@ CREATE TABLE IF NOT EXISTS faq (
 );
 
 CREATE TABLE IF NOT EXISTS passos (
-  id       INTEGER PRIMARY KEY,
-  contexto TEXT NOT NULL CHECK (contexto IN ('pronta','flex')),
-  titulo   TEXT NOT NULL,
-  texto    TEXT,
-  imagem   TEXT,
-  ativo    INTEGER NOT NULL DEFAULT 1,
-  ordem    INTEGER NOT NULL DEFAULT 0
+  id         INTEGER PRIMARY KEY,
+  contexto   TEXT NOT NULL CHECK (contexto IN ('pronta','flex')),
+  titulo     TEXT NOT NULL,
+  texto      TEXT,
+  imagem     TEXT,
+  imagem_alt TEXT,
+  ativo      INTEGER NOT NULL DEFAULT 1,
+  ordem      INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS blocos (
@@ -427,13 +428,23 @@ O HTML impresso por cada partial tem que ser **idêntico** ao que está hoje no 
 | `ts` | JS, `Date.now()` na abertura do formulário | sim |
 | `csrf` | campo oculto, preenchido pelo JS a partir da metatag | sim |
 
-**De onde o JS tira o token de CSRF.** A **frente 1 imprime esta metatag no `<head>` de toda página que tem formulário**:
+**De onde o JS tira o token de CSRF.** De um endereço próprio, `public_html/csrf.php`, escrito pela **frente 1**:
 
 ```php
-<meta name="csrf-token" content="<?= e(csrf_token()) ?>" />
+<?php
+declare(strict_types=1);
+require __DIR__ . '/lib/auth.php';
+auth_iniciar();
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: private, no-store');
+echo json_encode(['token' => csrf_token()]);
 ```
 
-Isto não é opcional. A frente 3 não pode escrever em `index.php` nem em `flex.php`, então sem a metatag todo envio volta 419 e nada funciona. É o único acoplamento duro entre as duas frentes.
+O `js/formulario.js` busca o token **quando o visitante abre o modal**, não no carregamento da página, e preenche o campo oculto. Se a busca falhar, o formulário mostra erro antes de deixar enviar, em vez de mandar e tomar 419.
+
+**Por que não uma metatag no `<head>`.** Seria mais simples, mas o token é por sessão: uma página que carrega token no HTML não pode ser guardada em cache compartilhado, sob pena de o LiteSpeed ou um CDN entregar o token de um visitante para outro. Isso obrigaria `Cache-Control: private, no-store` em toda página do site. A Castello vai investir em tráfego pago, então cada página de destino ser incacheável é um custo permanente e direto no que eles estão pagando para trazer gente. Com o endereço à parte, as páginas continuam cacheáveis por inteiro, nenhum visitante recebe cookie de sessão só por ler o site, e o custo é uma requisição pequena, só para quem realmente abre o formulário.
+
+Este é o acoplamento entre as frentes 1 e 3: sem o `csrf.php`, todo envio volta 419.
 
 **Honeypot, nome de transição.** O contrato define `empresa`, mas o `index.html` de hoje usa `_gotcha`. Até a costura unificar, o `enviar.php` aceita os dois e recusa se qualquer um vier preenchido, e o JS envia os dois vazios. Depois da costura, só `empresa` permanece.
 
@@ -475,12 +486,20 @@ Nenhuma frente escreve arquivo de outra.
 
 | Frente | Escreve |
 |---|---|
-| 1 | `lib/db.php` `lib/conteudo.php` `lib/auth.php` `lib/upload.php` `lib/schema.sql` `partials/` `painel/` `index.php` `flex.php` `migrar.php` |
+| 1 | `lib/db.php` `lib/conteudo.php` `lib/auth.php` `lib/upload.php` `lib/schema.sql` `partials/` `painel/` `index.php` `flex.php` `csrf.php` `migrar.php` `testes/smoke.php` |
 | 2 | `css/style.css` `js/main.js` `front/home.html` `front/flex.html` |
 | 3 | `enviar.php` `reenviar.php` `lib/leads.php` `lib/crm.php` `lib/email.php` `testes/crm-falso.php` `js/formulario.js` |
 
 A frente 2 **não** toca em `index.php` nem em `flex.php`. Entrega marcação estática em `front/`, que a costura converte.
 A frente 3 **não** toca em `js/main.js`. O JS do formulário vive em `js/formulario.js`, carregado à parte.
+
+### 7.0 Dono do runner de teste e formato dos casos
+
+O `testes/smoke.php` é da **frente 1**, e roda cada caso num processo PHP separado, com pasta de configuração e de uploads temporárias próprias. Isso existe para que um teste não contamine o outro pelo banco.
+
+Consequência para a frente 3: **não acrescente `require` no topo do `smoke.php`**. O runner não carrega `lib/` nenhuma; quem carrega é cada caso. A fusão correta é o `testes/smoke-f3.php` virar um arquivo de caso, `testes/casos/85-crm.php`, no formato que o runner da frente 1 espera. Está escrito assim na frente 4 para a costura não errar.
+
+O `migrar.php` fica em `public_html/` e é da frente 1.
 
 ### 7.1 O formulário já existe no `js/main.js`, e isso é um cruzamento
 

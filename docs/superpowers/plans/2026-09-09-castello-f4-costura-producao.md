@@ -59,9 +59,13 @@ php testes/smoke-f3.php; echo "saida f3: $?"
 
 Esperado: as duas passam. Se alguma falha, pare e corrija na frente de origem antes de fundir.
 
-- [ ] **Step 2: Mover os testes da frente 3 para dentro do runner único**
+- [ ] **Step 2: Converter o `smoke-f3.php` num arquivo de caso**
 
-Copie cada bloco de teste de `testes/smoke-f3.php` para `testes/smoke.php`, mantendo a mesma função de asserção. Remova o cabeçalho e o rodapé duplicados do arquivo da frente 3. Remova também o arquivo de apoio que a frente 3 usava para simular `db()` e `csrf_validar()`, porque a `lib` real já existe.
+Não copie os testes para dentro do `smoke.php` e **não acrescente `require` no topo dele**. O runner da frente 1 despacha cada caso num processo PHP separado, com pasta de configuração e de uploads temporárias próprias, e não carrega `lib/` nenhuma: quem carrega é cada arquivo de caso. Um `require` no topo do runner não teria efeito e daria a impressão de estar funcionando.
+
+A fusão certa é transformar `testes/smoke-f3.php` em `testes/casos/85-crm.php`, no formato que os demais casos usam: o próprio arquivo carrega o que precisa de `lib/`, declara seus testes e devolve o resultado ao runner.
+
+Remova o `testes/apoio-f1.php`, que a frente 3 usava para simular `db()`, `e()`, `agora()`, `config_ler()`, `config_gravar()`, `csrf_token()` e `csrf_validar()` enquanto a frente 1 não existia. Troque os `require` guardados por `function_exists` pelos `require` diretos da `lib` real.
 
 - [ ] **Step 3: Rodar a suíte fundida**
 
@@ -74,7 +78,8 @@ Esperado: todos os testes das duas frentes passam, saída zero. O teste de backu
 - [ ] **Step 4: Apagar o arquivo antigo e commitar**
 
 ```bash
-git rm testes/smoke-f3.php
+git mv testes/smoke-f3.php testes/casos/85-crm.php
+git rm testes/apoio-f1.php
 git add testes/smoke.php
 git commit -m "$(printf 'test: funde a suite da frente 3 no runner unico\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>')"
 ```
@@ -386,7 +391,7 @@ git commit -m "$(printf 'feat: formulario ligado nas duas paginas com captura de
 
 ```php
 teste('conteudo real migrou por inteiro', function () {
-    $esperado = ['modelos' => 4, 'portfolio' => 5, 'avaliacoes' => 14, 'videos' => 11,
+    $esperado = ['modelos' => 4, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11,
                  'faq' => 7, 'passos' => 5];
     foreach ($esperado as $tabela => $quantos) {
         $tem = (int) db()->query("SELECT COUNT(*) FROM {$tabela}")->fetchColumn();
@@ -397,7 +402,7 @@ teste('conteudo real migrou por inteiro', function () {
 });
 ```
 
-Os números saem da seção 5 da spec: 4 modelos, 5 itens de portfólio, 14 avaliações reais do Google, 11 vídeos, 7 perguntas de FAQ, 5 passos.
+Os números saem da seção 5 da spec: 4 modelos, 6 itens de portfólio, 14 avaliações reais do Google, 11 vídeos, 7 perguntas de FAQ, 5 passos.
 
 - [ ] **Step 2: Rodar**
 

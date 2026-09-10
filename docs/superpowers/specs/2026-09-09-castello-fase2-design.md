@@ -202,7 +202,7 @@ O protótipo não tem conteúdo de exemplo. O que está no HTML hoje é material
 | Tabela | Origem no protótipo | Quantidade |
 |---|---|---|
 | `modelos` (modalidade `pronta`) | seção `#modelos`, `index.html:222` | 4, com foto real e alt escrito |
-| `portfolio` | seção `#portfolio`, `index.html:294` | 5 casas entregues |
+| `portfolio` | seção `#portfolio`, `index.html:294` | 6 casas entregues |
 | `avaliacoes` | seção `#depoimentos`, `index.html:391` | 14 avaliações reais do Google, nome e texto completos |
 | `videos` | seção `#instagram`, `index.html:541` | 11 vídeos reais com poster já gerado |
 | `faq` (contexto `geral`) | seção `#faq`, `index.html:574` | 7 perguntas, cada uma com ícone próprio |
