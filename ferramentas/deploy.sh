@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 # Deploy do site Castello para o servidor de teste, por FTP.
 #
-# Sobe tudo que está versionado em public_html/ (mais lib/caminho-config.php,
-# que é ignorado pelo git e só existe para o servidor). Mantém um manifesto
-# local com o hash de cada arquivo enviado, para só reenviar o que mudou.
+# Sobe tudo que está versionado em public_html/, menos o migrar.php (que só
+# pode existir no servidor durante a instalação e é apagado em seguida), mais
+# o ferramentas/caminho-config.servidor.php, que vai para lib/caminho-config.php
+# no servidor e diz onde fica o config/ lá. Mantém um manifesto local com o
+# hash de cada arquivo enviado, para só reenviar o que mudou.
 #
 # Uso:
-#   ferramentas/deploy.sh            envia o que mudou
-#   ferramentas/deploy.sh --tudo     ignora o manifesto e reenvia tudo
-#   ferramentas/deploy.sh --listar   só mostra o que seria enviado
+#   ferramentas/deploy.sh                envia o que mudou
+#   ferramentas/deploy.sh --tudo         ignora o manifesto e reenvia tudo
+#   ferramentas/deploy.sh --listar       só mostra o que seria enviado
+#   ferramentas/deploy.sh --com-migrar   inclui o migrar.php (só na instalação)
 #
 # Credenciais em .credenciais-deploy (ignorado pelo git):
 #   FTP_HOST, FTP_USER, FTP_PASS, FTP_RAIZ (pasta remota, ex: /castello), URL
@@ -30,15 +33,21 @@ MODO="${1:-}"
 [[ "$MODO" == "--tudo" ]] && : > "$MANIFESTO"
 touch "$MANIFESTO"
 
-# Lista de arquivos: versionados em public_html/ mais o caminho-config do servidor.
-mapfile -t ARQUIVOS < <(git ls-files public_html)
-[[ -f public_html/lib/caminho-config.php ]] && ARQUIVOS+=("public_html/lib/caminho-config.php")
+# Cada entrada é "local|remoto". O remoto é relativo à raiz do site.
+ENTRADAS=()
+while IFS= read -r arquivo; do
+  [[ "$arquivo" == "public_html/migrar.php" && "$MODO" != "--com-migrar" ]] && continue
+  ENTRADAS+=("$arquivo|${arquivo#public_html/}")
+done < <(git ls-files public_html)
+[[ -f ferramentas/caminho-config.servidor.php ]] \
+  && ENTRADAS+=("ferramentas/caminho-config.servidor.php|lib/caminho-config.php")
 
 enviados=0; pulados=0; falhas=0
-for arquivo in "${ARQUIVOS[@]}"; do
+for entrada in "${ENTRADAS[@]}"; do
+  arquivo="${entrada%%|*}"
+  remoto="${entrada#*|}"
   [[ -f "$arquivo" ]] || continue
   hash="$(md5sum "$arquivo" | cut -d' ' -f1)"
-  remoto="${arquivo#public_html/}"
 
   if grep -qF "$hash  $arquivo" "$MANIFESTO"; then
     pulados=$((pulados + 1)); continue
