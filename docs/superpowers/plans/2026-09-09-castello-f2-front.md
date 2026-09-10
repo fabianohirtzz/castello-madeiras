@@ -1058,7 +1058,7 @@ Entrega a seção 3 da spec 7.2: o que é a modalidade, com o vídeo explicativo
 
 **Copy e vídeo provisórios.** Texto escrito a partir do material do Instagram. O vídeo é o mesmo `insta-04.mp4` usado na home, marcando o lugar do explicativo definitivo. Quando o vídeo real chegar e for horizontal, troque `vexp--reel` por `vexp--wide` na `<figure>`.
 
-- [ ] **Step 1: Inserir a seção**
+- [x] **Step 1: Inserir a seção**
 
 Em `front/flex.html`, logo depois de
 
@@ -1104,7 +1104,7 @@ cole:
   <div class="facet facet--sand" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Verificar no navegador**
+- [x] **Step 2: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#o-que-e` e `browser_take_screenshot` em `f2-t6-1440.png`. Olhe: texto à esquerda com o telhadinho vermelho em cada item da lista, vídeo vertical à direita limitado a 330px, legenda cinza abaixo dele, e o telhado creme recortando a saída da seção.
@@ -1116,7 +1116,7 @@ cole:
 8. Em 1440px, `browser_click` no link "A Flex" da nav. Esperado: rola até a seção com o título visível abaixo da nav fixa.
 9. `browser_press_key` `Tab` até o vídeo e `browser_press_key` `Space`. Esperado: o vídeo toca pelo teclado, com anel de foco visível no player.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
