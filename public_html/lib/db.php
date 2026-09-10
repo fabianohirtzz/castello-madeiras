@@ -56,6 +56,52 @@ if (is_file(CASTELLO_CONFIG . '/segredos.php')) {
 }
 
 /**
+ * Colunas que o schema.sql cria mas que um banco antigo pode nao ter.
+ * tabela => coluna => tipo da coluna no ALTER TABLE.
+ */
+const CASTELLO_COLUNAS_NOVAS = [
+    'leads' => [
+        'prazo'         => 'TEXT',
+        'crm_pessoa_id' => 'INTEGER',
+    ],
+];
+
+/**
+ * Acrescenta as colunas que faltam num banco que ja existe.
+ *
+ * CREATE TABLE IF NOT EXISTS nao mexe em tabela ja criada, entao um banco em
+ * producao nunca ganharia coluna nova so pelo schema.sql. Isto mora aqui, e
+ * nao no migrar.php, porque o migrar.php e apagado do servidor depois da
+ * instalacao e a migracao nunca chegaria la.
+ *
+ * Roda em toda conexao, entao precisa ser barato e idempotente.
+ *
+ * @return array<int,string> nomes das colunas acrescentadas nesta chamada
+ */
+function db_garantir_colunas(PDO $pdo): array
+{
+    $acrescentadas = [];
+
+    foreach (CASTELLO_COLUNAS_NOVAS as $tabela => $colunas) {
+        $info = $pdo->query('PRAGMA table_info(' . $tabela . ')')->fetchAll(PDO::FETCH_ASSOC);
+        if ($info === []) {
+            continue; // tabela ainda nao existe; o schema.sql cuida dela
+        }
+        $existentes = array_column($info, 'name');
+
+        foreach ($colunas as $coluna => $tipo) {
+            if (in_array($coluna, $existentes, true)) {
+                continue;
+            }
+            $pdo->exec('ALTER TABLE ' . $tabela . ' ADD COLUMN ' . $coluna . ' ' . $tipo);
+            $acrescentadas[] = $coluna;
+        }
+    }
+
+    return $acrescentadas;
+}
+
+/**
  * Chaves de config criadas na primeira abertura do banco. Valores do contrato.
  * reenvio_chave nao esta aqui porque e sorteada na instalacao.
  */
@@ -97,6 +143,8 @@ function db(): PDO
         throw new RuntimeException('nao consegui ler lib/schema.sql');
     }
     $pdo->exec($schema);
+
+    db_garantir_colunas($pdo);
 
     $inserir = $pdo->prepare('INSERT OR IGNORE INTO config (chave, valor) VALUES (?, ?)');
     foreach (CASTELLO_CONFIG_PADRAO as $chave => $valor) {

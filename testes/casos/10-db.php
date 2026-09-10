@@ -123,3 +123,32 @@ teste('config_gravar cria e depois atualiza a chave', function (): void {
     config_gravar('teste_chave', 'segundo');
     igual('segundo', config_ler('teste_chave'));
 });
+
+teste('db_garantir_colunas acrescenta o que falta e e idempotente', function (): void {
+    /* Banco em memoria com o leads ANTIGO, sem prazo nem crm_pessoa_id. */
+    $pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdo->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+
+    $acrescentadas = db_garantir_colunas($pdo);
+    sort($acrescentadas);
+    igual(['crm_pessoa_id', 'prazo'], $acrescentadas, 'acrescenta as duas colunas que faltavam');
+
+    $colunas = array_column($pdo->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo existe agora');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe agora');
+
+    /* Segunda passada nao pode falhar nem repetir: roda em toda requisicao. */
+    igual([], db_garantir_colunas($pdo), 'segunda chamada nao acrescenta nada');
+
+    /* O dado que ja estava la sobrevive. */
+    $pdo->exec("INSERT INTO leads (nome, crm_status) VALUES ('Antigo', 'pendente')");
+    $linha = $pdo->query('SELECT * FROM leads')->fetch(PDO::FETCH_ASSOC);
+    igual('Antigo', $linha['nome']);
+    verdade($linha['prazo'] === null, 'coluna nova nasce nula no registro antigo');
+});
+
+teste('o banco real do runner ja tem as colunas novas', function (): void {
+    $colunas = array_column(db()->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo no banco do runner');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id no banco do runner');
+});
