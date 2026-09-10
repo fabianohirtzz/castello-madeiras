@@ -21,6 +21,21 @@ function crm_teste_limpar(): void
     db()->exec('DELETE FROM config');
 }
 
+/** Config minima do Agendor apontando para o servidor falso desta rodada. */
+function crm_teste_config(): void
+{
+    config_gravar('crm_ativo', '1');
+    config_gravar('crm_base', 'http://127.0.0.1:' . crm_falso_porta());
+    config_gravar('crm_funil', '904296');
+    config_gravar('crm_etapa', '1');
+    config_gravar('crm_origem', '2656389');
+    config_gravar('crm_categoria', '4187395');
+    config_gravar('crm_marcador', '[SITE]');
+    config_gravar('crm_responsavel', '');
+    config_gravar('crm_timeout', '10');
+    putenv('CASTELLO_AGENDOR_TOKEN=token-de-teste');
+}
+
 function contar_leads(): int
 {
     return (int) db()->query('SELECT COUNT(*) FROM leads')->fetchColumn();
@@ -32,6 +47,9 @@ function lead_por_id(int $id): array
     return is_array($linha) ? $linha : [];
 }
 
+/* Ainda usada pelos testes de enviar.php/leads_reenviar mais abaixo (o
+   caminho que a Task 6 vai reconectar ao conector novo). O conector do
+   Agendor nao le mais config.crm_mapa_campos. */
 const MAPA_PADRAO = '{"nome":"nome","whatsapp":"telefone","busca":"interesse","modelo":"modelo","cidade":"cidade","mensagem":"observacao","utm_source":"origem","utm_campaign":"campanha","pagina":"pagina"}';
 
 const LEAD_EXEMPLO = [
@@ -40,6 +58,7 @@ const LEAD_EXEMPLO = [
     'busca'        => 'Modelo pronto do catalogo',
     'modelo'       => 'Compacta 39 m2',
     'cidade'       => 'Tubarao / SC',
+    'prazo'        => 'Ate 3 meses',
     'mensagem'     => 'Tenho terreno.',
     'pagina'       => '/index.php',
     'utm_source'   => 'instagram',
@@ -310,102 +329,88 @@ teste('o Agendor falso responde as tres rotas e imita a busca por telefone', fun
 
 /* ================= lib/crm.php: o conector ================= */
 
-teste('crm_enviar recusa sem fazer requisicao quando a config esta errada', function (): void {
-    crm_teste_limpar();
+teste('crm_whatsapp_ddi e crm_whatsapp_busca produzem os dois formatos', function (): void {
+    igual('5548998244494', crm_whatsapp_ddi('(48) 99824-4494'), '11 digitos ganham o 55');
+    igual('554836328743', crm_whatsapp_ddi('(48) 3632-8743'), '10 digitos ganham o 55');
+    igual('5548998244494', crm_whatsapp_ddi('5548998244494'), '13 digitos com 55 ficam como estao');
+    igual('5548998244494', crm_whatsapp_ddi('+55 (48) 99824-4494'), 'pontuacao e o mais sao ignorados');
+    igual('', crm_whatsapp_ddi('123'), 'curto demais nao vira telefone');
+    igual('', crm_whatsapp_ddi(''), 'vazio continua vazio');
 
-    config_gravar('crm_ativo', '0');
-    config_gravar('crm_endpoint', crm_falso_url('ok'));
-    config_gravar('crm_mapa_campos', MAPA_PADRAO);
-    $r = crm_enviar(LEAD_EXEMPLO);
-    falso($r['ok'], 'CRM desligado: ok false');
-    igual('crm_desativado', $r['erro']);
-    igual(0, $r['http']);
-    igual('', $r['resposta']);
-
-    config_gravar('crm_ativo', '1');
-    config_gravar('crm_endpoint', '');
-    igual('crm_sem_endpoint', crm_enviar(LEAD_EXEMPLO)['erro'], 'endpoint vazio');
-
-    config_gravar('crm_endpoint', crm_falso_url('ok'));
-    config_gravar('crm_mapa_campos', 'isso nao e json');
-    igual('crm_mapa_invalido', crm_enviar(LEAD_EXEMPLO)['erro'], 'mapa quebrado');
-
-    config_gravar('crm_mapa_campos', MAPA_PADRAO);
-    config_gravar('crm_cabecalhos', '{quebrado');
-    igual('crm_cabecalhos_invalidos', crm_enviar(LEAD_EXEMPLO)['erro'], 'cabecalhos quebrados');
-    config_gravar('crm_cabecalhos', '{"Authorization":"Bearer segredo-123"}');
+    igual('48998244494', crm_whatsapp_busca('(48) 99824-4494'), 'busca vai sem DDI');
+    igual('48998244494', crm_whatsapp_busca('5548998244494'), 'busca tira o 55 que veio');
+    igual('4836328743', crm_whatsapp_busca('(48) 3632-8743'));
+    igual('', crm_whatsapp_busca('123'));
 });
 
-teste('crm_enviar conversa com o CRM: sucesso, mapa, erro, resposta invalida e tempo', function (): void {
-    $servidor = crm_falso_subir();
-    verdade($servidor !== null, 'servidor do CRM falso subiu de novo');
+teste('crm_payload_pessoa monta o objeto aninhado que o Agendor espera', function (): void {
+    crm_teste_limpar();
+    crm_teste_config();
 
-    try {
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_mapa_campos', MAPA_PADRAO);
-        config_gravar('crm_cabecalhos', '{"Authorization":"Bearer segredo-123"}');
+    $p = crm_payload_pessoa(LEAD_EXEMPLO);
 
-        /* CRM responde 200 */
-        config_gravar('crm_endpoint', crm_falso_url('ok'));
-        $r = crm_enviar(LEAD_EXEMPLO);
-        verdade($r['ok'] === true, 'CRM 200: ok true: ' . json_encode($r));
-        igual(200, $r['http']);
-        verdade($r['erro'] === null, 'CRM 200: erro nulo');
-        contem('CRM-', $r['resposta'], 'CRM 200: guarda a resposta bruta');
+    igual('Fabiano Hirtz', $p['name']);
+    igual('5548998244494', $p['contact']['whatsapp'], 'whatsapp COM DDI: e o que faz o link do CRM funcionar');
+    igual('(48) 99824-4494', $p['contact']['mobile'], 'mobile SEM DDI: e o que a busca encontra depois');
+    igual(2656389, $p['leadOrigin'], 'origem sempre Site');
+    igual(4187395, $p['category']);
+    igual('Tubarao / SC', $p['customFields']['cidade_da_obra']);
+    igual('Ate 3 meses', $p['customFields']['pretende_iniciar_a_obra_em']);
+    igual('flex-setembro', $p['customFields']['anuncio_de_origem'], 'utm_campaign vira anuncio de origem');
+    falso(array_key_exists('ownerUser', $p), 'responsavel vazio nao vai no payload');
 
-        /* o mapa de campos e o cabecalho chegaram certos */
-        config_gravar('crm_endpoint', crm_falso_url('eco'));
-        crm_enviar(LEAD_EXEMPLO);
-        $ultima = crm_falso_ultima();
-        $payload = json_decode($ultima['corpo'] ?? '', true);
-        igual('(48) 99824-4494', $payload['telefone'] ?? null, 'mapa: whatsapp virou telefone');
-        igual('Modelo pronto do catalogo', $payload['interesse'] ?? null, 'mapa: busca virou interesse');
-        igual('instagram', $payload['origem'] ?? null, 'mapa: utm_source virou origem');
-        igual('Tenho terreno.', $payload['observacao'] ?? null, 'mapa: mensagem virou observacao');
-        falso(array_key_exists('utm_medium', (array) $payload), 'mapa nao manda campo fora do mapa');
-        igual('Bearer segredo-123', $ultima['cabecalhos']['authorization'] ?? null, 'cabecalho de autorizacao chegou');
-        verdade(str_starts_with((string) ($ultima['cabecalhos']['content-type'] ?? ''), 'application/json'), 'content-type e json');
+    /* Campo vazio nao pode ir como string vazia. */
+    $magro = crm_payload_pessoa(['nome' => 'So o nome', 'whatsapp' => '48999999999', 'busca' => 'Ainda estou pesquisando']);
+    falso(array_key_exists('cidade_da_obra', $magro['customFields'] ?? []), 'cidade vazia fica de fora');
+    falso(array_key_exists('pretende_iniciar_a_obra_em', $magro['customFields'] ?? []), 'prazo vazio fica de fora');
+    igual('direto', $magro['customFields']['anuncio_de_origem'], 'sem utm vira direto');
 
-        /* campo do mapa que o lead nao tem vira string vazia, nao some */
-        crm_enviar(['nome' => 'So o nome', 'whatsapp' => '48999999999', 'busca' => 'Ainda pesquisando']);
-        $payloadMagro = json_decode(crm_falso_ultima()['corpo'] ?? '', true);
-        igual('', $payloadMagro['cidade'] ?? null, 'campo ausente vai vazio');
+    /* Sem utm_campaign, cai para utm_source. */
+    $comFonte = crm_payload_pessoa(['nome' => 'X', 'whatsapp' => '48999999999', 'utm_source' => 'instagram']);
+    igual('instagram', $comFonte['customFields']['anuncio_de_origem']);
 
-        /* CRM responde 500 */
-        config_gravar('crm_endpoint', crm_falso_url('erro500'));
-        $r = crm_enviar(LEAD_EXEMPLO);
-        falso($r['ok'], 'CRM 500: ok false');
-        igual(500, $r['http']);
-        igual('crm_http', $r['erro']);
-        contem('interno', $r['resposta'], 'CRM 500: guarda o corpo do erro');
+    /* Responsavel configurado entra. */
+    config_gravar('crm_responsavel', '989735');
+    igual('989735', crm_payload_pessoa(LEAD_EXEMPLO)['ownerUser']);
+    config_gravar('crm_responsavel', '');
+});
 
-        /* CRM responde algo que nao e JSON */
-        config_gravar('crm_endpoint', crm_falso_url('invalido'));
-        $r = crm_enviar(LEAD_EXEMPLO);
-        falso($r['ok'], 'CRM invalido: ok false');
-        igual(200, $r['http']);
-        igual('crm_resposta_invalida', $r['erro']);
-        contem('Manutencao', $r['resposta'], 'CRM invalido: guarda o corpo pra diagnostico');
+teste('crm_titulo_negocio segue a convencao do funil', function (): void {
+    crm_teste_config();
 
-        /* CRM estoura o tempo */
-        config_gravar('crm_timeout', '2');
-        config_gravar('crm_endpoint', crm_falso_url('demora', ['seg' => 8]));
-        $inicio = microtime(true);
-        $r = crm_enviar(LEAD_EXEMPLO);
-        $gasto = microtime(true) - $inicio;
-        falso($r['ok'], 'CRM lento: ok false');
-        igual('crm_tempo', $r['erro']);
-        verdade($gasto < 6, 'CRM lento: desistiu perto do limite, gastou ' . round($gasto, 2) . 's');
-        config_gravar('crm_timeout', '10');
-    } finally {
-        crm_falso_derrubar($servidor);
-    }
+    igual('[SITE] - Ate 3 meses - Fabiano Hirtz', crm_titulo_negocio(LEAD_EXEMPLO));
 
-    /* servidor fora do ar: erro de conexao, nao de tempo */
-    config_gravar('crm_endpoint', 'http://127.0.0.1:8799/nada');
-    $r = crm_enviar(LEAD_EXEMPLO);
-    falso($r['ok'], 'CRM fora do ar: ok false');
-    igual('crm_conexao', $r['erro']);
+    $semPrazo = ['nome' => 'Maria Silva', 'busca' => 'Projeto exclusivo', 'prazo' => ''];
+    igual('[SITE] - Projeto exclusivo - Maria Silva', crm_titulo_negocio($semPrazo), 'sem prazo o meio usa a busca');
+
+    $semNada = ['nome' => 'Joao', 'busca' => '', 'prazo' => ''];
+    igual('[SITE] - Joao', crm_titulo_negocio($semNada), 'sem prazo e sem busca o titulo nao fica com traco solto');
+
+    $marcadorOutro = ['nome' => 'Ana', 'busca' => 'Modelo pronto', 'prazo' => 'Imediato'];
+    config_gravar('crm_marcador', '[SITE FLEX]');
+    igual('[SITE FLEX] - Imediato - Ana', crm_titulo_negocio($marcadorOutro), 'o marcador vem da config, com colchetes e tudo');
+    config_gravar('crm_marcador', '[SITE]');
+
+    $longo = ['nome' => str_repeat('Wenceslau ', 30), 'prazo' => 'Imediato'];
+    $titulo = crm_titulo_negocio($longo);
+    verdade(mb_strlen($titulo) <= 120, 'titulo cortado em 120: ' . mb_strlen($titulo));
+    verdade(str_starts_with($titulo, '[SITE] - Imediato - '), 'o corte tira do nome, nao do marcador nem do prazo');
+});
+
+teste('crm_descricao_negocio junta o lead num texto legivel e omite o vazio', function (): void {
+    $d = crm_descricao_negocio(LEAD_EXEMPLO);
+    contem('Modelo pronto do catalogo', $d);
+    contem('Compacta 39 m2', $d);
+    contem('Tubarao / SC', $d);
+    contem('Ate 3 meses', $d);
+    contem('Tenho terreno.', $d);
+    contem('/index.php', $d);
+    contem('instagram', $d, 'a campanha aparece na descricao');
+
+    $magro = crm_descricao_negocio(['nome' => 'So o nome', 'busca' => 'Ainda estou pesquisando']);
+    nao_contem('Cidade', $magro, 'linha de campo vazio nao aparece');
+    nao_contem('Mensagem', $magro);
+    contem('Ainda estou pesquisando', $magro);
 });
 
 /* ================= lib/email.php: aviso de lead novo ================= */
