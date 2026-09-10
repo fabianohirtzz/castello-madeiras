@@ -34,3 +34,7 @@ public_html/lib/caminho-config.php
 
 # Worktrees dos agentes (efemeros)
 .claude/
+
+# Manifesto do deploy por FTP
+.deploy-manifesto
+.deploy-manifesto.tmp
