@@ -633,7 +633,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 No servidor de teste a raiz do subdomínio é `/home/freelain/domains/tohospedando.com.br/public_html/castello`, e a pasta acima é a raiz pública do próprio `tohospedando.com.br`. Por isso o config vai para `/home/freelain/domains/tohospedando.com.br/castello-config`. O usuário de FTP está preso ao `public_html` e não consegue criar essa pasta: quem cria é o PHP, dentro de `db()`, com `mkdir` e permissão **0700**.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/10-db.php`:
 
@@ -765,12 +765,12 @@ teste('config_gravar cria e depois atualiza a chave', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 10-db`
 Esperado: erro fatal `Failed opening required .../public_html/lib/db.php`, e o runner encerra com `FALHOU: 10-db.php`.
 
-- [ ] **Passo 3: Criar o `lib/schema.sql`**
+- [x] **Passo 3: Criar o `lib/schema.sql`**
 
 Crie `public_html/lib/schema.sql` com **exatamente** o conteúdo do bloco SQL da seção 2 do contrato, sem alterar nada:
 
@@ -899,7 +899,7 @@ CREATE INDEX IF NOT EXISTS idx_passos_lista    ON passos (contexto, ativo, ordem
 CREATE INDEX IF NOT EXISTS idx_leads_pendentes ON leads (crm_status, criado_em);
 ```
 
-- [ ] **Passo 4: Escrever o `lib/db.php`**
+- [x] **Passo 4: Escrever o `lib/db.php`**
 
 Crie `public_html/lib/db.php`:
 
@@ -1044,7 +1044,7 @@ function config_gravar(string $chave, string $valor): void
 }
 ```
 
-- [ ] **Passo 5: Rodar e ver passar**
+- [x] **Passo 5: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 10-db`
 Esperado: `10-db.php` com 14 ok, 0 falha, 0 pulado.
@@ -1052,7 +1052,7 @@ Esperado: `10-db.php` com 14 ok, 0 falha, 0 pulado.
 Depois rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 6: Commit**
+- [x] **Passo 6: Commit**
 
 ```bash
 git add public_html/lib/schema.sql public_html/lib/db.php testes/casos/10-db.php
