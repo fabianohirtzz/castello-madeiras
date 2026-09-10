@@ -2804,7 +2804,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Detalhe do ambiente que muda o código.** Na linha de comando o PHP não consegue abrir sessão de verdade depois que já houve saída, e o runner imprime antes de rodar o caso. Por isso `auth_iniciar()` só chama `session_start()` quando `headers_sent()` é falso; caso contrário trabalha com `$_SESSION` como array em memória. No navegador, que é o que importa, a sessão real sempre abre, porque `auth_iniciar()` roda antes de qualquer saída.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/60-auth.php`:
 
@@ -2937,12 +2937,12 @@ teste('o destino do login e relativo, para funcionar em subpasta', function (): 
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 60-auth`
 Esperado: erro fatal `Failed opening required .../public_html/lib/auth.php`.
 
-- [ ] **Passo 3: Escrever o `lib/auth.php`**
+- [x] **Passo 3: Escrever o `lib/auth.php`**
 
 ```php
 <?php
@@ -3133,7 +3133,7 @@ function csrf_validar(?string $token): bool
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 60-auth`
 Esperado: 12 ok, 0 falha, 0 pulado.
@@ -3141,7 +3141,7 @@ Esperado: 12 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 5: Commit**
+- [x] **Passo 5: Commit**
 
 ```bash
 git add public_html/lib/auth.php testes/casos/60-auth.php
