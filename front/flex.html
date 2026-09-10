@@ -317,6 +317,65 @@
   <!-- faceta: transição para as perguntas -->
   <div class="facet facet--sand" aria-hidden="true"></div>
 
+  <!-- ============ FAQ DA CASTELO FLEX ============ -->
+  <!-- Perguntas provisórias: migram para `faq` com contexto flex. Ícones do conjunto fechado. -->
+  <section class="section faq" id="faq" aria-label="Perguntas frequentes sobre a Castelo Flex">
+    <div class="container">
+      <div class="section__head faq__head">
+        <span class="eyebrow reveal">Perguntas frequentes</span>
+        <h2 class="section__title reveal">O que todo mundo pergunta<br>antes de fechar a Flex.</h2>
+        <p class="section__lead reveal">Reunimos as dúvidas que mais aparecem sobre a modalidade semipronta. Ficou com outra pergunta? É só chamar a gente.</p>
+      </div>
+
+      <div class="faq__board reveal" id="faqTabs">
+        <div class="faq__tablist" role="tablist" aria-orientation="vertical" aria-label="Perguntas sobre a Castelo Flex">
+          <button class="faq__tab is-active" type="button" role="tab" id="faq-tab1" aria-selected="true" aria-controls="faq-panel1" aria-label="Em quanto tempo a Castelo Flex fica pronta?" title="Em quanto tempo a Castelo Flex fica pronta?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab2" aria-selected="false" aria-controls="faq-panel2" tabindex="-1" aria-label="O que exatamente vem na entrega da Flex?" title="O que exatamente vem na entrega da Flex?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="9" r="4"/><path d="m12 12-8 8M8 16l2 2M6 18l1.6 1.6"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab3" aria-selected="false" aria-controls="faq-panel3" tabindex="-1" aria-label="Posso mudar a planta da Castelo Flex?" title="Posso mudar a planta da Castelo Flex?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h2M10 12h10M4 18h9M17 18h3"/><circle cx="13" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="2" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab4" aria-selected="false" aria-controls="faq-panel4" tabindex="-1" aria-label="A madeira é a mesma das casas chave na mão?" title="A madeira é a mesma das casas chave na mão?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab5" aria-selected="false" aria-controls="faq-panel5" tabindex="-1" aria-label="Vocês cuidam da fundação e do terreno?" title="Vocês cuidam da fundação e do terreno?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></span>
+          </button>
+        </div>
+
+        <div class="faq__panels">
+          <div class="faq__content is-active" role="tabpanel" id="faq-panel1" aria-labelledby="faq-tab1" tabindex="0">
+            <h3 class="faq__content-title">Em quanto tempo a Castelo Flex fica pronta?</h3>
+            <p class="faq__content-body">A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel2" aria-labelledby="faq-tab2" tabindex="0" hidden>
+            <h3 class="faq__content-title">O que exatamente vem na entrega da Flex?</h3>
+            <p class="faq__content-body">Fundação preparada, estrutura de madeira montada, telhado completo, portas e janelas instaladas. A casa é entregue fechada e trancada no seu terreno. Elétrica, hidráulica, revestimento, piso e pintura ficam por sua conta.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel3" aria-labelledby="faq-tab3" tabindex="0" hidden>
+            <h3 class="faq__content-title">Posso mudar a planta da Castelo Flex?</h3>
+            <p class="faq__content-body">Sim. A planta é ajustada ao seu terreno e à sua rotina antes da produção. Depois que a estrutura entra em fabricação, as mudanças passam a ser de acabamento, que é justamente a parte que fica com você.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel4" aria-labelledby="faq-tab4" tabindex="0" hidden>
+            <h3 class="faq__content-title">A madeira é a mesma das casas chave na mão?</h3>
+            <p class="faq__content-body">É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello há 12 anos. A Flex muda o escopo da entrega, nunca o padrão da construção.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel5" aria-labelledby="faq-tab5" tabindex="0" hidden>
+            <h3 class="faq__content-title">Vocês cuidam da fundação e do terreno?</h3>
+            <p class="faq__content-body">A fundação faz parte da entrega da Flex. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="faq__foot reveal">A Castello fica em Tubarão e atende toda a região, com casas já entregues em diversas cidades de Santa Catarina.
+        <button type="button" class="faq__foot-link" data-quote-open>Tirar uma dúvida sobre a Flex</button>
+      </p>
+    </div>
+  </section>
+
   <!-- ============ CTA BAND / FORMULÁRIO DA FLEX ============ -->
   <section class="cta-band" id="orcamento">
     <div class="container cta-band__inner">

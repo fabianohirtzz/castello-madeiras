@@ -1557,7 +1557,7 @@ Entrega a seção 7 da spec 7.2. Reaproveita o componente de tabs vertical do FA
 
 **Copy provisória.** As cinco perguntas migram para `faq` com contexto `flex`. Os SVG são exatamente os mesmos do FAQ da home, o que garante que o conjunto de ícones continua fechado, como manda a spec 5.3.
 
-- [ ] **Step 1: Inserir o FAQ**
+- [x] **Step 1: Inserir o FAQ**
 
 Em `front/flex.html`, logo depois de
 
@@ -1629,7 +1629,7 @@ e imediatamente **antes** de `<!-- ============ CTA BAND / FORMULÁRIO DA FLEX =
   </section>
 ```
 
-- [ ] **Step 2: Verificar no navegador**
+- [x] **Step 2: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#faq` e `browser_take_screenshot` em `f2-t9-1440.png`. Olhe: rail vertical com cinco ícones à esquerda, o primeiro em vermelho cheio, e o painel branco à direita com a primeira pergunta aberta. Logo abaixo, a faixa vermelha de CTA com o telhado recortando a entrada a partir do creme do FAQ: a emenda que ficou torta na Tarefa 5 agora fecha.
@@ -1643,7 +1643,7 @@ e imediatamente **antes** de `<!-- ============ CTA BAND / FORMULÁRIO DA FLEX =
 10. `browser_click` no botão "Tirar uma dúvida sobre a Flex". Esperado: o modal abre.
 11. Em 1440px, `browser_click` no link "Perguntas" da nav. Esperado: rola até o FAQ.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
