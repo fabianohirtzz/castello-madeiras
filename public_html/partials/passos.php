@@ -1,14 +1,30 @@
 <?php
 /**
- * Passo a passo com imagem sticky. Espera: string $contexto ('pronta' ou 'flex').
+ * Passo a passo. Espera: string $contexto ('pronta' ou 'flex').
+ *
+ * Casa Pronta: scrollytelling com imagem sticky, como no site atual.
+ * Castelo Flex: cartoes numerados sem imagem (.epasso), como a frente 2
+ * desenhou para a pagina Flex.
  */
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/conteudo.php';
 
-$lista_passos = passos($contexto ?? 'pronta');
+$contexto     = $contexto ?? 'pronta';
+$lista_passos = passos($contexto);
 $total_passos = count($lista_passos);
-?>
+
+if ($contexto === 'flex'): ?>
+<div class="epasso__grid">
+<?php foreach ($lista_passos as $i => $p): ?>
+        <article class="epasso reveal">
+          <span class="epasso__num"><?= sprintf('%02d', $i + 1) ?></span>
+          <h3><?= e($p['titulo']) ?></h3>
+          <p><?= e($p['texto']) ?></p>
+        </article>
+<?php endforeach; ?>
+      </div>
+<?php return; endif; ?>
 <!-- véu (mobile): apaga o texto do passo antes dele encostar na imagem sticky -->
         <div class="process__veil" aria-hidden="true"></div>
         <div class="process__media" id="processMedia">

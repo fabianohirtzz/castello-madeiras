@@ -98,3 +98,13 @@ function icone_faq(string $chave): string
 {
     return CASTELLO_ICONES_FAQ[$chave] ?? '';
 }
+
+/**
+ * Texto de bloco com destaque: o trecho entre asteriscos vira
+ * <span class="hl">. Tudo passa por e() antes, entao a marcacao que sai e so
+ * essa. Um asterisco solto fica como esta.
+ */
+function realce(string $texto): string
+{
+    return (string) preg_replace('/\*([^*]+)\*/u', '<span class="hl">$1</span>', e($texto));
+}

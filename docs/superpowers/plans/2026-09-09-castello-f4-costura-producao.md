@@ -96,7 +96,7 @@ git commit -m "$(printf 'test: funde a suite da frente 3 no runner unico\n\nCo-A
 - Consumes: `modelos()`, `portfolio()`, `avaliacoes()`, `videos()`, `faq()`, `passos()`, `bloco()`, `icone_faq()`, `e()` da frente 1.
 - Produces: partials que imprimem a marcação da frente 2 em vez da marcação antiga.
 
-- [ ] **Step 1: Escrever o teste que compara partial e marcação de referência**
+- [x] **Step 1: Escrever o teste que compara partial e marcação de referência**
 
 Adicione a `testes/smoke.php`:
 
@@ -124,7 +124,7 @@ teste('partial de modelos usa a marcacao nova', function () {
 });
 ```
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 ```bash
 php testes/smoke.php
@@ -132,7 +132,7 @@ php testes/smoke.php
 
 Esperado: FALHA, porque os partials ainda imprimem a marcação antiga, ou porque o `front/home.html` ainda não tem os comentários de marcação.
 
-- [ ] **Step 3: Marcar os trechos no `front/`**
+- [x] **Step 3: Marcar os trechos no `front/`**
 
 Envolva cada seção dinâmica de `front/home.html` e `front/flex.html` com comentários de fronteira, para que a costura seja mecânica e verificável:
 
@@ -145,7 +145,7 @@ Envolva cada seção dinâmica de `front/home.html` e `front/flex.html` com come
 <!-- inicio:passos --> ... <!-- fim:passos -->
 ```
 
-- [ ] **Step 4: Reescrever cada partial com a marcação nova**
+- [x] **Step 4: Reescrever cada partial com a marcação nova**
 
 Para cada partial, copie o HTML de dentro dos comentários correspondentes e troque os valores de exemplo pelas chamadas ao banco. Exemplo, `public_html/partials/modelos.php`:
 
@@ -175,7 +175,7 @@ foreach ($lista as $m): ?>
 
 As classes exatas saem do `front/home.html` da frente 2, não deste exemplo. O `if` do preço existe porque a Castelo Flex pode não ter preço definido.
 
-- [ ] **Step 5: Rodar o teste até passar**
+- [x] **Step 5: Rodar o teste até passar**
 
 ```bash
 php testes/smoke.php
@@ -183,7 +183,7 @@ php testes/smoke.php
 
 Esperado: PASSA para os seis partials.
 
-- [ ] **Step 6: Commitar**
+- [x] **Step 6: Commitar**
 
 ```bash
 git add public_html/partials/ front/ testes/smoke.php

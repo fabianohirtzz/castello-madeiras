@@ -25,7 +25,16 @@ teste('partials/modelos.php imprime a grade identica ao site atual', function ()
 });
 
 teste('partials/modelos.php respeita a modalidade recebida', function (): void {
-    igual('<div class="grid grid--models"></div>', norm(parcial('modelos', ['modalidade' => 'flex'])));
+    $flex = parcial('modelos', ['modalidade' => 'flex']);
+    igual(3, substr_count($flex, '<article class="model'));
+    igual(3, substr_count($flex, 'Sob consulta'), 'Flex sem preco imprime Sob consulta');
+    contem('<span class="model__badge">Semipronta</span>', $flex);
+    nao_contem('Compacta', $flex);
+    nao_contem('Chave na mão', $flex);
+
+    db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'flex'");
+    igual('<div class="grid grid--models"></div>', norm(parcial('modelos', ['modalidade' => 'flex'])), 'sem modelo ativo a grade sai vazia');
+    db()->exec("UPDATE modelos SET ativo = 1 WHERE modalidade = 'flex'");
 });
 
 teste('o rotulo do botao de orcamento sai no formato do site atual', function (): void {

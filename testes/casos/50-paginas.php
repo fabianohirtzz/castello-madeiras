@@ -6,21 +6,8 @@ require_once site() . '/lib/auth.php';
 
 banco_com_conteudo();
 
-teste('index.php renderiza a home identica ao index.html original', function (): void {
-    config_gravar('videos_na_home', '11');
-    $novo = render(site() . '/index.php');
-    config_gravar('videos_na_home', '8');
-
-    $velho = file_get_contents(raiz() . '/testes/base/home-original.html');
-    verdade($velho !== false, 'testes/base/home-original.html precisa existir');
-
-    // Sem excecao de alt: a unica diferenca legitima e o caminho da midia, que
-    // norm() desfaz, e o campo oculto de csrf, que tem teste proprio abaixo.
-    // Todo o resto sai byte a byte igual ao prototipo.
-    $novo = (string) preg_replace('#\s*<input type="hidden" name="csrf" value="" />#u', '', $novo);
-
-    igual(norm((string) $velho), norm($novo));
-});
+// A comparacao byte a byte com o index.html do prototipo saiu na costura: a home
+// agora segue a marcacao da fase 2, conferida em 45-front.php e nos testes abaixo.
 
 teste('index.php nao vaza codigo PHP nem aviso do PHP', function (): void {
     $html = render(site() . '/index.php');
@@ -57,6 +44,10 @@ teste('a home traz nav, rodape e modal pelos parciais compartilhados', function 
 });
 
 teste('flex.php renderiza sem erro mesmo com o conteudo da Flex ainda vazio', function (): void {
+    db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'flex'");
+    db()->exec("UPDATE faq SET ativo = 0 WHERE contexto = 'flex'");
+    db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'flex'");
+    db()->exec("UPDATE blocos SET valor = '' WHERE chave LIKE 'flexpg_%'");
     $html = render(site() . '/flex.php');
     contem('<!DOCTYPE html>', $html);
     contem('<header class="nav" id="nav">', $html);
@@ -122,7 +113,7 @@ teste('flex.php monta as oito secoes assim que o conteudo Flex existir', functio
     contem('class="grid grid--models"', $html);
     contem('data-modelo="Flex 30 · 30 m² · R$ 39.900"', $html);
     contem('id="faqTabs"', $html);
-    contem('id="processSteps"', $html);
+    contem('class="epasso__grid"', $html, 'na Flex os passos saem como cartoes');
     contem('<source src="uploads/videos/insta-01.mp4" type="video/mp4" />', $html);
 });
 

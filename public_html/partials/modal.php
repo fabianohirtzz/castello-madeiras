@@ -1,14 +1,32 @@
 <?php
 /**
  * Modal de orcamento, lightbox dos reels e botao flutuante.
- * Compartilhado pela home e pela pagina Flex. Espera: nada.
+ * Compartilhado pela home e pela pagina Flex. Espera: string $pagina
+ * ('home' ou 'flex'): muda o titulo do modal e a lista de modelos.
+ *
+ * Os campos ocultos do contrato 6.1 nascem vazios de proposito: quem preenche
+ * e o js/formulario.js na abertura do modal. O token de csrf nunca e impresso
+ * no HTML, para a pagina continuar cacheavel.
  */
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/conteudo.php';
 
-$modal_modelos = modelos('pronta');
+$pagina        = $pagina ?? 'home';
+$modal_flex    = $pagina === 'flex';
+$modal_modelos = modelos($modal_flex ? 'flex' : 'pronta');
 $modal_videos  = count(videos());
+
+$modal_opcoes = [];
+foreach ($modal_modelos as $m) {
+    $area  = str_replace(',00 ', ' ', (string) $m['area']);
+    $preco = trim((string) $m['preco']);
+    $valor = $m['nome'] . ' · ' . $area . ' · ' . ($preco !== '' ? 'R$ ' . $preco : 'semipronta');
+    $modal_opcoes[] = [$valor, $preco !== '' ? $valor : $m['nome'] . ' · ' . $area];
+}
+if ($modal_flex) {
+    $modal_opcoes[] = ['Quero a Casa Pronta, chave na mão', 'Quero a Casa Pronta, chave na mão'];
+}
 ?>
   <!-- ============ MODAL DE ORÇAMENTO ============ -->
   <div class="qmodal" id="quoteModal" hidden role="dialog" aria-modal="true" aria-labelledby="qmodalTitle">
@@ -21,8 +39,13 @@ $modal_videos  = count(videos());
 
       <div class="qmodal__head">
         <span class="eyebrow">Orçamento sem compromisso</span>
+<?php if ($modal_flex): ?>
+        <h2 id="qmodalTitle">Vamos falar da sua Castelo Flex</h2>
+        <p>Conta pra gente o terreno e o tamanho que você imagina. A Castello volta com a tabela da Flex e o prazo.</p>
+<?php else: ?>
         <h2 id="qmodalTitle">Vamos falar da sua casa</h2>
         <p>Conta pra gente o que você procura. A Castello volta com uma proposta sob medida.</p>
+<?php endif; ?>
         <div class="qmodal__trust">
           <span><strong>5,0 ★</strong> no Google</span>
           <span><strong>56</strong> avaliações</span>
@@ -30,10 +53,20 @@ $modal_videos  = count(videos());
         </div>
       </div>
 
-      <form class="qform" id="quoteForm" novalidate>
+      <form class="qform" id="quoteForm" method="post" action="enviar.php" novalidate>
+        <!-- honeypot anti-spam (contrato 6.1: precisa chegar vazio). Humanos não veem. -->
+        <input type="text" name="empresa" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <!-- Ocultos do contrato 6.1, preenchidos pelo js/formulario.js na abertura do modal. -->
+        <input type="hidden" name="pagina" value="" />
+        <input type="hidden" name="referrer" value="" />
+        <input type="hidden" name="utm_source" value="" />
+        <input type="hidden" name="utm_medium" value="" />
+        <input type="hidden" name="utm_campaign" value="" />
+        <input type="hidden" name="utm_term" value="" />
+        <input type="hidden" name="utm_content" value="" />
+        <input type="hidden" name="ts" value="" />
         <input type="hidden" name="csrf" value="" />
-        <!-- honeypot anti-spam: humanos não veem, não preencher -->
-        <input type="text" name="_gotcha" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
         <div class="qform__row">
           <div class="qform__group">
@@ -60,15 +93,13 @@ $modal_videos  = count(videos());
           </div>
         </div>
 
-        <div class="qform__group qform__group--modelo" id="qGroupModelo" hidden>
+        <div class="qform__group qform__group--modelo" id="qGroupModelo"<?= $modal_flex ? '' : ' hidden' ?>>
           <label class="qform__label" for="q-modelo">Modelo de interesse</label>
           <div class="qform__select">
             <select id="q-modelo" name="modelo">
               <option value="">Ainda não sei</option>
-<?php foreach ($modal_modelos as $m):
-    $rotulo = $m['nome'] . ' · ' . str_replace(',00 ', ' ', (string) $m['area']) . ' · R$ ' . $m['preco'];
-?>
-              <option value="<?= e($rotulo) ?>"><?= e($rotulo) ?></option>
+<?php foreach ($modal_opcoes as [$valor, $rotulo]): ?>
+              <option value="<?= e($valor) ?>"><?= e($rotulo) ?></option>
 <?php endforeach; ?>
             </select>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
@@ -105,6 +136,7 @@ $modal_videos  = count(videos());
     </div>
   </div>
 
+<?php if (!$modal_flex): ?>
   <!-- ============ LIGHTBOX DOS REELS (tela cheia) ============ -->
   <div class="reelbox" id="reelbox" hidden role="dialog" aria-modal="true" aria-label="Vídeos do Instagram em tela cheia">
     <button class="reelbox__close" id="reelboxClose" type="button" aria-label="Fechar tela cheia">
@@ -125,6 +157,7 @@ $modal_videos  = count(videos());
 
     <div class="reelbox__count"><span id="reelboxCount">1 / <?= $modal_videos ?></span></div>
   </div>
+<?php endif; ?>
 
   <!-- Botão flutuante: abre o formulário de orçamento -->
   <button type="button" class="wpp-float" id="wppFloat" aria-label="Pedir orçamento" data-quote-open>

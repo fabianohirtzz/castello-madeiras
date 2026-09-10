@@ -6,12 +6,12 @@ require_once site() . '/lib/conteudo.php';
 $contagens = banco_com_conteudo();
 
 teste('a migracao insere a quantidade exata de cada tabela', function () use ($contagens): void {
-    igual(4,  $contagens['modelos']);
+    igual(7,  $contagens['modelos'], '4 Casa Pronta e 3 Flex provisorios');
     igual(6,  $contagens['portfolio']);
     igual(14, $contagens['avaliacoes']);
     igual(11, $contagens['videos']);
-    igual(7,  $contagens['faq']);
-    igual(5,  $contagens['passos']);
+    igual(12, $contagens['faq'], '7 gerais e 5 da Flex');
+    igual(10, $contagens['passos'], '5 da Casa Pronta e 5 da Flex');
     igual(21, $contagens['blocos']);
 });
 
@@ -35,7 +35,20 @@ teste('os quatro modelos Casa Pronta chegaram com preco, area e parede', functio
     igual('Ampla', $lista[3]['nome']);
     igual('97.776', $lista[3]['preco']);
 
-    igual(0, count(modelos('flex')), 'material da Flex ainda nao chegou do cliente');
+});
+
+teste('os tres modelos Flex provisorios chegaram sem preco e com prazo de 45 dias', function (): void {
+    $lista = modelos('flex');
+    igual(3, count($lista), 'provisorios ate o material do cliente chegar');
+    igual('Castelo Flex 36', $lista[0]['nome']);
+    igual('36,00 m²', $lista[0]['area']);
+    igual('Castelo Flex 60', $lista[2]['nome']);
+    foreach ($lista as $m) {
+        igual('', (string) $m['preco'], 'Flex sem preco, o site imprime Sob consulta');
+        igual('45 dias', $m['prazo']);
+        contem('uploads/modelos/', $m['foto']);
+        verdade($m['foto_alt'] !== '', 'todo modelo tem alt');
+    }
 });
 
 teste('as fotos dos modelos foram copiadas para uploads e o caminho e relativo', function (): void {
@@ -115,7 +128,12 @@ teste('as 7 perguntas do FAQ chegaram com o icone certo em cada uma', function (
         verdade(mb_strlen($lista[$i]['resposta']) > 60, 'resposta completa');
     }
 
-    igual(0, count(faq('flex')), 'FAQ da Flex ainda nao existe');
+    $flex = faq('flex');
+    igual(5, count($flex), 'FAQ provisoria da Flex');
+    igual('Em quanto tempo a Castelo Flex fica pronta?', $flex[0]['pergunta']);
+    igual('relogio', $flex[0]['icone']);
+    igual('fundacao', $flex[4]['icone']);
+    igual(1, (int) $flex[0]['ordem'], 'a ordem da Flex recomeça do 1');
 });
 
 teste('os 5 passos do Como funciona chegaram com imagem', function (): void {
@@ -129,7 +147,12 @@ teste('os 5 passos do Como funciona chegaram com imagem', function (): void {
     igual('uploads/passos/passo-1.jpg', $lista[0]['imagem']);
     igual('uploads/passos/passo-5.png', $lista[4]['imagem']);
     contem('90 a 120 dias', $lista[4]['texto']);
-    igual(0, count(passos('flex')), 'passo a passo da Flex ainda nao existe');
+    $flex = passos('flex');
+    igual(5, count($flex), 'passo a passo provisorio da Flex');
+    igual('Projeto e modelo', $flex[0]['titulo']);
+    igual('Portas e janelas', $flex[4]['titulo']);
+    igual('', (string) $flex[0]['imagem'], 'os passos da Flex saem como cartoes, sem imagem');
+    igual(1, (int) $flex[0]['ordem'], 'a ordem da Flex recomeça do 1');
 });
 
 teste('os alt descritivos dos passos vieram do index.html, um a um', function (): void {
@@ -168,7 +191,13 @@ teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function ()
     igual('90 a 120 dias', bloco('pronta_prazo'));
     igual('45 dias', bloco('flex_prazo'));
     igual('A casa dos seus sonhos', bloco('hero_titulo'));
-    igual('', bloco('flex_titulo'), 'texto da Flex e escrito depois, pela Frente 2');
+    igual('pronta pra morar, *chave na mão*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
+    contem('45 dias', bloco('flex_titulo'), 'copy provisoria da Flex ja vem preenchida');
+    igual('uploads/videos/insta-04.mp4', bloco('flex_video'));
+    foreach (['modalidades_titulo', 'modalidades_texto', 'flex_texto', 'flexpg_hero_titulo', 'flexpg_hero_texto', 'flexpg_oque_titulo',
+              'flexpg_oque_texto', 'flexpg_depois_titulo', 'flexpg_depois_texto', 'flexpg_catalogo_nota', 'flexpg_cta_titulo', 'flexpg_cta_texto'] as $chave) {
+        verdade(bloco($chave) !== '', "o bloco $chave precisa nascer preenchido");
+    }
 });
 
 teste('rodar a migracao de novo nao duplica conteudo', function (): void {
