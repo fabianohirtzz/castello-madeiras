@@ -229,10 +229,36 @@ teste('sem emoji e sem travessao na copy do arquivo', function () {
   assert.equal(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(fonte), false, 'achou emoji');
 });
 
-teste('o token nunca e buscado no carregamento, so na abertura do modal', function () {
+teste('o token nunca vem de metatag e a busca vai com o cookie da sessao', function () {
   var fonte = require('node:fs').readFileSync(caminho, 'utf8');
   assert.equal(/csrf-token/.test(fonte), false, 'nao pode ler metatag de csrf');
   assert.match(fonte, /credentials: 'same-origin'/);
+});
+
+/* Dentro do modal o token so vem quando o visitante abre o formulario; na
+   pagina de contato ele ja esta aberto, entao vem no carregamento. */
+function formFalso(dentroDoModal) {
+  return { closest: function (sel) { return sel === '#quoteModal' && dentroDoModal ? {} : null; } };
+}
+
+teste('tokenNoCarregamento e falso para o formulario dentro do modal', function () {
+  assert.equal(api.tokenNoCarregamento(formFalso(true)), false);
+});
+
+teste('tokenNoCarregamento e verdadeiro para o formulario embutido na pagina', function () {
+  assert.equal(api.tokenNoCarregamento(formFalso(false)), true);
+});
+
+teste('tokenNoCarregamento nao explode sem formulario', function () {
+  assert.equal(api.tokenNoCarregamento(null), false);
+  assert.equal(api.tokenNoCarregamento({}), false);
+});
+
+teste('o formulario embutido busca o token no carregamento e o do modal so no clique', function () {
+  var fonte = require('node:fs').readFileSync(caminho, 'utf8');
+  assert.match(fonte, /var embutido = api\.tokenNoCarregamento\(form\)/);
+  assert.match(fonte, /if \(embutido\) \{[\s\S]*?garantirToken\(\);[\s\S]*?return;/);
+  assert.match(fonte, /closest\('\[data-quote-open\]'\)/);
 });
 
 assincronos.reduce(function (fila, passo) {

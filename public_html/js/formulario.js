@@ -131,6 +131,15 @@
     tokenGuardado = '';
   };
 
+  /* O token e buscado na abertura do modal, para quem so le o site nao fazer
+     requisicao nem receber cookie de sessao. A excecao e o formulario
+     embutido na pagina de contato: ali o formulario ja esta aberto quando a
+     pagina carrega, entao o token vem no carregamento. Recebe o <form>. */
+  api.tokenNoCarregamento = function (form) {
+    if (!form || typeof form.closest !== 'function') return false;
+    return !form.closest('#quoteModal');
+  };
+
   /* buscar devolve uma promessa com o objeto que o csrf.php respondeu.
      O token vale pela sessao de pagina inteira: abrir, fechar e reabrir o
      modal nao busca de novo. Falha nao e guardada, para a proxima abertura
@@ -155,6 +164,8 @@
 
   var form = document.getElementById('quoteForm');
   if (!form) return;
+
+  var embutido = api.tokenNoCarregamento(form);
 
   var status = document.getElementById('quoteStatus');
   var botao = document.getElementById('quoteSubmit');
@@ -205,8 +216,9 @@
     });
   }
 
-  /* Chamada na abertura do modal, nunca no carregamento da pagina: quem so le
-     o site nao faz requisicao nem recebe cookie de sessao. */
+  /* Chamada na abertura do modal (ou no carregamento, quando o formulario
+     esta embutido na pagina): quem so le o site nao faz requisicao nem
+     recebe cookie de sessao. */
   function garantirToken() {
     return api.obterToken(buscarTokenNoServidor).then(function (token) {
       campoOculto('csrf', token);
@@ -371,6 +383,15 @@
     enviar();
   });
 
+  preencherOcultos();
+
+  if (embutido) {
+    /* Formulario embutido: aberto desde o carregamento. O time-trap conta a
+       partir daqui e o token vem agora, nao num clique. */
+    garantirToken();
+    return;
+  }
+
   /* Marca a hora de abertura para o time-trap e busca o token. O main.js
      continua abrindo o modal normalmente. */
   document.addEventListener('click', function (ev) {
@@ -382,6 +403,4 @@
       garantirToken();
     }, 0);
   }, true);
-
-  preencherOcultos();
 })();

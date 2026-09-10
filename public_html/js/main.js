@@ -704,13 +704,16 @@
     }
   }
 
-  /* ---------- Modal de orçamento (só interface) ----------
-     Abrir e fechar, foco preso, máscara do WhatsApp e o campo condicional de
-     modelo. O envio, o honeypot, o time-trap e a tela de sucesso vivem em
-     js/formulario.js, carregado depois deste arquivo. */
+  /* ---------- Formulário de orçamento (só interface) ----------
+     Máscara do WhatsApp, campo condicional de modelo e o botão de voltar da
+     tela de sucesso valem para o formulário onde ele estiver: dentro do modal
+     (#quoteModal) ou embutido na página de contato. Abrir e fechar o modal e o
+     foco preso existem só quando há modal; sem ele, todo [data-quote-open]
+     rola até o formulário. O envio, o honeypot, o time-trap e a tela de
+     sucesso vivem em js/formulario.js, carregado depois deste arquivo. */
   var qModal = document.getElementById('quoteModal');
-  if (qModal) {
-    var qForm = document.getElementById('quoteForm');
+  var qForm = document.getElementById('quoteForm');
+  if (qForm) {
     var qPanelForm = qForm;
     var qDone = document.getElementById('quoteDone');
     var qWppLink = document.getElementById('quoteWppLink');
@@ -742,62 +745,80 @@
       qWpp.removeAttribute('aria-invalid');
     });
 
-    function qOpen(trigger) {
-      qLastFocus = trigger || null;
-      if (drawer && drawer.classList.contains('is-open')) toggleDrawer(false);
-      // reabriu depois de enviar: volta pro formulário (mantendo o que foi digitado)
-      if (!qDone.hidden) {
-        qDone.hidden = true; qPanelForm.hidden = false;
-        qSetStatus(''); qSubmit.disabled = false;
-      }
-      // pré-seleção vinda do card de modelo
-      if (trigger) {
-        var m = trigger.getAttribute('data-modelo');
-        if (m) { qBusca.value = 'Modelo pronto do catálogo'; qToggleModelo(); qModelo.value = m; }
-      }
-      qModal.hidden = false;
-      document.body.classList.add('modal-open');
-      requestAnimationFrame(function () { qModal.classList.add('is-open'); });
-      setTimeout(function () {
-        var first = qDone.hidden ? document.getElementById('q-nome') : qWppLink;
-        if (first) first.focus({ preventScroll: true });
-      }, 320);
-    }
-    function qClose() {
-      if (qModal.hidden) return;
-      qModal.classList.remove('is-open');
-      document.body.classList.remove('modal-open');
-      setTimeout(function () { qModal.hidden = true; }, 340);
-      if (qLastFocus) { try { qLastFocus.focus({ preventScroll: true }); } catch (e) {} }
-    }
-
-    document.addEventListener('click', function (e) {
-      var opener = e.target.closest('[data-quote-open]');
-      if (opener) { e.preventDefault(); qOpen(opener); return; }
-      if (e.target.closest('[data-quote-close]')) { e.preventDefault(); qClose(); }
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !qModal.hidden) qClose();
-    });
-
-    // foco preso dentro do painel enquanto o modal está aberto
-    qModal.addEventListener('keydown', function (e) {
-      if (e.key !== 'Tab') return;
-      var f = qModal.querySelectorAll('button, input, select, textarea, a[href]');
-      var vis = Array.prototype.filter.call(f, function (el) { return el.offsetParent !== null; });
-      if (!vis.length) return;
-      var first = vis[0], last = vis[vis.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    });
-
-    document.getElementById('quoteBack').addEventListener('click', function () {
+    // volta da tela de sucesso para o formulário, mantendo o que foi digitado
+    function qVoltar() {
+      if (qDone.hidden) return;
       qDone.hidden = true;
       qPanelForm.hidden = false;
       qSetStatus('');
       qSubmit.disabled = false;
+    }
+    // pré-seleção vinda do card de modelo
+    function qPreSelecionar(trigger) {
+      var m = trigger ? trigger.getAttribute('data-modelo') : '';
+      if (m) { qBusca.value = 'Modelo pronto do catálogo'; qToggleModelo(); qModelo.value = m; }
+    }
+
+    document.getElementById('quoteBack').addEventListener('click', function () {
+      qVoltar();
       document.getElementById('q-nome').focus({ preventScroll: true });
     });
+
+    if (qModal) {
+      function qOpen(trigger) {
+        qLastFocus = trigger || null;
+        if (drawer && drawer.classList.contains('is-open')) toggleDrawer(false);
+        qVoltar();
+        qPreSelecionar(trigger);
+        qModal.hidden = false;
+        document.body.classList.add('modal-open');
+        requestAnimationFrame(function () { qModal.classList.add('is-open'); });
+        setTimeout(function () {
+          var first = qDone.hidden ? document.getElementById('q-nome') : qWppLink;
+          if (first) first.focus({ preventScroll: true });
+        }, 320);
+      }
+      function qClose() {
+        if (qModal.hidden) return;
+        qModal.classList.remove('is-open');
+        document.body.classList.remove('modal-open');
+        setTimeout(function () { qModal.hidden = true; }, 340);
+        if (qLastFocus) { try { qLastFocus.focus({ preventScroll: true }); } catch (e) {} }
+      }
+
+      document.addEventListener('click', function (e) {
+        var opener = e.target.closest('[data-quote-open]');
+        if (opener) { e.preventDefault(); qOpen(opener); return; }
+        if (e.target.closest('[data-quote-close]')) { e.preventDefault(); qClose(); }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !qModal.hidden) qClose();
+      });
+
+      // foco preso dentro do painel enquanto o modal está aberto
+      qModal.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        var f = qModal.querySelectorAll('button, input, select, textarea, a[href]');
+        var vis = Array.prototype.filter.call(f, function (el) { return el.offsetParent !== null; });
+        if (!vis.length) return;
+        var first = vis[0], last = vis[vis.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+    } else {
+      // formulário embutido na página: o CTA rola até ele e foca o primeiro campo
+      var qAlvo = qForm.closest('.contato__card') || qForm;
+      document.addEventListener('click', function (e) {
+        var opener = e.target.closest('[data-quote-open]');
+        if (!opener) return;
+        e.preventDefault();
+        if (drawer && drawer.classList.contains('is-open')) toggleDrawer(false);
+        qVoltar();
+        qPreSelecionar(opener);
+        qAlvo.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        setTimeout(function () { document.getElementById('q-nome').focus({ preventScroll: true }); }, reduce ? 0 : 500);
+      });
+    }
   }
 
 })();
