@@ -1,0 +1,108 @@
+# Guia do painel do site Castello
+
+Este guia é para quem cuida do conteúdo do site no dia a dia. Não precisa saber nada de programação: tudo é feito em telas simples, pelo navegador do computador ou do celular.
+
+Endereço do painel: **https://castello.tohospedando.com.br/painel/** (muda quando o site for para o domínio definitivo; a Freela avisa).
+
+## 1. Como entrar
+
+1. Abra o endereço do painel.
+2. Digite o login `castello` e a senha que a Freela entregou por outro canal.
+3. Toque em **Entrar**.
+
+Errou a senha cinco vezes seguidas? O painel trava por 15 minutos para o seu endereço, por segurança. Espere e tente de novo. Ficou parado por duas horas? Ele pede a senha de novo.
+
+Para sair, toque em **Sair**, no canto superior direito.
+
+![Tela de login](guia-do-painel/01-login.png)
+
+## 2. As telas
+
+O menu de cima tem uma aba para cada parte do site:
+
+| Aba | O que muda no site |
+|---|---|
+| **Modelos** | Os cards de casa com área, parede e preço. Tem um filtro para Casa Pronta e outro para Castelo Flex. |
+| **Portfólio** | A galeria de casas entregues. |
+| **Avaliações** | Os depoimentos do Google que rolam na home. |
+| **Vídeos** | Os vídeos do Instagram na home. |
+| **FAQ** | As perguntas frequentes, da home (geral) e da página Flex. |
+| **Passos** | O passo a passo, da Casa Pronta (com foto) e da Flex (sem foto). |
+| **Textos** | Títulos e textos avulsos: topo da home, bloco de modalidades, prazos, página Flex. |
+| **Configurações** | E-mail que recebe os pedidos, quantos vídeos aparecem na home e o CRM. |
+| **Backup** | Baixa uma cópia de tudo. |
+| **Trocar senha** | Sua senha de acesso. |
+
+![Lista de modelos](guia-do-painel/02-lista.png)
+
+## 3. Cadastrar um modelo de casa
+
+1. Aba **Modelos**. Escolha o filtro **Casa Pronta** ou **Castelo Flex**.
+2. Toque em **Adicionar modelo**.
+3. Preencha:
+   - **Modalidade**: Casa Pronta ou Castelo Flex.
+   - **Nome do modelo**: como Compacta, Família.
+   - **Área**: escreva com a unidade, como `39,00 m²`.
+   - **Parede**: `Parede vertical` ou `Parede dupla`. Na Flex pode deixar vazio: o site mostra o prazo no lugar.
+   - **Preço**: só o número, como `69.900`. O site coloca o R$ sozinho. Deixe vazio para o site mostrar **Sob consulta** (é assim que a Flex está hoje).
+   - **Prazo**: como `90 a 120 dias` ou `45 dias`.
+   - **Foto**: JPG, PNG ou WEBP, até 5 MB. Foto na horizontal fica melhor no card.
+   - **Descrição da foto**: conte o que aparece na foto. Isso serve para quem usa leitor de tela e para o Google.
+   - **Marcar como Mais escolhida**: destaca o card com o selo vermelho. Marque só um.
+4. Toque em **Salvar**.
+
+O modelo aparece no site na hora.
+
+![Formulário de modelo](guia-do-painel/03-form-modelo.png)
+
+## 4. Subir um vídeo e mudar a ordem
+
+1. Aba **Vídeos**, toque em **Adicionar vídeo**.
+2. Escolha o arquivo **MP4** (até 30 MB) e uma **capa** (a imagem que aparece antes de o vídeo tocar).
+3. Salve.
+
+Para mudar a ordem, segure o item pela alça **≡** à esquerda e arraste para cima ou para baixo (funciona com o mouse e com o dedo no celular). Solte e a ordem é salva sozinha. A ordem da lista é a ordem do site.
+
+**Por que existe um limite de vídeos na home.** Cada vídeo pesa alguns megabytes. Se todos carregassem de uma vez, a página ficaria lenta, principalmente no celular com internet fraca, e quem chega pelo anúncio vai embora antes de ver a casa. Por isso a home mostra só os primeiros da lista: hoje, 8. Os demais continuam cadastrados. Para trocar quais aparecem, mude a ordem. Para mudar quantos aparecem, vá em **Configurações**, campo **Quantos vídeos aparecem na home**. Quanto mais vídeos, mais devagar a página carrega.
+
+## 5. Publicar uma avaliação
+
+1. Aba **Avaliações**, toque em **Adicionar avaliação**.
+2. Copie o **nome do cliente** e o **texto** exatamente como está no Google. Não resuma nem corrija: é o depoimento da pessoa.
+3. **Estrelas**: de 1 a 5.
+4. Salve. A avaliação nova entra no fim do carrossel; arraste na lista se quiser que apareça antes.
+
+## 6. Desativar um item sem apagar
+
+Não existe botão de apagar. Existe **Desativar**: o item sai do site mas continua no painel, e você pode **Reativar** quando quiser. Serve para tirar um modelo do ar enquanto o preço muda, esconder um vídeo antigo ou pausar uma avaliação sem perder nada.
+
+Os itens desativados aparecem no fim da lista, marcados como inativos.
+
+## 7. Editar os textos
+
+Aba **Textos**. Cada campo tem um rótulo dizendo onde ele aparece no site, por exemplo *Título do topo* ou *Prazo da Castelo Flex*. Mude o que quiser e toque em **Salvar textos**.
+
+Dois detalhes:
+
+- Para deixar um trecho em **vermelho de destaque**, coloque entre asteriscos: `pronta pra morar, *chave na mão*` faz "chave na mão" sair em vermelho. Funciona nos títulos do topo da home e da página Flex.
+- Os prazos (**90 a 120 dias** e **45 dias**) estão aqui. Mudou o prazo? Mude no Textos e o site inteiro acompanha.
+
+## 8. Configurações
+
+- **E-mail que recebe aviso de pedido novo**: cada pedido de orçamento do site chega neste e-mail, com todos os dados e um link para responder no WhatsApp.
+- **Quantos vídeos aparecem na home**: veja a seção 4.
+- **CRM**: fica desligado até a Castello ter um CRM. Enquanto está desligado, os pedidos continuam sendo guardados no site e enviados por e-mail. Nenhum pedido se perde. Quando o CRM existir, a Freela configura aqui.
+
+## 9. Baixar o backup
+
+Aba **Backup**, toque em **Baixar backup agora**. Vem um arquivo `.zip` com o banco de dados (todos os textos, modelos, avaliações e pedidos) e todas as fotos e vídeos enviados pelo painel. Guarde em um lugar seguro, fora do computador do escritório, uma vez por mês ou depois de uma mudança grande.
+
+## 10. Trocar a senha
+
+Aba **Trocar senha**. Precisa da senha atual, da nova (mínimo 8 caracteres) e da confirmação. Use uma senha que não use em mais nada.
+
+Esqueceu a senha? Não existe "esqueci minha senha" no painel, de propósito. Fale com a Freela, que redefine.
+
+## Dúvidas
+
+Freela In Home, freelainhome@gmail.com.

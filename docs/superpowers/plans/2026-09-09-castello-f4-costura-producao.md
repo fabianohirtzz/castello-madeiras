@@ -492,29 +492,29 @@ git commit -m "$(printf 'feat: tira noindex, ajusta canonical e og:image, forca 
 **Files:**
 - Create: `docs/qa-fase2.md`
 
-- [ ] **Step 1: Rodar o `web-qa-reviewer` no site público**
+- [x] **Step 1: Rodar o `web-qa-reviewer` no site público**
 
 Suba o servidor local e peça uma auditoria completa de `http://localhost:8000/` e `http://localhost:8000/flex.php` contra o launch-checklist da Freela: erros de console, links quebrados, responsividade, formulário, CTAs, WhatsApp, SEO on-page, acessibilidade e performance.
 
-- [ ] **Step 2: Rodar o `web-qa-reviewer` no painel**
+- [x] **Step 2: Rodar o `web-qa-reviewer` no painel**
 
 Mesma auditoria em `http://localhost:8000/painel/`, logado, cobrindo cada tela. O painel é usado no celular, então a checagem em 390px não é opcional.
 
-- [ ] **Step 3: Conferir o contraste de branco sobre vermelho**
+- [x] **Step 3: Conferir o contraste de branco sobre vermelho**
 
 A frente 2 mediu o branco sobre `--red` em `.model__flag` e na faixa `.proof`, componentes que já estão no ar desde o protótipo: **4,33:1**, que reprova AA para texto normal, apesar de a skill `castello-design` afirmar que passa. Os componentes novos da frente 2 já usam `--red-deep`, que mede 6,9:1.
 
 Meça os dois de novo e, se confirmar, troque o fundo dos componentes antigos para `--red-deep` também. Corrija a afirmação na skill `castello-design`, senão o erro se repete no próximo componente.
 
-- [ ] **Step 4: Registrar os achados**
+- [x] **Step 4: Registrar os achados**
 
 Escreva `docs/qa-fase2.md` com os achados por severidade e o que foi feito com cada um.
 
-- [ ] **Step 4: Corrigir os críticos e os altos**
+- [x] **Step 4: Corrigir os críticos e os altos**
 
 Nenhum crítico pode sobrar. Cada correção é um commit próprio, com o achado citado na mensagem.
 
-- [ ] **Step 5: Reauditar e commitar**
+- [x] **Step 5: Reauditar e commitar**
 
 ```bash
 git add docs/qa-fase2.md
@@ -530,27 +530,27 @@ git commit -m "$(printf 'docs: relatorio de qa da fase 2\n\nCo-Authored-By: Clau
 
 Os itens abaixo não são testáveis na máquina local. São verificados no servidor, um a um, e o resultado vai para `docs/qa-fase2.md`.
 
-- [ ] **Step 1: Confirmar que o banco e os segredos não são alcançáveis pelo navegador**
+- [x] **Step 1: Confirmar que o banco e os segredos não são alcançáveis pelo navegador**
 
 Abra `https://<subdominio>/config/castello.db` e `https://<subdominio>/../config/castello.db`. Esperado: 404 ou 403 nos dois casos. Se algum baixar o arquivo, pare tudo: a pasta `config/` está dentro do `public_html` e precisa sair.
 
-- [ ] **Step 2: Confirmar que a pasta de uploads não executa script**
+- [x] **Step 2: Confirmar que a pasta de uploads não executa script**
 
 Suba pelo painel um arquivo `.php` renomeado para `.jpg`. Esperado: o upload é recusado por `finfo_file`. Depois, coloque um `.php` de teste direto em `uploads/` por FTP e abra pelo navegador. Esperado: o navegador baixa ou mostra o texto, nunca executa. Apague o arquivo de teste em seguida.
 
-- [ ] **Step 3: Confirmar a trava de força bruta**
+- [x] **Step 3: Confirmar a trava de força bruta**
 
 Erre a senha 5 vezes. Esperado: bloqueio com mensagem clara e desbloqueio depois de 15 minutos.
 
-- [ ] **Step 4: Confirmar o backup**
+- [x] **Step 4: Confirmar o backup**
 
 Baixe o backup pelo painel. Esperado: um `.zip` que abre e contém o `castello.db` e a pasta `uploads/`. Este é o teste que não roda local, porque o `ZipArchive` não existe lá.
 
-- [ ] **Step 5: Confirmar HTTPS e certificado**
+- [x] **Step 5: Confirmar HTTPS e certificado**
 
 Abra o site por `http://` e confirme o redirecionamento para `https://`. Confirme o certificado válido.
 
-- [ ] **Step 6: Registrar tudo em `docs/qa-fase2.md` e commitar**
+- [x] **Step 6: Registrar tudo em `docs/qa-fase2.md` e commitar**
 
 ---
 
@@ -559,7 +559,7 @@ Abra o site por `http://` e confirme o redirecionamento para `https://`. Confirm
 **Files:**
 - Modify: `public_html/index.php`, `public_html/flex.php`
 
-- [ ] **Step 1: Pedir os identificadores**
+- [ ] **Step 1: Pedir os identificadores** (PULADA: sem identificadores de GA e pixel; ver docs/qa-fase2.md, seção 5)
 
 Google Analytics e pixel do Meta. A reunião registrou que a Castello alinhou uma consultoria de tráfego pago, então a medição é requisito, não enfeite. Sem os identificadores em mãos, esta tarefa fica parada e não bloqueia as outras.
 
@@ -580,23 +580,23 @@ O evento é disparado quando `enviar.php` responde `ok: true`, dentro do `js/for
 **Files:**
 - Create: `docs/guia-do-painel.md`
 
-- [ ] **Step 1: Escrever o mini-guia**
+- [x] **Step 1: Escrever o mini-guia**
 
 Uma página, linguagem de quem não é técnico, com prints: como entrar, como cadastrar um modelo, como subir um vídeo e mudar a ordem, como publicar uma avaliação, como desativar um item sem apagar, como editar os textos, e como baixar o backup. Explique também por que o limite de vídeos existe.
 
-- [ ] **Step 2: Criar o usuário do cliente e definir a senha**
+- [ ] **Step 2: Criar o usuário do cliente e definir a senha** (não feito por instrução do coordenador: entrega da senha fica com a Freela)
 
 Pelo painel, na tela de trocar senha, com senha forte gerada na hora. A senha vai para o cliente por canal separado, nunca junto com o link no mesmo lugar.
 
-- [ ] **Step 3: Configurar o CRM se as credenciais já tiverem chegado**
+- [ ] **Step 3: Configurar o CRM se as credenciais já tiverem chegado** (credenciais não chegaram; `crm_ativo` desligado)
 
 Na tela de Configurações: endpoint, método, cabeçalhos e mapa de campos. Ligue `crm_ativo`, envie um lead de teste e confirme que ele apareceu no CRM. Se as credenciais ainda não chegaram, deixe `crm_ativo` desligado: o lead continua sendo gravado e o e-mail de aviso continua saindo.
 
-- [ ] **Step 4: Atualizar o `CLAUDE.md`**
+- [x] **Step 4: Atualizar o `CLAUDE.md`**
 
 Estado do projeto, o que ficou pendente do cliente, e como rodar o projeto local. Substitua a seção de estado atual, que ainda descreve o protótipo em landing única.
 
-- [ ] **Step 5: Commitar e subir**
+- [x] **Step 5: Commitar e subir** (commit feito; push fica com o coordenador)
 
 ```bash
 git add docs/guia-do-painel.md CLAUDE.md
