@@ -17,15 +17,8 @@ declare(strict_types=1);
  * imprimir, para o smoke rodar o fluxo inteiro por linha de comando.
  */
 
-/* A lib da frente 1 pode nao existir ainda. Enquanto nao existir, quem fornece
-   db(), agora(), config_ler() e csrf_validar() e testes/apoio-f1.php, carregado
-   pelo smoke antes deste arquivo. Na Tarefa 9 estes requires viram diretos. */
-foreach (['db.php', 'auth.php'] as $arquivoLib) {
-    $caminhoLib = __DIR__ . '/lib/' . $arquivoLib;
-    if (is_file($caminhoLib)) {
-        require_once $caminhoLib;
-    }
-}
+require_once __DIR__ . '/lib/db.php';
+require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/leads.php';
 require_once __DIR__ . '/lib/crm.php';
 require_once __DIR__ . '/lib/email.php';
@@ -151,21 +144,10 @@ function enviar_responder(int $http, array $corpo): void
 
 /* Em linha de comando o arquivo so define as funcoes, para o smoke testar. */
 if (PHP_SAPI !== 'cli') {
-    if (function_exists('auth_iniciar')) {
-        auth_iniciar();
-    } elseif (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+    auth_iniciar();
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
         enviar_responder(405, ['ok' => false, 'erro' => 'metodo']);
-    }
-
-    foreach (['db', 'agora', 'config_ler', 'csrf_validar'] as $obrigatoria) {
-        if (!function_exists($obrigatoria)) {
-            error_log('enviar.php: falta a funcao ' . $obrigatoria . ' da lib');
-            enviar_responder(500, ['ok' => false, 'erro' => 'servidor']);
-        }
     }
 
     try {

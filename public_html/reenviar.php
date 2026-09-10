@@ -18,25 +18,9 @@ declare(strict_types=1);
 // */15, e dentro de um docblock esse */ fecharia o comentario e quebraria o
 // arquivo. Nao converter em docblock.
 
-foreach (['db.php'] as $arquivoLib) {
-    $caminhoLib = __DIR__ . '/lib/' . $arquivoLib;
-    if (is_file($caminhoLib)) {
-        require_once $caminhoLib;
-    }
-}
+require_once __DIR__ . '/lib/db.php';
 require_once __DIR__ . '/lib/leads.php';
 require_once __DIR__ . '/lib/crm.php';
-
-if (!function_exists('db') || !function_exists('config_ler')) {
-    if (PHP_SAPI === 'cli') {
-        fwrite(STDERR, 'reenviar.php: lib/db.php nao encontrada' . PHP_EOL);
-        exit(2);
-    }
-    http_response_code(500);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['ok' => false, 'erro' => 'servidor']);
-    exit;
-}
 
 if (PHP_SAPI === 'cli') {
     $resumo = leads_reenviar();

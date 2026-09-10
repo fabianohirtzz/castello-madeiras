@@ -1,6 +1,6 @@
 /* Testes das funcoes puras de public_html/js/formulario.js.
    Rodar: node testes/formulario.test.js
-   Chamado tambem por testes/smoke-f3.php. */
+   Chamado tambem pelo caso testes/casos/85-crm.php do smoke. */
 
 'use strict';
 

@@ -50,7 +50,7 @@
 - Consumes: o runner de asserção da frente 1 e os testes da frente 3.
 - Produces: `php testes/smoke.php` roda tudo e devolve código de saída zero só quando tudo passa.
 
-- [ ] **Step 1: Rodar as duas suítes separadas e anotar o resultado**
+- [x] **Step 1: Rodar as duas suítes separadas e anotar o resultado**
 
 ```bash
 php testes/smoke.php; echo "saida f1: $?"
@@ -59,7 +59,7 @@ php testes/smoke-f3.php; echo "saida f3: $?"
 
 Esperado: as duas passam. Se alguma falha, pare e corrija na frente de origem antes de fundir.
 
-- [ ] **Step 2: Converter o `smoke-f3.php` num arquivo de caso**
+- [x] **Step 2: Converter o `smoke-f3.php` num arquivo de caso**
 
 Não copie os testes para dentro do `smoke.php` e **não acrescente `require` no topo dele**. O runner da frente 1 despacha cada caso num processo PHP separado, com pasta de configuração e de uploads temporárias próprias, e não carrega `lib/` nenhuma: quem carrega é cada arquivo de caso. Um `require` no topo do runner não teria efeito e daria a impressão de estar funcionando.
 
@@ -67,7 +67,7 @@ A fusão certa é transformar `testes/smoke-f3.php` em `testes/casos/85-crm.php`
 
 Remova o `testes/apoio-f1.php`, que a frente 3 usava para simular `db()`, `e()`, `agora()`, `config_ler()`, `config_gravar()`, `csrf_token()` e `csrf_validar()` enquanto a frente 1 não existia. Troque os `require` guardados por `function_exists` pelos `require` diretos da `lib` real.
 
-- [ ] **Step 3: Rodar a suíte fundida**
+- [x] **Step 3: Rodar a suíte fundida**
 
 ```bash
 php testes/smoke.php; echo "saida: $?"
@@ -75,7 +75,7 @@ php testes/smoke.php; echo "saida: $?"
 
 Esperado: todos os testes das duas frentes passam, saída zero. O teste de backup aparece como pulado, com o motivo `ZipArchive ausente`.
 
-- [ ] **Step 4: Apagar o arquivo antigo e commitar**
+- [x] **Step 4: Apagar o arquivo antigo e commitar**
 
 ```bash
 git mv testes/smoke-f3.php testes/casos/85-crm.php
