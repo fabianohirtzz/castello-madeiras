@@ -110,6 +110,9 @@ function enviar_processar(array $post): array
 
     /* 6. so entao o CRM. O visitante nunca ve falha de integracao. */
     $resultado = crm_enviar($lead);
+    if (!empty($resultado['pessoa_id'])) {
+        lead_marcar_pessoa($id, (int) $resultado['pessoa_id']);
+    }
     if (!empty($resultado['ok'])) {
         $status = 'enviado';
         $tentativas = 1;

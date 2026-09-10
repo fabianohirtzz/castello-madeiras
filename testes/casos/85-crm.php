@@ -47,11 +47,6 @@ function lead_por_id(int $id): array
     return is_array($linha) ? $linha : [];
 }
 
-/* Ainda usada pelos testes de enviar.php/leads_reenviar mais abaixo (o
-   caminho que a Task 6 vai reconectar ao conector novo). O conector do
-   Agendor nao le mais config.crm_mapa_campos. */
-const MAPA_PADRAO = '{"nome":"nome","whatsapp":"telefone","busca":"interesse","modelo":"modelo","cidade":"cidade","mensagem":"observacao","utm_source":"origem","utm_campaign":"campanha","pagina":"pagina"}';
-
 const LEAD_EXEMPLO = [
     'nome'         => 'Fabiano Hirtz',
     'whatsapp'     => '(48) 99824-4494',
@@ -806,16 +801,25 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
     verdade($servidor !== null, 'servidor do CRM falso subiu para o enviar.php');
 
     try {
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_mapa_campos', MAPA_PADRAO);
-        config_gravar('crm_endpoint', crm_falso_url('ok'));
+        crm_teste_limpar();
+        crm_teste_config();
+        emails_limpar();
+        putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+        config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+        /* CRM em dia: busca, cria pessoa e cria negocio, tudo com sucesso. */
         $r = enviar_processar(post_valido());
         $linha = lead_por_id((int) ($r['corpo']['id'] ?? 0));
         igual('enviado', $linha['crm_status'], 'CRM 200: status enviado');
         igual(1, (int) $linha['crm_tentativas']);
-        contem('CRM-', (string) $linha['crm_resposta']);
+        contem('web.agendor.com.br', (string) $linha['crm_resposta'], 'guarda a resposta do negocio criado');
 
-        config_gravar('crm_endpoint', crm_falso_url('erro500'));
+        /* Falha na criacao do negocio: a busca (GET) acha a pessoa do envio
+           acima de verdade, entao so a criacao do negocio (POST) e derrubada
+           por erro500. O visitante nunca ve isso, so o status do lead
+           reflete o erro - e o pessoa_id continua gravado, porque a pessoa
+           foi encontrada antes do negocio falhar. */
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=erro500@POST');
         $r = enviar_processar(post_valido());
         igual(200, $r['http'], 'CRM 500: visitante ainda ve HTTP 200');
         verdade(($r['corpo']['ok'] ?? null) === true, 'CRM 500: visitante ainda ve ok true');
@@ -823,9 +827,13 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
         igual('erro', $linha['crm_status']);
         igual(1, (int) $linha['crm_tentativas']);
         contem('crm_http', (string) $linha['crm_resposta']);
+        verdade((int) $linha['crm_pessoa_id'] > 0, 'a pessoa achada na busca fica gravada mesmo o negocio falhando');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
 
+        /* CRM lento: o orcamento de tempo estoura e o visitante ainda assim
+           ve HTTP 200. */
         config_gravar('crm_timeout', '2');
-        config_gravar('crm_endpoint', crm_falso_url('demora', ['seg' => 8]));
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=demora:8');
         $r = enviar_processar(post_valido());
         igual(200, $r['http'], 'CRM lento: visitante ainda ve HTTP 200');
         $linha = lead_por_id((int) ($r['corpo']['id'] ?? 0));
@@ -833,11 +841,38 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
         contem('crm_tempo', (string) $linha['crm_resposta']);
         config_gravar('crm_timeout', '10');
     } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        putenv('CASTELLO_EMAIL_DIR');
         crm_falso_derrubar($servidor);
     }
 
     igual(contar_leads(), count(emails_gravados()), 'cada lead gravado gerou um e-mail');
-    putenv('CASTELLO_EMAIL_DIR');
+});
+
+teste('o id da pessoa fica gravado mesmo quando o negocio falha', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+        emails_limpar();
+        putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+        config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+        /* Caminho feliz: grava o id da pessoa. */
+        $r = enviar_processar(post_valido());
+        $linha = lead_por_id((int) $r['corpo']['id']);
+        igual('enviado', $linha['crm_status']);
+        verdade((int) $linha['crm_pessoa_id'] > 0, 'gravou o crm_pessoa_id');
+
+        /* lead_marcar_pessoa e idempotente e nao mexe no resto. */
+        lead_marcar_pessoa((int) $r['corpo']['id'], 12345);
+        $trocado = lead_por_id((int) $r['corpo']['id']);
+        igual(12345, (int) $trocado['crm_pessoa_id']);
+        igual('enviado', $trocado['crm_status'], 'marcar a pessoa nao mexe no status');
+    } finally {
+        putenv('CASTELLO_EMAIL_DIR');
+        crm_falso_derrubar($servidor);
+    }
 });
 
 /* ================= leads_pendentes e leads_reenviar ================= */
@@ -845,7 +880,6 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
 teste('leads_pendentes lista quem ainda precisa subir, do mais antigo ao mais novo', function (): void {
     crm_teste_limpar();
     config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
-    config_gravar('crm_mapa_campos', MAPA_PADRAO);
 
     $GLOBALS['ids'] = [
         'pendente'   => semear_lead('Pendente', 'pendente', 0),
@@ -879,8 +913,7 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
     verdade($servidor !== null, 'servidor do CRM falso subiu para o reenvio');
 
     try {
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_endpoint', crm_falso_url('ok'));
+        crm_teste_config();
         $r = leads_reenviar();
         igual(3, $r['tentados']);
         igual(3, $r['enviados']);
@@ -893,9 +926,8 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
         igual(LEAD_TENTATIVAS_MAX, (int) lead_por_id($ids['desistido'])['crm_tentativas'], 'nao mexeu em quem desistiu');
 
         crm_teste_limpar();
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_mapa_campos', MAPA_PADRAO);
-        config_gravar('crm_endpoint', crm_falso_url('erro500'));
+        crm_teste_config();
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=erro500');
         $idFalha = semear_lead('Vai falhar', 'pendente', 0);
         $r = leads_reenviar();
         igual(1, $r['tentados']);
@@ -911,6 +943,29 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
             leads_reenviar();
         }
         igual(0, count(leads_pendentes()), 'depois do limite o lead sai da fila');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('o reenvio de um lead com pessoa conhecida nao cria pessoa de novo', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $id = semear_lead('Meio caminho', 'erro', 1);
+        lead_marcar_pessoa($id, 71397195);
+
+        $r = leads_reenviar();
+        igual(1, $r['tentados']);
+        igual(1, $r['enviados']);
+
+        foreach (crm_falso_todas() as $chamada) {
+            falso($chamada['metodo'] === 'POST' && $chamada['caminho'] === '/people', 'nao criou pessoa nova');
+        }
     } finally {
         crm_falso_derrubar($servidor);
     }

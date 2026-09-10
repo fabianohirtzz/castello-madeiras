@@ -95,6 +95,22 @@ function lead_marcar(int $id, string $status, int $tentativas, ?string $resposta
 }
 
 /**
+ * Guarda o id da pessoa no CRM.
+ *
+ * Existe para o reenvio nao criar pessoa duplicada quando a primeira tentativa
+ * conseguiu criar a pessoa e morreu antes de criar o negocio. Nao mexe em
+ * status nem em tentativas: e so a memoria de meio caminho.
+ */
+function lead_marcar_pessoa(int $id, int $pessoaId): void
+{
+    if ($pessoaId <= 0) {
+        return;
+    }
+    $st = db()->prepare('UPDATE leads SET crm_pessoa_id = :pessoa WHERE id = :id');
+    $st->execute([':pessoa' => $pessoaId, ':id' => $id]);
+}
+
+/**
  * Leads que ainda precisam subir para o CRM, mais antigos primeiro.
  *
  * Entram os status pendente, erro e desativado. O desativado entra porque um
@@ -138,6 +154,9 @@ function leads_reenviar(): array
     foreach (leads_pendentes(20) as $lead) {
         $resumo['tentados']++;
         $resultado = crm_enviar($lead);
+        if (!empty($resultado['pessoa_id'])) {
+            lead_marcar_pessoa((int) $lead['id'], (int) $resultado['pessoa_id']);
+        }
         $tentativas = ((int) ($lead['crm_tentativas'] ?? 0)) + 1;
 
         if (!empty($resultado['ok'])) {
