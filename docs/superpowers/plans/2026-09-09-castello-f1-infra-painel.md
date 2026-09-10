@@ -1974,7 +1974,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Uma diferença conhecida e aceita em relação ao `index.html`:** os caminhos de mídia passam a apontar para `uploads/`. O `norm()` dos testes desfaz essa troca antes de comparar. Fora isso a saída é byte a byte a mesma, inclusive os `alt`, porque a tabela `passos` ganhou a coluna `imagem_alt` no contrato e os cinco textos descritivos migram como estão.
 
-- [ ] **Passo 1: Extrair os fragmentos de referência do `index.html`**
+- [x] **Passo 1: Extrair os fragmentos de referência do `index.html`**
 
 O `index.html` ainda não foi tocado, então as linhas abaixo valem. Rode na raiz do repositório:
 
@@ -2006,7 +2006,7 @@ grep -c 'faq__tab' testes/base/frag-faq.html                # 7 (mais 0 no tabli
 
 Se algum `head`/`tail` não bater, ajuste o intervalo até bater. Os fragmentos são a referência do teste, então precisam estar exatos.
 
-- [ ] **Passo 2: Escrever o teste que falha**
+- [x] **Passo 2: Escrever o teste que falha**
 
 Crie `testes/casos/40-partials.php`:
 
@@ -2110,12 +2110,12 @@ teste('o texto do banco sai escapado', function (): void {
 });
 ```
 
-- [ ] **Passo 3: Rodar e ver falhar**
+- [x] **Passo 3: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 40-partials`
 Esperado: falha em todos os testes de parcial, com `Failed opening required .../partials/modelos.php`.
 
-- [ ] **Passo 4: Escrever `partials/modelos.php`**
+- [x] **Passo 4: Escrever `partials/modelos.php`**
 
 ```php
 <?php
@@ -2156,7 +2156,7 @@ $lista_modelos = modelos($modalidade ?? 'pronta');
       </div>
 ```
 
-- [ ] **Passo 5: Escrever `partials/portfolio.php`**
+- [x] **Passo 5: Escrever `partials/portfolio.php`**
 
 ```php
 <?php
@@ -2183,7 +2183,7 @@ $lista_portfolio = portfolio();
       </div>
 ```
 
-- [ ] **Passo 6: Escrever `partials/avaliacoes.php`**
+- [x] **Passo 6: Escrever `partials/avaliacoes.php`**
 
 ```php
 <?php
@@ -2210,7 +2210,7 @@ $lista_avaliacoes = avaliacoes();
       </div>
 ```
 
-- [ ] **Passo 7: Escrever `partials/videos.php`**
+- [x] **Passo 7: Escrever `partials/videos.php`**
 
 ```php
 <?php
@@ -2231,7 +2231,7 @@ $lista_videos = videos();
     </div>
 ```
 
-- [ ] **Passo 8: Escrever `partials/faq.php`**
+- [x] **Passo 8: Escrever `partials/faq.php`**
 
 ```php
 <?php
@@ -2264,7 +2264,7 @@ $lista_faq = faq($contexto ?? 'geral');
       </div>
 ```
 
-- [ ] **Passo 9: Escrever `partials/passos.php`**
+- [x] **Passo 9: Escrever `partials/passos.php`**
 
 ```php
 <?php
@@ -2294,7 +2294,7 @@ $total_passos = count($lista_passos);
         </ol>
 ```
 
-- [ ] **Passo 10: Rodar e ver passar**
+- [x] **Passo 10: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 40-partials`
 Esperado: 12 ok, 0 falha, 0 pulado.
@@ -2304,7 +2304,7 @@ Se algum `igual()` de fragmento falhar, a mensagem mostra os dois lados normaliz
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 11: Commit**
+- [x] **Passo 11: Commit**
 
 ```bash
 git add public_html/partials testes/base testes/casos/40-partials.php
