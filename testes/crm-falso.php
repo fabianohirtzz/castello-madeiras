@@ -172,11 +172,23 @@ if ($metodo === 'POST' && $caminho === '/people') {
         }
     }
 
+    $nome = (string) ($entrada['name'] ?? '');
     $id = 70000000 + count($pessoas) + 1;
-    $pessoas[] = ['id' => $id, 'name' => (string) ($entrada['name'] ?? ''), 'telefones' => $telefones];
-    falso_gravar(FALSO_PESSOAS, $pessoas);
 
-    falso_responder(201, ['data' => ['id' => $id, 'name' => (string) ($entrada['name'] ?? '')]]);
+    /* So grava no estado compartilhado quando ha nome ou telefone de
+       verdade. O modo demora (acima) nao interrompe a rota depois de
+       dormir, de proposito: um teste de orcamento de tempo precisa que a
+       chamada lenta ainda crie a pessoa de verdade quando o corpo e real.
+       Mas uma chamada usada so para medir tempo, com corpo vazio, nao pode
+       deixar um registro fantasma (sem nome, sem telefone) no arquivo de
+       estado - isso contaminaria contagem de id e buscas de quem rodar
+       depois na mesma rodada. */
+    if ($nome !== '' || $telefones !== []) {
+        $pessoas[] = ['id' => $id, 'name' => $nome, 'telefones' => $telefones];
+        falso_gravar(FALSO_PESSOAS, $pessoas);
+    }
+
+    falso_responder(201, ['data' => ['id' => $id, 'name' => $nome]]);
     return;
 }
 

@@ -169,55 +169,67 @@ teste('a config nasce com os valores reais da conta do Agendor', function (): vo
 });
 
 teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', function (): void {
-    /* Banco real com a coluna ja adicionada (simulando outra requisicao que venceu). */
-    $pdo_real = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    $pdo_real->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
-    $pdo_real->exec('ALTER TABLE leads ADD COLUMN prazo TEXT'); // Outra requisicao adicionou
+    /* Banco de verdade com a coluna ja adicionada (simulando outra requisicao que venceu). */
+    $pdoVerdadeiro = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdoVerdadeiro->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+    $pdoVerdadeiro->exec('ALTER TABLE leads ADD COLUMN prazo TEXT'); // outra requisicao ja adicionou
 
-    /* Mock que faz o PRAGMA table_info mentir e dizer que prazo nao existe ainda.
-       Quando a funcao tentar ALTER TABLE, vai falhar com "duplicate column name". */
-    class MockPDOForRaceCondition extends PDO {
-        private $pdo_real;
-        public function __construct($pdo) {
-            $this->pdo_real = $pdo;
+    /* PDO de mentira que faz o PRAGMA table_info mentir, dizendo que prazo
+       ainda nao existe. Quando a funcao tentar o ALTER TABLE, vai esbarrar
+       na coluna que ja existe de verdade e receber "duplicate column name". */
+    class PdoFalsoDeCorrida extends PDO {
+        private PDO $pdoVerdadeiro;
+        public function __construct(PDO $pdoVerdadeiro) {
+            $this->pdoVerdadeiro = $pdoVerdadeiro;
         }
         #[\ReturnTypeWillChange]
         public function query(string $sql, ...$args) {
-            // PRAGMA table_info(leads) retorna resultado forjado sem prazo e sem crm_pessoa_id
+            // PRAGMA table_info(leads) devolve resultado forjado, sem prazo e sem crm_pessoa_id.
             if (strpos($sql, 'PRAGMA table_info') !== false) {
-                return $this->pdo_real->query(
+                return $this->pdoVerdadeiro->query(
                     "SELECT 'id' AS name UNION ALL SELECT 'nome' UNION ALL SELECT 'crm_status'"
                 );
             }
-            // Outro SQL vai pro banco de verdade, onde a coluna ja existe
-            return $this->pdo_real->query($sql, ...$args);
+            // Qualquer outro SQL vai para o banco de verdade, onde a coluna ja existe.
+            return $this->pdoVerdadeiro->query($sql, ...$args);
         }
         public function exec(string $sql): int {
-            return $this->pdo_real->exec($sql);
+            return $this->pdoVerdadeiro->exec($sql);
         }
     }
 
-    $pdo_mock = new MockPDOForRaceCondition($pdo_real);
+    $pdoFalso = new PdoFalsoDeCorrida($pdoVerdadeiro);
 
-    /* A funcao vai achar que prazo falta (mentira do PRAGMA), tentar adicionar (ALTER TABLE),
-       e falhar com "duplicate column name" porque prazo ja existe no banco de verdade.
-       O try/catch tem que engolir a excecao silenciosamente. */
-    $pegou_excecao = false;
+    /* A funcao vai achar que prazo falta (mentira do PRAGMA), tentar
+       acrescentar (ALTER TABLE) e esbarrar em "duplicate column name" porque
+       a coluna ja existe no banco de verdade. O catch de db_garantir_colunas
+       tem que engolir essa excecao especifica, sem deixar escapar.
+       $acrescentadas comeca nulo e so ganha valor se a chamada nao lancar;
+       se lancasse, um sort(null) mataria o processo em vez de reprovar o
+       teste com uma mensagem legivel - por isso o cheque de $falha vem
+       antes do sort(). */
+    $acrescentadas = null;
+    $falha = null;
     try {
-        $acrescentadas = db_garantir_colunas($pdo_mock);
-    } catch (PDOException $ex) {
-        $pegou_excecao = true;
+        $acrescentadas = db_garantir_colunas($pdoFalso);
+    } catch (Throwable $ex) {
+        $falha = $ex;
     }
 
-    falso($pegou_excecao, 'nao deve lancar excecao; coluna duplicada e engolida no catch');
+    verdade(
+        $falha === null,
+        'nao pode lancar excecao; coluna duplicada tem que ser engolida no catch: '
+            . ($falha instanceof Throwable ? $falha->getMessage() : '')
+    );
+    verdade(is_array($acrescentadas), 'db_garantir_colunas precisa devolver um array mesmo neste caminho');
 
-    /* Apenas crm_pessoa_id entrou na lista de acrescentadas.
-       Prazo foi recusado silenciosamente pelo catch de coluna duplicada. */
+    /* So crm_pessoa_id entrou na lista de acrescentadas nesta chamada.
+       Prazo foi recusado em silencio pelo catch de coluna duplicada. */
     sort($acrescentadas);
     igual(['crm_pessoa_id'], $acrescentadas, 'apenas crm_pessoa_id foi acrescentado nesta chamada');
 
     /* Ambas as colunas existem agora no banco de verdade. */
-    $colunas = array_column($pdo_real->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    $colunas = array_column($pdoVerdadeiro->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     verdade(in_array('prazo', $colunas, true), 'prazo existe no banco');
     verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe no banco');
 });

@@ -42,9 +42,6 @@ $ativos = (int) db()->query('SELECT COUNT(*) FROM videos WHERE ativo = 1')->fetc
 <?php endforeach; ?>
     </select>
 
-<?php elseif ($campo['tipo'] === 'json'): ?>
-    <textarea id="<?= e($idc) ?>" name="<?= e($chave) ?>" rows="3"><?= e($valor) ?></textarea>
-
 <?php else: ?>
     <input type="text" id="<?= e($idc) ?>" name="<?= e($chave) ?>" value="<?= e($valor) ?>" />
 <?php endif; ?>

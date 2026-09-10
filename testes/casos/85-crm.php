@@ -73,11 +73,6 @@ function crm_falso_porta(): int
     return (int) $GLOBALS['crm_falso_porta'];
 }
 
-function crm_falso_url(string $modo, array $extra = []): string
-{
-    return 'http://127.0.0.1:' . crm_falso_porta() . '/?' . http_build_query(['modo' => $modo] + $extra);
-}
-
 function crm_falso_arquivo(): string
 {
     return sys_get_temp_dir() . CRM_FALSO_ULTIMA;
