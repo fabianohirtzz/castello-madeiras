@@ -217,6 +217,9 @@ teste('painel_salvar ignora coluna que nao esta na descricao', function (): void
     ]);
 
     igual(1, (int) painel_linha('avaliacoes', $id)['ativo'], 'ativo nao pode vir do formulario');
+
+    // Limpa a linha de teste: os casos seguintes contam com as 14 avaliacoes migradas.
+    db()->exec('DELETE FROM avaliacoes WHERE id = ' . $id);
 });
 
 teste('painel_arquivos grava o upload valido e devolve o caminho relativo', function (): void {
@@ -263,4 +266,74 @@ teste('painel_erro_upload fala a lingua do cliente', function (): void {
     contem('5 MB', painel_erro_upload('tamanho', 'imagem'));
     contem('MP4', painel_erro_upload('tipo', 'video'));
     nao_contem('finfo', painel_erro_upload('tipo', 'imagem'));
+});
+
+teste('painel_estado desativa e reativa sem apagar nada', function (): void {
+    $id = (int) db()->query("SELECT id FROM avaliacoes WHERE nome = 'Nany Festa'")->fetchColumn();
+
+    painel_estado('avaliacoes', $id, 0);
+    igual(0, (int) painel_linha('avaliacoes', $id)['ativo']);
+    igual(13, count(avaliacoes()), 'o site deixa de mostrar');
+    verdade(painel_linha('avaliacoes', $id) !== null, 'a linha continua no banco');
+
+    painel_estado('avaliacoes', $id, 1);
+    igual(1, (int) painel_linha('avaliacoes', $id)['ativo']);
+    igual(14, count(avaliacoes()));
+});
+
+teste('painel_estado recusa tabela fora da descricao', function (): void {
+    foreach (['usuarios', 'leads', 'config'] as $chave) {
+        $pegou = false;
+        try {
+            painel_estado($chave, 1, 0);
+        } catch (InvalidArgumentException $ex) {
+            $pegou = true;
+        }
+        verdade($pegou, "painel_estado tinha que recusar $chave");
+    }
+});
+
+teste('painel_reordenar renumera de 1 ate N na ordem recebida', function (): void {
+    $ids = array_map('intval', array_column(painel_listar('passos', 'pronta'), 'id'));
+    igual(5, count($ids));
+
+    $invertido = array_reverse($ids);
+    igual(5, painel_reordenar('passos', $invertido));
+
+    $agora = array_map('intval', array_column(painel_listar('passos', 'pronta'), 'id'));
+    igual($invertido, $agora, 'a lista do painel segue a nova ordem');
+    igual('Chave na mão', passos('pronta')[0]['titulo'], 'o site tambem segue');
+
+    igual(1, (int) painel_linha('passos', $invertido[0])['ordem']);
+    igual(5, (int) painel_linha('passos', $invertido[4])['ordem']);
+
+    painel_reordenar('passos', $ids);
+    igual('Conversa e projeto', passos('pronta')[0]['titulo'], 'voltou ao normal');
+});
+
+teste('reordenar troca quais videos aparecem na home', function (): void {
+    igual('8', config_ler('videos_na_home'));
+    nao_contem('insta-11', videos()[0]['arquivo'] . videos()[1]['arquivo']);
+
+    $ids = array_map('intval', array_column(painel_listar('videos'), 'id'));
+    $ultimo = array_pop($ids);
+    array_unshift($ids, $ultimo);
+    painel_reordenar('videos', $ids);
+
+    contem('insta-11', videos()[0]['arquivo'], 'o promovido virou o primeiro da home');
+    igual(8, count(videos()), 'o limite continua valendo');
+    igual(11, count(videos(0)), 'nenhum video sumiu');
+});
+
+teste('painel_reordenar ignora id invalido e recusa tabela desconhecida', function (): void {
+    $ids = array_map('intval', array_column(painel_listar('portfolio'), 'id'));
+    igual(count($ids), painel_reordenar('portfolio', array_merge($ids, [0, -3, 999999])));
+
+    $pegou = false;
+    try {
+        painel_reordenar('usuarios', [1]);
+    } catch (InvalidArgumentException $ex) {
+        $pegou = true;
+    }
+    verdade($pegou);
 });

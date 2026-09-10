@@ -321,3 +321,43 @@ function painel_salvar(string $chave, ?int $id, array $valores): int
 
     return $id;
 }
+
+/** Liga ou desliga um item. Nada e apagado, so deixa de aparecer no site. */
+function painel_estado(string $chave, int $id, int $ativo): void
+{
+    if (painel_tabela($chave) === null) {
+        throw new InvalidArgumentException('tela de conteudo desconhecida: ' . $chave);
+    }
+
+    db()->prepare('UPDATE ' . $chave . ' SET ativo = ? WHERE id = ?')
+        ->execute([$ativo === 1 ? 1 : 0, $id]);
+}
+
+/**
+ * Grava a nova ordem: o primeiro id da lista vira ordem 1, e assim por diante.
+ * Ids que nao existem sao ignorados. Devolve quantas linhas mudaram.
+ */
+function painel_reordenar(string $chave, array $ids): int
+{
+    if (painel_tabela($chave) === null) {
+        throw new InvalidArgumentException('tela de conteudo desconhecida: ' . $chave);
+    }
+
+    $st = db()->prepare('UPDATE ' . $chave . ' SET ordem = ? WHERE id = ?');
+    $posicao = 0;
+    $mudaram = 0;
+
+    db()->beginTransaction();
+    foreach ($ids as $bruto) {
+        $id = (int) $bruto;
+        if ($id <= 0) {
+            continue;
+        }
+        $posicao++;
+        $st->execute([$posicao, $id]);
+        $mudaram += $st->rowCount();
+    }
+    db()->commit();
+
+    return $mudaram;
+}

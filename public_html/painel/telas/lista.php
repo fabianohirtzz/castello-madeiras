@@ -42,7 +42,8 @@ foreach ($linhas as $linha) {
 <?php if ($linhas === []): ?>
 <p class="p-sub">Nada cadastrado aqui ainda. Toque em Adicionar <?= e($def['singular']) ?> para começar.</p>
 <?php else: ?>
-<ul class="p-lista" id="pLista" data-tabela="<?= e($tela) ?>">
+<p class="p-aviso" id="pOrdemAviso" role="status" hidden></p>
+<ul class="p-lista" id="pLista" data-tabela="<?= e($tela) ?>" data-csrf="<?= e(csrf_token()) ?>">
 <?php foreach ($linhas as $linha):
     $inativo = (int) $linha['ativo'] !== 1;
     $mini    = isset($def['miniatura']) ? (string) ($linha[$def['miniatura']] ?? '') : '';
@@ -67,9 +68,18 @@ foreach ($linhas as $linha) {
     </span>
 
     <span class="p-acoes">
-      <a class="p-btn" href="painel.php?tela=<?= e($tela) ?>&amp;editar=<?= (int) $linha['id'] ?>">Editar</a>
+      <a class="p-btn" href="painel.php?tela=<?= e($tela) ?>&amp;editar=<?= (int) $linha['id'] ?><?= $filtro !== null ? '&amp;filtro=' . e($filtro) : '' ?>">Editar</a>
+      <form method="post" action="acoes/estado.php">
+        <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
+        <input type="hidden" name="tela" value="<?= e($tela) ?>" />
+        <input type="hidden" name="filtro" value="<?= e((string) $filtro) ?>" />
+        <input type="hidden" name="id" value="<?= (int) $linha['id'] ?>" />
+        <input type="hidden" name="ativo" value="<?= $inativo ? '1' : '0' ?>" />
+        <button class="p-btn p-btn--fraco" type="submit"><?= $inativo ? 'Reativar' : 'Desativar' ?></button>
+      </form>
     </span>
   </li>
 <?php endforeach; ?>
 </ul>
+<script src="assets/painel.js?v=1"></script>
 <?php endif; ?>

@@ -4941,7 +4941,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: `painel_tabela()`, `painel_linha()`, `painel_listar()`, `csrf_token()`, `csrf_validar()`, `auth_exigir()`, `auth_logado()`, `videos()`.
 - Produz: `painel_estado(string $chave, int $id, int $ativo): void`, `painel_reordenar(string $chave, array $ids): int` (devolve quantas linhas mudaram); e o endpoint `painel/acoes/ordem.php`, que responde JSON `{"ok":true,"atualizados":N}` ou `{"ok":false,"erro":"csrf|tela|sessao"}`.
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao final de `testes/casos/80-painel.php`:
 
@@ -5017,12 +5017,12 @@ teste('painel_reordenar ignora id invalido e recusa tabela desconhecida', functi
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: os 22 anteriores passam, os 5 novos falham com `Call to undefined function painel_estado()`.
 
-- [ ] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -5068,7 +5068,7 @@ function painel_reordenar(string $chave, array $ids): int
 }
 ```
 
-- [ ] **Passo 4: Acrescentar o botão de estado e o script à `telas/lista.php`**
+- [x] **Passo 4: Acrescentar o botão de estado e o script à `telas/lista.php`**
 
 Na `public_html/painel/telas/lista.php`, faça três mudanças.
 
@@ -5104,7 +5104,7 @@ Na `public_html/painel/telas/lista.php`, faça três mudanças.
 <script src="assets/painel.js?v=1"></script>
 ```
 
-- [ ] **Passo 5: Escrever `acoes/estado.php`**
+- [x] **Passo 5: Escrever `acoes/estado.php`**
 
 ```php
 <?php
@@ -5147,7 +5147,7 @@ header('Location: ' . $lista . '&ok=' . rawurlencode($recado));
 exit;
 ```
 
-- [ ] **Passo 6: Escrever `acoes/ordem.php`**
+- [x] **Passo 6: Escrever `acoes/ordem.php`**
 
 ```php
 <?php
@@ -5187,7 +5187,7 @@ $ids = is_array($corpo['ids'] ?? null) ? $corpo['ids'] : [];
 echo json_encode(['ok' => true, 'atualizados' => painel_reordenar($tela, $ids)]);
 ```
 
-- [ ] **Passo 7: Escrever `assets/painel.js`**
+- [x] **Passo 7: Escrever `assets/painel.js`**
 
 ```javascript
 /* Reordenar arrastando, com ponteiro unico: funciona no mouse e no toque. */
@@ -5283,12 +5283,12 @@ echo json_encode(['ok' => true, 'atualizados' => painel_reordenar($tela, $ids)])
 })();
 ```
 
-- [ ] **Passo 8: Rodar e ver passar**
+- [x] **Passo 8: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 27 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 9: Conferir no navegador**
+- [x] **Passo 9: Conferir no navegador**
 
 Com o servidor local no ar e logado:
 
@@ -5300,7 +5300,7 @@ Com o servidor local no ar e logado:
    `fetch('acoes/ordem.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({csrf:'errado',tela:'videos',ids:[1]})}).then(r=>r.status).then(console.log)`
    Esperado: `419`.
 
-- [ ] **Passo 10: Rodar a suíte e commitar**
+- [x] **Passo 10: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
