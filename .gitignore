@@ -15,6 +15,7 @@ qa-*.jpeg
 CLAUDE.md
 avaliacoes/
 .credenciais-deploy
+.credenciais-agendor
 
 # Backup do video original do hero (pre all-intra)
 public_html/video-hero/video-hero.original.mp4
