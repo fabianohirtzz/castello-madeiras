@@ -254,14 +254,19 @@ Posição: depois de "O que você busca?" e antes de "Modelo de interesse", onde
 - `public_html/enviar.php` — limite de tamanho e validação contra a lista fechada de valores. Valor fora da lista vira string vazia, não HTTP 422: o campo é opcional e um POST adulterado não deve custar o lead.
 - `lib/leads.php` e `lib/schema.sql` — coluna `prazo`
 - `lib/email.php` — a linha no e-mail de aviso
-- `painel/` — a coluna na lista de leads
-- **`testes/casos/50-paginas.php`** — ver 7.3
+- **`testes/casos/50-paginas.php`** e as cinco bases — ver 7.3
 
-### 7.3 A comparação byte a byte
+Não há nada a fazer no painel: **o painel não tem tela de leads**, por decisão da spec da Fase 2. O e-mail de aviso é o único lugar onde a equipe lê o lead fora do CRM, o que torna a linha do prazo nele mais importante, não menos.
 
-Os testes comparam a saída de `index.php` e `flex.php` **byte a byte** com `testes/base/home-fase2.html` e `flex-fase2.html`. Mexer no formulário quebra essa comparação nas duas páginas.
+### 7.3 A comparação byte a byte, nas cinco páginas
 
-A lista de desvios em `testes/casos/50-paginas.php` precisa ser atualizada **na mesma tarefa** que altera o formulário. Se ficar para depois, a suíte inteira fica vermelha e deixa de servir como rede de segurança para o resto do trabalho.
+O `testes/casos/50-paginas.php` compara o corpo de **cada página do site** com uma base conferida no navegador, guardada em `testes/base/pagina-<chave>.html`. São cinco: `pagina-home.html`, `pagina-casa-pronta.html`, `pagina-flex.html`, `pagina-portfolio.html` e `pagina-contato.html`.
+
+O `partials/formulario.php` é um só e aparece **uma vez em cada uma das cinco**: dentro do `partials/modal.php` em quatro delas, e embutido direto na `contato.php`, que por isso não inclui o modal. Ou seja, acrescentar um campo ao formulário invalida **as cinco bases de uma vez**.
+
+Regenerar as cinco bases faz parte da **mesma tarefa** que altera o formulário. Se ficar para depois, a suíte inteira fica vermelha e deixa de servir como rede de segurança para o resto do trabalho. E o cabeçalho do arquivo é explícito quanto ao procedimento: base nova só depois de conferir a página no navegador, não gerada às cegas a partir da própria saída.
+
+O mesmo arquivo tem um teste que afirma o conteúdo do select de modelos (`'<option value="Compacta · 39 m² · R$ 69.900">'`). Ele não é afetado pelo campo novo, mas é o teste que vai quebrar quando o catálogo da seção 13.1 for corrigido.
 
 ---
 
@@ -276,7 +281,13 @@ crm_pessoa_id  INTEGER
 
 `prazo` guarda a resposta do campo novo. `crm_pessoa_id` guarda o id da pessoa no Agendor assim que ela é criada ou encontrada, e existe para resolver o caso descrito em 9.2.
 
-**Migração.** O `migrar()` aplica o `schema.sql` com `CREATE TABLE IF NOT EXISTS` e **não tem mecanismo para adicionar coluna em tabela existente**. O banco no servidor de teste já tem leads gravados. É preciso um passo de migração que leia `PRAGMA table_info(leads)` e execute `ALTER TABLE leads ADD COLUMN` para cada coluna faltante. O passo é idempotente: rodar duas vezes não pode falhar.
+**Migração, e por que ela não pode morar no `migrar.php`.** O `CREATE TABLE IF NOT EXISTS` do `schema.sql` não adiciona coluna a tabela que já existe, e o banco no servidor já tem leads gravados. Falta um `ALTER TABLE leads ADD COLUMN`.
+
+O lugar óbvio seria o `migrar.php`, e é o lugar errado: **ele é apagado do servidor depois da instalação**, então uma migração escondida ali nunca rodaria em produção.
+
+O lugar certo é a `db()`, em `lib/db.php`, que já aplica o `schema.sql` inteiro e já semeia a `config` com `INSERT OR IGNORE` a cada conexão. Entra ali uma função `db_garantir_colunas(PDO $pdo): array` que lê `PRAGMA table_info(leads)` e acrescenta o que faltar, devolvendo o que acrescentou. Uma consulta a mais por requisição, ao lado de um `exec` de schema inteiro que já acontece: irrelevante.
+
+Ser idempotente não é detalhe, é o requisito: essa função roda em toda requisição do site.
 
 ---
 
@@ -302,6 +313,7 @@ Mantém a convenção do conector atual, acrescentando o que é do Agendor:
 |---|---|
 | `crm_desativado` | `crm_ativo` desligado |
 | `crm_sem_token` | `CASTELLO_AGENDOR_TOKEN` ausente ou vazio |
+| `crm_sem_telefone` | telefone que não normaliza para 10 ou 11 dígitos, e o lead ainda não tem `crm_pessoa_id`. Sem telefone não há como buscar duplicata nem como o vendedor responder |
 | `crm_tempo` | orçamento de tempo esgotado |
 | `crm_conexao` | falha de rede |
 | `crm_auth` | HTTP 401 ou 403, token inválido ou revogado |
