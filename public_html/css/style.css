@@ -135,12 +135,12 @@ ul,ol{list-style:none}
   box-shadow:0 14px 40px -18px rgba(0,0,0,.6);
   transition:background .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease),height .35s var(--ease);
 }
-.nav__logo{display:flex;align-items:center;flex:none;justify-self:start}
+.nav__logo{display:flex;align-items:center;flex:none;grid-column:1;justify-self:start}
 .nav__logo-img{height:58px;width:auto;flex:none;object-fit:contain;transition:opacity .3s}
 .nav__logo-img--dark{display:none}
 
-.nav__links{display:flex;gap:clamp(4px,.8vw,12px);justify-self:center}
-.nav__acoes{display:flex;align-items:center;gap:clamp(10px,1.4vw,20px);justify-self:end}
+.nav__links{display:flex;gap:clamp(4px,.8vw,12px);grid-column:2;justify-self:center}
+.nav__acoes{display:flex;align-items:center;gap:clamp(10px,1.4vw,20px);grid-column:3;justify-self:end}
 .nav__links a{
   display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
   font-family:var(--font-display);font-weight:600;font-size:.92rem;color:#fff;
@@ -1115,9 +1115,9 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 
 /* ---------- Hero de página interna (Castelo Flex) ---------- */
 .pagehero{
-  position:relative;display:flex;align-items:flex-end;
+  position:relative;display:flex;align-items:center;
   min-height:100vh;min-height:100svh;
-  padding-block:clamp(130px,18vh,180px) clamp(56px,9vh,96px);
+  padding-block:clamp(110px,14vh,150px); /* simetrico: o conteudo centraliza de verdade */
   background:var(--ink);color:#fff;overflow:hidden;
 }
 .pagehero__media{position:absolute;inset:0;z-index:0}
@@ -1126,18 +1126,19 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   position:absolute;inset:0;z-index:1;
   background:linear-gradient(180deg,rgba(20,20,20,.66) 0%,rgba(20,20,20,.42) 38%,rgba(20,20,20,.88) 100%);
 }
-.pagehero .container{position:relative;z-index:2}
+.pagehero .container{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center}
+.pagehero .eyebrow,.pagehero .stamp{margin-inline:auto}
 .pagehero__title{
   font-family:var(--font-display);font-weight:800;
   font-size:clamp(2.3rem,5.6vw,4.4rem);line-height:1.02;letter-spacing:-.035em;
-  max-width:17ch;text-shadow:0 2px 40px rgba(0,0,0,.5);
+  max-width:17ch;margin-inline:auto;text-shadow:0 2px 40px rgba(0,0,0,.5);
 }
 .pagehero__title .hl{color:var(--red-bright)}
 .pagehero__lead{
-  margin-top:20px;max-width:54ch;line-height:1.6;
+  margin-top:20px;max-width:54ch;margin-inline:auto;line-height:1.6;
   font-size:clamp(1.04rem,1.4vw,1.24rem);color:rgba(255,255,255,.86);
 }
-.pagehero__actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
+.pagehero__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:32px}
 @media(max-width:560px){
   .pagehero__actions{flex-direction:column;align-items:stretch}
   .pagehero__actions .btn{width:100%}
