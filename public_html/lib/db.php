@@ -119,11 +119,18 @@ const CASTELLO_CONFIG_PADRAO = [
     'videos_na_home'  => '8',
     'email_aviso'     => 'contato@castellomadeiras.com.br',
     'email_dominio'   => 'castellomadeiras.com.br',
+    /* Os ids sao os da conta real da Castello, lidos em 2026-09-10. crm_etapa
+       e a SEQUENCIA da etapa Contato, nao o id 3845540: a API pede sequencia.
+       crm_base nao aparece no painel; existe para o teste apontar o conector
+       ao servidor falso. */
     'crm_ativo'       => '0',
-    'crm_endpoint'    => '',
-    'crm_metodo'      => 'POST',
-    'crm_cabecalhos'  => '{}',
-    'crm_mapa_campos' => '{"nome":"nome","whatsapp":"telefone","busca":"interesse","modelo":"modelo","cidade":"cidade","mensagem":"observacao","utm_source":"origem","utm_campaign":"campanha","pagina":"pagina"}',
+    'crm_base'        => 'https://api.agendor.com.br/v3',
+    'crm_funil'       => '904296',
+    'crm_etapa'       => '1',
+    'crm_origem'      => '2656389',
+    'crm_categoria'   => '4187395',
+    'crm_marcador'    => '[SITE]',
+    'crm_responsavel' => '',
     'crm_timeout'     => '10',
 ];
 

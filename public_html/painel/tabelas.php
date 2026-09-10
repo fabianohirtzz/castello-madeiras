@@ -447,14 +447,22 @@ function painel_config_campos(): array
                              'ajuda' => 'Só o domínio, como castellomadeiras.com.br'],
         'crm_ativo'      => ['rotulo' => 'Enviar os pedidos para o CRM', 'tipo' => 'sim_nao',
                              'ajuda' => 'Deixe desligado enquanto o CRM não estiver configurado. O pedido continua sendo gravado e enviado por e-mail'],
-        'crm_endpoint'   => ['rotulo' => 'Endereço do CRM', 'tipo' => 'texto',
-                             'ajuda' => 'A URL completa, começando com https://'],
-        'crm_metodo'     => ['rotulo' => 'Método HTTP', 'tipo' => 'selecao',
-                             'opcoes' => ['POST' => 'POST', 'PUT' => 'PUT', 'PATCH' => 'PATCH']],
-        'crm_cabecalhos' => ['rotulo' => 'Cabeçalhos do CRM', 'tipo' => 'json',
-                             'ajuda' => 'JSON, como {"Authorization":"Bearer sua-chave"}'],
-        'crm_mapa_campos' => ['rotulo' => 'De para dos campos', 'tipo' => 'json',
-                              'ajuda' => 'JSON ligando o campo do site ao nome que o CRM espera'],
+        'crm_funil'      => ['rotulo' => 'Funil do Agendor', 'tipo' => 'numero',
+                             'min' => 1, 'max' => 99999999,
+                             'ajuda' => 'O número do funil que recebe os pedidos. O funil de vendas da Castello é o 904296'],
+        'crm_etapa'      => ['rotulo' => 'Etapa onde o pedido entra', 'tipo' => 'numero',
+                             'min' => 1, 'max' => 99,
+                             'ajuda' => 'A posição da etapa no funil, contando da esquerda. Contato é a 1'],
+        'crm_origem'     => ['rotulo' => 'Origem do contato', 'tipo' => 'numero',
+                             'min' => 1, 'max' => 99999999,
+                             'ajuda' => 'O número da origem no Agendor. Site é 2656389'],
+        'crm_categoria'  => ['rotulo' => 'Categoria do contato', 'tipo' => 'numero',
+                             'min' => 1, 'max' => 99999999,
+                             'ajuda' => 'O número da categoria. Cliente em potencial é 4187395'],
+        'crm_marcador'   => ['rotulo' => 'Marcador no título do negócio', 'tipo' => 'texto',
+                             'ajuda' => 'Aparece na frente do título, para separar o que veio do site do que veio das redes. Escreva com os colchetes, como [SITE]'],
+        'crm_responsavel' => ['rotulo' => 'Responsável pelos pedidos do site', 'tipo' => 'texto',
+                              'ajuda' => 'O número ou o e-mail do vendedor no Agendor. Deixe vazio para cair na conta principal'],
         'crm_timeout'    => ['rotulo' => 'Segundos de espera pelo CRM', 'tipo' => 'numero',
                              'min' => 1, 'max' => 10,
                              'ajuda' => 'De 1 a 10. O servidor derruba a página em 60 segundos, então esperar mais que 10 pelo CRM faria o visitante esperar junto'],
@@ -516,39 +524,38 @@ function painel_config_validar(array $entrada): array
             continue;
         }
 
-        if ($chave === 'reenvio_chave') {
-            $valores[$chave] = strlen($bruto) >= 32 ? $bruto : bin2hex(random_bytes(16));
-            continue;
-        }
-
         if ($chave === 'crm_ativo') {
             $valores[$chave] = $bruto === '1' ? '1' : '0';
             continue;
         }
 
-        if ($chave === 'crm_endpoint') {
-            if ($bruto !== '' && filter_var($bruto, FILTER_VALIDATE_URL) === false) {
-                $erros[$chave] = 'Escreva a URL completa, começando com https://';
+        if (in_array($chave, ['crm_funil', 'crm_etapa', 'crm_origem', 'crm_categoria'], true)) {
+            if ($bruto === '' || !ctype_digit($bruto) || (int) $bruto < 1) {
+                $erros[$chave] = 'Escreva só o número, maior que zero. Ele vem do Agendor.';
                 continue;
             }
-            $valores[$chave] = $bruto;
+            $valores[$chave] = (string) (int) $bruto;
             continue;
         }
 
-        if ($chave === 'crm_metodo') {
-            $valores[$chave] = isset($campo['opcoes'][$bruto]) ? $bruto : 'POST';
+        if ($chave === 'crm_marcador') {
+            if ($bruto === '') {
+                $erros[$chave] = 'O marcador não pode ficar vazio. O padrão é [SITE].';
+                continue;
+            }
+            $valores[$chave] = mb_substr($bruto, 0, 30);
             continue;
         }
 
-        $decodificado = json_decode($bruto === '' ? '{}' : $bruto, true);
-        if (!is_array($decodificado)) {
-            $erros[$chave] = 'Este campo precisa ser um JSON válido, como {"chave":"valor"}.';
+        if ($chave === 'crm_responsavel') {
+            $valores[$chave] = mb_substr($bruto, 0, 120);
             continue;
         }
-        // Array vazio viraria "[]" no json_encode; o CRM espera objeto, entao "{}".
-        $valores[$chave] = $decodificado === []
-            ? '{}'
-            : (string) json_encode($decodificado, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        if ($chave === 'reenvio_chave') {
+            $valores[$chave] = strlen($bruto) >= 32 ? $bruto : bin2hex(random_bytes(16));
+            continue;
+        }
     }
 
     return ['valores' => $valores, 'erros' => $erros];

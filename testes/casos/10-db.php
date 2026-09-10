@@ -58,22 +58,21 @@ teste('agora() devolve data no formato do contrato', function (): void {
     igual('America/Sao_Paulo', date_default_timezone_get());
 });
 
-teste('as dez chaves iniciais de config nascem com os valores do contrato', function (): void {
+teste('as chaves iniciais de config nascem com os valores do contrato', function (): void {
     igual('8', config_ler('videos_na_home'));
     igual('contato@castellomadeiras.com.br', config_ler('email_aviso'));
-    igual('0', config_ler('crm_ativo'));
-    igual('', config_ler('crm_endpoint'));
-    igual('POST', config_ler('crm_metodo'));
-    igual('{}', config_ler('crm_cabecalhos'));
-    igual('10', config_ler('crm_timeout'));
     igual('castellomadeiras.com.br', config_ler('email_dominio'));
+    igual('0', config_ler('crm_ativo'));
+    igual('https://api.agendor.com.br/v3', config_ler('crm_base'));
+    igual('904296', config_ler('crm_funil'));
+    igual('1', config_ler('crm_etapa'));
+    igual('2656389', config_ler('crm_origem'));
+    igual('4187395', config_ler('crm_categoria'));
+    igual('[SITE]', config_ler('crm_marcador'));
+    igual('', config_ler('crm_responsavel'));
+    igual('10', config_ler('crm_timeout'));
 
-    $mapa = json_decode((string) config_ler('crm_mapa_campos'), true);
-    igual('telefone', $mapa['whatsapp']);
-    igual('observacao', $mapa['mensagem']);
-    igual('origem', $mapa['utm_source']);
-
-    igual(10, (int) db()->query('SELECT COUNT(*) FROM config')->fetchColumn());
+    igual(13, (int) db()->query('SELECT COUNT(*) FROM config')->fetchColumn());
 });
 
 teste('reenvio_chave e gerada na instalacao e nao muda depois', function (): void {
@@ -151,6 +150,22 @@ teste('o banco real do runner ja tem as colunas novas', function (): void {
     $colunas = array_column(db()->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     verdade(in_array('prazo', $colunas, true), 'prazo no banco do runner');
     verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id no banco do runner');
+});
+
+teste('a config nasce com os valores reais da conta do Agendor', function (): void {
+    igual('0', config_ler('crm_ativo'), 'CRM nasce desligado');
+    igual('https://api.agendor.com.br/v3', config_ler('crm_base'));
+    igual('904296', config_ler('crm_funil'), 'Funil de Vendas');
+    igual('1', config_ler('crm_etapa'), 'sequencia da etapa Contato, nao o id 3845540');
+    igual('2656389', config_ler('crm_origem'), 'origem Site');
+    igual('4187395', config_ler('crm_categoria'), 'Cliente em potencial');
+    igual('[SITE]', config_ler('crm_marcador'), 'marcador com colchetes no proprio valor');
+    igual('', config_ler('crm_responsavel'), 'vazio: cai no dono do token');
+    igual('10', config_ler('crm_timeout'));
+
+    foreach (['crm_endpoint', 'crm_metodo', 'crm_cabecalhos', 'crm_mapa_campos'] as $morta) {
+        verdade(config_ler($morta) === null, 'chave generica ' . $morta . ' nao existe mais');
+    }
 });
 
 teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', function (): void {
