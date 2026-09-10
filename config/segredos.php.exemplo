@@ -1,0 +1,10 @@
+<?php
+// Copie este arquivo para config/segredos.php e preencha os valores.
+// config/segredos.php nunca vai para o git.
+
+// Chave que libera migrar.php pela web, para hospedagem sem acesso a linha
+// de comando. Vazia significa acesso web bloqueado, que e o padrao seguro.
+define('CASTELLO_MIGRAR_CHAVE', '');
+
+// Credenciais do CRM e do envio de e-mail entram aqui quando a Frente 3
+// precisar. Ate la, este arquivo so carrega a chave acima.

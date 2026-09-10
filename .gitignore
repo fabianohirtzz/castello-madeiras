@@ -6,6 +6,7 @@ desktop.ini
 # QA artifacts
 .playwright-mcp/
 qa-*.png
+qa-*.jpeg
 
 # Brainstorm companion (efêmero)
 .superpowers/
@@ -13,22 +14,20 @@ qa-*.png
 # Notas internas (não publicar)
 CLAUDE.md
 avaliacoes/
-
-# Screenshots QA jpeg
-qa-*.jpeg
-
-# Backup do video original do hero (pre all-intra)
-video-hero/video-hero.original.mp4
-
-# Backups de vídeos brutos (pre otimização web)
-videos-instagram/web/*.original.mp4
-
-# Fase 2: banco, segredos e uploads (nunca versionar)
-config/castello.db
-config/castello.db-*
-config/segredos.php
-public_html/uploads/
 .credenciais-deploy
 
-# Caminho do config no servidor (nao versionar)
+# Backup do video original do hero (pre all-intra)
+public_html/video-hero/video-hero.original.mp4
+
+# Backups de vídeos brutos (pre otimização web)
+public_html/videos-instagram/web/*.original.mp4
+
+# Fase 2: banco, segredos e mídia enviada pelo painel
+config/castello.db
+config/castello.db-wal
+config/castello.db-shm
+config/segredos.php
+public_html/uploads/
+
+# Caminho absoluto do config no servidor. Existe só lá, nunca no git.
 public_html/lib/caminho-config.php

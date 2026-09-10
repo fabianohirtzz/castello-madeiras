@@ -171,7 +171,7 @@ Dentro de um caso, `banco_com_conteudo()` roda o `migrar()` de verdade no banco 
 - Consome: nada, é a primeira tarefa.
 - Produz: `teste(string $nome, callable $corpo): void`, `igual($esperado, $obtido, string $msg = ''): void`, `verdade($valor, string $msg = ''): void`, `falso($valor, string $msg = ''): void`, `contem(string $agulha, string $palheiro, string $msg = ''): void`, `nao_contem(string $agulha, string $palheiro, string $msg = ''): void`, `pular(string $motivo): void`, `smoke_encerrar(): void`, `raiz(): string`, `site(): string`, `norm(string $html): string`, `norm_sem_alt(string $html): string`, `render(string $arquivo, array $vars = []): string`, `banco_com_conteudo(): array`. As constantes `CASTELLO_CONFIG` e `CASTELLO_UPLOADS` passam a existir já definidas dentro de qualquer caso de teste.
 
-- [ ] **Passo 1: Mover os arquivos do site para `public_html/`**
+- [x] **Passo 1: Mover os arquivos do site para `public_html/`**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -189,7 +189,7 @@ git status --short
 
 `README.md`, `hdr-top.png`, `preview-mountain-vista.html` e `docs/` ficam na raiz de propósito: não fazem parte do site publicado.
 
-- [ ] **Passo 2: Ajustar o `.gitignore`**
+- [x] **Passo 2: Ajustar o `.gitignore`**
 
 Substitua o conteúdo de `.gitignore` por:
 
@@ -228,7 +228,7 @@ public_html/uploads/
 public_html/lib/caminho-config.php
 ```
 
-- [ ] **Passo 3: Criar o modelo de segredos**
+- [x] **Passo 3: Criar o modelo de segredos**
 
 Crie `config/segredos.php.exemplo`:
 
@@ -245,7 +245,7 @@ define('CASTELLO_MIGRAR_CHAVE', '');
 // precisar. Ate la, este arquivo so carrega a chave acima.
 ```
 
-- [ ] **Passo 4: Escrever o caso de teste do próprio runner**
+- [x] **Passo 4: Escrever o caso de teste do próprio runner**
 
 Crie `testes/casos/00-runner.php`:
 
@@ -315,12 +315,12 @@ teste('raiz e site apontam para as pastas certas', function (): void {
 });
 ```
 
-- [ ] **Passo 5: Rodar e ver falhar**
+- [x] **Passo 5: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php`
 Esperado: falha, porque `testes/smoke.php` ainda não existe. O PHP responde `Could not open input file: testes/smoke.php`.
 
-- [ ] **Passo 6: Escrever as assertivas**
+- [x] **Passo 6: Escrever as assertivas**
 
 Crie `testes/assertivas.php`:
 
@@ -473,7 +473,7 @@ function render(string $arquivo, array $vars = []): string
 }
 ```
 
-- [ ] **Passo 7: Escrever o executor de um caso**
+- [x] **Passo 7: Escrever o executor de um caso**
 
 Crie `testes/executar-caso.php`:
 
@@ -518,7 +518,7 @@ require $arquivo;
 smoke_encerrar();
 ```
 
-- [ ] **Passo 8: Escrever o runner**
+- [x] **Passo 8: Escrever o runner**
 
 Crie `testes/smoke.php`:
 
@@ -592,12 +592,12 @@ echo "todos os casos passaram\n";
 exit(0);
 ```
 
-- [ ] **Passo 9: Rodar e ver passar**
+- [x] **Passo 9: Rodar e ver passar**
 
 Rode: `php testes/smoke.php`
 Esperado: `00-runner.php` com 9 ok, 0 falha, 1 pulado, e a linha final `todos os casos passaram`. Confirme também que o código de saída é zero.
 
-- [ ] **Passo 10: Commit**
+- [x] **Passo 10: Commit**
 
 ```bash
 git add -A
