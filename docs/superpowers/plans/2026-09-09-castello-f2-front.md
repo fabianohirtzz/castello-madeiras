@@ -374,7 +374,7 @@ Entrega o bloco novo que separa Casa Pronta de Castelo Flex logo depois da prova
 - Consome: `.section`, `.section--facetada`, `.container`, `.eyebrow`, `.section__title`, `.section__lead`, `.reveal`, `.btn--primary`, `.facet`
 - Produz: `#modalidades` (alvo do CTA secundário do hero), `.modalidades`, `.modalidades__head`, `.modalidades__grid`, `.modalidade`, `.modalidade--flex`, `.modalidade__tag`, `.modalidade__name`, `.modalidade__prazo`, `.modalidade__text`, `.checklist` e `.checklist--light` (usadas de novo nas Tarefas 6 e 7)
 
-- [ ] **Step 1: Mover a seção de Vantagens para depois de onde a Flex vai entrar**
+- [x] **Step 1: Mover a seção de Vantagens para depois de onde a Flex vai entrar**
 
 A ordem da spec 7.1 é Modalidades, Casa Pronta, Castelo Flex, Vantagens. Hoje Vantagens vem antes de Modelos. Recorte de `front/home.html` o bloco inteiro que começa em `<!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->` e termina no `</section>` que fecha `.vantagens`, junto com a faceta que vem logo depois dele:
 
@@ -391,7 +391,7 @@ Na tag de abertura da seção movida, tire nada e mude nada: continua
   <section class="section vantagens" id="vantagens">
 ```
 
-- [ ] **Step 2: Tirar o respiro de faceta que Vantagens não precisa mais**
+- [x] **Step 2: Tirar o respiro de faceta que Vantagens não precisa mais**
 
 Em `css/style.css`, apague estas duas linhas (a regra e o comentário acima dela), porque não há mais faceta depois de Vantagens e o espaço vira um buraco:
 
@@ -400,7 +400,7 @@ Em `css/style.css`, apague estas duas linhas (a regra e o comentário acima dela
 .vantagens{padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
 ```
 
-- [ ] **Step 3: Inserir a seção de Modalidades**
+- [x] **Step 3: Inserir a seção de Modalidades**
 
 Em `front/home.html`, logo depois de
 
@@ -456,7 +456,7 @@ cole:
   <div class="facet facet--sand" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 4: Acrescentar o CSS na região FASE 2**
+- [x] **Step 4: Acrescentar o CSS na região FASE 2**
 
 No fim do `css/style.css`, dentro da região FASE 2:
 
@@ -505,7 +505,7 @@ No fim do `css/style.css`, dentro da região FASE 2:
 .modalidade .btn{margin-top:28px;align-self:flex-start}
 ```
 
-- [ ] **Step 5: Verificar no navegador**
+- [x] **Step 5: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900. Role até o bloco novo e `browser_take_screenshot` em `f2-t2-1440.png`. Olhe: dois cards lado a lado, o da esquerda branco e o da direita preto; o telhadinho vermelho antes de cada item das listas; o card preto com a etiqueta "Lançamento" vermelha e texto branco; nenhum corte de faceta comendo o topo dos cards.
@@ -518,7 +518,7 @@ No fim do `css/style.css`, dentro da região FASE 2:
 9. Em 1440px, `browser_click` em "Ver modelos e preços" do card Casa Pronta. Esperado: rola até a seção de modelos, agora `#casa-pronta`.
 10. `browser_press_key` `Tab` até chegar nos dois CTAs do bloco e `browser_snapshot`. Esperado: anel de foco visível nos dois botões, inclusive no card preto.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"

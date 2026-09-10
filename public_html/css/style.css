@@ -277,8 +277,6 @@ body.drawer-open{overflow:hidden}
 .section--dark .section__lead{color:rgba(255,255,255,.74)}
 .section--dark .section__title{color:#fff}
 .section__head{max-width:780px;margin-bottom:clamp(44px,6vh,72px)}
-/* vantagens precede a faceta de telhado: folga extra embaixo p/ não ser coberta */
-.vantagens{padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
 
 .grid{display:grid;gap:clamp(16px,2.2vw,28px)}
 .grid--models{grid-template-columns:repeat(auto-fit,minmax(248px,1fr))}
@@ -1025,3 +1023,46 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .nav__links{display:none}
   .nav__burger{display:flex;margin-left:0}   /* cola no CTA em vez de dividir o espaço com ele */
 }
+
+/* ---------- Lista com marcador de telhado (reusada na Flex) ---------- */
+.checklist{display:grid;gap:12px;margin-top:22px}
+.checklist li{position:relative;padding-left:28px;font-size:1.02rem;line-height:1.55;color:var(--ink)}
+.checklist li::before{
+  content:"";position:absolute;left:0;top:8px;width:0;height:0;
+  border-left:7px solid transparent;border-right:7px solid transparent;
+  border-bottom:10px solid var(--red);
+}
+.checklist--light li{color:rgba(255,255,255,.82)}
+.checklist--light li::before{border-bottom-color:var(--red-bright)}
+
+/* ---------- Modalidades: o garfo Casa Pronta x Castelo Flex ---------- */
+.modalidades__head{max-width:760px;margin-bottom:clamp(36px,5vh,56px)}
+.modalidades__grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:clamp(18px,2.6vw,32px);
+}
+.modalidade{
+  position:relative;display:flex;flex-direction:column;
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-soft);padding:clamp(26px,3.2vw,40px);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.modalidade:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
+.modalidade--flex{background:var(--ink);color:#fff;border-color:transparent}
+.modalidade__tag{
+  align-self:flex-start;padding:6px 13px;border-radius:999px;
+  background:var(--red-tint);color:var(--red-deep);
+  font-family:var(--font-display);font-weight:600;font-size:.72rem;
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.modalidade--flex .modalidade__tag{background:var(--red-deep);color:#fff}
+.modalidade__name{
+  margin-top:18px;font-family:var(--font-display);font-weight:800;
+  font-size:clamp(1.7rem,3vw,2.3rem);letter-spacing:-.025em;line-height:1.04;
+}
+.modalidade__prazo{margin-top:10px;font-family:var(--font-display);font-weight:600;font-size:1.02rem;color:var(--red-deep)}
+.modalidade__prazo strong{font-weight:800}
+.modalidade--flex .modalidade__prazo{color:var(--red-bright)}
+.modalidade__text{margin-top:14px;color:var(--muted);font-size:1.02rem;line-height:1.6;max-width:40ch}
+.modalidade--flex .modalidade__text{color:rgba(255,255,255,.76)}
+.modalidade .btn{margin-top:28px;align-self:flex-start}
