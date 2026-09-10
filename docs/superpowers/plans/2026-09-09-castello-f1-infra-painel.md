@@ -6248,7 +6248,7 @@ O servidor de teste é **LiteSpeed**, que lê `.htaccess` com a sintaxe do Apach
 
 `uploads/.htaccess` é a trava que importa: mesmo que alguém consiga gravar um arquivo executável ali, ele não roda.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/95-htaccess.php`:
 
@@ -6318,12 +6318,12 @@ teste('nenhum htaccess vaza caminho de disco do ambiente local', function (): vo
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 95-htaccess`
 Esperado: todos falham com `nao consegui ler .../public_html/.htaccess`.
 
-- [ ] **Passo 3: Escrever `public_html/.htaccess`**
+- [x] **Passo 3: Escrever `public_html/.htaccess`**
 
 ```apache
 # Castello Casas de Madeira. Servidor de teste: LiteSpeed, que le .htaccess
@@ -6363,7 +6363,7 @@ Options -Indexes
 </IfModule>
 ```
 
-- [ ] **Passo 4: Escrever `public_html/uploads/.htaccess`**
+- [x] **Passo 4: Escrever `public_html/uploads/.htaccess`**
 
 ```apache
 # Nada executa nesta pasta. Se um arquivo malicioso passar pela validacao do
@@ -6389,7 +6389,7 @@ RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phps
 </FilesMatch>
 ```
 
-- [ ] **Passo 5: Escrever `public_html/painel/.htaccess`**
+- [x] **Passo 5: Escrever `public_html/painel/.htaccess`**
 
 ```apache
 # Segunda senha, opcional, na frente do painel. Vem desligada.
@@ -6411,7 +6411,7 @@ Options -Indexes
 </FilesMatch>
 ```
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [x] **Passo 6: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 95-htaccess`
 Esperado: 5 ok, 0 falha, 0 pulado.
@@ -6421,7 +6421,7 @@ Esperado: `todos os casos passaram`.
 
 O servidor embutido do PHP (`php -S`) **ignora** `.htaccess`, então nada disso é testável localmente além do conteúdo do arquivo. A checagem de verdade é a Tarefa 16, com `curl` contra o servidor.
 
-- [ ] **Passo 7: Commit**
+- [x] **Passo 7: Commit**
 
 ```bash
 git add public_html/.htaccess public_html/uploads/.htaccess public_html/painel/.htaccess testes/casos/95-htaccess.php

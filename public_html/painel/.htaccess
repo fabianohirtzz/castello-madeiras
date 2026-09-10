@@ -1,0 +1,17 @@
+# Segunda senha, opcional, na frente do painel. Vem desligada.
+#
+# Para ligar: crie o arquivo de senhas fora do public_html e tire o
+# comentario das quatro linhas abaixo.
+#
+#   htpasswd -c /home/freelain/domains/tohospedando.com.br/castello-config/.htpasswd castello
+#
+# AuthType Basic
+# AuthName "Painel Castello"
+# AuthUserFile /home/freelain/domains/tohospedando.com.br/castello-config/.htpasswd
+# Require valid-user
+
+Options -Indexes
+
+<FilesMatch "\.(sql|db|db-wal|db-shm|log|ini|bak|old)$">
+  Require all denied
+</FilesMatch>

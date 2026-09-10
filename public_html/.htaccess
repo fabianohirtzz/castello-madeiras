@@ -1,0 +1,47 @@
+# Castello Casas de Madeira. Servidor de teste: LiteSpeed, que le .htaccess
+# com a sintaxe do Apache 2.4.
+
+AddDefaultCharset UTF-8
+DirectoryIndex index.php index.html
+Options -Indexes
+
+# HTTPS obrigatorio. Inegociavel: o painel manda senha por este canal.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# Nada de servir banco, schema, segredo ou arquivo de ambiente.
+<FilesMatch "(^\.|\.(sql|db|db-wal|db-shm|sqlite|log|ini|bak|old|sh)$|^caminho-config\.php$)">
+  Require all denied
+</FilesMatch>
+
+# Os dois arquivos de lib/ que nunca podem ser lidos pelo navegador,
+# nomeados por extenso para nao depender da expressao acima.
+<Files "schema.sql">
+  Require all denied
+</Files>
+<Files "caminho-config.php">
+  Require all denied
+</Files>
+<Files "castello.db">
+  Require all denied
+</Files>
+
+# Compressao e cache dos estaticos. As paginas PHP mandam o proprio
+# Cache-Control, porque carregam o token do formulario.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType video/mp4 "access plus 30 days"
+</IfModule>
