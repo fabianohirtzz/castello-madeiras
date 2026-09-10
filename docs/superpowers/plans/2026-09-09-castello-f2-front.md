@@ -152,7 +152,7 @@ Copia o site atual para `front/home.html`, corrige os caminhos, tira o prazo do 
 - Consome: `css/style.css`, `js/main.js`, `images/`, `fotos-casas/`, `passos/`, `videos-instagram/web/` — todos por `../`
 - Produz: `front/home.html` com os ganchos obrigatórios `#nav`, `#burger`, `#drawer`, `#drawerBackdrop`, `#topo`; a âncora `#casa-pronta`; a classe utilitária `.section--facetada`; o componente `.nav__tag`; a região `FASE 2` no fim do `css/style.css`, onde todas as tarefas seguintes acrescentam CSS
 
-- [ ] **Step 1: Subir o servidor local**
+- [x] **Step 1: Subir o servidor local**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -161,7 +161,7 @@ python -m http.server 8000
 
 Deixe rodando em segundo plano durante todo o plano. Confirme com `http://localhost:8000/index.html` abrindo o site atual.
 
-- [ ] **Step 2: Criar `front/` e copiar o `index.html`**
+- [x] **Step 2: Criar `front/` e copiar o `index.html`**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -169,7 +169,7 @@ mkdir -p front
 cp index.html front/home.html
 ```
 
-- [ ] **Step 3: Corrigir todos os caminhos de asset para `../`**
+- [x] **Step 3: Corrigir todos os caminhos de asset para `../`**
 
 Em `front/home.html`, todo `src` e `href` de asset local ganha `../` na frente:
 
@@ -200,7 +200,7 @@ grep -n 'src="\(css\|js\|images\|fotos-casas\|passos\|videos-instagram\|video-he
 
 Esperado: nenhuma linha.
 
-- [ ] **Step 4: Trocar o `<title>`, as metas e o cache-buster do CSS**
+- [x] **Step 4: Trocar o `<title>`, as metas e o cache-buster do CSS**
 
 Substitua o bloco de `<title>` e as metas por este, que tira o prazo do topo e coloca cada prazo ao lado do nome da sua modalidade:
 
@@ -222,7 +222,7 @@ E o cache-buster, porque a folha vai mudar:
   <link rel="stylesheet" href="../css/style.css?v=13" />
 ```
 
-- [ ] **Step 5: Trocar a lista de links da nav**
+- [x] **Step 5: Trocar a lista de links da nav**
 
 Substitua o `<nav class="nav__links" ...>` inteiro por este. São sete links: "Modelos" vira "Casa Pronta" apontando para a âncora nova, e a Castelo Flex entra como link de página com etiqueta de lançamento.
 
@@ -238,7 +238,7 @@ Substitua o `<nav class="nav__links" ...>` inteiro por este. São sete links: "M
       </nav>
 ```
 
-- [ ] **Step 6: Trocar o drawer mobile**
+- [x] **Step 6: Trocar o drawer mobile**
 
 Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por este:
 
@@ -255,7 +255,7 @@ Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por es
   </div>
 ```
 
-- [ ] **Step 7: Tirar o prazo do hero**
+- [x] **Step 7: Tirar o prazo do hero**
 
 Substitua o bloco `<!-- Beat 2 — ~3s ao fim -->` inteiro por este. A linha "pronta em até 120 dias" morre; o segundo beat fecha a frase pelo benefício, não pelo prazo, e o CTA secundário aponta para o bloco de Modalidades:
 
@@ -273,7 +273,7 @@ Substitua o bloco `<!-- Beat 2 — ~3s ao fim -->` inteiro por este. A linha "pr
         </div>
 ```
 
-- [ ] **Step 8: Renomear a âncora da seção de modelos**
+- [x] **Step 8: Renomear a âncora da seção de modelos**
 
 Uma troca só, para a nav e o drawer não apontarem para o vazio. O conteúdo da seção muda na Tarefa 3.
 
@@ -285,7 +285,7 @@ grep -n 'id="casa-pronta"\|href="#modelos"' home.html
 
 Esperado: uma linha com `id="casa-pronta"` e nenhuma com `href="#modelos"`.
 
-- [ ] **Step 9: Abrir a região FASE 2 no `css/style.css`**
+- [x] **Step 9: Abrir a região FASE 2 no `css/style.css`**
 
 Acrescente no **fim** do `css/style.css`, depois do bloco `@media(prefers-reduced-motion:reduce)`:
 
@@ -329,7 +329,7 @@ Acrescente no **fim** do `css/style.css`, depois do bloco `@media(prefers-reduce
 }
 ```
 
-- [ ] **Step 10: Verificar no navegador**
+- [x] **Step 10: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html`.
 2. `browser_console_messages`. Esperado: nenhuma mensagem de erro. Um `TypeError` aqui quer dizer que um gancho obrigatório do `js/main.js` sumiu na cópia.
@@ -343,7 +343,7 @@ Acrescente no **fim** do `css/style.css`, depois do bloco `@media(prefers-reduce
 10. `browser_evaluate` com `() => getComputedStyle(document.querySelector('.nav__tag')).backgroundColor`. Esperado: `rgb(179, 20, 27)`.
 11. `browser_click` no link "Castelo Flex" da nav. Esperado: 404 do servidor, porque `front/flex.html` só nasce na Tarefa 5. É o resultado correto nesta altura. Volte com `browser_navigate_back`.
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"

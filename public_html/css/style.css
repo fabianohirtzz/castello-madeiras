@@ -974,3 +974,54 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .faq__content.is-active{animation:none}
   .faq__tab,.faq__ico{transition:none}
 }
+
+/* ============================================================
+   FASE 2 — Modalidades, Casa Pronta, Castelo Flex
+   Tudo o que a Fase 2 acrescenta vive daqui pra baixo, com nomes
+   de classe novos. Nenhuma regra acima é sobrescrita sem que o
+   plano mande, com o texto exato da regra antiga.
+   Texto branco pequeno sobre vermelho usa --red-deep (6,9:1).
+   --red (4,33:1) fica para superfície grande, ícone e o que já existia.
+   ============================================================ */
+
+/* seção seguida de faceta precisa do respiro da altura dela */
+.section--facetada{padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
+
+/* link da Flex na nav: um fio mais forte, por ser o único que troca de página.
+   Seletor com a e a classe juntos para vencer `.nav__links a` (0,1,1) sem
+   atropelar o :hover, que continua com especificidade maior. */
+.nav__links a.nav__link--flex{font-weight:700}
+
+/* etiqueta de lançamento no link da Flex, na nav */
+.nav__tag{
+  display:inline-block;margin-left:7px;padding:2px 7px;border-radius:999px;
+  background:var(--red-deep);color:#fff;
+  font-family:var(--font-display);font-weight:600;font-size:.62rem;
+  letter-spacing:.08em;text-transform:uppercase;line-height:1.6;
+}
+.nav.is-scrolled .nav__tag{background:var(--red-deep);color:#fff}
+
+/* Sete links com ícone somam cerca de 1510px e a pílula da nav tem no máximo
+   1320px: não cabe em largura nenhuma (medido em 1440: 190px de sobra).
+   O ícone sai em toda largura, o link aperta e a nav encolhe por etapas
+   até o burger assumir, com o CTA sempre à vista. */
+.nav__ico{display:none}
+.nav__links a{padding:9px 10px;gap:0;font-size:.88rem}
+.nav__inner{gap:clamp(10px,1.4vw,20px)}
+/* Cortes medidos com barra de rolagem de 17px e folga mínima de 14px:
+   7 links cabem de 1354px pra cima; 6 de 1247; 5 de 1126; 4 de 980. */
+@media(max-width:1380px){
+  .nav__links a[href="#instagram"]{display:none}
+}
+@media(max-width:1260px){
+  .nav__links a[href="#portfolio"]{display:none}
+  .nav__cta{padding:12px 18px;font-size:.88rem}
+}
+@media(max-width:1140px){
+  .nav__links a[href="#como-funciona"]{display:none}
+}
+/* abaixo de 1000px os links vão todos para o drawer; logo, CTA e burger ficam */
+@media(max-width:1000px){
+  .nav__links{display:none}
+  .nav__burger{display:flex;margin-left:0}   /* cola no CTA em vez de dividir o espaço com ele */
+}
