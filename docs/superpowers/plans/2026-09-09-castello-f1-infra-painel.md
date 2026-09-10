@@ -153,6 +153,8 @@ prototipo-site-castello/
 
 Dentro de um caso, `banco_com_conteudo()` roda o `migrar()` de verdade no banco temporário, então os casos que precisam do conteúdo real o têm sem depender da ordem de execução.
 
+**Como a Frente 3 entra nesta suíte.** O plano da Frente 3 prevê, na Tarefa 9 dela, fundir o `testes/smoke-f3.php` dentro de `testes/smoke.php`, acrescentando `require` no topo do arquivo. Isso **não** funciona com este runner: `smoke.php` aqui não carrega `lib/` nenhuma, ele despacha processos. A fusão correta é outra, e é mais simples: o conteúdo do `smoke-f3.php` vira `testes/casos/85-crm.php`, que o runner encontra sozinho e roda em processo isolado, com banco e uploads próprios, sem precisar de `testes/apoio-f1.php`. Quem faz essa fusão é a costura; este parágrafo existe para que ela não seja feita da forma que quebra os dois lados.
+
 ---
 
 ## Tarefa 1: Reorganizar o repositório e criar o runner de smoke tests
