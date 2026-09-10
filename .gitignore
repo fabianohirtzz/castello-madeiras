@@ -14,6 +14,7 @@ qa-*.jpeg
 # Notas internas (não publicar)
 CLAUDE.md
 avaliacoes/
+informacoes/
 .credenciais-deploy
 .credenciais-agendor
 
