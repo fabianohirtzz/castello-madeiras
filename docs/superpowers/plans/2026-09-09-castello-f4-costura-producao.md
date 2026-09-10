@@ -202,7 +202,7 @@ git commit -m "$(printf 'feat: partials passam a imprimir a marcacao nova do fro
 - Consumes: os partials da Task 2, `bloco()`, `csrf_token()`.
 - Produces: as duas páginas públicas finais.
 
-- [ ] **Step 1: Escrever o teste de renderização das duas páginas**
+- [x] **Step 1: Escrever o teste de renderização das duas páginas**
 
 ```php
 teste('home renderiza sem erro e com as secoes esperadas', function () {
@@ -223,7 +223,7 @@ teste('pagina flex renderiza sem erro', function () {
 
 A função `renderizar()` vem do runner da frente 1: faz `ob_start()`, inclui o arquivo e devolve a saída.
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 ```bash
 php testes/smoke.php
@@ -231,7 +231,7 @@ php testes/smoke.php
 
 Esperado: FALHA, porque `index.php` ainda é a conversão direta do HTML antigo e `flex.php` ainda é o esqueleto.
 
-- [ ] **Step 3: Montar as páginas**
+- [x] **Step 3: Montar as páginas**
 
 Use `front/home.html` como base. Substitua cada trecho entre comentários de fronteira pelo `include` do partial correspondente:
 
@@ -256,7 +256,7 @@ O formulário das duas páginas recebe o campo oculto de CSRF:
 <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
 ```
 
-- [ ] **Step 4: Rodar o teste até passar**
+- [x] **Step 4: Rodar o teste até passar**
 
 ```bash
 php testes/smoke.php
@@ -264,7 +264,7 @@ php testes/smoke.php
 
 Esperado: PASSA.
 
-- [ ] **Step 5: Conferir no navegador**
+- [x] **Step 5: Conferir no navegador**
 
 ```bash
 php -S localhost:8000 -t public_html
@@ -272,7 +272,7 @@ php -S localhost:8000 -t public_html
 
 Abra `http://localhost:8000/` e `http://localhost:8000/flex.php` com Playwright, em 1440px e 390px. Confira: nenhum erro no console, nenhuma rolagem horizontal, as fotos e vídeos carregam dos caminhos de `uploads/`, o menu leva à página Flex e volta.
 
-- [ ] **Step 6: Apagar o `front/` e commitar**
+- [x] **Step 6: Apagar o `front/` e commitar**
 
 ```bash
 git rm -r front/

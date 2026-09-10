@@ -1,7 +1,17 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * Home. Marcacao da fase 2 (frente 2) com o conteudo vindo do banco: as
+ * listas pelos partials, os textos editaveis pelos blocos.
+ */
+
 require_once __DIR__ . '/lib/conteudo.php';
+
+$prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
+$prazo_flex   = bloco('flex_prazo', '45 dias');
+$flex_video   = bloco('flex_video');
+$flex_poster  = bloco('flex_video_poster');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -11,13 +21,13 @@ require_once __DIR__ . '/lib/conteudo.php';
   <!-- PROTÓTIPO: noindex enquanto não for produção -->
   <meta name="robots" content="noindex, nofollow" />
 
-  <title>Castello Casas de Madeira | Sua casa pronta em até 120 dias</title>
-  <meta name="description" content="Casas de madeira chave na mão em Tubarão e região. Projeto, montagem e acabamento completos em 90 a 120 dias. 5,0 estrelas no Google." />
+  <title>Castello Casas de Madeira | Casa Pronta e Castelo Flex em Tubarão SC</title>
+  <meta name="description" content="Casas de madeira em Tubarão e região. Casa Pronta chave na mão em 90 a 120 dias e Castelo Flex semipronta em 45 dias. 5,0 estrelas no Google, 56 avaliações." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Castello Casas de Madeira | Sua casa pronta em até 120 dias" />
-  <meta property="og:description" content="Casas de madeira chave na mão. Projeto, montagem e acabamento completos em 90 a 120 dias. 5,0 estrelas no Google." />
+  <meta property="og:title" content="Castello Casas de Madeira | Casa Pronta e Castelo Flex" />
+  <meta property="og:description" content="Casa Pronta chave na mão em 90 a 120 dias e Castelo Flex semipronta em 45 dias. 5,0 estrelas no Google." />
   <meta property="og:image" content="fotos-casas/casa3.png" />
   <meta property="og:locale" content="pt_BR" />
 
@@ -31,11 +41,11 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=12" />
+  <link rel="stylesheet" href="css/style.css?v=13" />
 </head>
 <body>
 
-<?php include __DIR__ . '/partials/nav.php'; ?>
+<?php $pagina = 'home'; include __DIR__ . '/partials/nav.php'; ?>
 
   <!-- ============ HERO (cinematográfico — scrub de vídeo no scroll) ============ -->
   <section class="hero" id="topo" aria-label="Castello Casas de Madeira">
@@ -51,18 +61,18 @@ require_once __DIR__ . '/lib/conteudo.php';
         <!-- Beat 1 — 0 a ~3s -->
         <div class="hero__beat hero__beat--one" id="heroBeatOne">
           <span class="eyebrow eyebrow--light">Casas de madeira chave na mão · Tubarão SC</span>
-          <h1 class="hero__headline">A casa dos seus sonhos</h1>
+          <h1 class="hero__headline"><?= e(bloco('hero_titulo', 'A casa dos seus sonhos')) ?></h1>
         </div>
 
         <!-- Beat 2 — ~3s ao fim -->
         <div class="hero__beat hero__beat--two" id="heroBeatTwo">
-          <p class="hero__headline-sub">pronta em até <span class="hl">120 dias</span></p>
+          <p class="hero__headline-sub"><?= realce(bloco('hero_subtitulo', 'pronta pra morar, *chave na mão*')) ?></p>
           <div class="hero__actions">
             <button type="button" class="btn btn--primary btn--lg" data-quote-open>
               <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
               Pedir orçamento
             </button>
-            <a href="#modelos" class="btn btn--ghost-light btn--lg">Ver modelos e preços</a>
+            <a href="#modalidades" class="btn btn--ghost-light btn--lg">Ver as duas modalidades</a>
           </div>
         </div>
 
@@ -112,6 +122,111 @@ require_once __DIR__ . '/lib/conteudo.php';
   </section>
 
   <!-- faceta: telhado recorta a saída da faixa vermelha -->
+  <div class="facet facet--bone" aria-hidden="true"></div>
+
+  <!-- ============ MODALIDADES (Casa Pronta x Castelo Flex) ============ -->
+  <!-- Copy provisória da Flex: sai do material do Instagram até o cliente enviar o definitivo. -->
+  <section class="section modalidades section--facetada" id="modalidades">
+    <div class="container">
+      <div class="modalidades__head">
+        <span class="eyebrow reveal">Duas formas de construir</span>
+        <h2 class="section__title reveal"><?= e(bloco('modalidades_titulo', 'Escolha como a sua casa sai do papel.')) ?></h2>
+        <p class="section__lead reveal"><?= e(bloco('modalidades_texto')) ?></p>
+      </div>
+
+      <div class="modalidades__grid">
+        <article class="modalidade reveal">
+          <span class="modalidade__tag">Chave na mão</span>
+          <h3 class="modalidade__name">Casa Pronta</h3>
+          <p class="modalidade__prazo">Pronta em <strong><?= e($prazo_pronta) ?></strong></p>
+          <p class="modalidade__text">A Castello faz tudo: projeto, fundação, estrutura, elétrica, hidráulica, revestimento e acabamento. Você recebe a chave e entra pra morar.</p>
+          <ul class="checklist">
+            <li>Projeto exclusivo, planta do seu jeito</li>
+            <li>Obra completa do primeiro ao último dia</li>
+            <li>Quatro modelos com preço de referência</li>
+          </ul>
+          <a href="#casa-pronta" class="btn btn--primary">Ver modelos e preços</a>
+        </article>
+
+        <article class="modalidade modalidade--flex reveal">
+          <span class="modalidade__tag">Lançamento</span>
+          <h3 class="modalidade__name">Castelo Flex</h3>
+          <p class="modalidade__prazo">No seu terreno em <strong><?= e($prazo_flex) ?></strong></p>
+          <p class="modalidade__text">A casa semipronta da Castello. Entregamos a estrutura de madeira montada, coberta e fechada no seu terreno, e você conduz o acabamento no seu tempo.</p>
+          <ul class="checklist checklist--light">
+            <li>Estrutura montada, coberta e fechada</li>
+            <li>Entrega em <?= e($prazo_flex) ?></li>
+            <li>Acabamento no seu ritmo e no seu orçamento</li>
+          </ul>
+          <a href="flex.php" class="btn btn--primary">Conhecer a Castelo Flex</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- faceta: transição para a Casa Pronta -->
+  <div class="facet facet--sand" aria-hidden="true"></div>
+
+  <!-- ============ MODELOS ============ -->
+  <section class="section section--sand section--facetada modelos" id="casa-pronta">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Casa Pronta · chave na mão</span>
+        <h2 class="section__title reveal"><?= e(bloco('pronta_titulo', 'Escolha o tamanho. A gente entrega completa.')) ?></h2>
+        <p class="section__lead reveal"><?= e(bloco('pronta_texto')) ?></p>
+        <p class="stamp reveal">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+          Pronta pra morar em <strong><?= e($prazo_pronta) ?></strong>
+        </p>
+      </div>
+
+<?php $modalidade = 'pronta'; include __DIR__ . '/partials/modelos.php'; ?>
+
+      <p class="modelos__note reveal">Valores de referência para casa completa. O orçamento final varia conforme a personalização, o terreno e a região. Fale com a gente e receba uma proposta sob medida.</p>
+    </div>
+  </section>
+
+  <!-- faceta: transição escura para a Castelo Flex -->
+  <div class="facet facet--ink" aria-hidden="true"></div>
+
+  <!-- ============ CASTELO FLEX (resumo + vídeo explicativo) ============ -->
+  <!-- Copy e vídeo provisórios: entram pelo painel nas chaves flex_* de `blocos`. -->
+  <section class="section section--dark section--facetada flexhome" id="castelo-flex">
+    <div class="container">
+      <div class="split2">
+        <div class="flexhome__text">
+          <span class="eyebrow eyebrow--light reveal">Lançamento Castello</span>
+          <h2 class="flexhome__title reveal"><?= e(bloco('flex_titulo', 'Castelo Flex: a casa semipronta no seu terreno em 45 dias.')) ?></h2>
+          <p class="flexhome__lead reveal"><?= e(bloco('flex_texto')) ?></p>
+
+          <div class="flexhome__facts reveal">
+            <div class="flexhome__fact"><strong><?= e($prazo_flex) ?></strong><span>da assinatura à entrega</span></div>
+            <div class="flexhome__fact"><strong>Casa fechada</strong><span>coberta, com portas e janelas</span></div>
+            <div class="flexhome__fact"><strong>Você termina</strong><span>acabamento no seu tempo</span></div>
+          </div>
+
+          <div class="flexhome__actions reveal">
+            <a href="flex.php" class="btn btn--primary btn--lg">Conhecer a Castelo Flex</a>
+            <button type="button" class="btn btn--ghost-light btn--lg" data-quote-open>Pedir orçamento</button>
+          </div>
+        </div>
+
+<?php if ($flex_video !== ''): ?>
+        <figure class="vexp vexp--reel reveal">
+          <div class="vexp__frame">
+            <video controls playsinline preload="none" poster="<?= e($flex_poster) ?>">
+              <source src="<?= e($flex_video) ?>" type="video/mp4" />
+              Seu navegador não abre vídeo. <a href="<?= e($flex_video) ?>">Baixe o vídeo da Castelo Flex</a>.
+            </video>
+          </div>
+          <figcaption class="vexp__cap vexp__cap--light">A Castello mostra como funciona a Castelo Flex, do terreno à casa fechada.</figcaption>
+        </figure>
+<?php endif; ?>
+      </div>
+    </div>
+  </section>
+
+  <!-- faceta: volta ao canvas claro nas vantagens -->
   <div class="facet facet--bone" aria-hidden="true"></div>
 
   <!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->
@@ -169,24 +284,6 @@ require_once __DIR__ . '/lib/conteudo.php';
           <div class="why__dots" id="whyDots" role="tablist" aria-label="Selecionar vantagem"></div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- faceta: transição para os modelos -->
-  <div class="facet facet--sand" aria-hidden="true"></div>
-
-  <!-- ============ MODELOS ============ -->
-  <section class="section section--sand modelos" id="modelos">
-    <div class="container">
-      <div class="section__head">
-        <span class="eyebrow reveal">Modelos chave na mão</span>
-        <h2 class="section__title reveal">Escolha o tamanho.<br>A gente entrega completa.</h2>
-        <p class="section__lead reveal">Todos os modelos saem prontos pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas.</p>
-      </div>
-
-<?php $modalidade = 'pronta'; include __DIR__ . '/partials/modelos.php'; ?>
-
-      <p class="modelos__note reveal">Valores de referência para casa completa. O orçamento final varia conforme a personalização, o terreno e a região. Fale com a gente e receba uma proposta sob medida.</p>
     </div>
   </section>
 
@@ -343,6 +440,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=12"></script>
+  <script src="js/main.js?v=13"></script>
 </body>
 </html>

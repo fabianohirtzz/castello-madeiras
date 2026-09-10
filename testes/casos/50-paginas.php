@@ -32,6 +32,101 @@ teste('o select de modelo do formulario sai do banco', function (): void {
     contem('<option value="">Ainda não sei</option>', $html);
 });
 
+/**
+ * Referencia de cada pagina: a marcacao estatica da frente 2, guardada em
+ * testes/base/*-fase2.html (antes da costura, em front/). Os desvios
+ * deliberados da costura sao aplicados aqui, e so eles:
+ *   1. assets enxergados pela raiz do site, nao por ../public_html/;
+ *   2. links .html viram .php;
+ *   3. titulos que viraram blocos editaveis perdem o <br> de controle;
+ *   4. o formulario ganha method e action, para funcionar tambem sem JS.
+ */
+function referencia_pagina(string $pagina): string
+{
+    foreach ([raiz() . '/testes/base/' . $pagina . '-fase2.html', raiz() . '/front/' . $pagina . '.html'] as $caminho) {
+        if (is_file($caminho)) {
+            $html = (string) file_get_contents($caminho);
+            $html = str_replace('../public_html/', '', $html);
+            $html = str_replace(['href="flex.html"', 'href="home.html', '"home.html"'], ['href="flex.php"', 'href="index.php', '"index.php"'], $html);
+            $html = str_replace([
+                'Escolha como a sua casa<br>sai do papel.',
+                'Escolha o tamanho.<br>A gente entrega completa.',
+                'A estrutura pronta.<br>O acabamento no seu tempo.',
+            ], [
+                'Escolha como a sua casa sai do papel.',
+                'Escolha o tamanho. A gente entrega completa.',
+                'A estrutura pronta. O acabamento no seu tempo.',
+            ], $html);
+            $html = str_replace('<form class="qform" id="quoteForm" novalidate>', '<form class="qform" id="quoteForm" method="post" action="enviar.php" novalidate>', $html);
+            // Os comentarios de fronteira existem so para o teste dos partials.
+            return (string) preg_replace('#<!-- (inicio|fim):[a-z-]+ -->\n?#', '', $html);
+        }
+    }
+    throw new RuntimeException('referencia da pagina ' . $pagina . ' nao encontrada');
+}
+
+/**
+ * So o miolo entre <body> e o primeiro <script>, sem comentarios HTML: head e
+ * scripts tem testes proprios, e comentario nao e conteudo.
+ */
+function corpo(string $html): string
+{
+    $ini = strpos($html, '<body>');
+    $fim = strpos($html, '<script', $ini === false ? 0 : $ini);
+    verdade($ini !== false && $fim !== false, 'a pagina precisa ter <body> e <script>');
+    return (string) preg_replace('/<!--.*?-->/s', '', substr($html, $ini, $fim - $ini));
+}
+
+teste('a home sai identica a marcacao da fase 2', function (): void {
+    config_gravar('videos_na_home', '11');
+    $novo = render(site() . '/index.php');
+    config_gravar('videos_na_home', '8');
+    igual(norm(corpo(referencia_pagina('home'))), norm(corpo($novo)));
+});
+
+teste('a pagina flex sai identica a marcacao da fase 2', function (): void {
+    $novo = render(site() . '/flex.php');
+    igual(norm(corpo(referencia_pagina('flex'))), norm(corpo($novo)));
+});
+
+teste('home renderiza com as secoes esperadas e sem prazo fixo no topo', function (): void {
+    $html = render(site() . '/index.php');
+    foreach (['id="topo"', 'id="prova"', 'id="modalidades"', 'id="casa-pronta"', 'id="castelo-flex"', 'id="vantagens"',
+              'id="portfolio"', 'id="como-funciona"', 'id="depoimentos"', 'id="instagram"', 'id="faq"', 'id="contato"',
+              'class="cta-band"'] as $marca) {
+        contem($marca, $html, "home nao tem $marca");
+    }
+    nao_contem('em até 120 dias', $html, 'prazo fixo continua no topo da home');
+    nao_contem('id="modelos"', $html, 'o id antigo #modelos deu lugar a #casa-pronta');
+    contem('Casa Pronta e Castelo Flex em Tubarão SC</title>', $html);
+    contem('href="flex.php"', $html);
+    nao_contem('.html', $html, 'nenhum link para .html sobra na home');
+});
+
+teste('a home imprime os textos editaveis do banco', function (): void {
+    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['Titulo *editado* pelo painel', 'hero_subtitulo']);
+    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['Texto novo de modalidades', 'modalidades_texto']);
+    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['60 dias', 'flex_prazo']);
+    $html = render(site() . '/index.php');
+    contem('Titulo <span class="hl">editado</span> pelo painel', $html);
+    contem('Texto novo de modalidades', $html);
+    contem('<strong>60 dias</strong>', $html, 'o prazo da Flex no bloco de modalidades vem do banco');
+    nao_contem('<strong>45 dias</strong>', $html, 'nenhum prazo da Flex fica fixo na home (o titulo flex_titulo e outro bloco, editavel)');
+    nao_contem('Entrega em 45 dias', $html);
+    contem('<strong>90 a 120 dias</strong>', $html, 'o prazo da Casa Pronta vem do bloco pronta_prazo');
+
+    // o video da Flex some quando o bloco esta vazio
+    db()->prepare("UPDATE blocos SET valor = '' WHERE chave = 'flex_video'")->execute();
+    nao_contem('class="vexp vexp--reel', render(site() . '/index.php'), 'sem video cadastrado, a figura nao aparece');
+
+    db()->prepare("UPDATE blocos SET valor = 'uploads/videos/insta-04.mp4' WHERE chave = 'flex_video'")->execute();
+    db()->prepare("UPDATE blocos SET valor = '45 dias' WHERE chave = 'flex_prazo'")->execute();
+    db()->prepare("UPDATE blocos SET valor = 'pronta pra morar, *chave na mão*' WHERE chave = 'hero_subtitulo'")->execute();
+    db()->prepare("UPDATE blocos SET valor = ? WHERE chave = 'modalidades_texto'")->execute([
+        'A Castello entrega a casa completa, pronta pra morar, e agora entrega também a casa semipronta, para quem quer a estrutura no terreno e o acabamento no próprio ritmo.',
+    ]);
+});
+
 teste('a home traz nav, rodape e modal pelos parciais compartilhados', function (): void {
     $html = render(site() . '/index.php');
     contem('<header class="nav" id="nav">', $html);
@@ -40,81 +135,60 @@ teste('a home traz nav, rodape e modal pelos parciais compartilhados', function 
     contem('id="quoteModal"', $html);
     contem('id="reelbox"', $html);
     contem('id="wppFloat"', $html);
-    contem('<script src="js/main.js?v=12"></script>', $html);
+    contem('<script src="js/main.js?v=13"></script>', $html);
 });
 
-teste('flex.php renderiza sem erro mesmo com o conteudo da Flex ainda vazio', function (): void {
-    db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'flex'");
-    db()->exec("UPDATE faq SET ativo = 0 WHERE contexto = 'flex'");
-    db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'flex'");
-    db()->exec("UPDATE blocos SET valor = '' WHERE chave LIKE 'flexpg_%'");
+teste('pagina flex renderiza com as secoes esperadas e o prazo', function (): void {
     $html = render(site() . '/flex.php');
-    contem('<!DOCTYPE html>', $html);
-    contem('<header class="nav" id="nav">', $html);
-    contem('<footer class="footer" id="contato">', $html);
-    contem('id="quoteModal"', $html);
-    contem('45 dias', $html, 'o prazo da Flex vem do bloco flex_prazo');
+    foreach (['id="topo"', 'id="o-que-e"', 'id="passos-flex"', 'id="modelos-flex"', 'id="diferenciais"', 'id="faq"',
+              'id="orcamento"', 'id="contato"', 'class="pagehero"', 'class="epasso__grid"', 'id="faqTabs"',
+              'Sob consulta'] as $marca) {
+        contem($marca, $html, "flex nao tem $marca");
+    }
+    contem('45 dias', $html, 'pagina flex nao mostra o prazo');
+    contem('<title>Castelo Flex | Casa de madeira semipronta em 45 dias | Castello</title>', $html);
+    contem('href="index.php#casa-pronta"', $html);
+    nao_contem('.html', $html);
+    nao_contem('id="reelbox"', $html, 'a Flex nao tem trilha do Instagram, entao nao carrega o lightbox');
     nao_contem('Warning:', $html);
     nao_contem('Fatal error', $html);
     nao_contem('<?php', $html);
-    nao_contem('class="grid grid--models"', $html, 'sem modelo Flex cadastrado, a grade nao aparece');
-    nao_contem('id="faqTabs"', $html, 'sem FAQ Flex cadastrado, o bloco nao aparece');
-    nao_contem('id="flex-depois"', $html, 'sem texto escrito, a secao nao aparece');
 });
 
-teste('flex.php tem um formulario so, o modal compartilhado', function (): void {
+teste('a pagina flex esconde o que o cliente ainda nao cadastrou, sem quebrar', function (): void {
+    db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'flex'");
+    db()->exec("UPDATE faq SET ativo = 0 WHERE contexto = 'flex'");
+    db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'flex'");
+    db()->exec("UPDATE blocos SET valor = '' WHERE chave IN ('flex_video', 'flexpg_hero_texto', 'flexpg_oque_texto', 'flexpg_catalogo_nota')");
+
     $html = render(site() . '/flex.php');
+    nao_contem('class="grid grid--models"', $html, 'sem modelo Flex ativo, a grade nao aparece');
+    nao_contem('id="faqTabs"', $html, 'sem FAQ Flex ativa, o bloco nao aparece');
+    nao_contem('class="epasso__grid"', $html, 'sem passo Flex ativo, a grade nao aparece');
+    nao_contem('class="vexp', $html, 'sem video, a figura nao aparece');
+    nao_contem('class="modelos__note', $html, 'sem nota, o paragrafo nao aparece');
+    contem('<header class="nav" id="nav">', $html);
+    contem('<footer class="footer" id="contato">', $html);
+    contem('id="quoteModal"', $html);
+    contem('45 dias', $html, 'o prazo do bloco continua');
+    nao_contem('Warning:', $html);
+    nao_contem('<?php', $html);
     igual(1, substr_count($html, '<form'), 'nenhum formulario inline alem do modal');
-    contem('data-quote-open', $html);
+
+    db()->exec("UPDATE modelos SET ativo = 1 WHERE modalidade = 'flex'");
+    db()->exec("UPDATE faq SET ativo = 1 WHERE contexto = 'flex'");
+    db()->exec("UPDATE passos SET ativo = 1 WHERE contexto = 'flex'");
 });
 
-teste('flex.php monta as oito secoes assim que o conteudo Flex existir', function (): void {
-    db()->exec("INSERT INTO modelos (modalidade, nome, area, parede, preco, foto, foto_alt, ativo, ordem)
-                VALUES ('flex','Flex 30','30,00 m²','Parede simples','39.900','uploads/modelos/casa1.png','Casa Flex',1,1)");
-    db()->exec("INSERT INTO faq (pergunta, resposta, icone, contexto, ativo, ordem)
-                VALUES ('O que a Castello entrega na Flex?','A estrutura montada e fechada.','chave','flex',1,1)");
-    db()->exec("INSERT INTO passos (contexto, titulo, texto, imagem, ativo, ordem)
-                VALUES ('flex','Entrega da estrutura','A Castello entrega e monta.','uploads/passos/passo-1.jpg',1,1)");
-
-    $textos = [
-        'flexpg_hero_titulo'   => 'Sua casa começa montada',
-        'flexpg_hero_texto'    => 'A estrutura pronta em 45 dias, o acabamento no seu tempo.',
-        'flexpg_oque_titulo'   => 'O que é a Castelo Flex',
-        'flexpg_oque_texto'    => 'A Castello entrega a casa fechada e montada no seu terreno.',
-        'flexpg_depois_titulo' => 'O que fica por sua conta',
-        'flexpg_depois_texto'  => 'Acabamento interno, elétrica, hidráulica e revestimentos.',
-        'flexpg_catalogo_nota' => 'Valores de referência para a estrutura montada.',
-        'flexpg_cta_titulo'    => 'Quer um orçamento da Castelo Flex?',
-        'flexpg_cta_texto'     => 'Conte o tamanho que você imagina e a gente volta com uma proposta.',
-        'flex_video'           => 'uploads/videos/insta-01.mp4',
-        'flex_video_poster'    => 'uploads/videos/insta-01.jpg',
-    ];
-    $st = db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?');
-    foreach ($textos as $chave => $valor) {
-        $st->execute([$valor, $chave]);
+teste('as duas paginas tem um formulario so, o modal compartilhado, e todo CTA abre ele', function (): void {
+    foreach (['index.php', 'flex.php'] as $arquivo) {
+        $html = render(site() . '/' . $arquivo);
+        igual(1, substr_count($html, '<form'), "$arquivo: nenhum formulario inline alem do modal");
+        contem('<form class="qform" id="quoteForm" method="post" action="enviar.php" novalidate>', $html, $arquivo);
+        verdade(substr_count($html, 'data-quote-open') >= 6, "$arquivo: os CTAs abrem o modal");
+        nao_contem('_gotcha', $html, "$arquivo: honeypot antigo");
+        contem('name="empresa"', $html, "$arquivo: honeypot do contrato");
     }
-
-    $html = render(site() . '/flex.php');
-
-    foreach ($textos as $chave => $valor) {
-        if (str_starts_with($chave, 'flexpg_')) {
-            contem(e($valor), $html, "o bloco $chave precisa aparecer na pagina");
-        }
-    }
-
-    contem('id="flex-oque"', $html);
-    contem('id="flex-passos"', $html);
-    contem('id="flex-depois"', $html);
-    contem('id="flex-catalogo"', $html);
-    contem('id="flex-prazo"', $html);
-    contem('id="flex-faq"', $html);
-    contem('class="cta-band"', $html);
-
-    contem('class="grid grid--models"', $html);
-    contem('data-modelo="Flex 30 · 30 m² · R$ 39.900"', $html);
-    contem('id="faqTabs"', $html);
-    contem('class="epasso__grid"', $html, 'na Flex os passos saem como cartoes');
-    contem('<source src="uploads/videos/insta-01.mp4" type="video/mp4" />', $html);
 });
 
 teste('csrf.php responde JSON com um token utilizavel', function (): void {
