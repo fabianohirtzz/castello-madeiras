@@ -48,7 +48,7 @@ Todo requisito abaixo vale para todas as tarefas. Valores copiados literalmente 
 - Ícones válidos de FAQ, conjunto fechado de sete: `relogio`, `chave`, `planta`, `clima`, `escudo`, `fundacao`, `garantia`.
 - Trava de força bruta: 5 tentativas erradas bloqueiam o IP por 15 minutos. Sessão expira com 2 horas de inatividade.
 - Upload: imagem `image/jpeg`, `image/png`, `image/webp`, máximo 5 MB. Vídeo `video/mp4`, máximo 30 MB. Tipo conferido com `finfo_file`, nunca pela extensão. Arquivo renomeado para `slug-do-nome-original` mais 6 caracteres aleatórios.
-- **A metatag de CSRF é obrigatória.** Toda página desta frente que tem formulário imprime no `<head>`: `<meta name="csrf-token" content="<?= e(csrf_token()) ?>" />`. A Frente 3 lê o token daí, porque não pode escrever em `index.php` nem em `flex.php`. Sem a metatag, todo envio volta 419 e o site não capta um lead. É a Tarefa 9.
+- **O `csrf.php` é obrigatório.** O token do formulário sai de um endereço próprio, `public_html/csrf.php`, que a Frente 3 busca quando o visitante abre o modal. Sem ele, todo envio volta 419 e o site não capta um lead. É a Tarefa 9. **Nenhuma página imprime o token no HTML**: token no `<head>` obrigaria `Cache-Control: private, no-store` no site inteiro, e a Castello vai investir em tráfego pago, então página de destino incacheável é custo permanente em cima do que eles pagam para trazer gente. `index.php` e `flex.php` continuam cacheáveis por inteiro e o visitante não recebe cookie de sessão só por ler o site.
 - Toda mensagem de commit é em português e termina com a linha:
   `Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>`
 
@@ -73,8 +73,9 @@ prototipo-site-castello/
     segredos.php                 -    gerado na instalacao, ignorado pelo git
     castello.db                  -    gerado por migrar.php, ignorado pelo git
   public_html/
-    index.php                    T6   home (conversao do index.html), metatag CSRF em T9
-    flex.php                     T6   esqueleto da pagina Castelo Flex, metatag CSRF em T9
+    index.php                    T6   home (conversao do index.html)
+    flex.php                     T6   esqueleto da pagina Castelo Flex
+    csrf.php                     T9   entrega o token do formulario em JSON
     migrar.php                   T4   carrega o conteudo real no banco
     .htaccess                    T15  HTTPS, DirectoryIndex, bloqueios
     lib/
@@ -847,13 +848,14 @@ CREATE TABLE IF NOT EXISTS faq (
 );
 
 CREATE TABLE IF NOT EXISTS passos (
-  id       INTEGER PRIMARY KEY,
-  contexto TEXT NOT NULL CHECK (contexto IN ('pronta','flex')),
-  titulo   TEXT NOT NULL,
-  texto    TEXT,
-  imagem   TEXT,
-  ativo    INTEGER NOT NULL DEFAULT 1,
-  ordem    INTEGER NOT NULL DEFAULT 0
+  id         INTEGER PRIMARY KEY,
+  contexto   TEXT NOT NULL CHECK (contexto IN ('pronta','flex')),
+  titulo     TEXT NOT NULL,
+  texto      TEXT,
+  imagem     TEXT,
+  imagem_alt TEXT,
+  ativo      INTEGER NOT NULL DEFAULT 1,
+  ordem      INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS blocos (
@@ -1118,10 +1120,10 @@ function semear(): void
                        ('Flex um?','Resposta flex','planta','flex',1,1),
                        ('Geral off?','Resposta off','clima','geral',0,3)");
 
-    db()->exec("INSERT INTO passos (contexto, titulo, texto, imagem, ativo, ordem)
-                VALUES ('pronta','Passo dois','Texto dois','uploads/passos/2.jpg',1,2),
-                       ('pronta','Passo um','Texto um','uploads/passos/1.jpg',1,1),
-                       ('flex','Flex passo','Texto flex','uploads/passos/f.jpg',1,1)");
+    db()->exec("INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem)
+                VALUES ('pronta','Passo dois','Texto dois','uploads/passos/2.jpg','Alt dois',1,2),
+                       ('pronta','Passo um','Texto um','uploads/passos/1.jpg','Alt um',1,1),
+                       ('flex','Flex passo','Texto flex','uploads/passos/f.jpg','Alt flex',1,1)");
 
     db()->exec("INSERT INTO blocos (chave, rotulo, valor, tipo)
                 VALUES ('hero_titulo','Titulo do topo','A casa dos seus sonhos','texto'),
@@ -1191,6 +1193,7 @@ teste('passos separa pronta de flex', function (): void {
     igual(2, count($lista));
     igual('Passo um', $lista[0]['titulo']);
     igual('uploads/passos/1.jpg', $lista[0]['imagem']);
+    igual('Alt um', $lista[0]['imagem_alt']);
     igual(1, count(passos('flex')));
 });
 
@@ -1362,7 +1365,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Contagens esperadas:** 4 modelos, 6 itens de portfólio, 14 avaliações, 11 vídeos, 7 perguntas de FAQ, 5 passos, 21 blocos.
 
-> **Divergência registrada.** A spec, na seção 5, diz "5 casas entregues" no portfólio. O `index.html` tem **6** botões `.accordion__item`. O plano migra os 6 que existem, porque a regra é não inventar e não descartar conteúdo real. Confirmar com o cliente depois; desativar um item no painel é um clique.
+> **Portfólio: são 6, e isso já foi confirmado.** A spec antiga falava em 5 casas entregues; o `index.html` tem 6 botões `.accordion__item`, a spec foi corrigida e os 6 migram.
 
 - [ ] **Passo 1: Escrever o teste que falha**
 
@@ -1503,6 +1506,20 @@ teste('os 5 passos do Como funciona chegaram com imagem', function (): void {
     igual(0, count(passos('flex')), 'passo a passo da Flex ainda nao existe');
 });
 
+teste('os alt descritivos dos passos vieram do index.html, um a um', function (): void {
+    $lista = passos('pronta');
+
+    igual('Maquete do projeto da casa de madeira sobre a planta', $lista[0]['imagem_alt']);
+    igual('Início da estrutura de madeira sobre a fundação', $lista[1]['imagem_alt']);
+    igual('Estrutura e montagem da casa de madeira', $lista[2]['imagem_alt']);
+    igual('Equipe no acabamento do telhado e fachada da casa', $lista[3]['imagem_alt']);
+    igual('Chaves da casa de madeira pronta, chave na mão', $lista[4]['imagem_alt']);
+
+    foreach ($lista as $p) {
+        verdade($p['imagem_alt'] !== $p['titulo'], 'o alt e descritivo, nao repete o titulo: ' . $p['titulo']);
+    }
+});
+
 teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function (): void {
     $linhas = db()->query('SELECT chave, rotulo, tipo FROM blocos ORDER BY chave')->fetchAll();
     igual(21, count($linhas));
@@ -1640,13 +1657,13 @@ const MIGRAR_FAQ = [
     ['Que garantias eu tenho com a Castello?', 'Você tem a garantia da construção, o compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo com uma empresa só.', 'garantia'],
 ];
 
-/** titulo, texto, imagem de origem */
+/** titulo, texto, imagem de origem, alt da imagem */
 const MIGRAR_PASSOS = [
-    ['Conversa e projeto', 'Entendemos seu sonho, seu terreno e seu orçamento, e desenhamos a planta ideal pra você.', 'passos/passo-1.jpg'],
-    ['Fundação', 'Preparamos a base da casa com técnica e segurança, prontos para receber a estrutura.', 'passos/passo-2.jpg'],
-    ['Estrutura e montagem', 'Montamos a casa com madeira de qualidade e prego galvanizado, no padrão Castello.', 'passos/passo-3.jpg'],
-    ['Acabamento', 'Elétrica, hidráulica, revestimentos, vidros e os detalhes finos que fazem do seu jeito.', 'passos/passo-4.jpg'],
-    ['Chave na mão', 'Você recebe a casa pronta pra morar, completa, em 90 a 120 dias.', 'passos/passo-5.png'],
+    ['Conversa e projeto', 'Entendemos seu sonho, seu terreno e seu orçamento, e desenhamos a planta ideal pra você.', 'passos/passo-1.jpg', 'Maquete do projeto da casa de madeira sobre a planta'],
+    ['Fundação', 'Preparamos a base da casa com técnica e segurança, prontos para receber a estrutura.', 'passos/passo-2.jpg', 'Início da estrutura de madeira sobre a fundação'],
+    ['Estrutura e montagem', 'Montamos a casa com madeira de qualidade e prego galvanizado, no padrão Castello.', 'passos/passo-3.jpg', 'Estrutura e montagem da casa de madeira'],
+    ['Acabamento', 'Elétrica, hidráulica, revestimentos, vidros e os detalhes finos que fazem do seu jeito.', 'passos/passo-4.jpg', 'Equipe no acabamento do telhado e fachada da casa'],
+    ['Chave na mão', 'Você recebe a casa pronta pra morar, completa, em 90 a 120 dias.', 'passos/passo-5.png', 'Chaves da casa de madeira pronta, chave na mão'],
 ];
 
 /**
@@ -1779,10 +1796,11 @@ function migrar(): array
 
     if (migrar_vazia('passos')) {
         $st = db()->prepare(
-            "INSERT INTO passos (contexto, titulo, texto, imagem, ativo, ordem) VALUES ('pronta', ?, ?, ?, 1, ?)"
+            "INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem)
+             VALUES ('pronta', ?, ?, ?, ?, 1, ?)"
         );
-        foreach (MIGRAR_PASSOS as $i => [$titulo, $texto, $imagem]) {
-            $st->execute([$titulo, $texto, migrar_copiar($imagem, 'passos'), $i + 1]);
+        foreach (MIGRAR_PASSOS as $i => [$titulo, $texto, $imagem, $alt]) {
+            $st->execute([$titulo, $texto, migrar_copiar($imagem, 'passos'), $alt, $i + 1]);
             $conta['passos']++;
         }
     }
@@ -1899,7 +1917,7 @@ if (realpath((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === realpath(__FILE__
 - [ ] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 20-migracao`
-Esperado: 13 ok, 0 falha, 0 pulado.
+Esperado: 14 ok, 0 falha, 0 pulado.
 
 - [ ] **Passo 5: Rodar a migração de verdade, no banco local**
 
@@ -1945,7 +1963,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Teste: `testes/casos/40-partials.php`
 
 **Interfaces:**
-- Consome: `modelos()`, `portfolio()`, `avaliacoes()`, `videos()`, `faq()`, `passos()`, `icone_faq()`, `e()`; `banco_com_conteudo()`, `render()`, `norm()`, `norm_sem_alt()` dos testes.
+- Consome: `modelos()`, `portfolio()`, `avaliacoes()`, `videos()`, `faq()`, `passos()`, `icone_faq()`, `e()`; `banco_com_conteudo()`, `render()` e `norm()` dos testes.
 - Produz: seis arquivos que **imprimem** HTML e não devolvem nada. Variáveis chegam por escopo, definidas logo antes do `include`:
   - `partials/modelos.php` espera `string $modalidade`
   - `partials/portfolio.php` espera nada
@@ -1954,9 +1972,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
   - `partials/faq.php` espera `string $contexto`
   - `partials/passos.php` espera `string $contexto`
 
-**Duas diferenças conhecidas e aceitas em relação ao `index.html`:**
-1. Os caminhos de mídia passam a apontar para `uploads/`. O `norm()` dos testes desfaz essa troca antes de comparar.
-2. Em `passos.php` o `alt` da imagem passa a ser o título do passo, porque a tabela `passos` não tem coluna de alt no contrato. A comparação usa `norm_sem_alt()` e um teste separado garante que todo `img` sai com alt não vazio. Registrado como lacuna do contrato.
+**Uma diferença conhecida e aceita em relação ao `index.html`:** os caminhos de mídia passam a apontar para `uploads/`. O `norm()` dos testes desfaz essa troca antes de comparar. Fora isso a saída é byte a byte a mesma, inclusive os `alt`, porque a tabela `passos` ganhou a coluna `imagem_alt` no contrato e os cinco textos descritivos migram como estão.
 
 - [ ] **Passo 1: Extrair os fragmentos de referência do `index.html`**
 
@@ -2057,7 +2073,7 @@ teste('partials/faq.php imprime as abas e paineis identicos ao site atual', func
 });
 
 teste('partials/passos.php imprime o scrollytelling identico ao site atual', function (): void {
-    igual(norm_sem_alt(base_frag('passos')), norm_sem_alt(parcial('passos', ['contexto' => 'pronta'])));
+    igual(norm(base_frag('passos')), norm(parcial('passos', ['contexto' => 'pronta'])));
 });
 
 teste('toda imagem impressa pelos parciais tem alt preenchido', function (): void {
@@ -2254,8 +2270,6 @@ $lista_faq = faq($contexto ?? 'geral');
 <?php
 /**
  * Passo a passo com imagem sticky. Espera: string $contexto ('pronta' ou 'flex').
- * A tabela passos nao tem coluna de alt no contrato, entao o alt da imagem e o
- * titulo do passo. Fica registrado como lacuna a corrigir num contrato futuro.
  */
 declare(strict_types=1);
 
@@ -2268,7 +2282,7 @@ $total_passos = count($lista_passos);
         <div class="process__veil" aria-hidden="true"></div>
         <div class="process__media" id="processMedia">
 <?php foreach ($lista_passos as $i => $p): ?>
-          <div class="process__media-fig<?= $i === 0 ? ' is-active' : '' ?>" data-step="<?= $i ?>"><img src="<?= e($p['imagem']) ?>" alt="<?= e($p['titulo']) ?>" loading="lazy" /></div>
+          <div class="process__media-fig<?= $i === 0 ? ' is-active' : '' ?>" data-step="<?= $i ?>"><img src="<?= e($p['imagem']) ?>" alt="<?= e($p['imagem_alt']) ?>" loading="lazy" /></div>
 <?php endforeach; ?>
           <div class="process__counter" id="processCounter"><span>01</span> / <?= sprintf('%02d', $total_passos) ?></div>
         </div>
@@ -2342,7 +2356,9 @@ teste('index.php renderiza a home identica ao index.html original', function ():
     $velho = file_get_contents(raiz() . '/testes/base/home-original.html');
     verdade($velho !== false, 'testes/base/home-original.html precisa existir');
 
-    igual(norm_sem_alt((string) $velho), norm_sem_alt($novo));
+    // Sem excecao de alt: a unica diferenca legitima e o caminho da midia, que
+    // norm() desfaz. Todo o resto sai byte a byte igual ao prototipo.
+    igual(norm((string) $velho), norm($novo));
 });
 
 teste('index.php nao vaza codigo PHP nem aviso do PHP', function (): void {
@@ -3474,23 +3490,90 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 ---
 
-## Tarefa 9: Metatag de CSRF nas páginas com formulário
+## Tarefa 9: `csrf.php`, o endereço que entrega o token do formulário
 
 **Arquivos:**
-- Modificar: `public_html/index.php`, `public_html/flex.php`, `public_html/partials/modal.php`
-- Teste: acrescentar ao final de `testes/casos/50-paginas.php`, e ajustar o teste de identidade da home
+- Criar: `public_html/csrf.php`
+- Modificar: `public_html/partials/modal.php` (campo oculto `csrf`, vazio)
+- Teste: acrescentar ao final de `testes/casos/50-paginas.php`
 
 **Interfaces:**
-- Consome: `auth_iniciar()`, `csrf_token()` da Tarefa 7; `e()` da Tarefa 2.
-- Produz: a metatag `<meta name="csrf-token" content="...">` no `<head>` de `index.php` e de `flex.php`, e o campo oculto `csrf` dentro do `#quoteForm`.
+- Consome: `auth_iniciar()`, `csrf_token()` da Tarefa 7.
+- Produz: o endereço `public_html/csrf.php`, que responde `{"token":"..."}` com `Content-Type: application/json; charset=utf-8` e `Cache-Control: private, no-store`; e o campo oculto `csrf` dentro do `#quoteForm`, vazio, preenchido pelo JS da Frente 3.
 
-**Por que isto é bloqueante.** A Frente 3 escreve `enviar.php` e `js/formulario.js`, e não pode escrever em `index.php` nem em `flex.php`. O único jeito de o JS dela conhecer o token é lendo a metatag que esta frente imprime. Sem a metatag, todo envio volta HTTP 419 e o site não capta um lead. É o único acoplamento duro entre as duas frentes.
+**Por que isto é bloqueante.** A Frente 3 escreve `enviar.php` e `js/formulario.js`, e não pode escrever em `index.php` nem em `flex.php`. O `csrf.php` é o único ponto por onde o JS dela conhece o token. Sem ele, todo envio volta HTTP 419 e o site não capta um lead. É o único acoplamento duro entre as duas frentes.
 
-**Cuidado com cache.** O token é por sessão. Se um cache compartilhado (a página em cache do LiteSpeed, um CDN) guardar a página com o token de um visitante e entregá-la a outro, o envio quebra. Por isso as duas páginas mandam `Cache-Control: private, no-store, max-age=0`.
+**Por que um endereço à parte e não uma metatag no `<head>`.** A metatag seria mais simples, mas o token é por sessão: uma página que carrega token no HTML não pode ser guardada em cache compartilhado, sob pena de o LiteSpeed ou um CDN entregar o token de um visitante para outro. Isso obrigaria `Cache-Control: private, no-store` em **toda** página do site. A Castello vai investir em tráfego pago, então cada página de destino incacheável é custo permanente e direto em cima do que eles pagam para trazer gente. Com o endereço à parte, `index.php` e `flex.php` continuam cacheáveis por inteiro, o visitante não recebe cookie de sessão só por ler o site, e o custo vira uma requisição pequena, só para quem realmente abre o formulário.
 
-- [ ] **Passo 1: Ajustar o teste de identidade e escrever os testes novos**
+Por isso `index.php` e `flex.php` **não mudam** nesta tarefa: nada de metatag, nada de `auth_iniciar()`, nada de `Cache-Control`.
 
-Em `testes/casos/50-paginas.php`, troque o primeiro teste por esta versão, que tira a metatag e o campo oculto antes de comparar, já que são as duas únicas adições ao HTML do protótipo:
+- [ ] **Passo 1: Escrever os testes que falham**
+
+Acrescente ao topo de `testes/casos/50-paginas.php`, logo depois do `require_once` que já está lá:
+
+```php
+require_once site() . '/lib/auth.php';
+```
+
+E acrescente ao final do mesmo arquivo:
+
+```php
+teste('csrf.php responde JSON com um token utilizavel', function (): void {
+    $saida = render(site() . '/csrf.php');
+
+    $dados = json_decode($saida, true);
+    verdade(is_array($dados), 'a resposta precisa ser JSON, obtida: ' . mb_substr($saida, 0, 120));
+    verdade(isset($dados['token']), 'o JSON precisa ter a chave token');
+    verdade((bool) preg_match('/^[0-9a-f]{64}$/', (string) $dados['token']),
+        'token esperado: 64 caracteres hexadecimais, obtido ' . var_export($dados['token'], true));
+
+    verdade(csrf_validar((string) $dados['token']), 'o token entregue precisa passar em csrf_validar');
+    igual(['token'], array_keys($dados), 'a resposta nao devolve mais nada alem do token');
+});
+
+teste('o token e o mesmo dentro da sessao e muda quando a sessao muda', function (): void {
+    $primeiro = json_decode(render(site() . '/csrf.php'), true)['token'];
+    $segundo  = json_decode(render(site() . '/csrf.php'), true)['token'];
+    igual($primeiro, $segundo, 'na mesma sessao o token nao pode mudar a cada chamada');
+
+    // Simula outro visitante: a sessao e zerada e o token e sorteado de novo.
+    $_SESSION = [];
+    $outro = json_decode(render(site() . '/csrf.php'), true)['token'];
+
+    verdade($outro !== $primeiro, 'visitantes diferentes precisam receber tokens diferentes');
+    verdade(csrf_validar($outro));
+    falso(csrf_validar($primeiro), 'o token da sessao antiga deixa de valer');
+});
+
+teste('csrf.php manda os cabecalhos certos', function (): void {
+    $fonte = (string) file_get_contents(site() . '/csrf.php');
+
+    contem("Content-Type: application/json; charset=utf-8", $fonte);
+    contem("Cache-Control: private, no-store", $fonte);
+    contem('auth_iniciar()', $fonte);
+    contem('csrf_token()', $fonte);
+});
+
+teste('nenhuma pagina do site imprime o token no HTML', function (): void {
+    foreach ([site() . '/index.php', site() . '/flex.php'] as $pagina) {
+        $html = render($pagina);
+
+        nao_contem('csrf-token', $html, 'metatag de token em ' . basename($pagina));
+        nao_contem('Cache-Control', (string) file_get_contents($pagina),
+            basename($pagina) . ' precisa continuar cacheavel por inteiro');
+    }
+});
+
+teste('o formulario do modal tem o campo oculto de csrf, vazio para o JS preencher', function (): void {
+    foreach ([site() . '/index.php', site() . '/flex.php'] as $pagina) {
+        $html = render($pagina);
+        contem('<input type="hidden" name="csrf" value="" />', $html, basename($pagina));
+        igual(1, substr_count($html, 'name="csrf"'), 'um campo csrf so, em ' . basename($pagina));
+    }
+});
+```
+
+E troque o primeiro teste do arquivo, o de identidade da home, por esta versão, que tira o campo oculto novo antes de comparar. Ele é a única adição ao HTML do protótipo, e tem teste próprio logo acima:
 
 ```php
 teste('index.php renderiza a home identica ao index.html original', function (): void {
@@ -3501,109 +3584,36 @@ teste('index.php renderiza a home identica ao index.html original', function ():
     $velho = file_get_contents(raiz() . '/testes/base/home-original.html');
     verdade($velho !== false, 'testes/base/home-original.html precisa existir');
 
-    // As duas unicas adicoes intencionais ao HTML do prototipo saem antes da
-    // comparacao. Cada uma tem um teste proprio logo abaixo.
-    $novo = (string) preg_replace('#\s*<meta name="csrf-token"[^>]*>#u', '', $novo);
     $novo = (string) preg_replace('#\s*<input type="hidden" name="csrf" value="" />#u', '', $novo);
 
-    igual(norm_sem_alt((string) $velho), norm_sem_alt($novo));
+    igual(norm((string) $velho), norm($novo));
 });
-```
-
-Acrescente ao final do mesmo arquivo:
-
-```php
-teste('a home imprime a metatag de CSRF que a Frente 3 vai ler', function (): void {
-    $html = render(site() . '/index.php');
-
-    verdade((bool) preg_match('#<meta name="csrf-token" content="([0-9a-f]{64})" />#u', $html, $achado),
-        'a metatag precisa estar no HTML com um token de 64 caracteres hexadecimais');
-    verdade(csrf_validar($achado[1]), 'o token impresso precisa ser aceito por csrf_validar');
-
-    $cabeca = mb_substr($html, 0, (int) mb_strpos($html, '</head>'));
-    contem('csrf-token', $cabeca, 'a metatag tem que estar dentro do head');
-});
-
-teste('a pagina Flex imprime a mesma metatag', function (): void {
-    $html = render(site() . '/flex.php');
-
-    verdade((bool) preg_match('#<meta name="csrf-token" content="([0-9a-f]{64})" />#u', $html, $achado));
-    verdade(csrf_validar($achado[1]));
-});
-
-teste('o formulario do modal tem o campo oculto de csrf, vazio para o JS preencher', function (): void {
-    foreach ([site() . '/index.php', site() . '/flex.php'] as $pagina) {
-        $html = render($pagina);
-        contem('<input type="hidden" name="csrf" value="" />', $html, basename($pagina));
-        igual(1, substr_count($html, 'name="csrf"'), 'um campo csrf so, em ' . basename($pagina));
-    }
-});
-
-teste('as duas paginas proibem cache compartilhado do token', function (): void {
-    $fonte = (string) file_get_contents(site() . '/index.php');
-    contem("Cache-Control: private, no-store, max-age=0", $fonte);
-
-    $fonte = (string) file_get_contents(site() . '/flex.php');
-    contem("Cache-Control: private, no-store, max-age=0", $fonte);
-});
-```
-
-E acrescente, no topo de `testes/casos/50-paginas.php`, logo depois do `require_once` que já está lá:
-
-```php
-require_once site() . '/lib/auth.php';
 ```
 
 - [ ] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 50-paginas`
-Esperado: os quatro testes novos falham, porque a metatag ainda não existe. O teste de identidade continua passando, já que o `preg_replace` não encontra nada para tirar.
+Esperado: os testes do `csrf.php` falham com `Failed opening required .../public_html/csrf.php`, e o do campo oculto falha porque o campo ainda não existe. O teste de identidade continua passando, já que o `preg_replace` não encontra nada para tirar.
 
-- [ ] **Passo 3: Ligar auth e imprimir a metatag no `index.php`**
+- [ ] **Passo 3: Escrever o `csrf.php`**
 
-No topo de `public_html/index.php`, troque o bloco PHP de abertura por:
+Crie `public_html/csrf.php` com exatamente o conteúdo definido no contrato:
 
 ```php
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/lib/conteudo.php';
-require_once __DIR__ . '/lib/auth.php';
-
-// A sessao abre aqui, antes de qualquer saida, porque o token de CSRF do
-// formulario vive nela. O cache compartilhado fica proibido: uma pagina
-// guardada com o token de um visitante quebraria o envio de outro.
-auth_iniciar();
-header('Cache-Control: private, no-store, max-age=0');
-?>
-```
-
-E no `<head>`, logo depois da linha do `<link rel="stylesheet" href="css/style.css?v=12" />`, acrescente:
-
-```php
-  <!-- token lido pelo js/formulario.js da Frente 3 -->
-  <meta name="csrf-token" content="<?= e(csrf_token()) ?>" />
-```
-
-- [ ] **Passo 4: Fazer o mesmo no `flex.php`**
-
-No topo de `public_html/flex.php`, depois do `require_once __DIR__ . '/lib/conteudo.php';`, acrescente:
-
-```php
-require_once __DIR__ . '/lib/auth.php';
+require __DIR__ . '/lib/auth.php';
 
 auth_iniciar();
-header('Cache-Control: private, no-store, max-age=0');
+
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: private, no-store');
+
+echo json_encode(['token' => csrf_token()]);
 ```
 
-E no `<head>`, logo depois da linha do `<link rel="stylesheet" href="css/style.css?v=12" />`, acrescente:
-
-```php
-  <!-- token lido pelo js/formulario.js da Frente 3 -->
-  <meta name="csrf-token" content="<?= e(csrf_token()) ?>" />
-```
-
-- [ ] **Passo 5: Acrescentar o campo oculto ao formulário do modal**
+- [ ] **Passo 4: Acrescentar o campo oculto ao formulário do modal**
 
 Em `public_html/partials/modal.php`, dentro do `<form class="qform" id="quoteForm" novalidate>`, logo antes da linha do honeypot, acrescente:
 
@@ -3611,39 +3621,42 @@ Em `public_html/partials/modal.php`, dentro do `<form class="qform" id="quoteFor
         <input type="hidden" name="csrf" value="" />
 ```
 
-O valor fica vazio de propósito: quem preenche é o `js/formulario.js` da Frente 3, lendo a metatag. Assim existe um lugar só de onde o token sai.
+O valor fica vazio de propósito: quem preenche é o `js/formulario.js` da Frente 3, que busca o token em `csrf.php` **quando o visitante abre o modal**, não no carregamento da página. Assim existe um lugar só de onde o token sai, e a página continua cacheável.
 
 O honeypot continua sendo `_gotcha` neste arquivo. O contrato define `empresa` como nome final, mas quem troca é a costura, junto com a limpeza do bloco antigo de formulário no `js/main.js`. Até lá o `enviar.php` aceita os dois nomes.
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [ ] **Passo 5: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 50-paginas`
-Esperado: 12 ok, 0 falha, 0 pulado.
+Esperado: 13 ok, 0 falha, 0 pulado.
 
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 7: Conferir no navegador**
+- [ ] **Passo 6: Conferir no navegador**
 
-Com `php -S localhost:8000 -t public_html` no ar, abra `http://localhost:8000/` e veja o código-fonte da página. Confira:
+Com `php -S localhost:8000 -t public_html` no ar:
 
-1. A linha `<meta name="csrf-token" content="...">` está no `<head>`, com um valor longo.
+1. Abra `http://localhost:8000/csrf.php`. A resposta é `{"token":"..."}` com um valor longo.
 2. Recarregue com F5: o token continua o mesmo, porque a sessão é a mesma.
 3. Abra em uma janela anônima: o token é outro.
-4. No console, `document.querySelector('meta[name=csrf-token]').content` devolve o token, que é exatamente o que o JS da Frente 3 vai fazer.
-5. Faça o mesmo em `http://localhost:8000/flex.php`.
-6. Nas ferramentas de rede, a resposta das duas páginas traz `Cache-Control: private, no-store, max-age=0`.
+4. Nas ferramentas de rede, a resposta do `csrf.php` traz `Content-Type: application/json; charset=utf-8` e `Cache-Control: private, no-store`.
+5. Abra `http://localhost:8000/` e veja o código-fonte: **não** existe nenhuma metatag `csrf-token`. Nas ferramentas de rede, a resposta da home **não** traz `Cache-Control: private` nem `Set-Cookie`.
+6. No console da home, `fetch('csrf.php').then(r=>r.json()).then(console.log)` devolve o token. É exatamente o que o JS da Frente 3 vai fazer ao abrir o modal.
+7. Confira que o `#quoteForm` tem `<input type="hidden" name="csrf" value="">`, vazio.
+8. Repita os passos 5 e 7 em `http://localhost:8000/flex.php`.
 
-- [ ] **Passo 8: Commit**
+- [ ] **Passo 7: Commit**
 
 ```bash
-git add public_html/index.php public_html/flex.php public_html/partials/modal.php testes/casos/50-paginas.php
-git commit -m "feat: metatag de CSRF nas paginas com formulario
+git add public_html/csrf.php public_html/partials/modal.php testes/casos/50-paginas.php
+git commit -m "feat: csrf.php entrega o token do formulario sem sujar as paginas
 
 A Frente 3 nao pode escrever em index.php nem em flex.php, entao o token do
-formulario sai daqui. Sem a metatag, todo envio volta 419. As duas paginas
-tambem proibem cache compartilhado, para nao entregar o token de um
-visitante para outro.
+formulario sai de um endereco proprio. Token no HTML obrigaria Cache-Control
+private em todo o site, e a Castello vai investir em trafego pago: pagina de
+destino incacheavel seria custo permanente. Assim as paginas continuam
+cacheaveis por inteiro e ninguem recebe cookie de sessao so por ler o site.
 
 Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 ```
@@ -3915,6 +3928,8 @@ function painel_tabelas(): array
                 'titulo'   => ['rotulo' => 'Título do passo', 'tipo' => 'texto', 'obrigatorio' => true],
                 'texto'    => ['rotulo' => 'Texto do passo', 'tipo' => 'texto_longo'],
                 'imagem'   => ['rotulo' => 'Imagem', 'tipo' => 'imagem', 'pasta' => 'passos'],
+                'imagem_alt' => ['rotulo' => 'Descrição da imagem', 'tipo' => 'texto',
+                                 'ajuda' => 'Conte o que aparece na imagem. Serve para quem usa leitor de tela e para o Google'],
             ],
         ],
     ];
@@ -6538,6 +6553,16 @@ curl -sI https://tohospedando.com.br/castello/migrar.php | head -1
 # 6. O painel exige login
 curl -sI https://tohospedando.com.br/castello/painel/painel.php | head -3
 # esperado: 302 com Location para index.php
+
+# 7. O csrf.php entrega o token, e so ele leva no-store
+curl -s https://tohospedando.com.br/castello/csrf.php
+# esperado: {"token":"..."} com 64 caracteres hexadecimais
+curl -sI https://tohospedando.com.br/castello/csrf.php | grep -i "cache-control\|content-type"
+# esperado: application/json e private, no-store
+
+# 8. A home continua cacheavel e nao entrega cookie de sessao
+curl -sI https://tohospedando.com.br/castello/ | grep -ic "set-cookie\|no-store"
+# esperado: 0
 ```
 
 - [ ] **Passo 8: Provar que `uploads/` não executa script**
@@ -6566,7 +6591,7 @@ Abra `https://tohospedando.com.br/castello/` e confira, com os próprios olhos:
 
 1. Hero com vídeo, quatro modelos com preço, acordeão do portfólio, cinco passos, carrossel de avaliações, oito vídeos do Instagram, sete abas de FAQ, modal de orçamento abrindo pelos CTAs.
 2. Nenhum erro no console.
-3. No código-fonte, a linha `<meta name="csrf-token" content="...">` está no `<head>`.
+3. No código-fonte, **não** existe nenhuma metatag de token, e o `#quoteForm` tem `<input type="hidden" name="csrf" value="">` vazio. `https://tohospedando.com.br/castello/csrf.php` devolve `{"token":"..."}`.
 4. Compare lado a lado com o protótipo antigo. Nada pode ter mudado de aparência.
 5. `https://tohospedando.com.br/castello/flex.php` abre sem erro, com nav e rodapé.
 
@@ -6674,7 +6699,8 @@ Feita ao final da escrita deste plano, conforme a skill manda.
 | 21 chaves de `blocos`, incluindo as nove `flexpg_` | Tarefa 4 |
 | Seis parciais com HTML idêntico | Tarefa 5, comparados com fragmentos do `index.html` |
 | `index.php` e `flex.php` | Tarefa 6 |
-| Metatag de CSRF | Tarefa 9 |
+| `passos.imagem_alt` migrado e impresso | Tarefas 2, 4, 5 e 10 |
+| `csrf.php`, sem token no HTML e sem página incacheável | Tarefa 9 |
 | `lib/auth.php`, bcrypt, 5 em 15 min, CSRF, sessão de 2h | Tarefa 7 |
 | `lib/upload.php`, `finfo_file`, 5 MB e 30 MB, renomeia | Tarefa 8 |
 | Painel com CRUD genérico dirigido por `painel/tabelas.php` | Tarefas 10 e 11 |
