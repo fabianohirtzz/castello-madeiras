@@ -700,4 +700,15 @@ $fonte = (string) file_get_contents(__DIR__ . '/../public_html/reenviar.php');
 t_ok('reenviar.php compara a chave com hash_equals', strpos($fonte, 'hash_equals') !== false);
 t_ok('reenviar.php tem modo de linha de comando', strpos($fonte, "PHP_SAPI === 'cli'") !== false);
 
+t_secao('js/formulario.js pelo Node');
+$ondeNode = trim((string) shell_exec(PHP_OS_FAMILY === 'Windows' ? 'where node 2>NUL' : 'command -v node 2>/dev/null'));
+if ($ondeNode === '') {
+    echo '  pulado: node nao encontrado no PATH', PHP_EOL;
+} else {
+    $saidaNode = [];
+    $codigoNode = 0;
+    exec('node ' . escapeshellarg(__DIR__ . '/formulario.test.js') . ' 2>&1', $saidaNode, $codigoNode);
+    t_ok('node testes/formulario.test.js passa', $codigoNode === 0, implode(' | ', $saidaNode));
+}
+
 exit(t_resumo());

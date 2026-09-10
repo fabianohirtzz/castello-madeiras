@@ -2191,7 +2191,7 @@ Três consequências para este arquivo:
 
 Este é o acoplamento entre as frentes 1 e 3. Sem o `csrf.php`, todo envio volta 419.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Criar `testes/formulario.test.js`:
 
@@ -2442,7 +2442,7 @@ assincronos.reduce(function (fila, passo) {
 });
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -2451,7 +2451,7 @@ node testes/formulario.test.js; echo "codigo de saida: $?"
 
 Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de saída 1.
 
-- [ ] **Passo 3: escrever `public_html/js/formulario.js`**
+- [x] **Passo 3: escrever `public_html/js/formulario.js`**
 
 ```js
 /* Castello - formulario de orcamento (frente 3).
@@ -2854,7 +2854,7 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
 })();
 ```
 
-- [ ] **Passo 4: rodar os testes do JS e ver passar**
+- [x] **Passo 4: rodar os testes do JS e ver passar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -2863,7 +2863,7 @@ node testes/formulario.test.js; echo "codigo de saida: $?"
 
 Esperado: `29/29 passaram` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: pendurar o teste do JS no smoke**
+- [x] **Passo 5: pendurar o teste do JS no smoke**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -2880,7 +2880,7 @@ if ($ondeNode === '') {
 }
 ```
 
-- [ ] **Passo 6: rodar o smoke inteiro**
+- [x] **Passo 6: rodar o smoke inteiro**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -2888,7 +2888,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: todas as seções com `ok`, incluindo `node testes/formulario.test.js passa`, e `codigo de saida: 0`.
 
-- [ ] **Passo 7: conferir no navegador que o envio antigo ficou desligado**
+- [x] **Passo 7: conferir no navegador que o envio antigo ficou desligado**
 
 Como `index.php` ainda é da frente 1, a conferência é feita no `index.html` atual sem editá-lo, injetando o arquivo pela mão:
 
@@ -2930,7 +2930,7 @@ sessionStorage.getItem('castello_utm')   // {"utm_source":"instagram","utm_campa
 
 Navegar para `http://localhost:8000/index.html` sem parâmetro, injetar de novo, abrir o modal e conferir que `document.querySelector('#quoteForm [name=utm_source]').value` continua `instagram`. O envio em si só fecha o ciclo quando a frente 1 entregar o `csrf.php`, e isso é conferido na Tarefa 9.
 
-- [ ] **Passo 8: commitar**
+- [x] **Passo 8: commitar**
 
 ```bash
 git add public_html/js/formulario.js testes/formulario.test.js testes/smoke-f3.php
