@@ -52,12 +52,12 @@ teste('a nav de cada pagina tem os quatro links de pagina, o CTA e nenhuma ancor
         preg_match('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
         verdade(isset($m[1]), "$arquivo: bloco nav__links");
         preg_match_all('#<a href="([^"]+)"#', $m[1], $links);
-        igual(['casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $links[1], "$arquivo: links da nav");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $links[1], "$arquivo: links da nav");
         contem('class="btn btn--primary nav__cta" data-quote-open', $html, "$arquivo: CTA da nav");
 
         preg_match('#<div class="drawer" id="drawer"[^>]*>(.*?)</div>#s', $html, $g);
         preg_match_all('#<a href="([^"]+)"#', $g[1], $glinks);
-        igual(['casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $glinks[1], "$arquivo: links da gaveta");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $glinks[1], "$arquivo: links da gaveta");
         contem('data-quote-open>Pedir orçamento</button>', $g[1], "$arquivo: CTA da gaveta");
 
         // nenhum href com # dentro da nav, da gaveta ou do rodape
@@ -76,7 +76,7 @@ teste('a pagina atual recebe aria-current="page" e as outras nao', function (): 
         if ($chave === 'home') {
             contem('class="nav__logo" aria-label="Castello Casas de Madeira" aria-current="page"', $html, 'home: o logo e a pagina atual');
             contem('<a href="index.php" aria-current="page">Início</a>', $html, 'home: marcada no rodape');
-            igual(2, substr_count($html, 'aria-current="page"'), 'home: logo e rodape');
+            igual(4, substr_count($html, 'aria-current="page"'), 'home: logo, nav, gaveta e rodape');
             continue;
         }
         verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '"[^>]*aria-current="page"[^>]*>#', $html) === 1, "$arquivo: link marcado");

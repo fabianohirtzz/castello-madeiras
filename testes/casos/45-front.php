@@ -34,11 +34,11 @@ teste('a nav lista so paginas, sem ancora, e o logo leva a home', function (): v
         preg_match_all('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
         verdade(isset($m[1][0]), "$chave: bloco de links");
         preg_match_all('#href="([^"]+)"#', $m[1][0], $hrefs);
-        igual(['casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $hrefs[1], "$chave: os quatro links de pagina, nesta ordem");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $hrefs[1], "$chave: os cinco links de pagina, nesta ordem");
 
         preg_match_all('#<div class="drawer"[^>]*>(.*?)</div>#s', $html, $g);
         preg_match_all('#href="([^"]+)"#', $g[1][0], $ghrefs);
-        igual(['casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $ghrefs[1], "$chave: a gaveta tem os mesmos quatro links");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $ghrefs[1], "$chave: a gaveta tem os mesmos cinco links");
 
         nao_contem('href="#', $html, "$chave: nenhuma ancora no menu");
         contem('href="index.php" class="nav__logo"', $html, "$chave: o logo leva a home");
@@ -51,7 +51,7 @@ teste('a nav lista so paginas, sem ancora, e o logo leva a home', function (): v
 teste('a pagina atual recebe aria-current="page" na nav e na gaveta', function (): void {
     foreach (PAGINAS_NAV as $chave => $arquivo) {
         $html = parcial_costura('nav', ['pagina' => $chave]);
-        igual($chave === 'home' ? 1 : 2, substr_count($html, 'aria-current="page"'), "$chave: um na nav e um na gaveta (na home, so o logo)");
+        igual($chave === 'home' ? 3 : 2, substr_count($html, 'aria-current="page"'), "$chave: um na nav e um na gaveta (na home, tambem o logo)");
         if ($chave === 'home') {
             contem('href="index.php" class="nav__logo" aria-label="Castello Casas de Madeira" aria-current="page"', $html);
         } else {

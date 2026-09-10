@@ -14,6 +14,7 @@ require_once __DIR__ . '/../lib/db.php';
 $pagina = $pagina ?? 'home';
 
 $ico = [
+    'inicio'  => '<path d="m3 11 9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9Z"/>',
     'casa'    => '<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/>',
     'camadas' => '<path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/>',
     'foto'    => '<path d="M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/>',
@@ -22,6 +23,7 @@ $ico = [
 
 /* chave da pagina, href, rotulo, icone, classe extra, etiqueta */
 $menu = [
+    ['home',      'index.php',       'Início',       'inicio',  '',                ''],
     ['pronta',    'casa-pronta.php', 'Casa Pronta',  'casa',    '',                ''],
     ['flex',      'flex.php',        'Castelo Flex', 'camadas', 'nav__link--flex', 'Novo'],
     ['portfolio', 'portfolio.php',   'Portfólio',    'foto',    '',                ''],
@@ -52,6 +54,7 @@ $menu = [
 <?php endforeach; ?>
       </nav>
 
+      <div class="nav__acoes">
       <button type="button" class="btn btn--primary nav__cta" data-quote-open>
         <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
         Pedir orçamento
@@ -60,6 +63,7 @@ $menu = [
       <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
+      </div>
     </div>
   </header>
 

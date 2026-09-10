@@ -126,7 +126,7 @@ ul,ol{list-style:none}
 }
 .nav__inner{
   max-width:1320px;margin-inline:auto;
-  display:flex;align-items:center;gap:clamp(14px,2vw,28px);
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(14px,2vw,28px);
   height:74px;padding:0 14px 0 clamp(18px,2vw,26px);
   border-radius:999px;
   background:rgba(20,20,20,.32);
@@ -135,11 +135,12 @@ ul,ol{list-style:none}
   box-shadow:0 14px 40px -18px rgba(0,0,0,.6);
   transition:background .35s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease),height .35s var(--ease);
 }
-.nav__logo{margin-right:auto;display:flex;align-items:center;flex:none}
+.nav__logo{display:flex;align-items:center;flex:none;justify-self:start}
 .nav__logo-img{height:58px;width:auto;flex:none;object-fit:contain;transition:opacity .3s}
 .nav__logo-img--dark{display:none}
 
-.nav__links{display:flex;gap:clamp(4px,.8vw,12px)}
+.nav__links{display:flex;gap:clamp(4px,.8vw,12px);justify-self:center}
+.nav__acoes{display:flex;align-items:center;gap:clamp(10px,1.4vw,20px);justify-self:end}
 .nav__links a{
   display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
   font-family:var(--font-display);font-weight:600;font-size:.92rem;color:#fff;
@@ -259,11 +260,15 @@ body.drawer-open{overflow:hidden}
    ============================================================ */
 /* margin-bottom:-1px fecha o fio do fundo --bone que vazava na emenda faceta→próxima seção */
 .facet{position:relative;height:var(--facet-h);margin-top:calc(-1 * var(--facet-h));margin-bottom:-1px;z-index:3;pointer-events:none}
-.facet::before{content:"";position:absolute;inset:0;clip-path:var(--facet-roof)}
-.facet--bone::before{background:var(--bone)}
-.facet--sand::before{background:var(--sand)}
-.facet--ink::before{background:var(--ink)}
-.facet--red::before{background:var(--red-deep)}
+/* O telhado é um SVG de fundo, não clip-path: no Chrome com tela a 125% o
+   clip-path em camada composta deixava uma fenda de 1px físico na aresta,
+   por onde o fundo escuro do hero vazava como uma linha preta. O traço da
+   mesma cor cobre a borda serrilhada. Mesmo polígono de --facet-roof. */
+.facet::before{content:"";position:absolute;inset:-1px 0 0;background-repeat:no-repeat;background-size:100% 100%}
+.facet--bone::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23FAF7F2' stroke='%23FAF7F2' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
+.facet--sand::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23EFE7DB' stroke='%23EFE7DB' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
+.facet--ink::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23141414' stroke='%23141414' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
+.facet--red::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23B3141B' stroke='%23B3141B' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
 
 /* ============================================================
    SECTIONS base
@@ -1106,7 +1111,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 /* ---------- Hero de página interna (Castelo Flex) ---------- */
 .pagehero{
   position:relative;display:flex;align-items:flex-end;
-  min-height:clamp(560px,80svh,780px);
+  min-height:100vh;min-height:100svh;
   padding-block:clamp(130px,18vh,180px) clamp(56px,9vh,96px);
   background:var(--ink);color:#fff;overflow:hidden;
 }
@@ -1391,8 +1396,8 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
 .canal__sub{display:block;margin-top:5px;color:var(--muted);font-size:.92rem;line-height:1.5}
 .canal--wpp .canal__ico{background:rgba(37,211,102,.14);color:#12A54A}
 .contato__mapa{
-  border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card);border:1px solid var(--line);
-  background:var(--ink);aspect-ratio:21/9;
+  border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card);border:0;
+  background:transparent;aspect-ratio:21/9;
 }
 .contato__mapa iframe{display:block;width:100%;height:100%;border:0;filter:grayscale(.15) contrast(1.04)}
 .contato__mapa-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:clamp(28px,4vh,44px)}
