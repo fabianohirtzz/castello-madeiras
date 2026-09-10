@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/conteudo.php';
 require_once __DIR__ . '/../lib/upload.php';
+require_once __DIR__ . '/../lib/auth.php';
 
 /**
  * Descricao declarativa das telas de conteudo do painel.
@@ -638,6 +639,9 @@ function painel_trocar_senha(int $usuarioId, string $atual, string $nova, string
 
     db()->prepare('UPDATE usuarios SET senha_hash = ? WHERE id = ?')
         ->execute([password_hash($nova, PASSWORD_BCRYPT), $usuarioId]);
+
+    // Senha nova expulsa todo aparelho que estava lembrado, inclusive este.
+    auth_lembrar_derrubar($usuarioId);
 
     return ['ok' => true, 'erro' => null];
 }

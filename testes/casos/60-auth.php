@@ -124,3 +124,143 @@ teste('o destino do login e relativo, para funcionar em subpasta', function (): 
     igual('index.php', AUTH_LOGIN_URL);
     falso(str_starts_with(AUTH_LOGIN_URL, '/'), 'caminho absoluto quebraria o painel em subpasta');
 });
+
+/** Zera sessao e cookies entre os casos do continuar conectado. */
+function lembrar_zerar(): void
+{
+    $_SESSION = [];
+    $_COOKIE  = [];
+    db()->exec('DELETE FROM login_lembrado');
+    db()->exec('DELETE FROM login_tentativas');
+}
+
+teste('marcar continuar conectado grava o token e guarda so o hash do validador', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+
+    $cookie = (string) ($_COOKIE[AUTH_COOKIE_LEMBRAR] ?? '');
+    verdade($cookie !== '', 'o cookie de lembrar precisa existir');
+    verdade(str_contains($cookie, ':'), 'o cookie e seletor:validador');
+    [$seletor, $validador] = explode(':', $cookie, 2);
+    verdade(strlen($seletor) >= 16 && strlen($validador) >= 32, 'seletor e validador curtos demais');
+
+    $linha = db()->query('SELECT * FROM login_lembrado')->fetch();
+    verdade($linha !== false, 'o token precisa estar no banco');
+    igual($seletor, (string) $linha['seletor']);
+    igual(hash('sha256', $validador), (string) $linha['validador_hash']);
+    nao_contem($validador, (string) $linha['validador_hash'], 'o validador nunca pode ficar em claro no banco');
+
+    $faltam = strtotime((string) $linha['expira_em']) - time();
+    verdade($faltam > 29 * 86400 && $faltam <= 30 * 86400, 'o token dura cerca de 30 dias, faltam ' . $faltam . 's');
+
+    igual('castello', (string) ($_COOKIE[AUTH_COOKIE_LOGIN] ?? ''), 'o login fica salvo para vir preenchido');
+});
+
+teste('sem marcar a opcao nada e guardado, e marcar antes nao deixa sobra', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+    igual(1, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn());
+
+    $_SESSION = [];
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', false));
+    igual(0, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn(),
+        'entrar sem marcar limpa o token que existia');
+    igual('', (string) ($_COOKIE[AUTH_COOKIE_LEMBRAR] ?? ''), 'e apaga o cookie');
+    igual('', (string) ($_COOKIE[AUTH_COOKIE_LOGIN] ?? ''), 'e o login salvo');
+});
+
+teste('o cookie revive a sessao depois que ela morre', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+
+    $_SESSION = [];
+    verdade(auth_logado(), 'com o cookie valido a sessao volta sozinha');
+    igual(1, (int) db()->query("SELECT id FROM usuarios WHERE login = 'castello'")->fetchColumn() > 0 ? 1 : 0);
+    verdade((int) ($_SESSION['usuario_id'] ?? 0) > 0, 'a sessao volta com o usuario dentro');
+});
+
+teste('o validador roda a cada revivida e o cookie antigo perde o valor', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+    $antigo = (string) $_COOKIE[AUTH_COOKIE_LEMBRAR];
+
+    $_SESSION = [];
+    verdade(auth_logado());
+    $novo = (string) $_COOKIE[AUTH_COOKIE_LEMBRAR];
+    verdade($antigo !== $novo, 'o cookie precisa mudar depois de reviver a sessao');
+
+    $_SESSION = [];
+    $_COOKIE[AUTH_COOKIE_LEMBRAR] = $antigo;
+    falso(auth_logado(), 'o cookie antigo nao pode mais valer');
+});
+
+teste('validador errado com seletor certo e recusado e derruba o token', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+    [$seletor] = explode(':', (string) $_COOKIE[AUTH_COOKIE_LEMBRAR], 2);
+
+    $_SESSION = [];
+    $_COOKIE[AUTH_COOKIE_LEMBRAR] = $seletor . ':' . str_repeat('a', 64);
+    falso(auth_logado(), 'validador errado nao entra');
+    igual(0, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn(),
+        'validador errado cheira a roubo de cookie, entao o token cai');
+});
+
+teste('cookie sem sentido nao derruba nem estoura', function (): void {
+    lembrar_zerar();
+    foreach (['', 'abc', ':', 'sem-dois-pontos', 'naoexiste:' . str_repeat('b', 64)] as $lixo) {
+        $_SESSION = [];
+        $_COOKIE[AUTH_COOKIE_LEMBRAR] = $lixo;
+        falso(auth_logado(), "cookie '$lixo' nao pode logar ninguem");
+    }
+});
+
+teste('token vencido e recusado e sai do banco', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+
+    db()->prepare('UPDATE login_lembrado SET expira_em = ?')->execute([date('Y-m-d H:i:s', time() - 60)]);
+
+    $_SESSION = [];
+    falso(auth_logado(), 'token vencido nao entra');
+    igual(0, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn(), 'e e varrido do banco');
+});
+
+teste('sair apaga o token e o cookie, mas mantem o login salvo', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+
+    auth_sair();
+    falso(auth_logado());
+    igual(0, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn());
+    igual('', (string) ($_COOKIE[AUTH_COOKIE_LEMBRAR] ?? ''), 'o cookie de continuar conectado cai');
+    igual('castello', auth_login_salvo(), 'o login continua salvo para preencher o campo');
+});
+
+teste('trocar a senha derruba todos os tokens do usuario', function (): void {
+    lembrar_zerar();
+    verdade(auth_entrar('castello', 'senha-de-teste-forte', true));
+    $usuarioId = (int) $_SESSION['usuario_id'];
+
+    // um segundo aparelho do mesmo usuario
+    auth_lembrar_criar($usuarioId);
+    igual(2, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn());
+
+    require_once site() . '/painel/tabelas.php';
+    $r = painel_trocar_senha($usuarioId, 'senha-de-teste-forte', 'outra-senha-forte', 'outra-senha-forte');
+    verdade($r['ok'], (string) ($r['erro'] ?? ''));
+
+    igual(0, (int) db()->query('SELECT COUNT(*) FROM login_lembrado')->fetchColumn(),
+        'senha nova tem que expulsar todo aparelho lembrado');
+
+    // devolve a senha original para os outros casos
+    db()->prepare('UPDATE usuarios SET senha_hash = ? WHERE id = ?')
+        ->execute([password_hash('senha-de-teste-forte', PASSWORD_BCRYPT), $usuarioId]);
+    lembrar_zerar();
+});
+
+teste('o prazo de continuar conectado e o combinado', function (): void {
+    igual(30, AUTH_LEMBRAR_DIAS);
+    igual('castello_lembrar', AUTH_COOKIE_LEMBRAR);
+    igual('castello_login', AUTH_COOKIE_LOGIN);
+});

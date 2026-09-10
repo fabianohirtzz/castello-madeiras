@@ -8,36 +8,43 @@ Endereço do painel: **https://castello.tohospedando.com.br/painel/** (muda quan
 
 1. Abra o endereço do painel.
 2. Digite o login `castello` e a senha que a Freela entregou por outro canal.
-3. Toque em **Entrar**.
+3. Se este é o seu computador ou celular, marque **Salvar meu login e continuar conectado**.
+4. Toque em **Entrar**.
 
-Errou a senha cinco vezes seguidas? O painel trava por 15 minutos para o seu endereço, por segurança. Espere e tente de novo. Ficou parado por duas horas? Ele pede a senha de novo.
+Com a opção marcada, você fica dentro por 30 dias sem digitar a senha de novo, e cada visita renova o prazo. Não marque em computador compartilhado, de lan house ou de balcão: quem sentar depois de você entra direto no painel.
 
-Para sair, toque em **Sair**, no canto superior direito.
+Errou a senha cinco vezes seguidas? O painel trava por 15 minutos para o seu endereço, por segurança. Espere e tente de novo. Sem a opção marcada, ficar duas horas parado também faz ele pedir a senha de novo.
+
+Para sair, toque em **Sair**, no pé do menu da esquerda. Sair desliga o "continuar conectado" deste aparelho, mas o seu login continua preenchido na próxima vez.
 
 ![Tela de login](guia-do-painel/01-login.png)
 
 ## 2. As telas
 
-O menu de cima tem uma aba para cada parte do site:
+O menu da esquerda tem uma tela para cada parte do site, em dois grupos. **Conteúdo** é o que aparece para quem visita. **Sistema** é a parte de configuração.
 
-| Aba | O que muda no site |
+| Tela | O que muda no site |
 |---|---|
-| **Modelos** | Os cards de casa com área, parede e preço. Tem um filtro para Casa Pronta e outro para Castelo Flex. |
-| **Portfólio** | A galeria de casas entregues. |
-| **Avaliações** | Os depoimentos do Google que rolam na home. |
-| **Vídeos** | Os vídeos do Instagram na home. |
-| **FAQ** | As perguntas frequentes, da home (geral) e da página Flex. |
-| **Passos** | O passo a passo, da Casa Pronta (com foto) e da Flex (sem foto). |
-| **Textos** | Títulos e textos avulsos: topo da home, bloco de modalidades, prazos, página Flex. |
-| **Configurações** | E-mail que recebe os pedidos, quantos vídeos aparecem na home e o CRM. |
-| **Backup** | Baixa uma cópia de tudo. |
-| **Trocar senha** | Sua senha de acesso. |
+| **Modelos** *(Conteúdo)* | Os cards de casa com área, parede e preço. Tem um filtro para Casa Pronta e outro para Castelo Flex. |
+| **Portfólio** *(Conteúdo)* | A galeria de casas entregues. |
+| **Avaliações** *(Conteúdo)* | Os depoimentos do Google que rolam na home. |
+| **Vídeos** *(Conteúdo)* | Os vídeos do Instagram na home. |
+| **FAQ** *(Conteúdo)* | As perguntas frequentes, da home (geral) e da página Flex. |
+| **Passo a passo** *(Conteúdo)* | O passo a passo, da Casa Pronta (com foto) e da Flex (sem foto). |
+| **Textos** *(Sistema)* | Títulos e textos avulsos: topo da home, bloco de modalidades, prazos, página Flex. |
+| **Configurações** *(Sistema)* | E-mail que recebe os pedidos, quantos vídeos aparecem na home e o CRM. |
+| **Backup** *(Sistema)* | Baixa uma cópia de tudo. |
+| **Trocar senha** *(Sistema)* | Sua senha de acesso. |
+
+No celular o menu fica escondido: toque no botão de três risquinhos, no canto superior esquerdo, para abrir.
+
+![Menu no celular](guia-do-painel/04-menu.png)
 
 ![Lista de modelos](guia-do-painel/02-lista.png)
 
 ## 3. Cadastrar um modelo de casa
 
-1. Aba **Modelos**. Escolha o filtro **Casa Pronta** ou **Castelo Flex**.
+1. Tela **Modelos**. Escolha o filtro **Casa Pronta** ou **Castelo Flex**.
 2. Toque em **Adicionar modelo**.
 3. Preencha:
    - **Modalidade**: Casa Pronta ou Castelo Flex.
@@ -57,7 +64,7 @@ O modelo aparece no site na hora.
 
 ## 4. Subir um vídeo e mudar a ordem
 
-1. Aba **Vídeos**, toque em **Adicionar vídeo**.
+1. Tela **Vídeos**, toque em **Adicionar vídeo**.
 2. Escolha o arquivo **MP4** (até 30 MB) e uma **capa** (a imagem que aparece antes de o vídeo tocar).
 3. Salve.
 
@@ -67,7 +74,7 @@ Para mudar a ordem, segure o item pela alça **≡** à esquerda e arraste para 
 
 ## 5. Publicar uma avaliação
 
-1. Aba **Avaliações**, toque em **Adicionar avaliação**.
+1. Tela **Avaliações**, toque em **Adicionar avaliação**.
 2. Copie o **nome do cliente** e o **texto** exatamente como está no Google. Não resuma nem corrija: é o depoimento da pessoa.
 3. **Estrelas**: de 1 a 5.
 4. Salve. A avaliação nova entra no fim do carrossel; arraste na lista se quiser que apareça antes.
@@ -80,7 +87,7 @@ Os itens desativados aparecem no fim da lista, marcados como inativos.
 
 ## 7. Editar os textos
 
-Aba **Textos**. Cada campo tem um rótulo dizendo onde ele aparece no site, por exemplo *Título do topo* ou *Prazo da Castelo Flex*. Mude o que quiser e toque em **Salvar textos**.
+Tela **Textos**. Cada campo tem um rótulo dizendo onde ele aparece no site, por exemplo *Título do topo* ou *Prazo da Castelo Flex*. Mude o que quiser e toque em **Salvar textos**.
 
 Dois detalhes:
 
@@ -95,11 +102,13 @@ Dois detalhes:
 
 ## 9. Baixar o backup
 
-Aba **Backup**, toque em **Baixar backup agora**. Vem um arquivo `.zip` com o banco de dados (todos os textos, modelos, avaliações e pedidos) e todas as fotos e vídeos enviados pelo painel. Guarde em um lugar seguro, fora do computador do escritório, uma vez por mês ou depois de uma mudança grande.
+Tela **Backup**, toque em **Baixar backup agora**. Vem um arquivo `.zip` com o banco de dados (todos os textos, modelos, avaliações e pedidos) e todas as fotos e vídeos enviados pelo painel. Guarde em um lugar seguro, fora do computador do escritório, uma vez por mês ou depois de uma mudança grande.
 
 ## 10. Trocar a senha
 
-Aba **Trocar senha**. Precisa da senha atual, da nova (mínimo 8 caracteres) e da confirmação. Use uma senha que não use em mais nada.
+Tela **Trocar senha**. Precisa da senha atual, da nova (mínimo 8 caracteres) e da confirmação. Use uma senha que não use em mais nada.
+
+Trocar a senha desconecta todos os aparelhos que estavam com o "continuar conectado" ligado, inclusive o que você está usando. É de propósito: se a senha antiga vazou, a nova precisa expulsar quem estava dentro. Entre de novo com a senha nova.
 
 Esqueceu a senha? Não existe "esqueci minha senha" no painel, de propósito. Fale com a Freela, que redefine.
 

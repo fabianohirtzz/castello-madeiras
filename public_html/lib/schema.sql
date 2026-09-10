@@ -16,6 +16,18 @@ CREATE TABLE IF NOT EXISTS login_tentativas (
   bloqueado_ate TEXT
 );
 
+-- Continuar conectado. O seletor acha a linha, o validador prova quem e.
+-- Do validador so fica o hash: quem ler o banco nao consegue forjar cookie.
+CREATE TABLE IF NOT EXISTS login_lembrado (
+  seletor        TEXT PRIMARY KEY,
+  usuario_id     INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  validador_hash TEXT NOT NULL,
+  expira_em      TEXT NOT NULL,
+  criado_em      TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS login_lembrado_usuario ON login_lembrado (usuario_id);
+
 CREATE TABLE IF NOT EXISTS modelos (
   id          INTEGER PRIMARY KEY,
   modalidade  TEXT NOT NULL CHECK (modalidade IN ('pronta','flex')),

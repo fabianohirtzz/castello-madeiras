@@ -18,7 +18,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $erro = 'A sessão expirou nesta página. Tente entrar de novo.';
     } elseif (auth_bloqueado($ip)) {
         $erro = 'Muitas tentativas erradas. Espere 15 minutos e tente de novo.';
-    } elseif (auth_entrar(trim((string) ($_POST['login'] ?? '')), (string) ($_POST['senha'] ?? ''))) {
+    } elseif (auth_entrar(
+        trim((string) ($_POST['login'] ?? '')),
+        (string) ($_POST['senha'] ?? ''),
+        isset($_POST['lembrar'])
+    )) {
         header('Location: painel.php');
         exit;
     } elseif (auth_bloqueado($ip)) {
@@ -27,6 +31,15 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $erro = 'Login ou senha incorretos.';
     }
 }
+// O campo volta com o que a pessoa digitou quando o envio falhou, e com o
+// login salvo quando ela esta chegando agora.
+$loginSalvo = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+    ? trim((string) ($_POST['login'] ?? ''))
+    : auth_login_salvo();
+
+$lembrarMarcado = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST'
+    ? isset($_POST['lembrar'])
+    : auth_login_salvo() !== '';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -51,12 +64,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
       <div class="p-campo">
         <label for="login">Login</label>
-        <input type="text" id="login" name="login" autocomplete="username" autocapitalize="none" required />
+        <input type="text" id="login" name="login" value="<?= e($loginSalvo) ?>" autocomplete="username" autocapitalize="none" required />
       </div>
 
       <div class="p-campo">
         <label for="senha">Senha</label>
         <input type="password" id="senha" name="senha" autocomplete="current-password" required />
+      </div>
+
+      <div class="p-campo p-campo--marca">
+        <label for="lembrar">
+          <input type="checkbox" id="lembrar" name="lembrar" value="1"<?= $lembrarMarcado ? ' checked' : '' ?> />
+          <span>Salvar meu login e continuar conectado</span>
+        </label>
+        <span class="p-ajuda">Vale por 30 dias neste aparelho. Não marque em computador compartilhado.</span>
       </div>
 
       <button class="p-btn p-btn--forte" type="submit">Entrar</button>

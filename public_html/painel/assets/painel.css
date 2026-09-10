@@ -151,6 +151,14 @@ a { color: var(--p-vermelho-fundo); }
 
 body:not(.p-app) { display: block; }
 
+/* Caixa de marcar com o rotulo do lado, nao em cima. */
+.p-campo--marca > label {
+  display: flex; align-items: center; gap: 9px; cursor: pointer;
+  font-weight: 400; margin-bottom: 0;
+}
+.p-campo--marca input[type="checkbox"] { width: 17px; height: 17px; flex: none; accent-color: var(--p-vermelho); }
+.p-campo--marca .p-ajuda { margin-top: 6px; }
+
 .p-login { max-width: 360px; margin: 12vh auto; padding: 0 16px; }
 .p-login img { display: block; height: 54px; margin: 0 auto 20px; }
 
