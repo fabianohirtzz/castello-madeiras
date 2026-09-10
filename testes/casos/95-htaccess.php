@@ -61,3 +61,11 @@ teste('nenhum htaccess vaza caminho de disco do ambiente local', function (): vo
         nao_contem('C:\\', htaccess($pasta));
     }
 });
+
+teste('lib e partials sao bloqueados por inteiro pelo navegador', function (): void {
+    foreach (['lib', 'partials'] as $pasta) {
+        $t = htaccess($pasta);
+        contem('Require all denied', $t, "$pasta precisa negar tudo");
+        nao_contem('Require all granted', $t);
+    }
+});
