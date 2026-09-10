@@ -95,9 +95,9 @@ teste('painel_listar mostra tambem o que esta desativado', function (): void {
 
 teste('painel_listar aplica o filtro quando a tabela tem um', function (): void {
     igual(4, count(painel_listar('modelos', 'pronta')));
-    igual(3, count(painel_listar('modelos', 'flex')), 'os tres Flex provisorios');
-    igual(7, count(painel_listar('modelos')), 'sem filtro, lista tudo');
-    igual(7, count(painel_listar('modelos', 'inventada')), 'filtro invalido e ignorado');
+    igual(5, count(painel_listar('modelos', 'flex')), 'os cinco Flex');
+    igual(9, count(painel_listar('modelos')), 'sem filtro, lista tudo');
+    igual(9, count(painel_listar('modelos', 'inventada')), 'filtro invalido e ignorado');
 });
 
 teste('painel_listar devolve vazio para tabela fora da descricao', function (): void {

@@ -22,17 +22,19 @@ if (!defined('CASTELLO_UPLOADS')) {
 
 /**
  * modalidade, nome, area, parede, preco, prazo, foto de origem, alt, destaque.
- * Os tres Flex sao provisorios, com preco vazio (o site imprime Sob consulta)
- * e foto emprestada das casas prontas, ate o cliente mandar o material.
+ * Os cinco Flex sao os projetos que a Castello mandou no drive, com render da
+ * fachada, planta baixa e a tabela de precos de setembro de 2026.
  */
 const MIGRAR_MODELOS = [
     ['pronta', 'Compacta', '39,00 m²', 'Parede vertical', '69.900', '90 a 120 dias', 'fotos-casas/casa4.webp', 'Casa de madeira compacta de dois pavimentos da Castello', 0],
     ['pronta', 'Conforto', '42,75 m²', 'Parede dupla', '79.988', '90 a 120 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
     ['pronta', 'Família', '51,00 m²', 'Parede dupla', '87.997', '90 a 120 dias', 'fotos-casas/casa5.webp', 'Casa de madeira Castello com varanda ampla em volta e jardim', 1],
     ['pronta', 'Ampla', '59,75 m²', 'Parede dupla', '97.776', '90 a 120 dias', 'fotos-casas/casa3.webp', 'Sobrado de madeira Castello à beira da água com vista para a ponte', 0],
-    ['flex', 'Castelo Flex 36', '36,00 m²', '', '', '45 dias', 'fotos-casas/casa4.webp', 'Casa de madeira Castello compacta de dois pavimentos', 0],
-    ['flex', 'Castelo Flex 48', '48,00 m²', '', '', '45 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
-    ['flex', 'Castelo Flex 60', '60,00 m²', '', '', '45 dias', 'fotos-casas/casa6.webp', 'Casa de madeira Castello térrea com varanda ampla e garagem coberta', 0],
+    ['flex', 'Castelo Flex 36', '36,00 m²', '', '43.000', '45 dias', 'fotos-flex/flex-36.webp', 'Castelo Flex de 36 m²: casa de madeira térrea com varanda coberta e janela com veneziana', 0],
+    ['flex', 'Castelo Flex 39', '39,00 m²', '', '47.000', '45 dias', 'fotos-flex/flex-39.webp', 'Castelo Flex de 39 m²: casa de madeira térrea com varanda ampla na frente', 0],
+    ['flex', 'Castelo Flex 42', '42,75 m²', '', '51.000', '45 dias', 'fotos-flex/flex-42.webp', 'Castelo Flex de 42,75 m²: casa de madeira térrea com telhado de telha cerâmica e varanda', 0],
+    ['flex', 'Castelo Flex 51', '51,00 m²', 'Com garagem coberta', '59.000', '45 dias', 'fotos-flex/flex-51.webp', 'Castelo Flex de 51 m²: casa de madeira térrea com garagem coberta ao lado da varanda', 0],
+    ['flex', 'Castelo Flex 57', '57,75 m²', 'Com garagem coberta', '69.000', '45 dias', 'fotos-flex/flex-57.webp', 'Castelo Flex de 57,75 m²: casa de madeira térrea com varanda e garagem coberta', 0],
 ];
 
 /** titulo, categoria, foto de origem, alt */
@@ -63,7 +65,7 @@ const MIGRAR_AVALIACOES = [
     ['Lares do Sul', 'Tivemos uma ótima experiência com a Castello, entregaram dentro do prazo, serviço de qualidade. O proprietário também é uma pessoa de fácil negociação e respondia rapidamente sempre que solicitado. Recomendo.'],
 ];
 
-/** contexto, pergunta, resposta, icone. As cinco da Flex sao provisorias. */
+/** contexto, pergunta, resposta, icone. As cinco da Flex saem do escopo que a Castello mandou. */
 const MIGRAR_FAQ = [
     ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', 'Entre 90 e 120 dias, do projeto à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.', 'relogio'],
     ['geral', 'O que está incluso no chave na mão?', 'Sua casa sai pronta pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas. Você cuida da mudança, a Castello cuida de projeto, materiais, prazos e acabamento.', 'chave'],
@@ -73,10 +75,10 @@ const MIGRAR_FAQ = [
     ['geral', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte do processo. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança em cada etapa, do primeiro passo até a chave na mão.', 'fundacao'],
     ['geral', 'Que garantias eu tenho com a Castello?', 'Você tem a garantia da construção, o compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo com uma empresa só.', 'garantia'],
     ['flex', 'Em quanto tempo a Castelo Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.', 'relogio'],
-    ['flex', 'O que exatamente vem na entrega da Flex?', 'Fundação preparada, estrutura de madeira montada, telhado completo, portas e janelas instaladas. A casa é entregue fechada e trancada no seu terreno. Elétrica, hidráulica, revestimento, piso e pintura ficam por sua conta.', 'chave'],
+    ['flex', 'O que exatamente vem na entrega da Flex?', 'Fundação com laje aérea, estrutura de madeira montada, telhado completo, forro à nível, esquadrias instaladas, a alvenaria do banheiro no chapisco e a limpeza de obra feita. Ficam por sua conta os vidros, a elétrica, a hidráulica, o revestimento cerâmico, as louças e o balcão do banheiro, a fossa, o sumidouro e a pintura.', 'chave'],
     ['flex', 'Posso mudar a planta da Castelo Flex?', 'Sim. A planta é ajustada ao seu terreno e à sua rotina antes da produção. Depois que a estrutura entra em fabricação, as mudanças passam a ser de acabamento, que é justamente a parte que fica com você.', 'planta'],
     ['flex', 'A madeira é a mesma das casas chave na mão?', 'É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello há 12 anos. A Flex muda o escopo da entrega, nunca o padrão da construção.', 'escudo'],
-    ['flex', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte da entrega da Flex. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.', 'fundacao'],
+    ['flex', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte da entrega da Flex, com laje aérea em concreto armado. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.', 'fundacao'],
 ];
 
 /**
@@ -94,7 +96,7 @@ const MIGRAR_PASSOS = [
     ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
     ['flex', 'Estrutura montada', 'Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.', '', ''],
     ['flex', 'Cobertura', 'Telhado completo, com a casa protegida da chuva e do sol desde o primeiro dia.', '', ''],
-    ['flex', 'Portas e janelas', 'Aberturas instaladas e a casa entregue fechada e trancada no seu terreno, em 45 dias.', '', ''],
+    ['flex', 'Portas e janelas', 'Esquadrias instaladas e a casa entregue fechada no seu terreno, em 45 dias. Os vidros entram no seu acabamento.', '', ''],
 ];
 
 /**
@@ -112,7 +114,7 @@ const MIGRAR_BLOCOS = [
     ['pronta_texto', 'Texto da seção Casa Pronta', 'Todos os modelos saem prontos pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas.', 'texto_longo'],
     ['pronta_prazo', 'Prazo da Casa Pronta', '90 a 120 dias', 'texto'],
     ['flex_titulo', 'Título da seção Castelo Flex', 'Castelo Flex: a casa semipronta no seu terreno em 45 dias.', 'texto'],
-    ['flex_texto', 'Texto da seção Castelo Flex', 'Você recebe a casa de madeira estruturada, coberta e fechada. O acabamento fica no seu ritmo e no seu bolso, com a mesma madeira e o mesmo padrão de montagem das casas chave na mão.', 'texto_longo'],
+    ['flex_texto', 'Texto da seção Castelo Flex', 'Você recebe a casa de madeira estruturada, coberta e fechada, a partir de R$ 43.000. O acabamento fica no seu ritmo e no seu bolso, com a mesma madeira e o mesmo padrão de montagem das casas chave na mão.', 'texto_longo'],
     ['flex_prazo', 'Prazo da Castelo Flex', '45 dias', 'texto'],
     ['flex_video', 'Vídeo explicativo da Flex', 'uploads/videos/insta-12.mp4', 'texto'],
     ['flex_video_poster', 'Capa do vídeo da Flex', 'uploads/videos/insta-12.jpg', 'texto'],
@@ -121,8 +123,8 @@ const MIGRAR_BLOCOS = [
     ['flexpg_oque_titulo', 'Título de o que é a Castelo Flex', 'A estrutura pronta. O acabamento no seu tempo.', 'texto'],
     ['flexpg_oque_texto', 'Texto de o que é a Castelo Flex', 'A Castello monta a casa de madeira no seu terreno e entrega ela fechada: estrutura, telhado, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento, sem prazo de obra correndo atrás de você.', 'texto_longo'],
     ['flexpg_depois_titulo', 'Título de o que fica por sua conta', 'O que fica por sua conta', 'texto'],
-    ['flexpg_depois_texto', 'Texto de o que fica por sua conta', 'Daqui pra frente a casa é sua e o ritmo é seu. Você contrata quem quiser, na ordem que quiser, e paga por etapa. A Castello segue disponível para orientar, mas o acabamento não está incluso na Castelo Flex.', 'texto_longo'],
-    ['flexpg_catalogo_nota', 'Nota abaixo do catálogo Flex', 'Tamanhos e valores da Castelo Flex em fechamento com a fábrica. Peça o seu orçamento e receba a tabela atualizada, com o prazo para o seu terreno.', 'texto'],
+    ['flexpg_depois_texto', 'Texto de o que fica por sua conta', 'Daqui pra frente a casa é sua e o ritmo é seu. Você contrata quem quiser, na ordem que quiser, e paga por etapa. A Castello segue disponível para orientar, mas estes itens não estão inclusos na Castelo Flex.', 'texto_longo'],
+    ['flexpg_catalogo_nota', 'Nota abaixo do catálogo Flex', 'Valores de setembro de 2026, para a casa montada no seu terreno. O orçamento final considera as condições do seu terreno e a distância até Tubarão.', 'texto'],
     ['flexpg_cta_titulo', 'Título da faixa de orçamento da Flex', 'Quer a Castelo Flex no seu terreno?', 'texto'],
     ['flexpg_cta_texto', 'Texto da faixa de orçamento da Flex', 'Peça seu orçamento. A Castello volta com a tabela atualizada da Flex e o prazo para o seu terreno.', 'texto_longo'],
 ];

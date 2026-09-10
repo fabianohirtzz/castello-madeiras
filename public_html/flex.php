@@ -47,7 +47,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=16" />
+  <link rel="stylesheet" href="css/style.css?v=19" />
 </head>
 <body>
 
@@ -99,6 +99,7 @@ $flex_faq     = faq('flex');
             <li>A mesma madeira e o mesmo prego galvanizado das casas chave na mão</li>
             <li>Montagem pela equipe que constrói casas Castello há 12 anos</li>
             <li>Planta ajustada ao seu terreno antes da produção</li>
+            <li>Fundação com laje aérea, forro à nível e limpeza de obra inclusos</li>
             <li>Você paga o acabamento por etapa, no ritmo do seu bolso</li>
           </ul>
         </div>
@@ -150,9 +151,9 @@ $flex_faq     = faq('flex');
       </div>
 
       <div class="depois__grid">
-        <div class="depois__item reveal"><strong>Elétrica e hidráulica</strong>Fiação, pontos, tubulação e louças.</div>
-        <div class="depois__item reveal"><strong>Revestimentos e piso</strong>Cerâmica, forro, banheiro e cozinha.</div>
-        <div class="depois__item reveal"><strong>Pintura e acabamentos</strong>Interna, externa e os detalhes finos.</div>
+        <div class="depois__item reveal"><strong>Elétrica e hidráulica</strong>Fiação, pontos, tubulação, louças e o balcão do banheiro.</div>
+        <div class="depois__item reveal"><strong>Vidros das esquadrias</strong>As janelas vão instaladas. O vidro entra com você.</div>
+        <div class="depois__item reveal"><strong>Revestimento e pintura</strong>Cerâmica, azulejo e a pintura interna e externa.</div>
         <div class="depois__item reveal"><strong>Fossa e sumidouro</strong>Ligação de esgoto e de água no terreno.</div>
       </div>
 
@@ -166,13 +167,13 @@ $flex_faq     = faq('flex');
   <div class="facet facet--bone" aria-hidden="true"></div>
 
   <!-- ============ CATÁLOGO DAS CASAS FLEX ============ -->
-  <!-- Modelos provisórios: nome, área e preço entram pelo painel em `modelos` modalidade flex. -->
+  <!-- Modelos reais da Flex: render, área e preço de setembro de 2026, editáveis pelo painel. -->
   <section class="section section--facetada" id="modelos-flex">
     <div class="container">
       <div class="section__head">
         <span class="eyebrow reveal">Casas Castelo Flex</span>
-        <h2 class="section__title reveal">Três tamanhos<br>para começar.</h2>
-        <p class="section__lead reveal">Cada modelo Flex sai da fábrica com a estrutura completa e é montado no seu terreno em <?= e($prazo_flex) ?>. A planta é ajustada antes da produção.</p>
+        <h2 class="section__title reveal">Cinco tamanhos<br>para começar.</h2>
+        <p class="section__lead reveal">De 36 a 57,75 m², com dois dormitórios em todas as plantas e garagem coberta nas duas maiores. Cada modelo sai da fábrica com a estrutura completa e é montado no seu terreno em <?= e($prazo_flex) ?>.</p>
       </div>
 
 <?php if ($flex_modelos !== []): ?>

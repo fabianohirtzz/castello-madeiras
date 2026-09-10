@@ -26,8 +26,8 @@ teste('partials/modelos.php imprime a grade identica ao site atual', function ()
 
 teste('partials/modelos.php respeita a modalidade recebida', function (): void {
     $flex = parcial('modelos', ['modalidade' => 'flex']);
-    igual(3, substr_count($flex, '<article class="model'));
-    igual(3, substr_count($flex, 'Sob consulta'), 'Flex sem preco imprime Sob consulta');
+    igual(5, substr_count($flex, '<article class="model'));
+    nao_contem('Sob consulta', $flex, 'os cinco Flex tem preco em tabela');
     contem('<span class="model__badge">Semipronta</span>', $flex);
     nao_contem('Compacta', $flex);
     nao_contem('Chave na mão', $flex);

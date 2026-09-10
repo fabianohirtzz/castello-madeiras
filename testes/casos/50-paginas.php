@@ -147,7 +147,7 @@ teste('pagina flex renderiza com as secoes esperadas e o prazo', function (): vo
     $html = render(site() . '/flex.php');
     foreach (['id="topo"', 'id="o-que-e"', 'id="passos-flex"', 'id="modelos-flex"', 'id="diferenciais"', 'id="faq"',
               'id="orcamento"', 'id="contato"', 'class="pagehero"', 'class="epasso__grid"', 'id="faqTabs"',
-              'Sob consulta'] as $marca) {
+              'R$</span> 43.000'] as $marca) {
         contem($marca, $html, "flex nao tem $marca");
     }
     contem('45 dias', $html, 'pagina flex nao mostra o prazo');

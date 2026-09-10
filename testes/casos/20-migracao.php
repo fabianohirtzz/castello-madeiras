@@ -6,7 +6,7 @@ require_once site() . '/lib/conteudo.php';
 $contagens = banco_com_conteudo();
 
 teste('a migracao insere a quantidade exata de cada tabela', function () use ($contagens): void {
-    igual(7,  $contagens['modelos'], '4 Casa Pronta e 3 Flex provisorios');
+    igual(9,  $contagens['modelos'], '4 Casa Pronta e 5 Flex');
     igual(6,  $contagens['portfolio']);
     igual(14, $contagens['avaliacoes']);
     igual(11, $contagens['videos']);
@@ -37,16 +37,20 @@ teste('os quatro modelos Casa Pronta chegaram com preco, area e parede', functio
 
 });
 
-teste('os tres modelos Flex provisorios chegaram sem preco e com prazo de 45 dias', function (): void {
+teste('os cinco modelos Flex chegaram com preco, area e prazo de 45 dias', function (): void {
     $lista = modelos('flex');
-    igual(3, count($lista), 'provisorios ate o material do cliente chegar');
+    igual(5, count($lista), 'os cinco projetos do drive da Castello');
     igual('Castelo Flex 36', $lista[0]['nome']);
     igual('36,00 m²', $lista[0]['area']);
-    igual('Castelo Flex 60', $lista[2]['nome']);
+    igual('43.000', $lista[0]['preco'], 'tabela de setembro de 2026');
+    igual('Castelo Flex 57', $lista[4]['nome']);
+    igual('Com garagem coberta', $lista[4]['parede'], 'o selo do card avisa da garagem');
+    igual('57,75 m²', $lista[4]['area']);
+    igual('69.000', $lista[4]['preco']);
     foreach ($lista as $m) {
-        igual('', (string) $m['preco'], 'Flex sem preco, o site imprime Sob consulta');
+        verdade((string) $m['preco'] !== '', 'todo Flex tem preco');
         igual('45 dias', $m['prazo']);
-        contem('uploads/modelos/', $m['foto']);
+        contem('uploads/modelos/flex-', $m['foto'], 'render proprio da Flex, nao foto emprestada');
         verdade($m['foto_alt'] !== '', 'todo modelo tem alt');
     }
 });

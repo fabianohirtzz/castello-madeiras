@@ -108,7 +108,7 @@ teste('o modal muda o titulo e a lista de modelos conforme a pagina', function (
 
     $flex = parcial_costura('modal', ['pagina' => 'flex']);
     contem('Vamos falar da sua Castelo Flex', $flex);
-    contem('<option value="Castelo Flex 36 · 36 m² · semipronta">Castelo Flex 36 · 36 m²</option>', $flex);
+    contem('<option value="Castelo Flex 36 · 36 m² · R$ 43.000">Castelo Flex 36 · 36 m² · R$ 43.000</option>', $flex);
     contem('<option value="Quero a Casa Pronta, chave na mão">Quero a Casa Pronta, chave na mão</option>', $flex);
     nao_contem('Compacta · 39 m²', $flex, 'na Flex a lista e dos modelos Flex');
     contem('id="qGroupModelo">', $flex, 'na Flex o campo de modelo ja aparece aberto');

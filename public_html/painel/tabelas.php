@@ -36,7 +36,7 @@ function painel_tabelas(): array
                                  'opcoes' => ['pronta' => 'Casa Pronta', 'flex' => 'Castelo Flex']],
                 'nome'       => ['rotulo' => 'Nome do modelo', 'tipo' => 'texto', 'obrigatorio' => true],
                 'area'       => ['rotulo' => 'Área', 'tipo' => 'texto', 'ajuda' => 'Escreva com a unidade, como 39,00 m²'],
-                'parede'     => ['rotulo' => 'Parede', 'tipo' => 'texto', 'ajuda' => 'Parede vertical ou Parede dupla'],
+                'parede'     => ['rotulo' => 'Selo do card', 'tipo' => 'texto', 'ajuda' => 'Aparece acima do nome. Ex.: Parede dupla, Com garagem coberta. Vazio mostra o prazo'],
                 'preco'      => ['rotulo' => 'Preço', 'tipo' => 'texto', 'ajuda' => 'Só o número, como 69.900. O site coloca o R$ sozinho'],
                 'prazo'      => ['rotulo' => 'Prazo', 'tipo' => 'texto', 'ajuda' => 'Como 90 a 120 dias'],
                 'descricao'  => ['rotulo' => 'Descrição', 'tipo' => 'texto_longo'],
