@@ -435,7 +435,7 @@ function painel_textos_gravar(array $entrada): int
     return $gravadas;
 }
 
-/** As dez chaves de config que o cliente edita, com rotulo e tipo. */
+/** As doze chaves de config que o cliente edita, com rotulo e tipo. */
 function painel_config_campos(): array
 {
     return [
@@ -530,11 +530,12 @@ function painel_config_validar(array $entrada): array
         }
 
         if (in_array($chave, ['crm_funil', 'crm_etapa', 'crm_origem', 'crm_categoria'], true)) {
-            if ($bruto === '' || !ctype_digit($bruto) || (int) $bruto < 1) {
+            $numero = (int) $bruto;
+            if ($bruto === '' || !ctype_digit($bruto) || $numero < 1 || $numero > ($campo['max'] ?? PHP_INT_MAX)) {
                 $erros[$chave] = 'Escreva só o número, maior que zero. Ele vem do Agendor.';
                 continue;
             }
-            $valores[$chave] = (string) (int) $bruto;
+            $valores[$chave] = (string) $numero;
             continue;
         }
 

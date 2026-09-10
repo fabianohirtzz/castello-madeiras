@@ -430,16 +430,23 @@ teste('painel_config_validar recusa numero fora da faixa, e-mail torto e marcado
         'reenvio_chave'   => str_repeat('e', 32),
     ]);
 
-    verdade(isset($r['erros']['videos_na_home']), 'videos_na_home fora da faixa');
-    verdade(isset($r['erros']['email_aviso']), 'email_aviso invalido');
-    verdade(isset($r['erros']['email_dominio']), 'email_dominio invalido');
-    verdade(isset($r['erros']['crm_funil']), 'crm_funil nao numerico');
-    verdade(isset($r['erros']['crm_etapa']), 'crm_etapa zero');
-    verdade(isset($r['erros']['crm_marcador']), 'crm_marcador vazio');
-
+    igual(
+        ['videos_na_home', 'email_aviso', 'email_dominio', 'crm_funil', 'crm_etapa', 'crm_marcador'],
+        array_keys($r['erros'])
+    );
     contem('1 a 24', $r['erros']['videos_na_home']);
     contem('e-mail', $r['erros']['email_aviso']);
     contem('domínio', $r['erros']['email_dominio']);
+});
+
+teste('crm_etapa acima do teto e recusado', function (): void {
+    $r = painel_config_validar([
+        'videos_na_home' => '8', 'email_aviso' => 'a@b.com', 'email_dominio' => 'b.com',
+        'crm_ativo' => '0', 'crm_funil' => '904296', 'crm_etapa' => '150',
+        'crm_origem' => '2656389', 'crm_categoria' => '4187395', 'crm_marcador' => '[SITE]',
+        'crm_responsavel' => '', 'crm_timeout' => '10', 'reenvio_chave' => str_repeat('a', 32),
+    ]);
+    verdade(isset($r['erros']['crm_etapa']), 'crm_etapa 150 ultrapassa max 99 e vira erro');
 });
 
 teste('config gravada muda o que a home mostra', function (): void {
