@@ -122,4 +122,133 @@ lead_marcar($id, 'erro', 1, str_repeat('x', 5000));
 $cortado = db()->query('SELECT * FROM leads WHERE id = ' . (int) $id)->fetch(PDO::FETCH_ASSOC);
 t_igual('resposta longa cortada em 2000', 2000, mb_strlen((string) $cortado['crm_resposta']));
 
+/* ---------- servidor de teste que finge ser o CRM ---------- */
+
+const CRM_FALSO_ULTIMA = '/crm-falso-ultima.json';
+
+/* Cada secao sobe o servidor numa porta nova, para nao esbarrar em porta
+   presa em TIME_WAIT logo depois de derrubar a anterior. */
+$GLOBALS['crm_falso_porta'] = 8765;
+
+function crm_falso_porta(): int
+{
+    return (int) $GLOBALS['crm_falso_porta'];
+}
+
+function crm_falso_url(string $modo, array $extra = []): string
+{
+    return 'http://127.0.0.1:' . crm_falso_porta() . '/?' . http_build_query(['modo' => $modo] + $extra);
+}
+
+function crm_falso_arquivo(): string
+{
+    return sys_get_temp_dir() . CRM_FALSO_ULTIMA;
+}
+
+function crm_falso_ultima(): array
+{
+    $bruto = is_file(crm_falso_arquivo()) ? (string) file_get_contents(crm_falso_arquivo()) : '';
+    $dados = json_decode($bruto, true);
+    return is_array($dados) ? $dados : [];
+}
+
+function crm_falso_subir(?int $porta = null)
+{
+    if ($porta === null) {
+        $porta = crm_falso_porta();
+    }
+    $GLOBALS['crm_falso_porta'] = $porta;
+    @unlink(crm_falso_arquivo());
+    $comando = escapeshellarg(PHP_BINARY) . ' -S 127.0.0.1:' . $porta . ' ' . escapeshellarg(__DIR__ . '/crm-falso.php');
+    $tubos = [];
+    /* bypass_shell e obrigatorio no Windows: sem ele o proc_open passa pelo
+       cmd.exe, o proc_terminate mata so o cmd e o php -S fica orfao, segurando
+       a porta e os handles herdados, o que trava quem espera o fim do smoke. */
+    $processo = proc_open(
+        $comando,
+        [0 => ['pipe', 'r'], 1 => ['file', sys_get_temp_dir() . '/crm-falso-saida.log', 'a'], 2 => ['file', sys_get_temp_dir() . '/crm-falso-saida.log', 'a']],
+        $tubos,
+        null,
+        null,
+        ['bypass_shell' => true]
+    );
+    if (!is_resource($processo)) {
+        return null;
+    }
+    for ($i = 0; $i < 100; $i++) {
+        $socket = @fsockopen('127.0.0.1', $porta, $erroNum, $erroTexto, 0.2);
+        if (is_resource($socket)) {
+            fclose($socket);
+            return $processo;
+        }
+        usleep(100000);
+    }
+    proc_terminate($processo);
+    return null;
+}
+
+function crm_falso_derrubar($processo): void
+{
+    if (is_resource($processo)) {
+        proc_terminate($processo);
+        proc_close($processo);
+    }
+    $GLOBALS['crm_falso_porta'] = crm_falso_porta() + 1;
+}
+
+function crm_falso_pedir(string $url, string $corpo = '{}', array $cabecalhos = []): array
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $corpo,
+        CURLOPT_HTTPHEADER     => array_merge(['Content-Type: application/json'], $cabecalhos),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 20,
+    ]);
+    $resposta = (string) curl_exec($ch);
+    $http = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $tipo = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    curl_close($ch);
+    return ['http' => $http, 'corpo' => $resposta, 'tipo' => $tipo];
+}
+
+t_secao('testes/crm-falso.php');
+$servidor = crm_falso_subir();
+t_ok('servidor de teste subiu na porta ' . crm_falso_porta(), $servidor !== null);
+
+if ($servidor !== null) {
+    $r = crm_falso_pedir(crm_falso_url('ok'));
+    t_igual('modo ok responde 200', 200, $r['http']);
+    $j = json_decode($r['corpo'], true);
+    t_ok('modo ok devolve JSON com status ok', is_array($j) && ($j['status'] ?? '') === 'ok', $r['corpo']);
+
+    $r = crm_falso_pedir(crm_falso_url('erro500'));
+    t_igual('modo erro500 responde 500', 500, $r['http']);
+
+    $r = crm_falso_pedir(crm_falso_url('invalido'));
+    t_igual('modo invalido responde 200', 200, $r['http']);
+    t_ok('modo invalido devolve corpo que nao e JSON', json_decode($r['corpo'], true) === null, $r['corpo']);
+
+    $inicio = microtime(true);
+    $r = crm_falso_pedir(crm_falso_url('demora', ['seg' => 2]));
+    $gasto = microtime(true) - $inicio;
+    t_ok('modo demora segura a resposta', $gasto >= 1.8, 'gastou ' . round($gasto, 2) . 's');
+    t_igual('modo demora responde 200 no fim', 200, $r['http']);
+
+    $r = crm_falso_pedir(crm_falso_url('eco'), '{"nome":"Fabiano"}', ['Authorization: Bearer segredo-123']);
+    $j = json_decode($r['corpo'], true);
+    t_ok('modo eco devolve o que recebeu', is_array($j) && (($j['recebido']['nome'] ?? '') === 'Fabiano'), $r['corpo']);
+
+    $ultima = crm_falso_ultima();
+    t_igual('registrou o metodo', 'POST', $ultima['metodo'] ?? '');
+    t_ok(
+        'registrou o cabecalho Authorization',
+        ($ultima['cabecalhos']['authorization'] ?? '') === 'Bearer segredo-123',
+        json_encode($ultima['cabecalhos'] ?? [])
+    );
+
+    crm_falso_derrubar($servidor);
+}
+
 exit(t_resumo());

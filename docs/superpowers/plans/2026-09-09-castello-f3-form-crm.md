@@ -565,7 +565,7 @@ O conector precisa de um alvo real para ser testado de verdade, com socket, cabe
   - Arquivo `sys_get_temp_dir() . '/crm-falso-ultima.json'` com a última requisição recebida: `metodo`, `uri`, `cabecalhos`, `corpo`.
   - Helpers no smoke: `crm_falso_subir(int $porta = 8765)`, `crm_falso_derrubar($processo): void`, `crm_falso_ultima(): array`, `crm_falso_url(string $modo, array $extra = []): string`.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -694,7 +694,7 @@ if ($servidor !== null) {
 }
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -703,7 +703,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: `FALHA servidor de teste subiu na porta 8765` (o `php -S` não acha `testes/crm-falso.php`) e `codigo de saida: 1`.
 
-- [ ] **Passo 3: escrever `testes/crm-falso.php`**
+- [x] **Passo 3: escrever `testes/crm-falso.php`**
 
 ```php
 <?php
@@ -792,7 +792,7 @@ echo json_encode(['status' => 'ok', 'id' => 'CRM-' . substr(md5($corpo), 0, 8)])
 
 O `return` no fim de cada modo funciona porque o arquivo é o script roteador do servidor embutido do PHP, executado no escopo global.
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -802,7 +802,7 @@ Esperado: as onze asserções da seção `testes/crm-falso.php` com `ok` e `codi
 
 Se `servidor de teste subiu` falhar, conferir `sys_get_temp_dir()/crm-falso-saida.log` e, no Windows, se a porta 8765 já está ocupada (`netstat -ano | findstr 8765`).
 
-- [ ] **Passo 5: commitar**
+- [x] **Passo 5: commitar**
 
 ```bash
 git add testes/crm-falso.php testes/smoke-f3.php
