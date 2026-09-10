@@ -441,4 +441,165 @@ t_ok('remetente e um e-mail valido', (bool) filter_var(email_remetente(), FILTER
 
 putenv('CASTELLO_EMAIL_DIR');
 
+require_once __DIR__ . '/../public_html/enviar.php';
+
+t_secao('enviar.php: o caminho do lead');
+teste_banco_limpar();
+config_gravar('crm_ativo', '0');
+config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+putenv('CASTELLO_EMAIL_DIR=' . $pastaEmail);
+foreach ((array) glob($pastaEmail . '/*.txt') as $velho) {
+    @unlink($velho);
+}
+
+function post_valido(array $troca = []): array
+{
+    return array_merge([
+        'nome'         => 'Fabiano Hirtz',
+        'whatsapp'     => '(48) 99824-4494',
+        'busca'        => 'Modelo pronto do catalogo',
+        'modelo'       => 'Compacta 39 m2',
+        'cidade'       => 'Tubarao / SC',
+        'mensagem'     => 'Tenho terreno.',
+        'pagina'       => '/index.php',
+        'referrer'     => 'https://www.google.com/',
+        'utm_source'   => 'instagram',
+        'utm_medium'   => 'social',
+        'utm_campaign' => 'flex-setembro',
+        'utm_term'     => '',
+        'utm_content'  => 'reel-03',
+        'empresa'      => '',
+        'ts'           => (string) (int) round((microtime(true) - 10) * 1000),
+        'csrf'         => csrf_token(),
+    ], $troca);
+}
+
+function contar_leads(): int
+{
+    return (int) db()->query('SELECT COUNT(*) FROM leads')->fetchColumn();
+}
+
+/* caminho feliz com o CRM desligado */
+$r = enviar_processar(post_valido());
+t_igual('caminho feliz: HTTP 200', 200, $r['http']);
+t_ok('caminho feliz: ok true', ($r['corpo']['ok'] ?? null) === true, json_encode($r['corpo']));
+t_ok('caminho feliz: devolve o id do lead', (int) ($r['corpo']['id'] ?? 0) > 0);
+t_igual('caminho feliz: gravou um lead', 1, contar_leads());
+
+$gravado = db()->query('SELECT * FROM leads ORDER BY id DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+t_igual('gravou a utm_campaign', 'flex-setembro', $gravado['utm_campaign']);
+t_igual('gravou a pagina', '/index.php', $gravado['pagina']);
+t_igual('CRM desligado deixa o status desativado', 'desativado', $gravado['crm_status']);
+t_igual('CRM desligado nao conta tentativa', 0, (int) $gravado['crm_tentativas']);
+t_igual('CRM desligado disparou o e-mail assim mesmo', 1, count((array) glob($pastaEmail . '/*.txt')));
+
+/* honeypot preenchido: sucesso falso, nada gravado */
+$antes = contar_leads();
+$r = enviar_processar(post_valido(['empresa' => 'Loja do Robo']));
+t_igual('honeypot: HTTP 200', 200, $r['http']);
+t_ok('honeypot: responde sucesso falso', ($r['corpo']['ok'] ?? null) === true, json_encode($r['corpo']));
+t_igual('honeypot: id zero', 0, (int) ($r['corpo']['id'] ?? -1));
+t_igual('honeypot: nao gravou lead', $antes, contar_leads());
+
+/* honeypot com o nome antigo do campo, _gotcha, tambem barra */
+$r = enviar_processar(post_valido(['empresa' => '', '_gotcha' => 'robo']));
+t_ok('honeypot _gotcha: responde sucesso falso', ($r['corpo']['ok'] ?? null) === true);
+t_igual('honeypot _gotcha: nao gravou lead', $antes, contar_leads());
+
+/* envio em menos de 3 segundos */
+$antes = contar_leads();
+$r = enviar_processar(post_valido(['ts' => (string) (int) round((microtime(true) - 1) * 1000)]));
+t_igual('rapido demais: HTTP 200', 200, $r['http']);
+t_ok('rapido demais: responde sucesso falso', ($r['corpo']['ok'] ?? null) === true);
+t_igual('rapido demais: id zero', 0, (int) ($r['corpo']['id'] ?? -1));
+t_igual('rapido demais: nao gravou lead', $antes, contar_leads());
+
+/* sem carimbo de tempo nenhum */
+$r = enviar_processar(post_valido(['ts' => '']));
+t_ok('sem ts: responde sucesso falso', ($r['corpo']['ok'] ?? null) === true);
+t_igual('sem ts: nao gravou lead', $antes, contar_leads());
+
+/* relogio do visitante adiantado nao pode barrar */
+$r = enviar_processar(post_valido(['ts' => (string) (int) round((microtime(true) + 600) * 1000)]));
+t_ok('relogio adiantado passa', (int) ($r['corpo']['id'] ?? 0) > 0, json_encode($r['corpo']));
+$antes = contar_leads();
+
+/* CSRF invalido */
+$r = enviar_processar(post_valido(['csrf' => 'token-errado']));
+t_igual('csrf invalido: HTTP 419', 419, $r['http']);
+t_ok('csrf invalido: ok false', ($r['corpo']['ok'] ?? null) === false);
+t_igual('csrf invalido: erro csrf', 'csrf', $r['corpo']['erro'] ?? null);
+t_igual('csrf invalido: nao gravou lead', $antes, contar_leads());
+
+$r = enviar_processar(post_valido(['csrf' => '']));
+t_igual('csrf ausente: HTTP 419', 419, $r['http']);
+
+/* campos obrigatorios vazios */
+$r = enviar_processar(post_valido(['nome' => '', 'whatsapp' => '', 'busca' => '']));
+t_igual('campos vazios: HTTP 422', 422, $r['http']);
+t_ok('campos vazios: ok false', ($r['corpo']['ok'] ?? null) === false);
+t_igual('campos vazios: erro campos', 'campos', $r['corpo']['erro'] ?? null);
+t_igual('campos vazios: lista os tres', ['nome', 'whatsapp', 'busca'], $r['corpo']['campos'] ?? null);
+t_igual('campos vazios: nao gravou lead', $antes, contar_leads());
+
+/* so o nome faltando */
+$r = enviar_processar(post_valido(['nome' => '   ']));
+t_igual('nome vazio: lista so nome', ['nome'], $r['corpo']['campos'] ?? null);
+
+/* whatsapp com menos de 10 digitos */
+$r = enviar_processar(post_valido(['whatsapp' => '(48) 9982']));
+t_igual('whatsapp curto: HTTP 422', 422, $r['http']);
+t_igual('whatsapp curto: lista whatsapp', ['whatsapp'], $r['corpo']['campos'] ?? null);
+t_igual('whatsapp curto: nao gravou lead', $antes, contar_leads());
+
+/* whatsapp com 10 digitos passa (fixo com DDD) */
+$r = enviar_processar(post_valido(['whatsapp' => '(48) 3632-8743']));
+t_ok('whatsapp de 10 digitos passa', (int) ($r['corpo']['id'] ?? 0) > 0, json_encode($r['corpo']));
+$antes = contar_leads();
+
+/* CRM ligado e respondendo 200 */
+$servidor = crm_falso_subir();
+t_ok('servidor do CRM falso subiu para o enviar.php', $servidor !== null);
+
+if ($servidor !== null) {
+    config_gravar('crm_ativo', '1');
+    config_gravar('crm_mapa_campos', $mapaPadrao);
+    config_gravar('crm_endpoint', crm_falso_url('ok'));
+    $r = enviar_processar(post_valido());
+    $id = (int) ($r['corpo']['id'] ?? 0);
+    $linha = db()->query('SELECT * FROM leads WHERE id = ' . $id)->fetch(PDO::FETCH_ASSOC);
+    t_igual('CRM 200: status enviado', 'enviado', $linha['crm_status']);
+    t_igual('CRM 200: uma tentativa', 1, (int) $linha['crm_tentativas']);
+    t_ok('CRM 200: guardou a resposta', strpos((string) $linha['crm_resposta'], 'CRM-') !== false);
+
+    /* CRM ligado e respondendo 500: o visitante nao ve erro */
+    config_gravar('crm_endpoint', crm_falso_url('erro500'));
+    $r = enviar_processar(post_valido());
+    t_igual('CRM 500: visitante ainda ve HTTP 200', 200, $r['http']);
+    t_ok('CRM 500: visitante ainda ve ok true', ($r['corpo']['ok'] ?? null) === true);
+    $id = (int) ($r['corpo']['id'] ?? 0);
+    $linha = db()->query('SELECT * FROM leads WHERE id = ' . $id)->fetch(PDO::FETCH_ASSOC);
+    t_igual('CRM 500: status erro', 'erro', $linha['crm_status']);
+    t_igual('CRM 500: uma tentativa', 1, (int) $linha['crm_tentativas']);
+    t_ok('CRM 500: guardou o motivo', strpos((string) $linha['crm_resposta'], 'crm_http') !== false, (string) $linha['crm_resposta']);
+
+    /* CRM ligado e estourando o tempo */
+    config_gravar('crm_timeout', '2');
+    config_gravar('crm_endpoint', crm_falso_url('demora', ['seg' => 8]));
+    $r = enviar_processar(post_valido());
+    t_igual('CRM lento: visitante ainda ve HTTP 200', 200, $r['http']);
+    $id = (int) ($r['corpo']['id'] ?? 0);
+    $linha = db()->query('SELECT * FROM leads WHERE id = ' . $id)->fetch(PDO::FETCH_ASSOC);
+    t_igual('CRM lento: status erro', 'erro', $linha['crm_status']);
+    t_ok('CRM lento: guardou crm_tempo', strpos((string) $linha['crm_resposta'], 'crm_tempo') !== false, (string) $linha['crm_resposta']);
+    config_gravar('crm_timeout', '10');
+
+    crm_falso_derrubar($servidor);
+}
+
+/* o e-mail saiu em todos os envios que viraram lead */
+t_ok('cada lead gravado gerou um e-mail', count((array) glob($pastaEmail . '/*.txt')) === contar_leads(), 'emails=' . count((array) glob($pastaEmail . '/*.txt')) . ' leads=' . contar_leads());
+
+putenv('CASTELLO_EMAIL_DIR');
+
 exit(t_resumo());

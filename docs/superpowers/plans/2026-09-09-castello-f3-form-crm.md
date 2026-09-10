@@ -1447,7 +1447,7 @@ A porta de entrada. Honeypot, time-trap, CSRF, validação, gravação, CRM, e-m
 
 **Decisão sobre relógio adiantado:** o `ts` é o `Date.now()` do navegador, comparado com o relógio do servidor. Quando o relógio do visitante está adiantado, a diferença dá negativa. Nesse caso o envio **passa**, porque perder um lead real é pior que aceitar um envio de robô que já passou pelo honeypot. Só a faixa `0 <= decorrido < 3000` é recusada.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -1614,7 +1614,7 @@ t_ok('cada lead gravado gerou um e-mail', count((array) glob($pastaEmail . '/*.t
 putenv('CASTELLO_EMAIL_DIR');
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1623,7 +1623,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/enviar.php'`.
 
-- [ ] **Passo 3: escrever `public_html/enviar.php`**
+- [x] **Passo 3: escrever `public_html/enviar.php`**
 
 ```php
 <?php
@@ -1807,7 +1807,7 @@ if (PHP_SAPI !== 'cli') {
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -1815,7 +1815,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: toda a seção `enviar.php: o caminho do lead` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: conferir que o arquivo não quebra o interpretador**
+- [x] **Passo 5: conferir que o arquivo não quebra o interpretador**
 
 ```bash
 php -l public_html/enviar.php
@@ -1826,7 +1826,7 @@ php -l public_html/lib/email.php
 
 Esperado: `No syntax errors detected` nos quatro.
 
-- [ ] **Passo 6: commitar**
+- [x] **Passo 6: commitar**
 
 ```bash
 git add public_html/enviar.php testes/smoke-f3.php
