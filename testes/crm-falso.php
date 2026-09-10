@@ -11,9 +11,22 @@ declare(strict_types=1);
  *   POST /people                   cria pessoa,  201 {"data":{"id":N}}
  *   POST /people/<id>/deals        cria negocio, 201 {"data":{"id":M,"_webUrl":...}}
  *
- * A busca imita o comportamento MEDIDO na conta real em 2026-09-10: encontra
- * pelos digitos sem DDI e devolve vazio quando a busca chega com 55 na frente.
- * E justamente isso que o conector precisa acertar.
+ * A busca imita o que foi OBSERVADO na conta real em 2026-09-10: uma pessoa
+ * com telefone de 11 digitos foi cadastrada, e uma busca com esse mesmo
+ * numero prefixado por "55" (13 digitos, o formato com DDI) voltou vazia.
+ * Dai foi INFERIDO que "toda busca comecando por 55 volta vazia" - isso NAO
+ * foi medido, so o caso de 13 digitos foi. E igualmente plausivel, e mais
+ * simples, que a API real so faca comparacao exata de digitos (sem DDI nunca
+ * bate com o que foi salvo com DDI), sem nenhum tratamento especial do
+ * prefixo "55" em si.
+ *
+ * Esta fake escolhe de proposito a leitura mais estrita das duas, que e o
+ * lado seguro para testar contra: sob comparacao exata, um telefone
+ * legitimo de 11 digitos cujo DDD comeca em 55 (Santa Maria, RS, onde a
+ * Castello tambem vende) seria encontrado pela API de verdade, mas nunca por
+ * esta fake. Ou seja, a fake pode reprovar buscas que a API real aceitaria -
+ * nunca o contrario. E por isso que ela continua servindo de teste mesmo sem
+ * a segunda medicao.
  *
  * Falhas pelo cabecalho X-Falso-Modo: erro500, auth401, limite429, invalido,
  * demora:<segundos>. Qualquer modo pode ser escopado a um metodo com
@@ -128,7 +141,11 @@ $pessoas = falso_ler(FALSO_PESSOAS);
 if ($metodo === 'GET' && $caminho === '/people') {
     $procurado = preg_replace('/\D+/', '', (string) ($_GET['phone'] ?? '')) ?? '';
 
-    /* Comportamento medido na conta real: com 55 na frente nao acha nada. */
+    /* So o caso de 13 digitos com "55" na frente foi medido de verdade contra
+       a conta real; rejeitar TODA busca comecando por 55 e uma inferencia a
+       partir dele, nao uma segunda medicao. Ver o comentario no topo do
+       arquivo para a diferenca entre o que foi observado e o que foi
+       deduzido, e por que a fake fica do lado estrito de proposito. */
     $achadas = [];
     if ($procurado !== '' && !str_starts_with($procurado, '55')) {
         foreach ($pessoas as $pessoa) {
