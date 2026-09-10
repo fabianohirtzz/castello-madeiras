@@ -1246,3 +1246,34 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 }
 .depois__nota a{color:var(--red-deep);font-weight:600}
 .depois__nota a:hover{text-decoration:underline}
+
+/* ---------- Preço ainda sem tabela fechada ---------- */
+.price__val--sob{
+  font-size:clamp(1.3rem,2.2vw,1.7rem);font-weight:700;
+  color:var(--muted);letter-spacing:-.01em;
+}
+
+/* ---------- Cards de diferencial ---------- */
+.bene__grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));
+  gap:clamp(14px,2vw,24px);
+}
+.bene{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-soft);padding:28px 24px 30px;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.bene:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
+.bene__ico{
+  display:grid;place-items:center;width:54px;height:54px;
+  border-radius:15px;background:var(--red-tint);
+}
+.bene__ico svg{
+  width:26px;height:26px;fill:none;stroke:var(--red);
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.bene h3{
+  margin-top:18px;font-family:var(--font-display);font-weight:700;
+  font-size:1.16rem;letter-spacing:-.01em;line-height:1.18;color:var(--ink);
+}
+.bene p{margin-top:9px;color:var(--muted);font-size:.98rem;line-height:1.55}

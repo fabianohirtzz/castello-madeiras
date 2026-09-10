@@ -1347,7 +1347,7 @@ Entrega as seções 5 e 6 da spec 7.2: o catálogo das casas Flex e o bloco de p
 
 **Dados provisórios.** Nomes, áreas e o "Sob consulta" no lugar do preço são marcadores até o cliente enviar a tabela da Flex. Migram para `modelos` com modalidade `flex` (contrato §2), onde a coluna `preco` já é opcional exatamente por causa disso. As fotos são casas Castello reais reaproveitadas, e a legenda da seção avisa na própria página que a tabela está em fechamento.
 
-- [ ] **Step 1: Inserir o catálogo**
+- [x] **Step 1: Inserir o catálogo**
 
 Em `front/flex.html`, logo depois de
 
@@ -1430,7 +1430,7 @@ cole:
   <div class="facet facet--ink" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Inserir o bloco de prazo e diferenciais**
+- [x] **Step 2: Inserir o bloco de prazo e diferenciais**
 
 Logo depois dessa faceta escura, cole:
 
@@ -1477,7 +1477,7 @@ Logo depois dessa faceta escura, cole:
   <div class="facet facet--sand" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 3: Acrescentar o CSS na região FASE 2**
+- [x] **Step 3: Acrescentar o CSS na região FASE 2**
 
 ```css
 /* ---------- Preço ainda sem tabela fechada ---------- */
@@ -1512,7 +1512,7 @@ Logo depois dessa faceta escura, cole:
 .bene p{margin-top:9px;color:var(--muted);font-size:.98rem;line-height:1.55}
 ```
 
-- [ ] **Step 4: Verificar no navegador**
+- [x] **Step 4: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#modelos-flex` e `browser_take_screenshot` em `f2-t8-catalogo.png`. Olhe: três cards de modelo com foto, selo "Semipronta", eyebrow "Entrega em 45 dias", nome, área e "Sob consulta" no lugar do preço, mais a nota abaixo dizendo que a tabela está em fechamento.
@@ -1525,7 +1525,7 @@ Logo depois dessa faceta escura, cole:
 9. `browser_evaluate` com `() => ({ doc: document.documentElement.scrollWidth, win: window.innerWidth })` em 390px. Esperado: `doc` menor ou igual a `win`.
 10. Em 1440px, `browser_click` no link "Casas Flex" da nav. Esperado: rola até `#modelos-flex`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
