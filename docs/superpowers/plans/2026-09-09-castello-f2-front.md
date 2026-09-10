@@ -808,7 +808,7 @@ Cria `front/flex.html` com o esqueleto que a página inteira vai usar: head, nav
 - Consome: `.nav`, `.drawer`, `.footer`, `.qmodal`, `.wpp-float`, `.btn--primary`, `.btn--ghost-light`, `.stamp--light`, `.facet`, `../css/style.css`, `../js/main.js`
 - Produz: `front/flex.html` com `#topo` no hero, os ganchos obrigatórios do `js/main.js`, as âncoras `#o-que-e`, `#passos-flex`, `#modelos-flex`, `#faq`, `#orcamento`, `#contato`, e o componente `.pagehero`
 
-- [ ] **Step 1: Gerar a base a partir da home**
+- [x] **Step 1: Gerar a base a partir da home**
 
 O rodapé, o modal e o botão flutuante são idênticos aos da home. Comece copiando e depois recorte:
 
@@ -828,7 +828,7 @@ até o `</div>` que fecha `#reelbox`.
 
 E o `<link rel="preload" as="video" ...>` do vídeo do hero, que esta página não usa.
 
-- [ ] **Step 2: Trocar o head**
+- [x] **Step 2: Trocar o head**
 
 Substitua `<title>` e as metas de descrição e Open Graph por:
 
@@ -844,7 +844,7 @@ Substitua `<title>` e as metas de descrição e Open Graph por:
   <meta property="og:locale" content="pt_BR" />
 ```
 
-- [ ] **Step 3: Trocar os links da nav para os da página Flex**
+- [x] **Step 3: Trocar os links da nav para os da página Flex**
 
 Substitua o `<nav class="nav__links" ...>` inteiro por:
 
@@ -865,7 +865,7 @@ O logo da nav também deixa de apontar para `#topo` e passa a levar de volta par
       <a href="home.html" class="nav__logo" aria-label="Castello Casas de Madeira">
 ```
 
-- [ ] **Step 4: Trocar o drawer**
+- [x] **Step 4: Trocar o drawer**
 
 Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por:
 
@@ -882,7 +882,7 @@ Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por:
   </div>
 ```
 
-- [ ] **Step 5: Inserir o hero da Flex**
+- [x] **Step 5: Inserir o hero da Flex**
 
 Logo depois do fechamento do drawer, cole:
 
@@ -917,7 +917,7 @@ Logo depois do fechamento do drawer, cole:
   <div class="facet facet--bone" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 6: Ajustar a faixa de CTA e o `hidden` do campo de modelo**
+- [x] **Step 6: Ajustar a faixa de CTA e o `hidden` do campo de modelo**
 
 Substitua o bloco `<section class="cta-band">` inteiro por este, que ganha âncora e a copy da Flex:
 
@@ -976,7 +976,7 @@ E o cabeçalho do modal ganha a copy da Flex:
       </div>
 ```
 
-- [ ] **Step 7: Acrescentar o CSS do hero de página na região FASE 2**
+- [x] **Step 7: Acrescentar o CSS do hero de página na região FASE 2**
 
 ```css
 /* ---------- Hero de página interna (Castelo Flex) ---------- */
@@ -1010,7 +1010,7 @@ E o cabeçalho do modal ganha a copy da Flex:
 }
 ```
 
-- [ ] **Step 8: Verificar no navegador**
+- [x] **Step 8: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html`.
 2. `browser_console_messages`. Esperado: nenhum erro. Um `TypeError` aqui quer dizer que `#nav`, `#burger`, `#drawer`, `#drawerBackdrop` ou `#topo` não sobreviveram ao recorte.
@@ -1025,7 +1025,7 @@ E o cabeçalho do modal ganha a copy da Flex:
 11. `browser_press_key` `Escape`. Esperado: o modal fecha e o foco volta para o botão que o abriu.
 12. `browser_click` no link "Casa Pronta" da nav. Esperado: vai para `home.html#casa-pronta` e cai na seção certa.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
