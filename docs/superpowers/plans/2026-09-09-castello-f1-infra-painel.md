@@ -633,7 +633,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 No servidor de teste a raiz do subdomínio é `/home/freelain/domains/tohospedando.com.br/public_html/castello`, e a pasta acima é a raiz pública do próprio `tohospedando.com.br`. Por isso o config vai para `/home/freelain/domains/tohospedando.com.br/castello-config`. O usuário de FTP está preso ao `public_html` e não consegue criar essa pasta: quem cria é o PHP, dentro de `db()`, com `mkdir` e permissão **0700**.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/10-db.php`:
 
@@ -765,12 +765,12 @@ teste('config_gravar cria e depois atualiza a chave', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 10-db`
 Esperado: erro fatal `Failed opening required .../public_html/lib/db.php`, e o runner encerra com `FALHOU: 10-db.php`.
 
-- [ ] **Passo 3: Criar o `lib/schema.sql`**
+- [x] **Passo 3: Criar o `lib/schema.sql`**
 
 Crie `public_html/lib/schema.sql` com **exatamente** o conteúdo do bloco SQL da seção 2 do contrato, sem alterar nada:
 
@@ -899,7 +899,7 @@ CREATE INDEX IF NOT EXISTS idx_passos_lista    ON passos (contexto, ativo, ordem
 CREATE INDEX IF NOT EXISTS idx_leads_pendentes ON leads (crm_status, criado_em);
 ```
 
-- [ ] **Passo 4: Escrever o `lib/db.php`**
+- [x] **Passo 4: Escrever o `lib/db.php`**
 
 Crie `public_html/lib/db.php`:
 
@@ -1044,7 +1044,7 @@ function config_gravar(string $chave, string $valor): void
 }
 ```
 
-- [ ] **Passo 5: Rodar e ver passar**
+- [x] **Passo 5: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 10-db`
 Esperado: `10-db.php` com 14 ok, 0 falha, 0 pulado.
@@ -1052,7 +1052,7 @@ Esperado: `10-db.php` com 14 ok, 0 falha, 0 pulado.
 Depois rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 6: Commit**
+- [x] **Passo 6: Commit**
 
 ```bash
 git add public_html/lib/schema.sql public_html/lib/db.php testes/casos/10-db.php
@@ -1075,7 +1075,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 Toda função de listagem devolve `array` de linhas associativas, já filtradas por `ativo = 1` e ordenadas por `ordem ASC, id ASC`.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/30-conteudo.php`:
 
@@ -1220,12 +1220,12 @@ teste('icone_faq devolve string vazia para chave desconhecida', function (): voi
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 30-conteudo`
 Esperado: erro fatal `Failed opening required .../public_html/lib/conteudo.php`.
 
-- [ ] **Passo 3: Escrever o `lib/conteudo.php`**
+- [x] **Passo 3: Escrever o `lib/conteudo.php`**
 
 Crie `public_html/lib/conteudo.php`. Os sete SVGs são cópia literal dos ícones do bloco `#faq` do `index.html` original, na ordem em que as perguntas aparecem.
 
@@ -1332,7 +1332,7 @@ function icone_faq(string $chave): string
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 30-conteudo`
 Esperado: 11 ok, 0 falha, 0 pulado.
@@ -1340,7 +1340,7 @@ Esperado: 11 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 5: Commit**
+- [x] **Passo 5: Commit**
 
 ```bash
 git add public_html/lib/conteudo.php testes/casos/30-conteudo.php
@@ -1367,7 +1367,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 > **Portfólio: são 6, e isso já foi confirmado.** A spec antiga falava em 5 casas entregues; o `index.html` tem 6 botões `.accordion__item`, a spec foi corrigida e os 6 migram.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/20-migracao.php`:
 
@@ -1578,12 +1578,12 @@ teste('migrar_usuario cria o acesso do painel uma vez so', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 20-migracao`
 Esperado: erro fatal `Failed opening required .../public_html/migrar.php`.
 
-- [ ] **Passo 3: Escrever o `migrar.php`**
+- [x] **Passo 3: Escrever o `migrar.php`**
 
 Crie `public_html/migrar.php`. Todo o conteúdo abaixo é cópia literal do que está no `index.html` de hoje.
 
@@ -1914,12 +1914,12 @@ if (realpath((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === realpath(__FILE__
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 20-migracao`
 Esperado: 14 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 5: Rodar a migração de verdade, no banco local**
+- [x] **Passo 5: Rodar a migração de verdade, no banco local**
 
 ```bash
 php public_html/migrar.php
@@ -1936,7 +1936,7 @@ ls public_html/uploads/videos | wc -l
 
 Esperado: 4 fotos em `modelos`, 6 em `portfolio`, 5 em `passos`, 22 arquivos em `videos` (11 mp4 mais 11 jpg), e nenhum `insta-06.original.mp4`.
 
-- [ ] **Passo 6: Rodar a suíte inteira e commitar**
+- [x] **Passo 6: Rodar a suíte inteira e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
@@ -1974,7 +1974,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Uma diferença conhecida e aceita em relação ao `index.html`:** os caminhos de mídia passam a apontar para `uploads/`. O `norm()` dos testes desfaz essa troca antes de comparar. Fora isso a saída é byte a byte a mesma, inclusive os `alt`, porque a tabela `passos` ganhou a coluna `imagem_alt` no contrato e os cinco textos descritivos migram como estão.
 
-- [ ] **Passo 1: Extrair os fragmentos de referência do `index.html`**
+- [x] **Passo 1: Extrair os fragmentos de referência do `index.html`**
 
 O `index.html` ainda não foi tocado, então as linhas abaixo valem. Rode na raiz do repositório:
 
@@ -2006,7 +2006,7 @@ grep -c 'faq__tab' testes/base/frag-faq.html                # 7 (mais 0 no tabli
 
 Se algum `head`/`tail` não bater, ajuste o intervalo até bater. Os fragmentos são a referência do teste, então precisam estar exatos.
 
-- [ ] **Passo 2: Escrever o teste que falha**
+- [x] **Passo 2: Escrever o teste que falha**
 
 Crie `testes/casos/40-partials.php`:
 
@@ -2110,12 +2110,12 @@ teste('o texto do banco sai escapado', function (): void {
 });
 ```
 
-- [ ] **Passo 3: Rodar e ver falhar**
+- [x] **Passo 3: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 40-partials`
 Esperado: falha em todos os testes de parcial, com `Failed opening required .../partials/modelos.php`.
 
-- [ ] **Passo 4: Escrever `partials/modelos.php`**
+- [x] **Passo 4: Escrever `partials/modelos.php`**
 
 ```php
 <?php
@@ -2156,7 +2156,7 @@ $lista_modelos = modelos($modalidade ?? 'pronta');
       </div>
 ```
 
-- [ ] **Passo 5: Escrever `partials/portfolio.php`**
+- [x] **Passo 5: Escrever `partials/portfolio.php`**
 
 ```php
 <?php
@@ -2183,7 +2183,7 @@ $lista_portfolio = portfolio();
       </div>
 ```
 
-- [ ] **Passo 6: Escrever `partials/avaliacoes.php`**
+- [x] **Passo 6: Escrever `partials/avaliacoes.php`**
 
 ```php
 <?php
@@ -2210,7 +2210,7 @@ $lista_avaliacoes = avaliacoes();
       </div>
 ```
 
-- [ ] **Passo 7: Escrever `partials/videos.php`**
+- [x] **Passo 7: Escrever `partials/videos.php`**
 
 ```php
 <?php
@@ -2231,7 +2231,7 @@ $lista_videos = videos();
     </div>
 ```
 
-- [ ] **Passo 8: Escrever `partials/faq.php`**
+- [x] **Passo 8: Escrever `partials/faq.php`**
 
 ```php
 <?php
@@ -2264,7 +2264,7 @@ $lista_faq = faq($contexto ?? 'geral');
       </div>
 ```
 
-- [ ] **Passo 9: Escrever `partials/passos.php`**
+- [x] **Passo 9: Escrever `partials/passos.php`**
 
 ```php
 <?php
@@ -2294,7 +2294,7 @@ $total_passos = count($lista_passos);
         </ol>
 ```
 
-- [ ] **Passo 10: Rodar e ver passar**
+- [x] **Passo 10: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 40-partials`
 Esperado: 12 ok, 0 falha, 0 pulado.
@@ -2304,7 +2304,7 @@ Se algum `igual()` de fragmento falhar, a mensagem mostra os dois lados normaliz
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 11: Commit**
+- [x] **Passo 11: Commit**
 
 ```bash
 git add public_html/partials testes/base testes/casos/40-partials.php
@@ -2332,7 +2332,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: todos os parciais da Tarefa 5; `modelos()`, `videos()`, `bloco()`, `e()`.
 - Produz: `partials/nav.php` (sprite do Google, nav e drawer, não espera nada), `partials/rodape.php` (rodapé e contato, não espera nada), `partials/modal.php` (modal de orçamento, lightbox dos reels e botão flutuante, não espera nada), `index.php` e `flex.php`.
 
-- [ ] **Passo 1: Guardar a home original como referência e escrever o teste que falha**
+- [x] **Passo 1: Guardar a home original como referência e escrever o teste que falha**
 
 ```bash
 cp public_html/index.html testes/base/home-original.html
@@ -2466,12 +2466,12 @@ teste('flex.php monta as oito secoes assim que o conteudo Flex existir', functio
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: falha, `Failed opening required .../public_html/index.php` (o arquivo ainda se chama `index.html`).
 
-- [ ] **Passo 3: Extrair nav, rodapé e modal para parciais**
+- [x] **Passo 3: Extrair nav, rodapé e modal para parciais**
 
 As linhas abaixo valem para o `index.html` ainda intocado.
 
@@ -2521,7 +2521,7 @@ $modal_videos  = count(videos());
 
 Depois apague o arquivo temporário: `rm /tmp/castello-modal.html`.
 
-- [ ] **Passo 4: Converter o `index.html` em `index.php`**
+- [x] **Passo 4: Converter o `index.html` em `index.php`**
 
 ```bash
 git mv public_html/index.html public_html/index.php
@@ -2595,7 +2595,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 Nada mais muda: `<head>`, hero, prova social, vantagens, cabeçalhos de seção, faixa de CTA e a tag do `js/main.js` ficam exatamente como estão, inclusive o `noindex`, que só sai na ida para produção.
 
-- [ ] **Passo 5: Criar o `flex.php`**
+- [x] **Passo 5: Criar o `flex.php`**
 
 Crie `public_html/flex.php`:
 
@@ -2756,7 +2756,7 @@ $flex_video   = bloco('flex_video');
 </html>
 ```
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [x] **Passo 6: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: 8 ok, 0 falha, 0 pulado.
@@ -2766,7 +2766,7 @@ Se o primeiro teste falhar, a mensagem traz os dois HTML normalizados. A diferen
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 7: Conferir no navegador**
+- [x] **Passo 7: Conferir no navegador**
 
 ```bash
 php -S localhost:8000 -t public_html
@@ -2774,7 +2774,7 @@ php -S localhost:8000 -t public_html
 
 Abra `http://localhost:8000/` e `http://localhost:8000/flex.php`. Na home, confira com os próprios olhos: hero com vídeo, quatro modelos com preço, acordeão do portfólio abrindo, cinco passos com imagem sticky, carrossel de avaliações arrastando, oito vídeos do Instagram abrindo em tela cheia, sete abas de FAQ trocando, modal de orçamento abrindo pelos CTAs. Nenhum erro no console.
 
-- [ ] **Passo 8: Commit**
+- [x] **Passo 8: Commit**
 
 ```bash
 git add -A
@@ -2804,7 +2804,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Detalhe do ambiente que muda o código.** Na linha de comando o PHP não consegue abrir sessão de verdade depois que já houve saída, e o runner imprime antes de rodar o caso. Por isso `auth_iniciar()` só chama `session_start()` quando `headers_sent()` é falso; caso contrário trabalha com `$_SESSION` como array em memória. No navegador, que é o que importa, a sessão real sempre abre, porque `auth_iniciar()` roda antes de qualquer saída.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/60-auth.php`:
 
@@ -2937,12 +2937,12 @@ teste('o destino do login e relativo, para funcionar em subpasta', function (): 
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 60-auth`
 Esperado: erro fatal `Failed opening required .../public_html/lib/auth.php`.
 
-- [ ] **Passo 3: Escrever o `lib/auth.php`**
+- [x] **Passo 3: Escrever o `lib/auth.php`**
 
 ```php
 <?php
@@ -3133,7 +3133,7 @@ function csrf_validar(?string $token): bool
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 60-auth`
 Esperado: 12 ok, 0 falha, 0 pulado.
@@ -3141,7 +3141,7 @@ Esperado: 12 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 5: Commit**
+- [x] **Passo 5: Commit**
 
 ```bash
 git add public_html/lib/auth.php testes/casos/60-auth.php
@@ -3164,7 +3164,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 Códigos de erro devolvidos, todos em `snake_case`: `pasta_invalida`, `tipo_invalido`, `sem_arquivo`, `erro_upload`, `tamanho`, `tipo`, `finfo_indisponivel`, `gravacao`.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/70-upload.php`:
 
@@ -3324,12 +3324,12 @@ teste('os limites sao os do contrato', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 70-upload`
 Esperado: erro fatal `Failed opening required .../public_html/lib/upload.php`.
 
-- [ ] **Passo 3: Escrever o `lib/upload.php`**
+- [x] **Passo 3: Escrever o `lib/upload.php`**
 
 ```php
 <?php
@@ -3471,7 +3471,7 @@ function upload_slug(string $nome): string
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 70-upload`
 Esperado: 12 ok, 0 falha, 0 pulado.
@@ -3479,7 +3479,7 @@ Esperado: 12 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 5: Commit**
+- [x] **Passo 5: Commit**
 
 ```bash
 git add public_html/lib/upload.php testes/casos/70-upload.php
@@ -3507,7 +3507,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 Por isso `index.php` e `flex.php` **não mudam** nesta tarefa: nada de metatag, nada de `auth_iniciar()`, nada de `Cache-Control`.
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao topo de `testes/casos/50-paginas.php`, logo depois do `require_once` que já está lá:
 
@@ -3590,12 +3590,12 @@ teste('index.php renderiza a home identica ao index.html original', function ():
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: os testes do `csrf.php` falham com `Failed opening required .../public_html/csrf.php`, e o do campo oculto falha porque o campo ainda não existe. O teste de identidade continua passando, já que o `preg_replace` não encontra nada para tirar.
 
-- [ ] **Passo 3: Escrever o `csrf.php`**
+- [x] **Passo 3: Escrever o `csrf.php`**
 
 Crie `public_html/csrf.php` com exatamente o conteúdo definido no contrato:
 
@@ -3613,7 +3613,7 @@ header('Cache-Control: private, no-store');
 echo json_encode(['token' => csrf_token()]);
 ```
 
-- [ ] **Passo 4: Acrescentar o campo oculto ao formulário do modal**
+- [x] **Passo 4: Acrescentar o campo oculto ao formulário do modal**
 
 Em `public_html/partials/modal.php`, dentro do `<form class="qform" id="quoteForm" novalidate>`, logo antes da linha do honeypot, acrescente:
 
@@ -3625,7 +3625,7 @@ O valor fica vazio de propósito: quem preenche é o `js/formulario.js` da Frent
 
 O honeypot continua sendo `_gotcha` neste arquivo. O contrato define `empresa` como nome final, mas quem troca é a costura, junto com a limpeza do bloco antigo de formulário no `js/main.js`. Até lá o `enviar.php` aceita os dois nomes.
 
-- [ ] **Passo 5: Rodar e ver passar**
+- [x] **Passo 5: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: 13 ok, 0 falha, 0 pulado.
@@ -3633,7 +3633,7 @@ Esperado: 13 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 6: Conferir no navegador**
+- [x] **Passo 6: Conferir no navegador**
 
 Com `php -S localhost:8000 -t public_html` no ar:
 
@@ -3646,7 +3646,7 @@ Com `php -S localhost:8000 -t public_html` no ar:
 7. Confira que o `#quoteForm` tem `<input type="hidden" name="csrf" value="">`, vazio.
 8. Repita os passos 5 e 7 em `http://localhost:8000/flex.php`.
 
-- [ ] **Passo 7: Commit**
+- [x] **Passo 7: Commit**
 
 ```bash
 git add public_html/csrf.php public_html/partials/modal.php testes/casos/50-paginas.php
@@ -3678,7 +3678,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **A ideia central:** uma entrada em `painel_tabelas()` gera lista, formulário, salvar, desativar, reativar e reordenar. Nenhuma tela é copiada. Os nomes de tabela e de coluna usados no SQL vêm sempre dessa descrição, nunca da requisição, e é isso que torna a interpolação de nome de tabela no SQL segura.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/80-painel.php`:
 
@@ -3798,12 +3798,12 @@ teste('painel_linha traz uma linha pelo id e null quando nao existe', function (
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: erro fatal `Failed opening required .../public_html/painel/tabelas.php`.
 
-- [ ] **Passo 3: Escrever `painel/tabelas.php`**
+- [x] **Passo 3: Escrever `painel/tabelas.php`**
 
 ```php
 <?php
@@ -3987,12 +3987,12 @@ function painel_linha(string $chave, int $id): ?array
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar a parte de lógica**
+- [x] **Passo 4: Rodar e ver passar a parte de lógica**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 11 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 5: Escrever o CSS do painel**
+- [x] **Passo 5: Escrever o CSS do painel**
 
 Crie `public_html/painel/assets/painel.css`:
 
@@ -4108,7 +4108,7 @@ a { color: var(--p-vermelho-fundo); }
 }
 ```
 
-- [ ] **Passo 6: Escrever a tela de login**
+- [x] **Passo 6: Escrever a tela de login**
 
 Crie `public_html/painel/index.php`:
 
@@ -4181,7 +4181,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 </html>
 ```
 
-- [ ] **Passo 7: Escrever o shell e o `sair.php`**
+- [x] **Passo 7: Escrever o shell e o `sair.php`**
 
 Crie `public_html/painel/painel.php`:
 
@@ -4266,7 +4266,7 @@ header('Location: index.php');
 exit;
 ```
 
-- [ ] **Passo 8: Escrever a tela de lista genérica**
+- [x] **Passo 8: Escrever a tela de lista genérica**
 
 Crie `public_html/painel/telas/lista.php`. Espera, por escopo: `string $tela` e `array $def`.
 
@@ -4350,7 +4350,7 @@ foreach ($linhas as $linha) {
 
 O `<strong>` acima imprime uma tag HTML depois do `e()`. Isso é proposital e seguro: o dado passou por `e()` e o `<span class="p-tag">` é markup fixo escrito aqui, não vem do banco.
 
-- [ ] **Passo 9: Conferir no navegador**
+- [x] **Passo 9: Conferir no navegador**
 
 ```bash
 php -S localhost:8000 -t public_html
@@ -4367,7 +4367,7 @@ Abra `http://localhost:8000/painel/`. Faça, nesta ordem:
 7. Abra em um celular ou na visão responsiva com 390 px de largura. O menu rola na horizontal e a lista continua legível.
 8. Abra `http://localhost:8000/painel/painel.php` em uma janela anônima. Tem que redirecionar para o login.
 
-- [ ] **Passo 10: Rodar a suíte e commitar**
+- [x] **Passo 10: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
@@ -4396,7 +4396,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: `painel_tabela()`, `painel_linha()`, `painel_listar()` da Tarefa 10; `upload_receber()`, `UPLOAD_TIPOS` da Tarefa 8; `csrf_token()`, `csrf_validar()`, `auth_exigir()`, `auth_iniciar()` da Tarefa 7; `CASTELLO_ICONES_FAQ` da Tarefa 3.
 - Produz: `painel_valores(array $def, array $entrada): array`, `painel_arquivos(array $def, array $arquivos): array` devolvendo `array{valores: array<string,string>, erros: array<string,string>}`, `painel_erro_upload(string $erro, string $tipo): string`, `painel_erros(array $def, array $valores): array` (mapa `coluna => mensagem`), `painel_salvar(string $chave, ?int $id, array $valores): int` (devolve o id gravado).
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao final de `testes/casos/80-painel.php`:
 
@@ -4555,12 +4555,12 @@ teste('painel_erro_upload fala a lingua do cliente', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: os 11 testes da Tarefa 10 continuam passando e os 11 novos falham com `Call to undefined function painel_valores()`.
 
-- [ ] **Passo 3: Acrescentar as funções de escrita ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as funções de escrita ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -4710,7 +4710,7 @@ function painel_salvar(string $chave, ?int $id, array $valores): int
 }
 ```
 
-- [ ] **Passo 4: Escrever a tela de formulário**
+- [x] **Passo 4: Escrever a tela de formulário**
 
 Crie `public_html/painel/telas/form.php`:
 
@@ -4832,7 +4832,7 @@ $voltar = 'painel.php?tela=' . rawurlencode($tela) . ($filtro !== '' ? '&filtro=
 </form>
 ```
 
-- [ ] **Passo 5: Escrever a ação de salvar**
+- [x] **Passo 5: Escrever a ação de salvar**
 
 Crie `public_html/painel/acoes/salvar.php`:
 
@@ -4893,12 +4893,12 @@ header('Location: ' . $lista . '&ok=' . rawurlencode($recado));
 exit;
 ```
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [x] **Passo 6: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 22 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 7: Conferir no navegador**
+- [x] **Passo 7: Conferir no navegador**
 
 Com `php -S localhost:8000 -t public_html` no ar e logado no painel:
 
@@ -4911,7 +4911,7 @@ Com `php -S localhost:8000 -t public_html` no ar e logado no painel:
 7. **Vídeos:** adicione um vídeo MP4 e uma capa. Confira que aparece na lista com miniatura.
 8. Abra o painel no celular e repita o passo 2. O formulário e o seletor de ícone precisam ser usáveis com o polegar.
 
-- [ ] **Passo 8: Rodar a suíte e commitar**
+- [x] **Passo 8: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
@@ -4941,7 +4941,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: `painel_tabela()`, `painel_linha()`, `painel_listar()`, `csrf_token()`, `csrf_validar()`, `auth_exigir()`, `auth_logado()`, `videos()`.
 - Produz: `painel_estado(string $chave, int $id, int $ativo): void`, `painel_reordenar(string $chave, array $ids): int` (devolve quantas linhas mudaram); e o endpoint `painel/acoes/ordem.php`, que responde JSON `{"ok":true,"atualizados":N}` ou `{"ok":false,"erro":"csrf|tela|sessao"}`.
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao final de `testes/casos/80-painel.php`:
 
@@ -5017,12 +5017,12 @@ teste('painel_reordenar ignora id invalido e recusa tabela desconhecida', functi
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: os 22 anteriores passam, os 5 novos falham com `Call to undefined function painel_estado()`.
 
-- [ ] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -5068,7 +5068,7 @@ function painel_reordenar(string $chave, array $ids): int
 }
 ```
 
-- [ ] **Passo 4: Acrescentar o botão de estado e o script à `telas/lista.php`**
+- [x] **Passo 4: Acrescentar o botão de estado e o script à `telas/lista.php`**
 
 Na `public_html/painel/telas/lista.php`, faça três mudanças.
 
@@ -5104,7 +5104,7 @@ Na `public_html/painel/telas/lista.php`, faça três mudanças.
 <script src="assets/painel.js?v=1"></script>
 ```
 
-- [ ] **Passo 5: Escrever `acoes/estado.php`**
+- [x] **Passo 5: Escrever `acoes/estado.php`**
 
 ```php
 <?php
@@ -5147,7 +5147,7 @@ header('Location: ' . $lista . '&ok=' . rawurlencode($recado));
 exit;
 ```
 
-- [ ] **Passo 6: Escrever `acoes/ordem.php`**
+- [x] **Passo 6: Escrever `acoes/ordem.php`**
 
 ```php
 <?php
@@ -5187,7 +5187,7 @@ $ids = is_array($corpo['ids'] ?? null) ? $corpo['ids'] : [];
 echo json_encode(['ok' => true, 'atualizados' => painel_reordenar($tela, $ids)]);
 ```
 
-- [ ] **Passo 7: Escrever `assets/painel.js`**
+- [x] **Passo 7: Escrever `assets/painel.js`**
 
 ```javascript
 /* Reordenar arrastando, com ponteiro unico: funciona no mouse e no toque. */
@@ -5283,12 +5283,12 @@ echo json_encode(['ok' => true, 'atualizados' => painel_reordenar($tela, $ids)])
 })();
 ```
 
-- [ ] **Passo 8: Rodar e ver passar**
+- [x] **Passo 8: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 27 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 9: Conferir no navegador**
+- [x] **Passo 9: Conferir no navegador**
 
 Com o servidor local no ar e logado:
 
@@ -5300,7 +5300,7 @@ Com o servidor local no ar e logado:
    `fetch('acoes/ordem.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({csrf:'errado',tela:'videos',ids:[1]})}).then(r=>r.status).then(console.log)`
    Esperado: `419`.
 
-- [ ] **Passo 10: Rodar a suíte e commitar**
+- [x] **Passo 10: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
@@ -5330,7 +5330,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: `config_ler()`, `config_gravar()`, `bloco()`, `db()`, `csrf_token()`, `csrf_validar()`, `auth_exigir()`.
 - Produz: `painel_config_campos(): array`, `painel_config_validar(array $entrada): array` devolvendo `array{valores: array<string,string>, erros: array<string,string>}`, `painel_textos_gravar(array $entrada): int` (quantas chaves foram gravadas), `painel_fixas(): array` (mapa `chave => rótulo` das telas que não são de conteúdo).
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao final de `testes/casos/80-painel.php`:
 
@@ -5464,12 +5464,12 @@ teste('painel_fixas traz as quatro telas que nao sao de conteudo', function (): 
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: os 27 anteriores passam e os 8 novos falham com `Call to undefined function painel_textos_gravar()`.
 
-- [ ] **Passo 3: Acrescentar as funções ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as funções ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -5620,7 +5620,7 @@ function painel_config_validar(array $entrada): array
 }
 ```
 
-- [ ] **Passo 4: Ligar as telas fixas ao menu do `painel.php`**
+- [x] **Passo 4: Ligar as telas fixas ao menu do `painel.php`**
 
 Em `public_html/painel/painel.php`, troque a linha
 
@@ -5636,7 +5636,7 @@ $abas = painel_abas() + painel_fixas();
 
 O roteamento que já está escrito manda as telas fixas para `telas/<tela>.php`, então nada mais muda ali.
 
-- [ ] **Passo 5: Escrever a tela de Textos**
+- [x] **Passo 5: Escrever a tela de Textos**
 
 Crie `public_html/painel/telas/textos.php`:
 
@@ -5670,7 +5670,7 @@ $blocos = db()->query('SELECT chave, rotulo, valor, tipo FROM blocos ORDER BY ro
 </form>
 ```
 
-- [ ] **Passo 6: Escrever a tela de Configurações**
+- [x] **Passo 6: Escrever a tela de Configurações**
 
 Crie `public_html/painel/telas/config.php`:
 
@@ -5739,7 +5739,7 @@ $ativos = (int) db()->query('SELECT COUNT(*) FROM videos WHERE ativo = 1')->fetc
 </form>
 ```
 
-- [ ] **Passo 7: Escrever as duas ações**
+- [x] **Passo 7: Escrever as duas ações**
 
 Crie `public_html/painel/acoes/textos.php`:
 
@@ -5796,12 +5796,12 @@ header('Location: ../painel.php?tela=config&ok=' . rawurlencode('Configurações
 exit;
 ```
 
-- [ ] **Passo 8: Rodar e ver passar**
+- [x] **Passo 8: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 35 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 9: Conferir no navegador**
+- [x] **Passo 9: Conferir no navegador**
 
 1. Abra Textos. Mude o Prazo da Casa Pronta para `90 a 110 dias` e salve. A faixa verde diz `21 textos salvos.` e o valor persiste ao recarregar. Volte para `90 a 120 dias`.
 2. Abra Configurações. Coloque `0` em quantos vídeos aparecem e salve. O campo volta marcado com `Escolha um número de 1 a 24.` e o resto do formulário fica como você deixou.
@@ -5809,7 +5809,7 @@ Esperado: 35 ok, 0 falha, 0 pulado.
 4. Escreva `{quebrado` nos cabeçalhos do CRM e salve. Mensagem de JSON inválido, nada gravado.
 5. Escreva um e-mail sem arroba e salve. Mensagem de e-mail inválido.
 
-- [ ] **Passo 10: Rodar a suíte e commitar**
+- [x] **Passo 10: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
@@ -5843,7 +5843,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Checkpoint do WAL antes de zipar.** O banco roda em modo WAL, então parte das últimas gravações pode estar no arquivo `.db-wal` e não no `.db`. Sem `PRAGMA wal_checkpoint(TRUNCATE)` antes de zipar, o backup sairia desatualizado sem ninguém perceber.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/90-backup.php`:
 
@@ -5942,12 +5942,12 @@ teste('trocar senha de usuario inexistente devolve erro, nao fatal', function ()
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 90-backup`
 Esperado: falha com `Call to undefined function painel_backup()`.
 
-- [ ] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -6042,7 +6042,7 @@ function painel_trocar_senha(int $usuarioId, string $atual, string $nova, string
 }
 ```
 
-- [ ] **Passo 4: Escrever a tela de Backup**
+- [x] **Passo 4: Escrever a tela de Backup**
 
 Crie `public_html/painel/telas/backup.php`:
 
@@ -6094,7 +6094,7 @@ $emMega = static fn (int $bytes): string => number_format($bytes / 1048576, 1, '
 <?php endif; ?>
 ```
 
-- [ ] **Passo 5: Escrever a ação de Backup**
+- [x] **Passo 5: Escrever a ação de Backup**
 
 Crie `public_html/painel/acoes/backup.php`:
 
@@ -6132,7 +6132,7 @@ unlink($arquivo);
 exit;
 ```
 
-- [ ] **Passo 6: Escrever a tela e a ação de Trocar senha**
+- [x] **Passo 6: Escrever a tela e a ação de Trocar senha**
 
 Crie `public_html/painel/telas/senha.php`:
 
@@ -6203,7 +6203,7 @@ header('Location: ../painel.php?tela=senha&ok=' . rawurlencode('Senha trocada. U
 exit;
 ```
 
-- [ ] **Passo 7: Rodar e ver passar**
+- [x] **Passo 7: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 90-backup`
 Esperado no ambiente local: 5 ok, 0 falha, **1 pulado**, e a linha do pulado dizendo `ZipArchive nao existe no PHP local e phar.readonly esta ligado, entao o zip so pode ser validado no servidor`.
@@ -6211,7 +6211,7 @@ Esperado no ambiente local: 5 ok, 0 falha, **1 pulado**, e a linha do pulado diz
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 8: Conferir no navegador**
+- [x] **Passo 8: Conferir no navegador**
 
 1. Abra Backup. A tela mostra a contagem de arquivos e os dois tamanhos, e no ambiente local mostra a faixa vermelha avisando que falta o ZipArchive. Isso está certo: o download só funciona no servidor.
 2. Abra Trocar senha. Digite a senha atual errada e salve: mensagem `A senha atual está errada.`.
@@ -6219,7 +6219,7 @@ Esperado: `todos os casos passaram`.
 4. Digite uma senha nova de 10 caracteres com confirmação diferente: mensagem sobre a confirmação.
 5. Troque de verdade. Saia e entre com a senha nova. A antiga não entra mais.
 
-- [ ] **Passo 9: Commit**
+- [x] **Passo 9: Commit**
 
 ```bash
 git add public_html/painel testes/casos/90-backup.php
@@ -6248,7 +6248,7 @@ O servidor de teste é **LiteSpeed**, que lê `.htaccess` com a sintaxe do Apach
 
 `uploads/.htaccess` é a trava que importa: mesmo que alguém consiga gravar um arquivo executável ali, ele não roda.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/95-htaccess.php`:
 
@@ -6318,12 +6318,12 @@ teste('nenhum htaccess vaza caminho de disco do ambiente local', function (): vo
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 95-htaccess`
 Esperado: todos falham com `nao consegui ler .../public_html/.htaccess`.
 
-- [ ] **Passo 3: Escrever `public_html/.htaccess`**
+- [x] **Passo 3: Escrever `public_html/.htaccess`**
 
 ```apache
 # Castello Casas de Madeira. Servidor de teste: LiteSpeed, que le .htaccess
@@ -6363,7 +6363,7 @@ Options -Indexes
 </IfModule>
 ```
 
-- [ ] **Passo 4: Escrever `public_html/uploads/.htaccess`**
+- [x] **Passo 4: Escrever `public_html/uploads/.htaccess`**
 
 ```apache
 # Nada executa nesta pasta. Se um arquivo malicioso passar pela validacao do
@@ -6389,7 +6389,7 @@ RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phps
 </FilesMatch>
 ```
 
-- [ ] **Passo 5: Escrever `public_html/painel/.htaccess`**
+- [x] **Passo 5: Escrever `public_html/painel/.htaccess`**
 
 ```apache
 # Segunda senha, opcional, na frente do painel. Vem desligada.
@@ -6411,7 +6411,7 @@ Options -Indexes
 </FilesMatch>
 ```
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [x] **Passo 6: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 95-htaccess`
 Esperado: 5 ok, 0 falha, 0 pulado.
@@ -6421,7 +6421,7 @@ Esperado: `todos os casos passaram`.
 
 O servidor embutido do PHP (`php -S`) **ignora** `.htaccess`, então nada disso é testável localmente além do conteúdo do arquivo. A checagem de verdade é a Tarefa 16, com `curl` contra o servidor.
 
-- [ ] **Passo 7: Commit**
+- [x] **Passo 7: Commit**
 
 ```bash
 git add public_html/.htaccess public_html/uploads/.htaccess public_html/painel/.htaccess testes/casos/95-htaccess.php

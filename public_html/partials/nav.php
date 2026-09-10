@@ -1,0 +1,52 @@
+<?php
+declare(strict_types=1);
+?>
+  <!-- sprite: logo do Google (multicolor) reutilizado nas avaliações -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="ico-google" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M23.52 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.53 5.53 0 0 1-2.4 3.62v3h3.87c2.27-2.09 3.58-5.17 3.58-8.86z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.96-1.08 7.94-2.91l-3.87-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A12 12 0 0 0 12 24z"/>
+      <path fill="#FBBC05" d="M5.27 14.29a7.21 7.21 0 0 1 0-4.58V6.62H1.29a12 12 0 0 0 0 10.76l3.98-3.09z"/>
+      <path fill="#EA4335" d="M12 4.74c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.74 12 4.74z"/>
+    </symbol>
+  </svg>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="#topo" class="nav__logo" aria-label="Castello Casas de Madeira">
+        <img src="images/logo-horizontal-branco.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--light" />
+        <img src="images/logo-horizontal-colorido.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--dark" />
+      </a>
+
+      <nav class="nav__links" aria-label="Navegação principal">
+        <a href="#vantagens"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>Vantagens</a>
+        <a href="#modelos"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>Modelos</a>
+        <a href="#portfolio"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/></svg>Portfólio</a>
+        <a href="#instagram"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</a>
+        <a href="#como-funciona"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v6a4 4 0 0 0 4 4h4a4 4 0 0 1 4 4v2M6 4H4m2 0h2M18 20h-2m2 0h2"/></svg>Como funciona</a>
+        <a href="#contato"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>Contato</a>
+      </nav>
+
+      <button type="button" class="btn btn--primary nav__cta" data-quote-open>
+        <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+        Pedir orçamento
+      </button>
+
+      <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- mobile drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <a href="#vantagens">Vantagens</a>
+    <a href="#modelos">Modelos</a>
+    <a href="#portfolio">Portfólio</a>
+    <a href="#instagram">Instagram</a>
+    <a href="#como-funciona">Como funciona</a>
+    <a href="#contato">Contato</a>
+    <button type="button" class="btn btn--primary" data-quote-open>Fale Conosco</button>
+  </div>
