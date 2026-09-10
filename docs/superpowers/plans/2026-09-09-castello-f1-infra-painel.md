@@ -1075,7 +1075,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 Toda função de listagem devolve `array` de linhas associativas, já filtradas por `ativo = 1` e ordenadas por `ordem ASC, id ASC`.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/30-conteudo.php`:
 
@@ -1220,12 +1220,12 @@ teste('icone_faq devolve string vazia para chave desconhecida', function (): voi
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 30-conteudo`
 Esperado: erro fatal `Failed opening required .../public_html/lib/conteudo.php`.
 
-- [ ] **Passo 3: Escrever o `lib/conteudo.php`**
+- [x] **Passo 3: Escrever o `lib/conteudo.php`**
 
 Crie `public_html/lib/conteudo.php`. Os sete SVGs são cópia literal dos ícones do bloco `#faq` do `index.html` original, na ordem em que as perguntas aparecem.
 
@@ -1332,7 +1332,7 @@ function icone_faq(string $chave): string
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 30-conteudo`
 Esperado: 11 ok, 0 falha, 0 pulado.
@@ -1340,7 +1340,7 @@ Esperado: 11 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 5: Commit**
+- [x] **Passo 5: Commit**
 
 ```bash
 git add public_html/lib/conteudo.php testes/casos/30-conteudo.php
