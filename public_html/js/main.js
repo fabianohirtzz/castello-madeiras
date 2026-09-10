@@ -118,7 +118,8 @@
 
   if (heroTrack && heroVideo && !reduce) {
     // No celular o scrub usa uma versao menor do video (2,5 MB em vez de 8,9).
-    // O preload nasce em metadata, entao a troca acontece antes de baixar o arquivo.
+    // O preload nasce em none e vira auto so aqui, entao a troca acontece antes de
+    // qualquer requisicao do video: um arquivo so e baixado.
     var heroSource = heroVideo.querySelector('source');
     if (heroSource && heroSource.getAttribute('data-src-mobile') && window.matchMedia('(max-width: 760px)').matches) {
       heroSource.setAttribute('src', heroSource.getAttribute('data-src-mobile'));
