@@ -58,22 +58,21 @@ teste('agora() devolve data no formato do contrato', function (): void {
     igual('America/Sao_Paulo', date_default_timezone_get());
 });
 
-teste('as dez chaves iniciais de config nascem com os valores do contrato', function (): void {
+teste('as chaves iniciais de config nascem com os valores do contrato', function (): void {
     igual('8', config_ler('videos_na_home'));
     igual('contato@castellomadeiras.com.br', config_ler('email_aviso'));
-    igual('0', config_ler('crm_ativo'));
-    igual('', config_ler('crm_endpoint'));
-    igual('POST', config_ler('crm_metodo'));
-    igual('{}', config_ler('crm_cabecalhos'));
-    igual('10', config_ler('crm_timeout'));
     igual('castellomadeiras.com.br', config_ler('email_dominio'));
+    igual('0', config_ler('crm_ativo'));
+    igual('https://api.agendor.com.br/v3', config_ler('crm_base'));
+    igual('904296', config_ler('crm_funil'));
+    igual('1', config_ler('crm_etapa'));
+    igual('2656389', config_ler('crm_origem'));
+    igual('4187395', config_ler('crm_categoria'));
+    igual('[SITE]', config_ler('crm_marcador'));
+    igual('', config_ler('crm_responsavel'));
+    igual('10', config_ler('crm_timeout'));
 
-    $mapa = json_decode((string) config_ler('crm_mapa_campos'), true);
-    igual('telefone', $mapa['whatsapp']);
-    igual('observacao', $mapa['mensagem']);
-    igual('origem', $mapa['utm_source']);
-
-    igual(10, (int) db()->query('SELECT COUNT(*) FROM config')->fetchColumn());
+    igual(13, (int) db()->query('SELECT COUNT(*) FROM config')->fetchColumn());
 });
 
 teste('reenvio_chave e gerada na instalacao e nao muda depois', function (): void {
@@ -122,4 +121,115 @@ teste('config_gravar cria e depois atualiza a chave', function (): void {
     igual('primeiro', config_ler('teste_chave'));
     config_gravar('teste_chave', 'segundo');
     igual('segundo', config_ler('teste_chave'));
+});
+
+teste('db_garantir_colunas acrescenta o que falta e e idempotente', function (): void {
+    /* Banco em memoria com o leads ANTIGO, sem prazo nem crm_pessoa_id. */
+    $pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdo->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+
+    $acrescentadas = db_garantir_colunas($pdo);
+    sort($acrescentadas);
+    igual(['crm_pessoa_id', 'prazo'], $acrescentadas, 'acrescenta as duas colunas que faltavam');
+
+    $colunas = array_column($pdo->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo existe agora');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe agora');
+
+    /* Segunda passada nao pode falhar nem repetir: roda em toda requisicao. */
+    igual([], db_garantir_colunas($pdo), 'segunda chamada nao acrescenta nada');
+
+    /* O dado que ja estava la sobrevive. */
+    $pdo->exec("INSERT INTO leads (nome, crm_status) VALUES ('Antigo', 'pendente')");
+    $linha = $pdo->query('SELECT * FROM leads')->fetch(PDO::FETCH_ASSOC);
+    igual('Antigo', $linha['nome']);
+    verdade($linha['prazo'] === null, 'coluna nova nasce nula no registro antigo');
+});
+
+teste('o banco real do runner ja tem as colunas novas', function (): void {
+    $colunas = array_column(db()->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo no banco do runner');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id no banco do runner');
+});
+
+teste('a config nasce com os valores reais da conta do Agendor', function (): void {
+    igual('0', config_ler('crm_ativo'), 'CRM nasce desligado');
+    igual('https://api.agendor.com.br/v3', config_ler('crm_base'));
+    igual('904296', config_ler('crm_funil'), 'Funil de Vendas');
+    igual('1', config_ler('crm_etapa'), 'sequencia da etapa Contato, nao o id 3845540');
+    igual('2656389', config_ler('crm_origem'), 'origem Site');
+    igual('4187395', config_ler('crm_categoria'), 'Cliente em potencial');
+    igual('[SITE]', config_ler('crm_marcador'), 'marcador com colchetes no proprio valor');
+    igual('', config_ler('crm_responsavel'), 'vazio: cai no dono do token');
+    igual('10', config_ler('crm_timeout'));
+
+    foreach (['crm_endpoint', 'crm_metodo', 'crm_cabecalhos', 'crm_mapa_campos'] as $morta) {
+        verdade(config_ler($morta) === null, 'chave generica ' . $morta . ' nao existe mais');
+    }
+});
+
+teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', function (): void {
+    /* Banco de verdade com a coluna ja adicionada (simulando outra requisicao que venceu). */
+    $pdoVerdadeiro = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdoVerdadeiro->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+    $pdoVerdadeiro->exec('ALTER TABLE leads ADD COLUMN prazo TEXT'); // outra requisicao ja adicionou
+
+    /* PDO de mentira que faz o PRAGMA table_info mentir, dizendo que prazo
+       ainda nao existe. Quando a funcao tentar o ALTER TABLE, vai esbarrar
+       na coluna que ja existe de verdade e receber "duplicate column name". */
+    class PdoFalsoDeCorrida extends PDO {
+        private PDO $pdoVerdadeiro;
+        public function __construct(PDO $pdoVerdadeiro) {
+            $this->pdoVerdadeiro = $pdoVerdadeiro;
+        }
+        #[\ReturnTypeWillChange]
+        public function query(string $sql, ...$args) {
+            // PRAGMA table_info(leads) devolve resultado forjado, sem prazo e sem crm_pessoa_id.
+            if (strpos($sql, 'PRAGMA table_info') !== false) {
+                return $this->pdoVerdadeiro->query(
+                    "SELECT 'id' AS name UNION ALL SELECT 'nome' UNION ALL SELECT 'crm_status'"
+                );
+            }
+            // Qualquer outro SQL vai para o banco de verdade, onde a coluna ja existe.
+            return $this->pdoVerdadeiro->query($sql, ...$args);
+        }
+        public function exec(string $sql): int {
+            return $this->pdoVerdadeiro->exec($sql);
+        }
+    }
+
+    $pdoFalso = new PdoFalsoDeCorrida($pdoVerdadeiro);
+
+    /* A funcao vai achar que prazo falta (mentira do PRAGMA), tentar
+       acrescentar (ALTER TABLE) e esbarrar em "duplicate column name" porque
+       a coluna ja existe no banco de verdade. O catch de db_garantir_colunas
+       tem que engolir essa excecao especifica, sem deixar escapar.
+       $acrescentadas comeca nulo e so ganha valor se a chamada nao lancar;
+       se lancasse, um sort(null) mataria o processo em vez de reprovar o
+       teste com uma mensagem legivel - por isso o cheque de $falha vem
+       antes do sort(). */
+    $acrescentadas = null;
+    $falha = null;
+    try {
+        $acrescentadas = db_garantir_colunas($pdoFalso);
+    } catch (Throwable $ex) {
+        $falha = $ex;
+    }
+
+    verdade(
+        $falha === null,
+        'nao pode lancar excecao; coluna duplicada tem que ser engolida no catch: '
+            . ($falha instanceof Throwable ? $falha->getMessage() : '')
+    );
+    verdade(is_array($acrescentadas), 'db_garantir_colunas precisa devolver um array mesmo neste caminho');
+
+    /* So crm_pessoa_id entrou na lista de acrescentadas nesta chamada.
+       Prazo foi recusado em silencio pelo catch de coluna duplicada. */
+    sort($acrescentadas);
+    igual(['crm_pessoa_id'], $acrescentadas, 'apenas crm_pessoa_id foi acrescentado nesta chamada');
+
+    /* Ambas as colunas existem agora no banco de verdade. */
+    $colunas = array_column($pdoVerdadeiro->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo existe no banco');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe no banco');
 });

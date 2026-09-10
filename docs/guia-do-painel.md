@@ -98,7 +98,26 @@ Dois detalhes:
 
 - **E-mail que recebe aviso de pedido novo**: cada pedido de orçamento do site chega neste e-mail, com todos os dados e um link para responder no WhatsApp.
 - **Quantos vídeos aparecem na home**: veja a seção 4.
-- **CRM**: fica desligado até a Castello ter um CRM. Enquanto está desligado, os pedidos continuam sendo guardados no site e enviados por e-mail. Nenhum pedido se perde. Quando o CRM existir, a Freela configura aqui.
+- **CRM**: veja a seção 8.1, logo abaixo. É a parte mais delicada desta tela.
+
+### 8.1 O CRM (Agendor)
+
+Quando o campo **Enviar os pedidos para o CRM** (primeira linha da tabela abaixo) está ligado, todo pedido de orçamento do site também entra no Agendor, o CRM que a equipe comercial usa todo dia, junto com os leads que já chegam pelo Instagram e pelo Facebook. Oito campos controlam se isso acontece e, quando acontece, para onde e como cada pedido entra lá:
+
+| Campo | Para que serve |
+|---|---|
+| **Enviar os pedidos para o CRM** | Liga e desliga o envio ao Agendor. Desligado, o pedido continua sendo gravado no site e o e-mail de aviso continua saindo do mesmo jeito, exatamente como se o CRM não existisse. Nenhum pedido se perde nunca, ligado ou desligado. É o estado seguro para deixar enquanto qualquer um dos campos abaixo está sendo conferido. |
+| **Funil do Agendor** | Em qual funil de vendas o negócio nasce. Vem certo de fábrica e normalmente não precisa mudar. |
+| **Etapa onde o pedido entra** | Em qual coluna do funil o negócio nasce (hoje, "Contato"). Vem certo de fábrica. |
+| **Origem do contato** | O código que o Agendor usa para marcar "veio do site". Vem certo de fábrica. |
+| **Categoria do contato** | O código da categoria do contato no Agendor (hoje, "Cliente em potencial"). Vem certo de fábrica. |
+| **Marcador no título do negócio** | O texto na frente do título de cada negócio no funil, como `[SITE]`, para a equipe separar de longe o que veio do site do que veio do Instagram ou do Facebook (que chegam marcados `[META]`). |
+| **Responsável pelos pedidos do site** | Qual vendedor do Agendor recebe os pedidos do site. Vazio deixa cair na conta principal, para alguém distribuir na mão. |
+| **Segundos de espera pelo CRM** | Quanto tempo o site espera o Agendor responder antes de desistir e deixar o pedido para a próxima tentativa automática. É um ajuste técnico; não costuma precisar mexer. |
+
+**Por que Funil e Etapa merecem atenção redobrada.** Se um desses dois números estiver errado, o Agendor não avisa com erro nenhum. Ele simplesmente guarda o negócio num funil ou numa etapa que ninguém está olhando naquele momento, e o pedido some da visão de quem vende, mesmo estando lá dentro do Agendor o tempo todo. Não é um pedido perdido (ele existe, e o e-mail de aviso continua chegando), mas é um pedido que o time comercial não vê onde deveria ver.
+
+Por isso, antes de mudar Funil ou Etapa, confirme o número certo direto no Agendor (ou peça para a Freela conferir), e depois de mudar, envie um pedido de teste pelo próprio site para conferir que ele aparece no lugar certo do funil.
 
 ## 9. Baixar o backup
 

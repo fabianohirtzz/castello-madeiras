@@ -21,6 +21,21 @@ function crm_teste_limpar(): void
     db()->exec('DELETE FROM config');
 }
 
+/** Config minima do Agendor apontando para o servidor falso desta rodada. */
+function crm_teste_config(): void
+{
+    config_gravar('crm_ativo', '1');
+    config_gravar('crm_base', 'http://127.0.0.1:' . crm_falso_porta());
+    config_gravar('crm_funil', '904296');
+    config_gravar('crm_etapa', '1');
+    config_gravar('crm_origem', '2656389');
+    config_gravar('crm_categoria', '4187395');
+    config_gravar('crm_marcador', '[SITE]');
+    config_gravar('crm_responsavel', '');
+    config_gravar('crm_timeout', '10');
+    putenv('CASTELLO_AGENDOR_TOKEN=token-de-teste');
+}
+
 function contar_leads(): int
 {
     return (int) db()->query('SELECT COUNT(*) FROM leads')->fetchColumn();
@@ -32,14 +47,13 @@ function lead_por_id(int $id): array
     return is_array($linha) ? $linha : [];
 }
 
-const MAPA_PADRAO = '{"nome":"nome","whatsapp":"telefone","busca":"interesse","modelo":"modelo","cidade":"cidade","mensagem":"observacao","utm_source":"origem","utm_campaign":"campanha","pagina":"pagina"}';
-
 const LEAD_EXEMPLO = [
     'nome'         => 'Fabiano Hirtz',
     'whatsapp'     => '(48) 99824-4494',
     'busca'        => 'Modelo pronto do catalogo',
     'modelo'       => 'Compacta 39 m2',
     'cidade'       => 'Tubarao / SC',
+    'prazo'        => 'Ate 3 meses',
     'mensagem'     => 'Tenho terreno.',
     'pagina'       => '/index.php',
     'utm_source'   => 'instagram',
@@ -59,11 +73,6 @@ function crm_falso_porta(): int
     return (int) $GLOBALS['crm_falso_porta'];
 }
 
-function crm_falso_url(string $modo, array $extra = []): string
-{
-    return 'http://127.0.0.1:' . crm_falso_porta() . '/?' . http_build_query(['modo' => $modo] + $extra);
-}
-
 function crm_falso_arquivo(): string
 {
     return sys_get_temp_dir() . CRM_FALSO_ULTIMA;
@@ -76,13 +85,25 @@ function crm_falso_ultima(): array
     return is_array($dados) ? $dados : [];
 }
 
+function crm_falso_todas(): array
+{
+    $arquivo = sys_get_temp_dir() . '/crm-falso-todas.json';
+    $dados = json_decode(is_file($arquivo) ? (string) file_get_contents($arquivo) : '', true);
+    return is_array($dados) ? $dados : [];
+}
+
 function crm_falso_subir(?int $porta = null)
 {
     if ($porta === null) {
         $porta = crm_falso_porta();
     }
     $GLOBALS['crm_falso_porta'] = $porta;
+    /* Limpa o estado anterior. A pessoa criada numa requisicao precisa ser
+       encontrada na requisicao seguinte dentro do mesmo bloco, mas nao pode
+       vazar para o bloco seguinte. */
     @unlink(crm_falso_arquivo());
+    @unlink(sys_get_temp_dir() . '/crm-falso-todas.json');
+    @unlink(sys_get_temp_dir() . '/crm-falso-pessoas.json');
     $comando = escapeshellarg(PHP_BINARY) . ' -S 127.0.0.1:' . $porta . ' ' . escapeshellarg(raiz() . '/testes/crm-falso.php');
     $tubos = [];
     /* bypass_shell e obrigatorio no Windows: sem ele o proc_open passa pelo
@@ -120,16 +141,18 @@ function crm_falso_derrubar($processo): void
     $GLOBALS['crm_falso_porta'] = crm_falso_porta() + 1;
 }
 
-function crm_falso_pedir(string $url, string $corpo = '{}', array $cabecalhos = []): array
+function crm_falso_pedir(string $url, string $corpo = '{}', array $cabecalhos = [], string $metodo = 'POST'): array
 {
     $ch = curl_init($url);
     curl_setopt_array($ch, [
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $corpo,
+        CURLOPT_CUSTOMREQUEST  => $metodo,
         CURLOPT_HTTPHEADER     => array_merge(['Content-Type: application/json'], $cabecalhos),
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 20,
     ]);
+    if ($metodo !== 'GET') {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $corpo);
+    }
     $resposta = (string) curl_exec($ch);
     $http = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $tipo = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
@@ -238,36 +261,57 @@ teste('lead_marcar grava status, tentativas, resposta e carimbo', function (): v
 
 /* ================= testes/crm-falso.php ================= */
 
-teste('o CRM falso responde em cada modo e registra a requisicao', function (): void {
+teste('o Agendor falso responde as tres rotas e imita a busca por telefone', function (): void {
     $servidor = crm_falso_subir();
     verdade($servidor !== null, 'servidor de teste subiu na porta ' . crm_falso_porta());
 
     try {
-        $r = crm_falso_pedir(crm_falso_url('ok'));
-        igual(200, $r['http'], 'modo ok responde 200');
-        $j = json_decode($r['corpo'], true);
-        verdade(is_array($j) && ($j['status'] ?? '') === 'ok', 'modo ok devolve JSON com status ok: ' . $r['corpo']);
+        $base = 'http://127.0.0.1:' . crm_falso_porta();
 
-        $r = crm_falso_pedir(crm_falso_url('erro500'));
-        igual(500, $r['http'], 'modo erro500 responde 500');
+        /* pessoa nova */
+        $r = crm_falso_pedir($base . '/people', '{"name":"Fabiano","contact":{"mobile":"(48) 99824-4494"}}');
+        igual(201, $r['http'], 'POST /people responde 201');
+        $criada = json_decode($r['corpo'], true);
+        verdade(is_int($criada['data']['id'] ?? null), 'devolve data.id inteiro: ' . $r['corpo']);
+        $idPessoa = (int) $criada['data']['id'];
 
-        $r = crm_falso_pedir(crm_falso_url('invalido'));
-        igual(200, $r['http'], 'modo invalido responde 200');
+        /* busca com os digitos sem DDI: acha */
+        $r = crm_falso_pedir($base . '/people?phone=48998244494', '', [], 'GET');
+        $achou = json_decode($r['corpo'], true);
+        igual(1, count($achou['data'] ?? []), 'busca sem DDI encontra: ' . $r['corpo']);
+        igual($idPessoa, (int) ($achou['data'][0]['id'] ?? 0));
+
+        /* busca com 55 na frente: vazio, como na conta real */
+        $r = crm_falso_pedir($base . '/people?phone=5548998244494', '', [], 'GET');
+        igual(0, count(json_decode($r['corpo'], true)['data'] ?? []), 'busca com DDI volta vazia');
+
+        /* telefone desconhecido: vazio */
+        $r = crm_falso_pedir($base . '/people?phone=48900000000', '', [], 'GET');
+        igual(0, count(json_decode($r['corpo'], true)['data'] ?? []), 'telefone desconhecido volta vazio');
+
+        /* negocio na pessoa */
+        $r = crm_falso_pedir($base . '/people/' . $idPessoa . '/deals', '{"title":"[SITE] - Imediato - Fabiano"}');
+        igual(201, $r['http'], 'POST /people/{id}/deals responde 201');
+        $negocio = json_decode($r['corpo'], true);
+        verdade(is_int($negocio['data']['id'] ?? null), 'negocio tem id');
+        contem('web.agendor.com.br', (string) ($negocio['data']['_webUrl'] ?? ''), 'negocio traz _webUrl');
+
+        /* modos de falha */
+        igual(500, crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: erro500'])['http']);
+        igual(401, crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: auth401'])['http']);
+        igual(429, crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: limite429'])['http']);
+
+        $r = crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: invalido']);
         verdade(json_decode($r['corpo'], true) === null, 'modo invalido devolve corpo que nao e JSON');
 
         $inicio = microtime(true);
-        $r = crm_falso_pedir(crm_falso_url('demora', ['seg' => 2]));
-        $gasto = microtime(true) - $inicio;
-        verdade($gasto >= 1.8, 'modo demora segura a resposta, gastou ' . round($gasto, 2) . 's');
-        igual(200, $r['http'], 'modo demora responde 200 no fim');
+        crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: demora:2']);
+        verdade(microtime(true) - $inicio >= 1.8, 'modo demora segura a resposta');
 
-        $r = crm_falso_pedir(crm_falso_url('eco'), '{"nome":"Fabiano"}', ['Authorization: Bearer segredo-123']);
-        $j = json_decode($r['corpo'], true);
-        verdade(is_array($j) && (($j['recebido']['nome'] ?? '') === 'Fabiano'), 'modo eco devolve o que recebeu: ' . $r['corpo']);
-
+        /* registro */
         $ultima = crm_falso_ultima();
         igual('POST', $ultima['metodo'] ?? '', 'registrou o metodo');
-        igual('Bearer segredo-123', $ultima['cabecalhos']['authorization'] ?? '', 'registrou o cabecalho Authorization');
+        verdade(count(crm_falso_todas()) >= 8, 'registrou todas as requisicoes da rodada');
     } finally {
         crm_falso_derrubar($servidor);
     }
@@ -275,102 +319,302 @@ teste('o CRM falso responde em cada modo e registra a requisicao', function (): 
 
 /* ================= lib/crm.php: o conector ================= */
 
-teste('crm_enviar recusa sem fazer requisicao quando a config esta errada', function (): void {
+teste('crm_whatsapp_ddi e crm_whatsapp_busca produzem os dois formatos', function (): void {
+    igual('5548998244494', crm_whatsapp_ddi('(48) 99824-4494'), '11 digitos ganham o 55');
+    igual('554836328743', crm_whatsapp_ddi('(48) 3632-8743'), '10 digitos ganham o 55');
+    igual('5548998244494', crm_whatsapp_ddi('5548998244494'), '13 digitos com 55 ficam como estao');
+    igual('5548998244494', crm_whatsapp_ddi('+55 (48) 99824-4494'), 'pontuacao e o mais sao ignorados');
+    igual('', crm_whatsapp_ddi('123'), 'curto demais nao vira telefone');
+    igual('', crm_whatsapp_ddi(''), 'vazio continua vazio');
+
+    igual('48998244494', crm_whatsapp_busca('(48) 99824-4494'), 'busca vai sem DDI');
+    igual('48998244494', crm_whatsapp_busca('5548998244494'), 'busca tira o 55 que veio');
+    igual('4836328743', crm_whatsapp_busca('(48) 3632-8743'));
+    igual('', crm_whatsapp_busca('123'));
+});
+
+teste('crm_payload_pessoa monta o objeto aninhado que o Agendor espera', function (): void {
     crm_teste_limpar();
+    crm_teste_config();
+
+    $p = crm_payload_pessoa(LEAD_EXEMPLO);
+
+    igual('Fabiano Hirtz', $p['name']);
+    igual('5548998244494', $p['contact']['whatsapp'], 'whatsapp COM DDI: e o que faz o link do CRM funcionar');
+    igual('(48) 99824-4494', $p['contact']['mobile'], 'mobile SEM DDI: e o que a busca encontra depois');
+    igual(2656389, $p['leadOrigin'], 'origem sempre Site');
+    igual(4187395, $p['category']);
+    igual('Tubarao / SC', $p['customFields']['cidade_da_obra']);
+    igual('Ate 3 meses', $p['customFields']['pretende_iniciar_a_obra_em']);
+    igual('flex-setembro', $p['customFields']['anuncio_de_origem'], 'utm_campaign vira anuncio de origem');
+    falso(array_key_exists('ownerUser', $p), 'responsavel vazio nao vai no payload');
+
+    /* Campo vazio nao pode ir como string vazia. */
+    $magro = crm_payload_pessoa(['nome' => 'So o nome', 'whatsapp' => '48999999999', 'busca' => 'Ainda estou pesquisando']);
+    falso(array_key_exists('cidade_da_obra', $magro['customFields'] ?? []), 'cidade vazia fica de fora');
+    falso(array_key_exists('pretende_iniciar_a_obra_em', $magro['customFields'] ?? []), 'prazo vazio fica de fora');
+    igual('direto', $magro['customFields']['anuncio_de_origem'], 'sem utm vira direto');
+
+    /* Sem utm_campaign, cai para utm_source. */
+    $comFonte = crm_payload_pessoa(['nome' => 'X', 'whatsapp' => '48999999999', 'utm_source' => 'instagram']);
+    igual('instagram', $comFonte['customFields']['anuncio_de_origem']);
+
+    /* Responsavel configurado entra. */
+    config_gravar('crm_responsavel', '989735');
+    igual('989735', crm_payload_pessoa(LEAD_EXEMPLO)['ownerUser']);
+    config_gravar('crm_responsavel', '');
+
+    /* Nome vazio tambem fica de fora, como qualquer outro campo vazio. */
+    falso(array_key_exists('name', crm_payload_pessoa(['whatsapp' => '48999999999'])), 'nome vazio nao vai no payload');
+});
+
+teste('crm_payload_pessoa nunca guarda o mobile com DDI, mesmo quando o visitante digita com 55', function (): void {
+    crm_teste_config();
+
+    /* Achado da revisao 2026-09-10: quando o bruto e a busca divergem (o
+       visitante digitou com o codigo do pais), guardar o bruto faz whatsapp
+       e mobile carregarem o mesmo 55 - e a busca, que e sempre sem DDI,
+       nunca mais reencontra essa pessoa. O mobile tem que sempre bater com
+       a chave que a busca usa. */
+    /* Lista de pares, nao mapa: '5548998244494' e puramente numerico e o PHP
+       converteria essa chave de array para int, o que quebraria a tipagem
+       string de crm_whatsapp_busca(). */
+    $casos = [
+        ['(48) 99824-4494', '(48) 99824-4494'],       // digitos do bruto ja batem com a busca: guarda formatado
+        ['+55 (48) 99824-4494', '48998244494'],        // bruto tem o 55 a mais que a busca: guarda normalizado
+        ['5548998244494', '48998244494'],              // idem, sem formatacao nenhuma
+        ['55 48 3632-8743', '4836328743'],              // fixo com DDI: idem
+    ];
+    foreach ($casos as [$entrada, $mobileEsperado]) {
+        $p = crm_payload_pessoa(['nome' => 'Teste', 'whatsapp' => $entrada]);
+        igual($mobileEsperado, $p['contact']['mobile'], "mobile de '{$entrada}'");
+
+        /* A invariante de verdade: os digitos do que foi gravado tem que
+           bater com a chave que a busca de duplicata usa, formatado ou nao.
+           Era isso que a regressao do DDI quebrava em silencio. */
+        $digitosGravados = preg_replace('/\D+/', '', (string) $p['contact']['mobile']) ?? '';
+        igual(crm_whatsapp_busca($entrada), $digitosGravados, "os digitos do mobile de '{$entrada}' batem com a busca");
+    }
+});
+
+teste('crm_titulo_negocio segue a convencao do funil', function (): void {
+    crm_teste_config();
+
+    igual('[SITE] - Ate 3 meses - Fabiano Hirtz', crm_titulo_negocio(LEAD_EXEMPLO));
+
+    $semPrazo = ['nome' => 'Maria Silva', 'busca' => 'Projeto exclusivo', 'prazo' => ''];
+    igual('[SITE] - Projeto exclusivo - Maria Silva', crm_titulo_negocio($semPrazo), 'sem prazo o meio usa a busca');
+
+    $semNada = ['nome' => 'Joao', 'busca' => '', 'prazo' => ''];
+    igual('[SITE] - Joao', crm_titulo_negocio($semNada), 'sem prazo e sem busca o titulo nao fica com traco solto');
+
+    $marcadorOutro = ['nome' => 'Ana', 'busca' => 'Modelo pronto', 'prazo' => 'Imediato'];
+    config_gravar('crm_marcador', '[SITE FLEX]');
+    igual('[SITE FLEX] - Imediato - Ana', crm_titulo_negocio($marcadorOutro), 'o marcador vem da config, com colchetes e tudo');
+    config_gravar('crm_marcador', '[SITE]');
+
+    $longo = ['nome' => str_repeat('Wenceslau ', 30), 'prazo' => 'Imediato'];
+    $titulo = crm_titulo_negocio($longo);
+    verdade(mb_strlen($titulo) <= 120, 'titulo cortado em 120: ' . mb_strlen($titulo));
+    verdade(str_starts_with($titulo, '[SITE] - Imediato - '), 'o corte tira do nome, nao do marcador nem do prazo');
+
+    /* O prefixo sozinho (marcador + prazo) maior que o teto tambem tem que
+       sair cortado: o $sobra do nome nao e o unico lugar que protege o
+       limite de 120. */
+    config_gravar('crm_marcador', str_repeat('X', 150));
+    $tituloGigante = crm_titulo_negocio(['nome' => 'A', 'prazo' => '']);
+    igual(120, mb_strlen($tituloGigante), 'prefixo maior que 120 sozinho ainda sai cortado em 120');
+    config_gravar('crm_marcador', '[SITE]');
+});
+
+teste('crm_descricao_negocio junta o lead num texto legivel e omite o vazio', function (): void {
+    $d = crm_descricao_negocio(LEAD_EXEMPLO);
+    contem('Modelo pronto do catalogo', $d);
+    contem('Compacta 39 m2', $d);
+    contem('Tubarao / SC', $d);
+    contem('Ate 3 meses', $d);
+    contem('Tenho terreno.', $d);
+    contem('/index.php', $d);
+    contem('instagram', $d, 'a campanha aparece na descricao');
+
+    $magro = crm_descricao_negocio(['nome' => 'So o nome', 'busca' => 'Ainda estou pesquisando']);
+    nao_contem('Cidade', $magro, 'linha de campo vazio nao aparece');
+    nao_contem('Mensagem', $magro);
+    contem('Ainda estou pesquisando', $magro);
+});
+
+teste('crm_enviar recusa sem fazer requisicao quando falta config', function (): void {
+    crm_teste_limpar();
+    crm_teste_config();
 
     config_gravar('crm_ativo', '0');
-    config_gravar('crm_endpoint', crm_falso_url('ok'));
-    config_gravar('crm_mapa_campos', MAPA_PADRAO);
     $r = crm_enviar(LEAD_EXEMPLO);
     falso($r['ok'], 'CRM desligado: ok false');
     igual('crm_desativado', $r['erro']);
     igual(0, $r['http']);
-    igual('', $r['resposta']);
 
     config_gravar('crm_ativo', '1');
-    config_gravar('crm_endpoint', '');
-    igual('crm_sem_endpoint', crm_enviar(LEAD_EXEMPLO)['erro'], 'endpoint vazio');
+    putenv('CASTELLO_AGENDOR_TOKEN');
+    igual('crm_sem_token', crm_enviar(LEAD_EXEMPLO)['erro'], 'ligado sem token e configuracao incompleta');
+    putenv('CASTELLO_AGENDOR_TOKEN=token-de-teste');
 
-    config_gravar('crm_endpoint', crm_falso_url('ok'));
-    config_gravar('crm_mapa_campos', 'isso nao e json');
-    igual('crm_mapa_invalido', crm_enviar(LEAD_EXEMPLO)['erro'], 'mapa quebrado');
-
-    config_gravar('crm_mapa_campos', MAPA_PADRAO);
-    config_gravar('crm_cabecalhos', '{quebrado');
-    igual('crm_cabecalhos_invalidos', crm_enviar(LEAD_EXEMPLO)['erro'], 'cabecalhos quebrados');
-    config_gravar('crm_cabecalhos', '{"Authorization":"Bearer segredo-123"}');
+    igual('crm_sem_telefone', crm_enviar(['nome' => 'Sem telefone', 'whatsapp' => '12'])['erro']);
 });
 
-teste('crm_enviar conversa com o CRM: sucesso, mapa, erro, resposta invalida e tempo', function (): void {
+teste('crm_enviar cria pessoa e negocio, e reencontra a pessoa na volta', function (): void {
     $servidor = crm_falso_subir();
-    verdade($servidor !== null, 'servidor do CRM falso subiu de novo');
+    verdade($servidor !== null, 'agendor falso subiu');
 
     try {
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_mapa_campos', MAPA_PADRAO);
-        config_gravar('crm_cabecalhos', '{"Authorization":"Bearer segredo-123"}');
+        crm_teste_limpar();
+        crm_teste_config();
 
-        /* CRM responde 200 */
-        config_gravar('crm_endpoint', crm_falso_url('ok'));
+        /* Primeira vez: busca vazia, cria pessoa, cria negocio. */
         $r = crm_enviar(LEAD_EXEMPLO);
-        verdade($r['ok'] === true, 'CRM 200: ok true: ' . json_encode($r));
-        igual(200, $r['http']);
-        verdade($r['erro'] === null, 'CRM 200: erro nulo');
-        contem('CRM-', $r['resposta'], 'CRM 200: guarda a resposta bruta');
+        verdade($r['ok'] === true, 'primeiro envio deu certo: ' . json_encode($r));
+        verdade(is_int($r['pessoa_id']) && $r['pessoa_id'] > 0, 'devolve o id da pessoa');
+        contem('web.agendor.com.br', (string) $r['negocio_url'], 'devolve o link do negocio');
 
-        /* o mapa de campos e o cabecalho chegaram certos */
-        config_gravar('crm_endpoint', crm_falso_url('eco'));
-        crm_enviar(LEAD_EXEMPLO);
-        $ultima = crm_falso_ultima();
-        $payload = json_decode($ultima['corpo'] ?? '', true);
-        igual('(48) 99824-4494', $payload['telefone'] ?? null, 'mapa: whatsapp virou telefone');
-        igual('Modelo pronto do catalogo', $payload['interesse'] ?? null, 'mapa: busca virou interesse');
-        igual('instagram', $payload['origem'] ?? null, 'mapa: utm_source virou origem');
-        igual('Tenho terreno.', $payload['observacao'] ?? null, 'mapa: mensagem virou observacao');
-        falso(array_key_exists('utm_medium', (array) $payload), 'mapa nao manda campo fora do mapa');
-        igual('Bearer segredo-123', $ultima['cabecalhos']['authorization'] ?? null, 'cabecalho de autorizacao chegou');
-        verdade(str_starts_with((string) ($ultima['cabecalhos']['content-type'] ?? ''), 'application/json'), 'content-type e json');
+        $chamadas = crm_falso_todas();
+        igual(3, count($chamadas), 'foram tres chamadas: busca, pessoa, negocio');
+        igual('GET', $chamadas[0]['metodo']);
+        contem('phone=48998244494', $chamadas[0]['uri'], 'a busca vai sem DDI');
+        igual('POST', $chamadas[1]['metodo']);
+        igual('/people', $chamadas[1]['caminho']);
+        igual('Token token-de-teste', $chamadas[1]['cabecalhos']['authorization'] ?? '', 'cabecalho de autenticacao');
+        verdade(str_contains($chamadas[2]['caminho'], '/deals'), 'terceira chamada cria o negocio');
 
-        /* campo do mapa que o lead nao tem vira string vazia, nao some */
-        crm_enviar(['nome' => 'So o nome', 'whatsapp' => '48999999999', 'busca' => 'Ainda pesquisando']);
-        $payloadMagro = json_decode(crm_falso_ultima()['corpo'] ?? '', true);
-        igual('', $payloadMagro['cidade'] ?? null, 'campo ausente vai vazio');
+        $corpoNegocio = json_decode($chamadas[2]['corpo'], true);
+        igual(904296, $corpoNegocio['funnel'] ?? null);
+        igual(1, $corpoNegocio['dealStage'] ?? null, 'a etapa vai como sequencia');
+        igual('[SITE] - Ate 3 meses - Fabiano Hirtz', $corpoNegocio['title'] ?? null);
 
-        /* CRM responde 500 */
-        config_gravar('crm_endpoint', crm_falso_url('erro500'));
-        $r = crm_enviar(LEAD_EXEMPLO);
-        falso($r['ok'], 'CRM 500: ok false');
-        igual(500, $r['http']);
-        igual('crm_http', $r['erro']);
-        contem('interno', $r['resposta'], 'CRM 500: guarda o corpo do erro');
+        $pessoaCriada = (int) $r['pessoa_id'];
 
-        /* CRM responde algo que nao e JSON */
-        config_gravar('crm_endpoint', crm_falso_url('invalido'));
-        $r = crm_enviar(LEAD_EXEMPLO);
-        falso($r['ok'], 'CRM invalido: ok false');
-        igual(200, $r['http']);
-        igual('crm_resposta_invalida', $r['erro']);
-        contem('Manutencao', $r['resposta'], 'CRM invalido: guarda o corpo pra diagnostico');
+        /* Segunda vez, mesmo telefone: a busca acha e NAO cria pessoa nova.
+           E o teste que pega a regressao do DDI descrita na secao 5.1. */
+        $r2 = crm_enviar(LEAD_EXEMPLO);
+        verdade($r2['ok'] === true, 'segundo envio deu certo');
+        igual($pessoaCriada, (int) $r2['pessoa_id'], 'reaproveitou a mesma pessoa');
 
-        /* CRM estoura o tempo */
-        config_gravar('crm_timeout', '2');
-        config_gravar('crm_endpoint', crm_falso_url('demora', ['seg' => 8]));
-        $inicio = microtime(true);
-        $r = crm_enviar(LEAD_EXEMPLO);
-        $gasto = microtime(true) - $inicio;
-        falso($r['ok'], 'CRM lento: ok false');
-        igual('crm_tempo', $r['erro']);
-        verdade($gasto < 6, 'CRM lento: desistiu perto do limite, gastou ' . round($gasto, 2) . 's');
-        config_gravar('crm_timeout', '10');
+        $depois = crm_falso_todas();
+        $criacoes = 0;
+        foreach ($depois as $c) {
+            if ($c['metodo'] === 'POST' && $c['caminho'] === '/people') {
+                $criacoes++;
+            }
+        }
+        igual(1, $criacoes, 'a pessoa foi criada uma vez so nas duas visitas');
     } finally {
         crm_falso_derrubar($servidor);
     }
+});
 
-    /* servidor fora do ar: erro de conexao, nao de tempo */
-    config_gravar('crm_endpoint', 'http://127.0.0.1:8799/nada');
-    $r = crm_enviar(LEAD_EXEMPLO);
-    falso($r['ok'], 'CRM fora do ar: ok false');
-    igual('crm_conexao', $r['erro']);
+teste('crm_enviar com crm_pessoa_id pula direto para o negocio', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $r = crm_enviar(LEAD_EXEMPLO + ['crm_pessoa_id' => 71397195]);
+        verdade($r['ok'] === true, 'envio com pessoa conhecida deu certo: ' . json_encode($r));
+        igual(71397195, $r['pessoa_id'], 'manteve a pessoa que ja tinha');
+
+        $chamadas = crm_falso_todas();
+        igual(1, count($chamadas), 'uma chamada so: nem busca nem criacao de pessoa');
+        contem('/people/71397195/deals', $chamadas[0]['caminho']);
+    } finally {
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('crm_enviar trata 401, 429, resposta invalida e busca que falha', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        /* A busca falhando (por qualquer motivo que nao seja tempo) e
+           tolerada: o conector segue e cria a pessoa e o negocio normalmente.
+           Escopado a GET (com @GET) para nao contaminar as chamadas de
+           criacao que vem depois - sem o escopo, o mesmo modo tambem faria a
+           criacao falhar, e o teste passaria mesmo se a busca NAO fosse
+           tolerada, so porque tudo falha do mesmo jeito. */
+        foreach (['auth401', 'limite429', 'erro500', 'invalido'] as $modo) {
+            crm_teste_limpar();
+            crm_teste_config();
+            putenv('CASTELLO_AGENDOR_TESTE_MODO=' . $modo . '@GET');
+
+            $r = crm_enviar(LEAD_EXEMPLO);
+            verdade($r['ok'] === true, "busca com {$modo} e tolerada, o envio continua: " . json_encode($r));
+            verdade(is_int($r['pessoa_id']) && $r['pessoa_id'] > 0, "{$modo}: cria pessoa e negocio depois da busca falhar");
+        }
+
+        /* Falha na CRIACAO da pessoa (POST /people) precisa aparecer de
+           verdade, com o codigo traduzido certo. Escopada a POST (@POST) e
+           com telefone proprio por caso, para a busca (que aqui roda de
+           verdade, sem falha) nunca achar uma pessoa de um caso anterior e
+           pular a criacao que o teste quer observar. */
+        $casos = [
+            'auth401'   => ['crm_auth', 401],
+            'limite429' => ['crm_limite', 429],
+            'erro500'   => ['crm_http', 500],
+            'invalido'  => ['crm_resposta_invalida', 200],
+        ];
+        $indice = 0;
+        foreach ($casos as $modo => [$erroEsperado, $httpEsperado]) {
+            crm_teste_limpar();
+            crm_teste_config();
+            putenv('CASTELLO_AGENDOR_TESTE_MODO=' . $modo . '@POST');
+
+            $indice++;
+            $leadFalha = ['nome' => 'Falha ' . $modo, 'whatsapp' => '489900000' . str_pad((string) $indice, 2, '0', STR_PAD_LEFT)];
+            $r = crm_enviar($leadFalha);
+            falso($r['ok'], "{$modo} na criacao: ok false");
+            igual($erroEsperado, $r['erro'], "{$modo}: erro traduzido");
+            igual($httpEsperado, $r['http'], "{$modo}: http");
+        }
+
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        crm_falso_derrubar($servidor);
+    }
+
+    /* Servidor fora do ar: erro de conexao, nao de tempo. */
+    crm_teste_limpar();
+    crm_teste_config();
+    config_gravar('crm_base', 'http://127.0.0.1:8799');
+    igual('crm_conexao', crm_enviar(LEAD_EXEMPLO)['erro']);
+});
+
+teste('crm_enviar respeita o orcamento de tempo do conjunto', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+        /* Atraso curto (2s) em TODA chamada, com orcamento (5s) menor que a
+           soma das tres (6s). Um atraso unico maior que o proprio orcamento
+           (como o teste antigo fazia) so prova o timeout POR CHAMADA, que o
+           conector antigo ja tinha - nao prova nada sobre o orcamento ser
+           compartilhado entre as tres. Com estes numeros a busca e a criacao
+           da pessoa acontecem de verdade (2 chamadas reais), e so o negocio
+           fica sem tempo de ser sequer tentado. */
+        config_gravar('crm_timeout', '5');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=demora:2');
+
+        $inicio = microtime(true);
+        $r = crm_enviar(LEAD_EXEMPLO);
+        $gasto = microtime(true) - $inicio;
+
+        falso($r['ok'], 'CRM lento: ok false');
+        igual('crm_tempo', $r['erro']);
+        verdade($gasto < 5, 'desistiu dentro do orcamento, gastou ' . round($gasto, 2) . 's');
+
+        $chamadas = crm_falso_todas();
+        igual(2, count($chamadas), 'busca e criacao consumiram o orcamento; o negocio nem chegou a ser tentado');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        config_gravar('crm_timeout', '10');
+        crm_falso_derrubar($servidor);
+    }
 });
 
 /* ================= lib/email.php: aviso de lead novo ================= */
@@ -429,6 +673,27 @@ teste('o corpo do e-mail traz o lead e o resultado do CRM', function (): void {
 
     $corpoOff = email_corpo_lead(LEAD_EMAIL, ['ok' => false, 'http' => 0, 'resposta' => '', 'erro' => 'crm_desativado']);
     contem('CRM: desligado', $corpoOff);
+});
+
+teste('o e-mail traz o prazo e o link do negocio no CRM', function (): void {
+    $comPrazo = LEAD_EMAIL + ['prazo' => 'Até 3 meses'];
+
+    $corpo = email_corpo_lead($comPrazo, [
+        'ok' => true, 'http' => 201, 'resposta' => '{"data":{"id":90000001}}', 'erro' => null,
+        'pessoa_id' => 71397195, 'negocio_url' => 'https://web.agendor.com.br/negocio/90000001',
+    ]);
+    contem('Quer iniciar a obra: Até 3 meses', $corpo);
+    contem('https://web.agendor.com.br/negocio/90000001', $corpo, 'link direto para o negocio');
+    contem('CRM: entregue', $corpo);
+
+    /* Sem link, o corpo nao pode ficar com rotulo orfao. */
+    $semLink = email_corpo_lead($comPrazo, [
+        'ok' => false, 'http' => 500, 'resposta' => 'interno', 'erro' => 'crm_http',
+        'pessoa_id' => null, 'negocio_url' => null,
+    ]);
+    nao_contem('web.agendor.com.br', $semLink);
+    contem('CRM: falhou', $semLink);
+    contem('crm_http', $semLink);
 });
 
 teste('email_lead_novo grava em arquivo no modo de teste e recusa destino invalido', function (): void {
@@ -492,6 +757,33 @@ teste('enviar_processar no caminho feliz grava, marca desativado e dispara o e-m
     igual(1, count(emails_gravados()), 'CRM desligado disparou o e-mail assim mesmo');
 });
 
+teste('quando algo excepcional acontece depois do lead gravado, o e-mail ainda sai antes da excecao subir', function (): void {
+    crm_teste_limpar();
+    emails_limpar();
+    putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+    config_gravar('crm_ativo', '0');
+    config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+    $antes = contar_leads();
+    putenv('CASTELLO_TESTE_FALHA_APOS_GRAVAR=1');
+
+    $excecaoSubiu = false;
+    try {
+        enviar_processar(post_valido());
+    } catch (Throwable $falha) {
+        $excecaoSubiu = true;
+        contem('falha forcada', $falha->getMessage(), 'a excecao original chega ate aqui, nao mascarada');
+    } finally {
+        putenv('CASTELLO_TESTE_FALHA_APOS_GRAVAR');
+    }
+
+    verdade($excecaoSubiu, 'a excecao tem que subir, nao ser engolida em silencio');
+    igual($antes + 1, contar_leads(), 'o lead foi gravado antes da excecao acontecer');
+    igual(1, count(emails_gravados()), 'o e-mail de aviso saiu mesmo com a excecao depois de gravar o lead');
+
+    putenv('CASTELLO_EMAIL_DIR');
+});
+
 teste('honeypot e time-trap respondem sucesso falso sem gravar', function (): void {
     $antes = contar_leads();
 
@@ -552,16 +844,25 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
     verdade($servidor !== null, 'servidor do CRM falso subiu para o enviar.php');
 
     try {
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_mapa_campos', MAPA_PADRAO);
-        config_gravar('crm_endpoint', crm_falso_url('ok'));
+        crm_teste_limpar();
+        crm_teste_config();
+        emails_limpar();
+        putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+        config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+        /* CRM em dia: busca, cria pessoa e cria negocio, tudo com sucesso. */
         $r = enviar_processar(post_valido());
         $linha = lead_por_id((int) ($r['corpo']['id'] ?? 0));
         igual('enviado', $linha['crm_status'], 'CRM 200: status enviado');
         igual(1, (int) $linha['crm_tentativas']);
-        contem('CRM-', (string) $linha['crm_resposta']);
+        contem('web.agendor.com.br', (string) $linha['crm_resposta'], 'guarda a resposta do negocio criado');
 
-        config_gravar('crm_endpoint', crm_falso_url('erro500'));
+        /* Falha na criacao do negocio: a busca (GET) acha a pessoa do envio
+           acima de verdade, entao so a criacao do negocio (POST) e derrubada
+           por erro500. O visitante nunca ve isso, so o status do lead
+           reflete o erro - e o pessoa_id continua gravado, porque a pessoa
+           foi encontrada antes do negocio falhar. */
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=erro500@POST');
         $r = enviar_processar(post_valido());
         igual(200, $r['http'], 'CRM 500: visitante ainda ve HTTP 200');
         verdade(($r['corpo']['ok'] ?? null) === true, 'CRM 500: visitante ainda ve ok true');
@@ -569,9 +870,13 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
         igual('erro', $linha['crm_status']);
         igual(1, (int) $linha['crm_tentativas']);
         contem('crm_http', (string) $linha['crm_resposta']);
+        verdade((int) $linha['crm_pessoa_id'] > 0, 'a pessoa achada na busca fica gravada mesmo o negocio falhando');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
 
+        /* CRM lento: o orcamento de tempo estoura e o visitante ainda assim
+           ve HTTP 200. */
         config_gravar('crm_timeout', '2');
-        config_gravar('crm_endpoint', crm_falso_url('demora', ['seg' => 8]));
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=demora:8');
         $r = enviar_processar(post_valido());
         igual(200, $r['http'], 'CRM lento: visitante ainda ve HTTP 200');
         $linha = lead_por_id((int) ($r['corpo']['id'] ?? 0));
@@ -579,10 +884,62 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
         contem('crm_tempo', (string) $linha['crm_resposta']);
         config_gravar('crm_timeout', '10');
     } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        putenv('CASTELLO_EMAIL_DIR');
         crm_falso_derrubar($servidor);
     }
 
     igual(contar_leads(), count(emails_gravados()), 'cada lead gravado gerou um e-mail');
+});
+
+teste('o id da pessoa fica gravado mesmo quando o negocio falha', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+        emails_limpar();
+        putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+        config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+        /* Caminho feliz: grava o id da pessoa. */
+        $r = enviar_processar(post_valido());
+        $linha = lead_por_id((int) $r['corpo']['id']);
+        igual('enviado', $linha['crm_status']);
+        verdade((int) $linha['crm_pessoa_id'] > 0, 'gravou o crm_pessoa_id');
+
+        /* lead_marcar_pessoa e idempotente e nao mexe no resto. */
+        lead_marcar_pessoa((int) $r['corpo']['id'], 12345);
+        $trocado = lead_por_id((int) $r['corpo']['id']);
+        igual(12345, (int) $trocado['crm_pessoa_id']);
+        igual('enviado', $trocado['crm_status'], 'marcar a pessoa nao mexe no status');
+    } finally {
+        putenv('CASTELLO_EMAIL_DIR');
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('o prazo entra na lista fechada e valor inventado nao derruba o lead', function (): void {
+    crm_teste_limpar();
+    emails_limpar();
+    putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+    config_gravar('crm_ativo', '0');
+    config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+    igual(['Imediato', 'Até 3 meses', 'Até 6 meses', 'Só pesquisando'], ENVIAR_PRAZOS, 'os quatro valores, literais como no CRM');
+
+    $r = enviar_processar(post_valido(['prazo' => 'Até 3 meses']));
+    igual('Até 3 meses', lead_por_id((int) $r['corpo']['id'])['prazo']);
+
+    /* Campo opcional: ausente passa. */
+    $r = enviar_processar(post_valido(['prazo' => '']));
+    igual(200, $r['http']);
+    igual('', lead_por_id((int) $r['corpo']['id'])['prazo']);
+
+    /* POST adulterado nao pode custar o lead: vira vazio, nao 422. */
+    $r = enviar_processar(post_valido(['prazo' => 'Semana que vem']));
+    igual(200, $r['http'], 'prazo fora da lista nao vira erro');
+    igual('', lead_por_id((int) $r['corpo']['id'])['prazo'], 'prazo fora da lista vira vazio');
+
     putenv('CASTELLO_EMAIL_DIR');
 });
 
@@ -591,7 +948,6 @@ teste('com o CRM ligado o visitante nunca ve falha de integracao', function (): 
 teste('leads_pendentes lista quem ainda precisa subir, do mais antigo ao mais novo', function (): void {
     crm_teste_limpar();
     config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
-    config_gravar('crm_mapa_campos', MAPA_PADRAO);
 
     $GLOBALS['ids'] = [
         'pendente'   => semear_lead('Pendente', 'pendente', 0),
@@ -625,8 +981,7 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
     verdade($servidor !== null, 'servidor do CRM falso subiu para o reenvio');
 
     try {
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_endpoint', crm_falso_url('ok'));
+        crm_teste_config();
         $r = leads_reenviar();
         igual(3, $r['tentados']);
         igual(3, $r['enviados']);
@@ -639,9 +994,8 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
         igual(LEAD_TENTATIVAS_MAX, (int) lead_por_id($ids['desistido'])['crm_tentativas'], 'nao mexeu em quem desistiu');
 
         crm_teste_limpar();
-        config_gravar('crm_ativo', '1');
-        config_gravar('crm_mapa_campos', MAPA_PADRAO);
-        config_gravar('crm_endpoint', crm_falso_url('erro500'));
+        crm_teste_config();
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=erro500');
         $idFalha = semear_lead('Vai falhar', 'pendente', 0);
         $r = leads_reenviar();
         igual(1, $r['tentados']);
@@ -657,6 +1011,95 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
             leads_reenviar();
         }
         igual(0, count(leads_pendentes()), 'depois do limite o lead sai da fila');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('leads_reenviar pausa entre um lead e outro, para nao rajar a API', function (): void {
+    $servidor = crm_falso_subir();
+    verdade($servidor !== null, 'servidor do CRM falso subiu para o teste de pausa');
+
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $ids = [
+            semear_lead('Pausa Um', 'pendente', 0),
+            semear_lead('Pausa Dois', 'pendente', 0),
+            semear_lead('Pausa Tres', 'pendente', 0),
+        ];
+        /* Telefones diferentes, para as tres buscas nao se confundirem. */
+        foreach ($ids as $i => $id) {
+            db()->prepare('UPDATE leads SET whatsapp = ? WHERE id = ?')
+                ->execute(['4899000010' . $i, $id]);
+        }
+
+        $inicio = microtime(true);
+        $r = leads_reenviar();
+        $gasto = microtime(true) - $inicio;
+
+        igual(3, $r['tentados']);
+        igual(3, $r['enviados']);
+        /* Duas pausas entre tres leads. Margem folgada (80% do valor
+           nominal) para nao dar falso negativo por variacao de agenda do SO. */
+        $minimoEsperado = 2 * (LEAD_REENVIO_PAUSA_US / 1000000) * 0.8;
+        verdade($gasto >= $minimoEsperado, "reenvio de 3 leads levou {$gasto}s, esperado pelo menos {$minimoEsperado}s de pausa");
+    } finally {
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('leads_reenviar nao consome tentativa quando o CRM responde com limite de requisicoes', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $id = semear_lead('Vai tomar 429', 'erro', 2);
+
+        /* Escopado a POST: a busca (GET) roda normal e nao acha ninguem: so
+           a criacao da pessoa esbarra no 429, que e o que crm_enviar traduz
+           para crm_limite. */
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=limite429@POST');
+        $r = leads_reenviar();
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+
+        igual(1, $r['tentados']);
+        igual(0, $r['enviados']);
+        igual(1, $r['falhas']);
+
+        $lead = lead_por_id($id);
+        igual('erro', $lead['crm_status']);
+        igual(2, (int) $lead['crm_tentativas'], 'crm_limite nao consome tentativa: continua em 2, nao virou 3');
+        contem('crm_limite', (string) $lead['crm_resposta']);
+
+        $pendentes = array_column(leads_pendentes(), 'id');
+        verdade(in_array($id, array_map('intval', $pendentes), true), 'o lead rejeitado por limite continua na fila');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('o reenvio de um lead com pessoa conhecida nao cria pessoa de novo', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $id = semear_lead('Meio caminho', 'erro', 1);
+        lead_marcar_pessoa($id, 71397195);
+
+        $r = leads_reenviar();
+        igual(1, $r['tentados']);
+        igual(1, $r['enviados']);
+
+        foreach (crm_falso_todas() as $chamada) {
+            falso($chamada['metodo'] === 'POST' && $chamada['caminho'] === '/people', 'nao criou pessoa nova');
+        }
     } finally {
         crm_falso_derrubar($servidor);
     }

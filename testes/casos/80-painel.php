@@ -354,10 +354,11 @@ teste('painel_textos_gravar atualiza so as chaves que existem em blocos', functi
     painel_textos_gravar(['hero_titulo' => 'A casa dos seus sonhos']);
 });
 
-teste('painel_config_campos cobre as dez chaves do contrato', function (): void {
+teste('painel_config_campos cobre as chaves do contrato', function (): void {
     igual(
-        ['videos_na_home', 'email_aviso', 'email_dominio', 'crm_ativo', 'crm_endpoint',
-         'crm_metodo', 'crm_cabecalhos', 'crm_mapa_campos', 'crm_timeout', 'reenvio_chave'],
+        ['videos_na_home', 'email_aviso', 'email_dominio', 'crm_ativo', 'crm_funil',
+         'crm_etapa', 'crm_origem', 'crm_categoria', 'crm_marcador', 'crm_responsavel',
+         'crm_timeout', 'reenvio_chave'],
         array_keys(painel_config_campos())
     );
 });
@@ -368,10 +369,12 @@ teste('painel_config_validar aceita uma configuracao boa', function (): void {
         'email_aviso'     => 'contato@castellomadeiras.com.br',
         'email_dominio'   => 'castellomadeiras.com.br',
         'crm_ativo'       => '1',
-        'crm_endpoint'    => 'https://crm.exemplo.com.br/api/leads',
-        'crm_metodo'      => 'POST',
-        'crm_cabecalhos'  => '{"Authorization":"Bearer abc"}',
-        'crm_mapa_campos' => '{"nome":"nome","whatsapp":"telefone"}',
+        'crm_funil'       => '904296',
+        'crm_etapa'       => '1',
+        'crm_origem'      => '2656389',
+        'crm_categoria'   => '4187395',
+        'crm_marcador'    => '[SITE]',
+        'crm_responsavel' => '',
         'crm_timeout'     => '8',
         'reenvio_chave'   => str_repeat('a1b2', 8),
     ]);
@@ -380,14 +383,15 @@ teste('painel_config_validar aceita uma configuracao boa', function (): void {
     igual('6', $r['valores']['videos_na_home']);
     igual('1', $r['valores']['crm_ativo']);
     igual('8', $r['valores']['crm_timeout']);
-    igual('{"Authorization":"Bearer abc"}', $r['valores']['crm_cabecalhos']);
+    igual('904296', $r['valores']['crm_funil']);
 });
 
 teste('crm_timeout nunca passa de 10, porque max_execution_time e 60', function (): void {
     $base = [
         'videos_na_home' => '8', 'email_aviso' => 'a@b.com', 'email_dominio' => 'b.com',
-        'crm_ativo' => '0', 'crm_endpoint' => '', 'crm_metodo' => 'POST',
-        'crm_cabecalhos' => '{}', 'crm_mapa_campos' => '{}', 'reenvio_chave' => str_repeat('c', 32),
+        'crm_ativo' => '0', 'crm_funil' => '904296', 'crm_etapa' => '1',
+        'crm_origem' => '2656389', 'crm_categoria' => '4187395', 'crm_marcador' => '[SITE]',
+        'crm_responsavel' => '', 'reenvio_chave' => str_repeat('c', 32),
     ];
 
     igual('10', painel_config_validar($base + ['crm_timeout' => '30'])['valores']['crm_timeout']);
@@ -398,8 +402,9 @@ teste('crm_timeout nunca passa de 10, porque max_execution_time e 60', function 
 teste('reenvio_chave em branco gera uma chave nova em vez de apagar', function (): void {
     $base = [
         'videos_na_home' => '8', 'email_aviso' => 'a@b.com', 'email_dominio' => 'b.com',
-        'crm_ativo' => '0', 'crm_endpoint' => '', 'crm_metodo' => 'POST',
-        'crm_cabecalhos' => '{}', 'crm_mapa_campos' => '{}', 'crm_timeout' => '10',
+        'crm_ativo' => '0', 'crm_funil' => '904296', 'crm_etapa' => '1',
+        'crm_origem' => '2656389', 'crm_categoria' => '4187395', 'crm_marcador' => '[SITE]',
+        'crm_responsavel' => '', 'crm_timeout' => '10',
     ];
 
     $nova = painel_config_validar($base + ['reenvio_chave' => ''])['valores']['reenvio_chave'];
@@ -409,32 +414,39 @@ teste('reenvio_chave em branco gera uma chave nova em vez de apagar', function (
     igual($mantida, painel_config_validar($base + ['reenvio_chave' => $mantida])['valores']['reenvio_chave']);
 });
 
-teste('painel_config_validar recusa numero fora da faixa, e-mail torto e JSON quebrado', function (): void {
+teste('painel_config_validar recusa numero fora da faixa, e-mail torto e marcador vazio', function (): void {
     $r = painel_config_validar([
         'videos_na_home'  => '0',
         'email_aviso'     => 'nao-e-email',
         'email_dominio'   => 'nao vale espaco',
         'crm_ativo'       => '0',
-        'crm_endpoint'    => 'isso nao e url',
-        'crm_metodo'      => 'DELETE',
-        'crm_cabecalhos'  => '{quebrado',
-        'crm_mapa_campos' => '',
+        'crm_funil'       => 'abc',
+        'crm_etapa'       => '0',
+        'crm_origem'      => '2656389',
+        'crm_categoria'   => '4187395',
+        'crm_marcador'    => '',
+        'crm_responsavel' => '',
         'crm_timeout'     => '10',
         'reenvio_chave'   => str_repeat('e', 32),
     ]);
 
     igual(
-        ['videos_na_home', 'email_aviso', 'email_dominio', 'crm_endpoint', 'crm_cabecalhos'],
+        ['videos_na_home', 'email_aviso', 'email_dominio', 'crm_funil', 'crm_etapa', 'crm_marcador'],
         array_keys($r['erros'])
     );
     contem('1 a 24', $r['erros']['videos_na_home']);
     contem('e-mail', $r['erros']['email_aviso']);
     contem('domínio', $r['erros']['email_dominio']);
-    contem('https://', $r['erros']['crm_endpoint']);
-    contem('JSON', $r['erros']['crm_cabecalhos']);
+});
 
-    igual('POST', $r['valores']['crm_metodo'], 'metodo fora da lista cai em POST');
-    igual('{}', $r['valores']['crm_mapa_campos'], 'JSON vazio vira objeto vazio');
+teste('crm_etapa acima do teto e recusado', function (): void {
+    $r = painel_config_validar([
+        'videos_na_home' => '8', 'email_aviso' => 'a@b.com', 'email_dominio' => 'b.com',
+        'crm_ativo' => '0', 'crm_funil' => '904296', 'crm_etapa' => '150',
+        'crm_origem' => '2656389', 'crm_categoria' => '4187395', 'crm_marcador' => '[SITE]',
+        'crm_responsavel' => '', 'crm_timeout' => '10', 'reenvio_chave' => str_repeat('a', 32),
+    ]);
+    verdade(isset($r['erros']['crm_etapa']), 'crm_etapa 150 ultrapassa max 99 e vira erro');
 });
 
 teste('config gravada muda o que a home mostra', function (): void {
@@ -443,10 +455,12 @@ teste('config gravada muda o que a home mostra', function (): void {
         'email_aviso'     => 'contato@castellomadeiras.com.br',
         'email_dominio'   => 'castellomadeiras.com.br',
         'crm_ativo'       => '0',
-        'crm_endpoint'    => '',
-        'crm_metodo'      => 'POST',
-        'crm_cabecalhos'  => '{}',
-        'crm_mapa_campos' => '{"nome":"nome"}',
+        'crm_funil'       => '904296',
+        'crm_etapa'       => '1',
+        'crm_origem'      => '2656389',
+        'crm_categoria'   => '4187395',
+        'crm_marcador'    => '[SITE]',
+        'crm_responsavel' => '',
         'crm_timeout'     => '10',
         'reenvio_chave'   => (string) config_ler('reenvio_chave'),
     ]);
@@ -538,4 +552,54 @@ teste('a sidebar lista as dez telas, marca so a atual e leva para sair', functio
 
     contem('sair.php', $html, 'a sidebar leva para sair');
     contem('id="pLado"', $html, 'a gaveta precisa de id para o botao do celular apontar');
+});
+
+teste('a tela de config oferece os campos do Agendor e nao o token', function (): void {
+    $campos = painel_config_campos();
+    foreach (['crm_ativo', 'crm_funil', 'crm_etapa', 'crm_origem', 'crm_categoria', 'crm_marcador', 'crm_responsavel'] as $chave) {
+        verdade(isset($campos[$chave]), 'painel oferece ' . $chave);
+    }
+    foreach (['crm_endpoint', 'crm_metodo', 'crm_cabecalhos', 'crm_mapa_campos'] as $morta) {
+        falso(isset($campos[$morta]), 'painel nao oferece mais ' . $morta);
+    }
+    falso(isset($campos['crm_token']), 'o token nunca entra no banco, logo nunca no painel');
+    falso(isset($campos['crm_base']), 'crm_base e valvula tecnica, nao vai para o cliente');
+});
+
+teste('a validacao da config aceita id numerico e recusa lixo', function (): void {
+    $r = painel_config_validar([
+        'videos_na_home' => '8',
+        'email_aviso'    => 'contato@castellomadeiras.com.br',
+        'email_dominio'  => 'castellomadeiras.com.br',
+        'crm_ativo'      => '1',
+        'crm_funil'      => '904296',
+        'crm_etapa'      => '1',
+        'crm_origem'     => '2656389',
+        'crm_categoria'  => '4187395',
+        'crm_marcador'   => '[SITE]',
+        'crm_responsavel' => '',
+        'crm_timeout'    => '10',
+        'reenvio_chave'  => str_repeat('a', 32),
+    ]);
+    igual([], $r['erros'], 'config boa passa: ' . json_encode($r['erros']));
+    igual('904296', $r['valores']['crm_funil']);
+    igual('', $r['valores']['crm_responsavel'], 'responsavel vazio e valido');
+
+    $ruim = painel_config_validar([
+        'videos_na_home' => '8',
+        'email_aviso'    => 'contato@castellomadeiras.com.br',
+        'email_dominio'  => 'castellomadeiras.com.br',
+        'crm_ativo'      => '1',
+        'crm_funil'      => 'abc',
+        'crm_etapa'      => '0',
+        'crm_origem'     => '2656389',
+        'crm_categoria'  => '4187395',
+        'crm_marcador'   => '',
+        'crm_responsavel' => '',
+        'crm_timeout'    => '10',
+        'reenvio_chave'  => str_repeat('a', 32),
+    ]);
+    verdade(isset($ruim['erros']['crm_funil']), 'funil nao numerico e erro');
+    verdade(isset($ruim['erros']['crm_etapa']), 'etapa zero e erro: sequencia comeca em 1');
+    verdade(isset($ruim['erros']['crm_marcador']), 'marcador vazio e erro');
 });

@@ -56,6 +56,62 @@ if (is_file(CASTELLO_CONFIG . '/segredos.php')) {
 }
 
 /**
+ * Colunas que o schema.sql cria mas que um banco antigo pode nao ter.
+ * tabela => coluna => tipo da coluna no ALTER TABLE.
+ */
+const CASTELLO_COLUNAS_NOVAS = [
+    'leads' => [
+        'prazo'         => 'TEXT',
+        'crm_pessoa_id' => 'INTEGER',
+    ],
+];
+
+/**
+ * Acrescenta as colunas que faltam num banco que ja existe.
+ *
+ * CREATE TABLE IF NOT EXISTS nao mexe em tabela ja criada, entao um banco em
+ * producao nunca ganharia coluna nova so pelo schema.sql. Isto mora aqui, e
+ * nao no migrar.php, porque o migrar.php e apagado do servidor depois da
+ * instalacao e a migracao nunca chegaria la.
+ *
+ * Roda em toda conexao, entao precisa ser barato e idempotente.
+ *
+ * @return array<int,string> nomes das colunas acrescentadas nesta chamada
+ */
+function db_garantir_colunas(PDO $pdo): array
+{
+    $acrescentadas = [];
+
+    foreach (CASTELLO_COLUNAS_NOVAS as $tabela => $colunas) {
+        $info = $pdo->query('PRAGMA table_info(' . $tabela . ')')->fetchAll(PDO::FETCH_ASSOC);
+        if ($info === []) {
+            continue; // tabela ainda nao existe; o schema.sql cuida dela
+        }
+        $existentes = array_column($info, 'name');
+
+        foreach ($colunas as $coluna => $tipo) {
+            if (in_array($coluna, $existentes, true)) {
+                continue;
+            }
+            try {
+                $pdo->exec('ALTER TABLE ' . $tabela . ' ADD COLUMN ' . $coluna . ' ' . $tipo);
+                $acrescentadas[] = $coluna;
+            } catch (PDOException $ex) {
+                // Outra requisicao pode ter acrescentado a coluna entre o PRAGMA e o ALTER,
+                // especialmente logo apos o deploy. SQLite responde com "duplicate column name".
+                if (strpos($ex->getMessage(), 'duplicate column name') === false) {
+                    throw $ex; // erro de disco, permissao ou outro; precisa subir
+                }
+                // Se foi coluna duplicada, a coluna ja existe: outra requisicao venceu nesta.
+                // Nao incluimos na lista de acrescentadas, porque nao foi esta chamada.
+            }
+        }
+    }
+
+    return $acrescentadas;
+}
+
+/**
  * Chaves de config criadas na primeira abertura do banco. Valores do contrato.
  * reenvio_chave nao esta aqui porque e sorteada na instalacao.
  */
@@ -63,11 +119,18 @@ const CASTELLO_CONFIG_PADRAO = [
     'videos_na_home'  => '8',
     'email_aviso'     => 'contato@castellomadeiras.com.br',
     'email_dominio'   => 'castellomadeiras.com.br',
+    /* Os ids sao os da conta real da Castello, lidos em 2026-09-10. crm_etapa
+       e a SEQUENCIA da etapa Contato, nao o id 3845540: a API pede sequencia.
+       crm_base nao aparece no painel; existe para o teste apontar o conector
+       ao servidor falso. */
     'crm_ativo'       => '0',
-    'crm_endpoint'    => '',
-    'crm_metodo'      => 'POST',
-    'crm_cabecalhos'  => '{}',
-    'crm_mapa_campos' => '{"nome":"nome","whatsapp":"telefone","busca":"interesse","modelo":"modelo","cidade":"cidade","mensagem":"observacao","utm_source":"origem","utm_campaign":"campanha","pagina":"pagina"}',
+    'crm_base'        => 'https://api.agendor.com.br/v3',
+    'crm_funil'       => '904296',
+    'crm_etapa'       => '1',
+    'crm_origem'      => '2656389',
+    'crm_categoria'   => '4187395',
+    'crm_marcador'    => '[SITE]',
+    'crm_responsavel' => '',
     'crm_timeout'     => '10',
 ];
 
@@ -97,6 +160,8 @@ function db(): PDO
         throw new RuntimeException('nao consegui ler lib/schema.sql');
     }
     $pdo->exec($schema);
+
+    db_garantir_colunas($pdo);
 
     $inserir = $pdo->prepare('INSERT OR IGNORE INTO config (chave, valor) VALUES (?, ?)');
     foreach (CASTELLO_CONFIG_PADRAO as $chave => $valor) {

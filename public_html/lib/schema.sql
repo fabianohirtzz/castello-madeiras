@@ -113,6 +113,7 @@ CREATE TABLE IF NOT EXISTS leads (
   modelo               TEXT,
   cidade               TEXT,
   mensagem             TEXT,
+  prazo                TEXT,
   pagina               TEXT,
   referrer             TEXT,
   utm_source           TEXT,
@@ -125,7 +126,8 @@ CREATE TABLE IF NOT EXISTS leads (
                        CHECK (crm_status IN ('pendente','enviado','erro','desativado')),
   crm_tentativas       INTEGER NOT NULL DEFAULT 0,
   crm_ultima_tentativa TEXT,
-  crm_resposta         TEXT
+  crm_resposta         TEXT,
+  crm_pessoa_id        INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_modelos_lista   ON modelos (modalidade, ativo, ordem);

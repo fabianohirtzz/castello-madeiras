@@ -6,5 +6,9 @@
 // de comando. Vazia significa acesso web bloqueado, que e o padrao seguro.
 define('CASTELLO_MIGRAR_CHAVE', '');
 
-// Credenciais do CRM e do envio de e-mail entram aqui quando a Frente 3
-// precisar. Ate la, este arquivo so carrega a chave acima.
+// Token da conta do Agendor, de Menu > Integracoes dentro do CRM.
+//
+// Mora aqui, e nao na tabela config, porque o backup do painel empacota o
+// banco: um token no banco viajaria dentro de todo zip que o cliente baixa.
+// Vazio com o CRM ligado devolve o erro crm_sem_token.
+define('CASTELLO_AGENDOR_TOKEN', '');
