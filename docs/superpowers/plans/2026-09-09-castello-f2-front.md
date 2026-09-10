@@ -1147,7 +1147,7 @@ Entrega a seção 4 da spec 7.2, que é o coração da página: deixar claro o q
 
 **Copy provisória.** Os cinco passos e a lista do que fica por conta do cliente entram no banco como `passos` com contexto `flex` e são editáveis pelo painel.
 
-- [ ] **Step 1: Inserir a seção**
+- [x] **Step 1: Inserir a seção**
 
 Em `front/flex.html`, logo depois de
 
@@ -1226,7 +1226,7 @@ cole:
   <div class="facet facet--bone" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Acrescentar o CSS na região FASE 2**
+- [x] **Step 2: Acrescentar o CSS na região FASE 2**
 
 ```css
 /* ---------- Passo a passo da Flex ---------- */
@@ -1301,7 +1301,7 @@ cole:
 .depois__nota a:hover{text-decoration:underline}
 ```
 
-- [ ] **Step 3: Verificar no navegador**
+- [x] **Step 3: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#passos-flex` e `browser_take_screenshot` em `f2-t7-1440.png`. Olhe: cinco cards brancos numa faixa creme, cada um com o número em madeira; abaixo deles a pílula vermelha escura "A entrega da Castello termina aqui" com as duas linhas vermelhas saindo dos lados; depois o bloco "O que fica por sua conta" com quatro itens; e a nota final com o link para a Casa Pronta.
@@ -1315,7 +1315,7 @@ cole:
 10. `browser_press_key` `Tab` até esse link e `browser_snapshot`. Esperado: anel de foco vermelho visível.
 11. `browser_click` no link "Passo a passo" da nav. Esperado: rola até a seção com o título visível.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"

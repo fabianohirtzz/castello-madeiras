@@ -1172,3 +1172,77 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .pagehero__actions{flex-direction:column;align-items:stretch}
   .pagehero__actions .btn{width:100%}
 }
+
+/* ---------- Passo a passo da Flex ---------- */
+/* cinco passos numa linha só no desktop; auto-fit deixava o 05 órfão numa segunda linha */
+.epasso__grid{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:clamp(14px,2vw,24px);
+}
+@media(max-width:1180px){.epasso__grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.epasso__grid{grid-template-columns:1fr}}
+.epasso{
+  display:flex;flex-direction:column;
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-soft);padding:26px 24px 28px;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+.epasso:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
+.epasso__num{
+  font-family:var(--font-display);font-weight:800;font-size:2.1rem;
+  line-height:1;letter-spacing:-.02em;color:var(--wood);
+}
+.epasso h3{
+  margin-top:14px;font-family:var(--font-display);font-weight:700;
+  font-size:1.16rem;letter-spacing:-.01em;line-height:1.18;
+}
+.epasso p{margin-top:10px;color:var(--muted);font-size:.98rem;line-height:1.55}
+
+/* ---------- A linha que separa o que é nosso do que é seu ---------- */
+.limite{display:flex;align-items:center;gap:16px;margin:clamp(36px,5.5vh,58px) 0 clamp(28px,4vh,40px)}
+.limite::before,.limite::after{
+  content:"";flex:1;height:2px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+}
+.limite__txt{
+  flex:none;display:inline-flex;align-items:center;gap:10px;
+  padding:13px 22px;border-radius:999px;text-align:center;
+  background:var(--red-deep);color:#fff;
+  font-family:var(--font-display);font-weight:700;font-size:.98rem;line-height:1.3;
+  box-shadow:0 14px 32px -14px rgba(179,20,27,.7);
+}
+.limite__txt svg{
+  width:19px;height:19px;flex:none;fill:none;stroke:currentColor;
+  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+}
+@media(max-width:640px){
+  .limite{flex-direction:column;gap:14px}
+  .limite::before,.limite::after{width:100%;flex:none}
+  .limite__txt{font-size:.92rem;padding:12px 18px}
+}
+
+/* ---------- O que fica por conta do cliente ---------- */
+.depois__head{max-width:62ch;margin-bottom:clamp(22px,3.2vh,32px)}
+.depois__title{
+  font-family:var(--font-display);font-weight:800;
+  font-size:clamp(1.4rem,2.8vw,2rem);letter-spacing:-.02em;line-height:1.1;
+}
+.depois__text{margin-top:12px;color:var(--muted);font-size:1.02rem;line-height:1.6}
+.depois__grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:clamp(12px,1.8vw,20px);
+}
+.depois__item{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-md);
+  padding:20px 22px;color:var(--muted);font-size:.96rem;line-height:1.5;
+}
+.depois__item strong{
+  display:block;margin-bottom:6px;color:var(--ink);
+  font-family:var(--font-display);font-weight:700;font-size:1.04rem;
+}
+.depois__nota{
+  margin-top:clamp(24px,3.4vh,34px);max-width:62ch;
+  color:var(--muted);font-size:1rem;line-height:1.6;
+}
+.depois__nota a{color:var(--red-deep);font-weight:600}
+.depois__nota a:hover{text-decoration:underline}
