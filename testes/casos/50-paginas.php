@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once site() . '/lib/conteudo.php';
+require_once site() . '/lib/auth.php';
 
 banco_com_conteudo();
 
@@ -14,7 +15,10 @@ teste('index.php renderiza a home identica ao index.html original', function ():
     verdade($velho !== false, 'testes/base/home-original.html precisa existir');
 
     // Sem excecao de alt: a unica diferenca legitima e o caminho da midia, que
-    // norm() desfaz. Todo o resto sai byte a byte igual ao prototipo.
+    // norm() desfaz, e o campo oculto de csrf, que tem teste proprio abaixo.
+    // Todo o resto sai byte a byte igual ao prototipo.
+    $novo = (string) preg_replace('#\s*<input type="hidden" name="csrf" value="" />#u', '', $novo);
+
     igual(norm((string) $velho), norm($novo));
 });
 
@@ -120,4 +124,58 @@ teste('flex.php monta as oito secoes assim que o conteudo Flex existir', functio
     contem('id="faqTabs"', $html);
     contem('id="processSteps"', $html);
     contem('<source src="uploads/videos/insta-01.mp4" type="video/mp4" />', $html);
+});
+
+teste('csrf.php responde JSON com um token utilizavel', function (): void {
+    $saida = render(site() . '/csrf.php');
+
+    $dados = json_decode($saida, true);
+    verdade(is_array($dados), 'a resposta precisa ser JSON, obtida: ' . mb_substr($saida, 0, 120));
+    verdade(isset($dados['token']), 'o JSON precisa ter a chave token');
+    verdade((bool) preg_match('/^[0-9a-f]{64}$/', (string) $dados['token']),
+        'token esperado: 64 caracteres hexadecimais, obtido ' . var_export($dados['token'], true));
+
+    verdade(csrf_validar((string) $dados['token']), 'o token entregue precisa passar em csrf_validar');
+    igual(['token'], array_keys($dados), 'a resposta nao devolve mais nada alem do token');
+});
+
+teste('o token e o mesmo dentro da sessao e muda quando a sessao muda', function (): void {
+    $primeiro = json_decode(render(site() . '/csrf.php'), true)['token'];
+    $segundo  = json_decode(render(site() . '/csrf.php'), true)['token'];
+    igual($primeiro, $segundo, 'na mesma sessao o token nao pode mudar a cada chamada');
+
+    // Simula outro visitante: a sessao e zerada e o token e sorteado de novo.
+    $_SESSION = [];
+    $outro = json_decode(render(site() . '/csrf.php'), true)['token'];
+
+    verdade($outro !== $primeiro, 'visitantes diferentes precisam receber tokens diferentes');
+    verdade(csrf_validar($outro));
+    falso(csrf_validar($primeiro), 'o token da sessao antiga deixa de valer');
+});
+
+teste('csrf.php manda os cabecalhos certos', function (): void {
+    $fonte = (string) file_get_contents(site() . '/csrf.php');
+
+    contem("Content-Type: application/json; charset=utf-8", $fonte);
+    contem("Cache-Control: private, no-store", $fonte);
+    contem('auth_iniciar()', $fonte);
+    contem('csrf_token()', $fonte);
+});
+
+teste('nenhuma pagina do site imprime o token no HTML', function (): void {
+    foreach ([site() . '/index.php', site() . '/flex.php'] as $pagina) {
+        $html = render($pagina);
+
+        nao_contem('csrf-token', $html, 'metatag de token em ' . basename($pagina));
+        nao_contem('Cache-Control', (string) file_get_contents($pagina),
+            basename($pagina) . ' precisa continuar cacheavel por inteiro');
+    }
+});
+
+teste('o formulario do modal tem o campo oculto de csrf, vazio para o JS preencher', function (): void {
+    foreach ([site() . '/index.php', site() . '/flex.php'] as $pagina) {
+        $html = render($pagina);
+        contem('<input type="hidden" name="csrf" value="" />', $html, basename($pagina));
+        igual(1, substr_count($html, 'name="csrf"'), 'um campo csrf so, em ' . basename($pagina));
+    }
 });

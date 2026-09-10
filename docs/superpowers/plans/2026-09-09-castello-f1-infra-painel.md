@@ -3507,7 +3507,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 Por isso `index.php` e `flex.php` **não mudam** nesta tarefa: nada de metatag, nada de `auth_iniciar()`, nada de `Cache-Control`.
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao topo de `testes/casos/50-paginas.php`, logo depois do `require_once` que já está lá:
 
@@ -3590,12 +3590,12 @@ teste('index.php renderiza a home identica ao index.html original', function ():
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: os testes do `csrf.php` falham com `Failed opening required .../public_html/csrf.php`, e o do campo oculto falha porque o campo ainda não existe. O teste de identidade continua passando, já que o `preg_replace` não encontra nada para tirar.
 
-- [ ] **Passo 3: Escrever o `csrf.php`**
+- [x] **Passo 3: Escrever o `csrf.php`**
 
 Crie `public_html/csrf.php` com exatamente o conteúdo definido no contrato:
 
@@ -3613,7 +3613,7 @@ header('Cache-Control: private, no-store');
 echo json_encode(['token' => csrf_token()]);
 ```
 
-- [ ] **Passo 4: Acrescentar o campo oculto ao formulário do modal**
+- [x] **Passo 4: Acrescentar o campo oculto ao formulário do modal**
 
 Em `public_html/partials/modal.php`, dentro do `<form class="qform" id="quoteForm" novalidate>`, logo antes da linha do honeypot, acrescente:
 
@@ -3625,7 +3625,7 @@ O valor fica vazio de propósito: quem preenche é o `js/formulario.js` da Frent
 
 O honeypot continua sendo `_gotcha` neste arquivo. O contrato define `empresa` como nome final, mas quem troca é a costura, junto com a limpeza do bloco antigo de formulário no `js/main.js`. Até lá o `enviar.php` aceita os dois nomes.
 
-- [ ] **Passo 5: Rodar e ver passar**
+- [x] **Passo 5: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: 13 ok, 0 falha, 0 pulado.
@@ -3633,7 +3633,7 @@ Esperado: 13 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 6: Conferir no navegador**
+- [x] **Passo 6: Conferir no navegador**
 
 Com `php -S localhost:8000 -t public_html` no ar:
 
@@ -3646,7 +3646,7 @@ Com `php -S localhost:8000 -t public_html` no ar:
 7. Confira que o `#quoteForm` tem `<input type="hidden" name="csrf" value="">`, vazio.
 8. Repita os passos 5 e 7 em `http://localhost:8000/flex.php`.
 
-- [ ] **Passo 7: Commit**
+- [x] **Passo 7: Commit**
 
 ```bash
 git add public_html/csrf.php public_html/partials/modal.php testes/casos/50-paginas.php

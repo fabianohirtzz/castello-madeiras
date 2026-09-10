@@ -31,6 +31,7 @@ $modal_videos  = count(videos());
       </div>
 
       <form class="qform" id="quoteForm" novalidate>
+        <input type="hidden" name="csrf" value="" />
         <!-- honeypot anti-spam: humanos não veem, não preencher -->
         <input type="text" name="_gotcha" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
