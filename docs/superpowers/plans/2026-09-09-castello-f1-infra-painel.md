@@ -2332,7 +2332,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: todos os parciais da Tarefa 5; `modelos()`, `videos()`, `bloco()`, `e()`.
 - Produz: `partials/nav.php` (sprite do Google, nav e drawer, não espera nada), `partials/rodape.php` (rodapé e contato, não espera nada), `partials/modal.php` (modal de orçamento, lightbox dos reels e botão flutuante, não espera nada), `index.php` e `flex.php`.
 
-- [ ] **Passo 1: Guardar a home original como referência e escrever o teste que falha**
+- [x] **Passo 1: Guardar a home original como referência e escrever o teste que falha**
 
 ```bash
 cp public_html/index.html testes/base/home-original.html
@@ -2466,12 +2466,12 @@ teste('flex.php monta as oito secoes assim que o conteudo Flex existir', functio
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: falha, `Failed opening required .../public_html/index.php` (o arquivo ainda se chama `index.html`).
 
-- [ ] **Passo 3: Extrair nav, rodapé e modal para parciais**
+- [x] **Passo 3: Extrair nav, rodapé e modal para parciais**
 
 As linhas abaixo valem para o `index.html` ainda intocado.
 
@@ -2521,7 +2521,7 @@ $modal_videos  = count(videos());
 
 Depois apague o arquivo temporário: `rm /tmp/castello-modal.html`.
 
-- [ ] **Passo 4: Converter o `index.html` em `index.php`**
+- [x] **Passo 4: Converter o `index.html` em `index.php`**
 
 ```bash
 git mv public_html/index.html public_html/index.php
@@ -2595,7 +2595,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 Nada mais muda: `<head>`, hero, prova social, vantagens, cabeçalhos de seção, faixa de CTA e a tag do `js/main.js` ficam exatamente como estão, inclusive o `noindex`, que só sai na ida para produção.
 
-- [ ] **Passo 5: Criar o `flex.php`**
+- [x] **Passo 5: Criar o `flex.php`**
 
 Crie `public_html/flex.php`:
 
@@ -2756,7 +2756,7 @@ $flex_video   = bloco('flex_video');
 </html>
 ```
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [x] **Passo 6: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 50-paginas`
 Esperado: 8 ok, 0 falha, 0 pulado.
@@ -2766,7 +2766,7 @@ Se o primeiro teste falhar, a mensagem traz os dois HTML normalizados. A diferen
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 7: Conferir no navegador**
+- [x] **Passo 7: Conferir no navegador**
 
 ```bash
 php -S localhost:8000 -t public_html
@@ -2774,7 +2774,7 @@ php -S localhost:8000 -t public_html
 
 Abra `http://localhost:8000/` e `http://localhost:8000/flex.php`. Na home, confira com os próprios olhos: hero com vídeo, quatro modelos com preço, acordeão do portfólio abrindo, cinco passos com imagem sticky, carrossel de avaliações arrastando, oito vídeos do Instagram abrindo em tela cheia, sete abas de FAQ trocando, modal de orçamento abrindo pelos CTAs. Nenhum erro no console.
 
-- [ ] **Passo 8: Commit**
+- [x] **Passo 8: Commit**
 
 ```bash
 git add -A
