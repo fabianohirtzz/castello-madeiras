@@ -102,7 +102,7 @@ Dois detalhes:
 
 ### 8.1 O CRM (Agendor)
 
-Todo pedido de orçamento do site também entra no Agendor, o CRM que a equipe comercial usa todo dia, junto com os leads que já chegam pelo Instagram e pelo Facebook. Seis campos controlam para onde e como cada pedido entra lá:
+Quando o campo **Enviar os pedidos para o CRM** (primeira linha da tabela abaixo) está ligado, todo pedido de orçamento do site também entra no Agendor, o CRM que a equipe comercial usa todo dia, junto com os leads que já chegam pelo Instagram e pelo Facebook. Oito campos controlam se isso acontece e, quando acontece, para onde e como cada pedido entra lá:
 
 | Campo | Para que serve |
 |---|---|

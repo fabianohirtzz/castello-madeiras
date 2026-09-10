@@ -18,10 +18,10 @@ require_once __DIR__ . '/crm.php';
  * Campos de conteudo do lead.
  *
  * Nao segue mais a ordem do schema.sql: prazo entrou depois, no meio dos
- * campos originais, e o schema.sql o colocou entre cidade e mensagem, nesta
- * lista ele ficou depois de mensagem. O INSERT em lead_gravar() e por nome
- * de coluna, entao a ordem aqui e so a ordem em que os valores sao montados
- * e nao precisa bater com a ordem do CREATE TABLE.
+ * campos originais, e aqui nesta lista ele ficou entre cidade e mensagem,
+ * enquanto o schema.sql o colocou depois de mensagem. O INSERT em
+ * lead_gravar() e por nome de coluna, entao a ordem aqui e so a ordem em que
+ * os valores sao montados e nao precisa bater com a ordem do CREATE TABLE.
  */
 const LEAD_CAMPOS = [
     'nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'prazo', 'mensagem',
