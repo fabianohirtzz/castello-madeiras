@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- PROTÓTIPO: noindex enquanto não for produção -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <title>Castelo Flex | Casa de madeira semipronta em 45 dias | Castello</title>
+  <meta name="description" content="Castelo Flex é a casa de madeira semipronta da Castello: estrutura montada, coberta e fechada no seu terreno em 45 dias. Você faz o acabamento no seu ritmo." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Castelo Flex | Casa de madeira semipronta em 45 dias" />
+  <meta property="og:description" content="Estrutura montada, coberta e fechada no seu terreno em 45 dias. O acabamento fica no seu ritmo." />
+  <meta property="og:image" content="../public_html/fotos-casas/casa7.png" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <link rel="icon" type="image/png" href="../public_html/images/icone-colorido.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../public_html/css/style.css?v=13" />
+</head>
+<body>
+
+  <!-- sprite: logo do Google (multicolor) reutilizado nas avaliações -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="ico-google" viewBox="0 0 24 24">
+      <path fill="#4285F4" d="M23.52 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.53 5.53 0 0 1-2.4 3.62v3h3.87c2.27-2.09 3.58-5.17 3.58-8.86z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.96-1.08 7.94-2.91l-3.87-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A12 12 0 0 0 12 24z"/>
+      <path fill="#FBBC05" d="M5.27 14.29a7.21 7.21 0 0 1 0-4.58V6.62H1.29a12 12 0 0 0 0 10.76l3.98-3.09z"/>
+      <path fill="#EA4335" d="M12 4.74c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.74 12 4.74z"/>
+    </symbol>
+  </svg>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner container">
+      <a href="home.html" class="nav__logo" aria-label="Castello Casas de Madeira">
+        <img src="../public_html/images/logo-horizontal-branco.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--light" />
+        <img src="../public_html/images/logo-horizontal-colorido.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--dark" />
+      </a>
+
+      <nav class="nav__links" aria-label="Navegação principal">
+        <a href="#o-que-e"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg>A Flex</a>
+        <a href="#passos-flex"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v6a4 4 0 0 0 4 4h4a4 4 0 0 1 4 4v2M6 4H4m2 0h2M18 20h-2m2 0h2"/></svg>Passo a passo</a>
+        <a href="#modelos-flex"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg>Casas Flex</a>
+        <a href="#faq"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 1 1 4.2 2.8c-.8.4-1.3 1.1-1.3 2M12 17.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>Perguntas</a>
+        <a href="home.html#casa-pronta"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg>Casa Pronta</a>
+        <a href="#contato"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>Contato</a>
+      </nav>
+
+      <button type="button" class="btn btn--primary nav__cta" data-quote-open>
+        <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+        Pedir orçamento
+      </button>
+
+      <button class="nav__burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- mobile drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <a href="#o-que-e">A Flex</a>
+    <a href="#passos-flex">Passo a passo</a>
+    <a href="#modelos-flex">Casas Flex</a>
+    <a href="#faq">Perguntas</a>
+    <a href="home.html#casa-pronta">Casa Pronta</a>
+    <a href="home.html">Voltar para a home</a>
+    <a href="#contato">Contato</a>
+    <button type="button" class="btn btn--primary" data-quote-open>Pedir orçamento</button>
+  </div>
+
+  <!-- ============ HERO DA CASTELO FLEX ============ -->
+  <!-- Copy provisória: entra pelo painel quando o material da Flex chegar. -->
+  <section class="pagehero" id="topo" aria-label="Castelo Flex">
+    <div class="pagehero__media">
+      <img src="../public_html/fotos-casas/casa7.png" alt="Sobrado de madeira Castello com sacada e fachada de réguas" />
+    </div>
+    <div class="pagehero__overlay" aria-hidden="true"></div>
+
+    <div class="container">
+      <span class="eyebrow eyebrow--light reveal">Lançamento Castello · casas semiprontas</span>
+      <h1 class="pagehero__title reveal">A casa de madeira <span class="hl">montada e fechada</span> no seu terreno em 45 dias.</h1>
+      <p class="pagehero__lead reveal">A Castelo Flex é a modalidade semipronta da Castello. A gente entrega a estrutura completa, coberta, com portas e janelas instaladas. Você conduz o acabamento no seu ritmo, com a economia de quem faz por etapas.</p>
+      <p class="stamp stamp--light reveal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        Entrega em <strong>45 dias</strong>
+      </p>
+      <div class="pagehero__actions reveal">
+        <button type="button" class="btn btn--primary btn--lg" data-quote-open>
+          <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+          Pedir orçamento da Flex
+        </button>
+        <a href="#modelos-flex" class="btn btn--ghost-light btn--lg">Ver as casas Flex</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- faceta: telhado recorta a saída do hero -->
+  <div class="facet facet--bone" aria-hidden="true"></div>
+
+  <!-- ============ O QUE É A CASTELO FLEX ============ -->
+  <!-- Copy e vídeo provisórios: entram pelo painel nas chaves flexpg_oque_* e flex_video de `blocos`. -->
+  <section class="section section--facetada" id="o-que-e">
+    <div class="container">
+      <div class="split2">
+        <div>
+          <span class="eyebrow reveal">O que é a Castelo Flex</span>
+          <h2 class="section__title reveal">A estrutura pronta.<br>O acabamento no seu tempo.</h2>
+          <p class="section__lead reveal">A Castello monta a casa de madeira no seu terreno e entrega ela fechada: estrutura, telhado, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento, sem prazo de obra correndo atrás de você.</p>
+          <ul class="checklist reveal">
+            <li>A mesma madeira e o mesmo prego galvanizado das casas chave na mão</li>
+            <li>Montagem pela equipe que constrói casas Castello há 12 anos</li>
+            <li>Planta ajustada ao seu terreno antes da produção</li>
+            <li>Você paga o acabamento por etapa, no ritmo do seu bolso</li>
+          </ul>
+        </div>
+
+        <figure class="vexp vexp--reel reveal">
+          <div class="vexp__frame">
+            <video controls playsinline preload="none" poster="../public_html/videos-instagram/web/insta-04.jpg">
+              <source src="../public_html/videos-instagram/web/insta-04.mp4" type="video/mp4" />
+              Seu navegador não abre vídeo. <a href="../public_html/videos-instagram/web/insta-04.mp4">Baixe o vídeo da Castelo Flex</a>.
+            </video>
+          </div>
+          <figcaption class="vexp__cap">A Castello explica a Castelo Flex, do terreno à casa fechada.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- faceta: transição para o passo a passo -->
+  <div class="facet facet--sand" aria-hidden="true"></div>
+
+  <!-- ============ PASSO A PASSO DA FLEX (com a fronteira de entrega) ============ -->
+  <!-- Passos provisórios: migram para a tabela `passos` com contexto flex. -->
+  <section class="section section--sand section--facetada" id="passos-flex">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Passo a passo</span>
+        <h2 class="section__title reveal">O que a Castello entrega,<br>e onde a nossa entrega termina.</h2>
+        <p class="section__lead reveal">Sem letra miúda. Estas são as cinco etapas que a Castello executa na Castelo Flex, e logo abaixo está a lista do que fica por sua conta depois que a gente sai do terreno.</p>
+      </div>
+
+      <div class="epasso__grid">
+        <article class="epasso reveal">
+          <span class="epasso__num">01</span>
+          <h3>Projeto e modelo</h3>
+          <p>Você escolhe o modelo Flex e a gente ajusta a planta ao seu terreno e ao seu orçamento.</p>
+        </article>
+        <article class="epasso reveal">
+          <span class="epasso__num">02</span>
+          <h3>Fundação</h3>
+          <p>A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.</p>
+        </article>
+        <article class="epasso reveal">
+          <span class="epasso__num">03</span>
+          <h3>Estrutura montada</h3>
+          <p>Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.</p>
+        </article>
+        <article class="epasso reveal">
+          <span class="epasso__num">04</span>
+          <h3>Cobertura</h3>
+          <p>Telhado completo, com a casa protegida da chuva e do sol desde o primeiro dia.</p>
+        </article>
+        <article class="epasso reveal">
+          <span class="epasso__num">05</span>
+          <h3>Portas e janelas</h3>
+          <p>Aberturas instaladas e a casa entregue fechada e trancada no seu terreno, em 45 dias.</p>
+        </article>
+      </div>
+
+      <div class="limite reveal">
+        <span class="limite__txt">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 8h14M5 16h14"/></svg>
+          A entrega da Castello termina aqui
+        </span>
+      </div>
+
+      <div class="depois__head reveal">
+        <h3 class="depois__title">O que fica por sua conta</h3>
+        <p class="depois__text">Daqui pra frente a casa é sua e o ritmo é seu. Você contrata quem quiser, na ordem que quiser, e paga por etapa. A Castello segue disponível para orientar, mas o acabamento não está incluso na Castelo Flex.</p>
+      </div>
+
+      <div class="depois__grid">
+        <div class="depois__item reveal"><strong>Elétrica e hidráulica</strong>Fiação, pontos, tubulação e louças.</div>
+        <div class="depois__item reveal"><strong>Revestimentos e piso</strong>Cerâmica, forro, banheiro e cozinha.</div>
+        <div class="depois__item reveal"><strong>Pintura e acabamentos</strong>Interna, externa e os detalhes finos.</div>
+        <div class="depois__item reveal"><strong>Fossa e sumidouro</strong>Ligação de esgoto e de água no terreno.</div>
+      </div>
+
+      <p class="depois__nota reveal">Quer tudo isso incluso e a chave na mão no fim? Então a sua modalidade é a
+        <a href="home.html#casa-pronta">Casa Pronta, completa em 90 a 120 dias</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- faceta: transição para o catálogo Flex -->
+  <div class="facet facet--bone" aria-hidden="true"></div>
+
+  <!-- ============ CATÁLOGO DAS CASAS FLEX ============ -->
+  <!-- Modelos provisórios: nome, área e preço entram pelo painel em `modelos` modalidade flex. -->
+  <section class="section section--facetada" id="modelos-flex">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow reveal">Casas Castelo Flex</span>
+        <h2 class="section__title reveal">Três tamanhos<br>para começar.</h2>
+        <p class="section__lead reveal">Cada modelo Flex sai da fábrica com a estrutura completa e é montado no seu terreno em 45 dias. A planta é ajustada antes da produção.</p>
+      </div>
+
+      <div class="grid grid--models">
+        <article class="model reveal">
+          <div class="model__media">
+            <img src="../public_html/fotos-casas/casa4.png" alt="Casa de madeira Castello compacta de dois pavimentos" loading="lazy" />
+            <span class="model__badge">Semipronta</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Entrega em 45 dias</span>
+            <h3 class="model__name">Castelo Flex 36</h3>
+            <p class="model__area">36,00 m² de área construída</p>
+            <div class="price">
+              <span class="price__label">Valor</span>
+              <span class="price__val price__val--sob">Sob consulta</span>
+            </div>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Castelo Flex 36 · 36 m² · semipronta">Pedir orçamento</button>
+          </div>
+        </article>
+
+        <article class="model reveal">
+          <div class="model__media">
+            <img src="../public_html/fotos-casas/casa2.png" alt="Casa de madeira Castello térrea com telhado de telhas e varanda" loading="lazy" />
+            <span class="model__badge">Semipronta</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Entrega em 45 dias</span>
+            <h3 class="model__name">Castelo Flex 48</h3>
+            <p class="model__area">48,00 m² de área construída</p>
+            <div class="price">
+              <span class="price__label">Valor</span>
+              <span class="price__val price__val--sob">Sob consulta</span>
+            </div>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Castelo Flex 48 · 48 m² · semipronta">Pedir orçamento</button>
+          </div>
+        </article>
+
+        <article class="model reveal">
+          <div class="model__media">
+            <img src="../public_html/fotos-casas/casa6.png" alt="Casa de madeira Castello térrea com varanda ampla e garagem coberta" loading="lazy" />
+            <span class="model__badge">Semipronta</span>
+          </div>
+          <div class="model__body">
+            <span class="eyebrow">Entrega em 45 dias</span>
+            <h3 class="model__name">Castelo Flex 60</h3>
+            <p class="model__area">60,00 m² de área construída</p>
+            <div class="price">
+              <span class="price__label">Valor</span>
+              <span class="price__val price__val--sob">Sob consulta</span>
+            </div>
+            <button type="button" class="btn btn--primary btn--block" data-quote-open data-modelo="Castelo Flex 60 · 60 m² · semipronta">Pedir orçamento</button>
+          </div>
+        </article>
+      </div>
+
+      <p class="modelos__note reveal">Tamanhos e valores da Castelo Flex em fechamento com a fábrica. Peça o seu orçamento e receba a tabela atualizada, com o prazo para o seu terreno.</p>
+    </div>
+  </section>
+
+  <!-- faceta: transição escura para os diferenciais -->
+  <div class="facet facet--ink" aria-hidden="true"></div>
+
+  <!-- ============ PRAZO E DIFERENCIAIS DA FLEX ============ -->
+  <section class="section section--dark section--facetada" id="diferenciais">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow eyebrow--light reveal">Por que a Flex</span>
+        <h2 class="section__title reveal">Quarenta e cinco dias<br>e a casa é sua.</h2>
+        <p class="section__lead reveal">A Castelo Flex encurta a parte difícil da obra. O que costuma levar meses de canteiro sai em 45 dias, com a estrutura fechada e a casa protegida.</p>
+        <p class="stamp stamp--light reveal">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+          Entrega em <strong>45 dias</strong>
+        </p>
+      </div>
+
+      <div class="bene__grid">
+        <article class="bene reveal">
+          <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
+          <h3>45 dias de obra</h3>
+          <p>Da assinatura à casa fechada no seu terreno, com data combinada em contrato.</p>
+        </article>
+        <article class="bene reveal">
+          <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h15a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8Zm0 0a3 3 0 0 1 3-3h9"/><circle cx="17" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+          <h3>Você paga por etapa</h3>
+          <p>O acabamento vem depois, no seu ritmo. Sem obra inteira travando o seu orçamento.</p>
+        </article>
+        <article class="bene reveal">
+          <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <h3>Mesma madeira, mesma equipe</h3>
+          <p>Prego galvanizado e madeira de qualidade, montados por quem constrói Castello há 12 anos.</p>
+        </article>
+        <article class="bene reveal">
+          <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span>
+          <h3>Pode virar renda</h3>
+          <p>Muita gente fecha a Flex para aluguel, hospedagem ou revenda, e termina o acabamento depois.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- faceta: transição para as perguntas -->
+  <div class="facet facet--sand" aria-hidden="true"></div>
+
+  <!-- ============ FAQ DA CASTELO FLEX ============ -->
+  <!-- Perguntas provisórias: migram para `faq` com contexto flex. Ícones do conjunto fechado. -->
+  <section class="section faq" id="faq" aria-label="Perguntas frequentes sobre a Castelo Flex">
+    <div class="container">
+      <div class="section__head faq__head">
+        <span class="eyebrow reveal">Perguntas frequentes</span>
+        <h2 class="section__title reveal">O que todo mundo pergunta<br>antes de fechar a Flex.</h2>
+        <p class="section__lead reveal">Reunimos as dúvidas que mais aparecem sobre a modalidade semipronta. Ficou com outra pergunta? É só chamar a gente.</p>
+      </div>
+
+      <div class="faq__board reveal" id="faqTabs">
+        <div class="faq__tablist" role="tablist" aria-orientation="vertical" aria-label="Perguntas sobre a Castelo Flex">
+          <button class="faq__tab is-active" type="button" role="tab" id="faq-tab1" aria-selected="true" aria-controls="faq-panel1" aria-label="Em quanto tempo a Castelo Flex fica pronta?" title="Em quanto tempo a Castelo Flex fica pronta?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab2" aria-selected="false" aria-controls="faq-panel2" tabindex="-1" aria-label="O que exatamente vem na entrega da Flex?" title="O que exatamente vem na entrega da Flex?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="9" r="4"/><path d="m12 12-8 8M8 16l2 2M6 18l1.6 1.6"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab3" aria-selected="false" aria-controls="faq-panel3" tabindex="-1" aria-label="Posso mudar a planta da Castelo Flex?" title="Posso mudar a planta da Castelo Flex?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h2M10 12h10M4 18h9M17 18h3"/><circle cx="13" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="2" fill="currentColor" stroke="none"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab4" aria-selected="false" aria-controls="faq-panel4" tabindex="-1" aria-label="A madeira é a mesma das casas chave na mão?" title="A madeira é a mesma das casas chave na mão?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          </button>
+          <button class="faq__tab" type="button" role="tab" id="faq-tab5" aria-selected="false" aria-controls="faq-panel5" tabindex="-1" aria-label="Vocês cuidam da fundação e do terreno?" title="Vocês cuidam da fundação e do terreno?">
+            <span class="faq__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg></span>
+          </button>
+        </div>
+
+        <div class="faq__panels">
+          <div class="faq__content is-active" role="tabpanel" id="faq-panel1" aria-labelledby="faq-tab1" tabindex="0">
+            <h3 class="faq__content-title">Em quanto tempo a Castelo Flex fica pronta?</h3>
+            <p class="faq__content-body">A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel2" aria-labelledby="faq-tab2" tabindex="0" hidden>
+            <h3 class="faq__content-title">O que exatamente vem na entrega da Flex?</h3>
+            <p class="faq__content-body">Fundação preparada, estrutura de madeira montada, telhado completo, portas e janelas instaladas. A casa é entregue fechada e trancada no seu terreno. Elétrica, hidráulica, revestimento, piso e pintura ficam por sua conta.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel3" aria-labelledby="faq-tab3" tabindex="0" hidden>
+            <h3 class="faq__content-title">Posso mudar a planta da Castelo Flex?</h3>
+            <p class="faq__content-body">Sim. A planta é ajustada ao seu terreno e à sua rotina antes da produção. Depois que a estrutura entra em fabricação, as mudanças passam a ser de acabamento, que é justamente a parte que fica com você.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel4" aria-labelledby="faq-tab4" tabindex="0" hidden>
+            <h3 class="faq__content-title">A madeira é a mesma das casas chave na mão?</h3>
+            <p class="faq__content-body">É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello há 12 anos. A Flex muda o escopo da entrega, nunca o padrão da construção.</p>
+          </div>
+          <div class="faq__content" role="tabpanel" id="faq-panel5" aria-labelledby="faq-tab5" tabindex="0" hidden>
+            <h3 class="faq__content-title">Vocês cuidam da fundação e do terreno?</h3>
+            <p class="faq__content-body">A fundação faz parte da entrega da Flex. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="faq__foot reveal">A Castello fica em Tubarão e atende toda a região, com casas já entregues em diversas cidades de Santa Catarina.
+        <button type="button" class="faq__foot-link" data-quote-open>Tirar uma dúvida sobre a Flex</button>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ CTA BAND / FORMULÁRIO DA FLEX ============ -->
+  <section class="cta-band" id="orcamento">
+    <div class="container cta-band__inner">
+      <div class="reveal">
+        <h2>Quer a Castelo Flex no seu terreno?</h2>
+        <p>Peça seu orçamento. A Castello volta com a tabela atualizada da Flex e o prazo para o seu terreno.</p>
+      </div>
+      <button type="button" class="btn btn--light btn--lg reveal" data-quote-open>
+        <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+        Pedir orçamento da Flex
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER / CONTATO ============ -->
+  <footer class="footer" id="contato">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img src="../public_html/images/logo-vertical-branco.png" alt="Castello Casas de Madeira" class="footer__logo" />
+        <p>Casas de madeira chave na mão. Projeto, execução e pós-venda numa empresa só, há 12 anos em Tubarão e região.</p>
+        <div class="footer__social">
+          <a href="https://wa.me/5548998244494" class="footer__social-btn" target="_blank" rel="noopener" aria-label="WhatsApp da Castello">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/castellocasasdemadeira/" class="footer__social-btn" target="_blank" rel="noopener" aria-label="Instagram da Castello">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2Zm0 4.87a4.93 4.93 0 1 0 0 9.86 4.93 4.93 0 0 0 0-9.86Zm0 1.8a3.13 3.13 0 1 1 0 6.26 3.13 3.13 0 0 1 0-6.26Zm5.13-3.24a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/castellomadeiras" class="footer__social-btn" target="_blank" rel="noopener" aria-label="Facebook da Castello">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer__col">
+        <h4>Contato</h4>
+        <ul class="footer__list">
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg></span>
+            <a href="https://wa.me/5548998244494" target="_blank" rel="noopener">WhatsApp (48) 99824-4494</a>
+          </li>
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2Z"/></svg></span>
+            <a href="tel:+554836328743">Telefone (48) 3632-8743</a>
+          </li>
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
+            <span>Av. Patrício Lima, 843<br>Tubarão, Santa Catarina</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer__col">
+        <h4>Atendimento</h4>
+        <ul class="footer__list">
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2Zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8Zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7Z"/></svg></span>
+            <span>Segunda a sexta<br>8h às 12h e 13h30 às 18h</span>
+          </li>
+          <li>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h1.5A2.5 2.5 0 0 1 21 6.5v12A2.5 2.5 0 0 1 18.5 21h-13A2.5 2.5 0 0 1 3 18.5v-12A2.5 2.5 0 0 1 5.5 4H7V2ZM5 9v9.5c0 .3.2.5.5.5h13c.3 0 .5-.2.5-.5V9H5Z"/></svg></span>
+            <span>Sábado<br>8h30 às 12h</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer__map">
+        <iframe
+          src="https://www.google.com/maps?q=Av.%20Patr%C3%ADcio%20Lima%20843%20Tubar%C3%A3o%20SC&output=embed"
+          title="Localização da Castello Casas de Madeira em Tubarão, SC"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+
+    <div class="footer__bottom container">
+      <span class="footer__copy">© 2026 Castello Casas de Madeira. <span class="nowrap">Todos os direitos reservados.</span></span>
+      <span class="nowrap">Desenvolvido por Freela In Home.</span>
+    </div>
+  </footer>
+
+  <!-- ============ MODAL DE ORÇAMENTO ============ -->
+  <div class="qmodal" id="quoteModal" hidden role="dialog" aria-modal="true" aria-labelledby="qmodalTitle">
+    <div class="qmodal__backdrop" data-quote-close></div>
+
+    <div class="qmodal__panel">
+      <button class="qmodal__close" type="button" data-quote-close aria-label="Fechar formulário">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+
+      <div class="qmodal__head">
+        <span class="eyebrow">Orçamento sem compromisso</span>
+        <h2 id="qmodalTitle">Vamos falar da sua Castelo Flex</h2>
+        <p>Conta pra gente o terreno e o tamanho que você imagina. A Castello volta com a tabela da Flex e o prazo.</p>
+        <div class="qmodal__trust">
+          <span><strong>5,0 ★</strong> no Google</span>
+          <span><strong>56</strong> avaliações</span>
+          <span><strong>12 anos</strong> de mercado</span>
+        </div>
+      </div>
+
+      <form class="qform" id="quoteForm" novalidate>
+        <!-- honeypot anti-spam (contrato 6.1: precisa chegar vazio). Humanos não veem. -->
+        <input type="text" name="empresa" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <!-- Ocultos do contrato 6.1. Nascem vazios de propósito: quem preenche é
+             o js/formulario.js da frente 3, e o csrf é impresso pelo PHP na costura. -->
+        <input type="hidden" name="pagina" value="" />
+        <input type="hidden" name="referrer" value="" />
+        <input type="hidden" name="utm_source" value="" />
+        <input type="hidden" name="utm_medium" value="" />
+        <input type="hidden" name="utm_campaign" value="" />
+        <input type="hidden" name="utm_term" value="" />
+        <input type="hidden" name="utm_content" value="" />
+        <input type="hidden" name="ts" value="" />
+        <input type="hidden" name="csrf" value="" />
+
+        <div class="qform__row">
+          <div class="qform__group">
+            <label class="qform__label" for="q-nome">Nome completo <span class="req">*</span></label>
+            <input class="qform__input" type="text" id="q-nome" name="nome" placeholder="Como podemos te chamar" autocomplete="name" required />
+          </div>
+          <div class="qform__group">
+            <label class="qform__label" for="q-whatsapp">WhatsApp <span class="req">*</span></label>
+            <input class="qform__input" type="tel" id="q-whatsapp" name="whatsapp" placeholder="(48) 99999-9999" autocomplete="tel" inputmode="tel" required />
+          </div>
+        </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-busca">O que você busca? <span class="req">*</span></label>
+          <div class="qform__select">
+            <select id="q-busca" name="busca" required>
+              <option value="" selected disabled>Selecione uma opção</option>
+              <option value="Modelo pronto do catálogo">Modelo pronto do catálogo</option>
+              <option value="Projeto exclusivo (planta sob medida)">Projeto exclusivo (planta sob medida)</option>
+              <option value="Já tenho o projeto, quero orçar a execução">Já tenho o projeto, quero orçar a execução</option>
+              <option value="Ainda estou pesquisando">Ainda estou pesquisando</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="qform__group qform__group--modelo" id="qGroupModelo">
+          <label class="qform__label" for="q-modelo">Modelo de interesse</label>
+          <div class="qform__select">
+            <select id="q-modelo" name="modelo">
+              <option value="">Ainda não sei</option>
+              <option value="Castelo Flex 36 · 36 m² · semipronta">Castelo Flex 36 · 36 m²</option>
+              <option value="Castelo Flex 48 · 48 m² · semipronta">Castelo Flex 48 · 48 m²</option>
+              <option value="Castelo Flex 60 · 60 m² · semipronta">Castelo Flex 60 · 60 m²</option>
+              <option value="Quero a Casa Pronta, chave na mão">Quero a Casa Pronta, chave na mão</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-cidade">Cidade / região do terreno</label>
+          <input class="qform__input" type="text" id="q-cidade" name="cidade" placeholder="Ex: Tubarão / SC" />
+        </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-mensagem">Mensagem <span class="opt">(opcional)</span></label>
+          <textarea class="qform__input qform__textarea" id="q-mensagem" name="mensagem" rows="3" placeholder="Conte o tamanho que imagina, se já tem terreno, prazo desejado..."></textarea>
+        </div>
+
+        <button class="btn btn--primary btn--block btn--lg qform__submit" type="submit" id="quoteSubmit">Enviar meu pedido</button>
+        <p class="qform__status" id="quoteStatus" role="status" aria-live="polite"></p>
+        <p class="qform__note">Resposta em até 1 dia útil. Seus dados são usados só para responder ao seu pedido.</p>
+      </form>
+
+      <div class="qmodal__done" id="quoteDone" hidden>
+        <span class="qmodal__done-ico">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg>
+        </span>
+        <h3>Pedido pronto pra enviar</h3>
+        <p id="quoteDoneMsg">Toque no botão abaixo para mandar seu pedido no WhatsApp da Castello. É só apertar enviar.</p>
+        <a class="btn btn--primary btn--lg qmodal__done-cta" id="quoteWppLink" href="https://wa.me/5548998244494" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" class="ico-wpp" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
+          Enviar no WhatsApp
+        </a>
+        <button class="qmodal__done-back" type="button" id="quoteBack">Voltar e revisar os dados</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão flutuante: abre o formulário de orçamento -->
+  <button type="button" class="wpp-float" id="wppFloat" aria-label="Pedir orçamento" data-quote-open>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
+    <span class="wpp-float__label">Pedir orçamento</span>
+  </button>
+
+  <script src="../public_html/js/main.js?v=12"></script>
+</body>
+</html>

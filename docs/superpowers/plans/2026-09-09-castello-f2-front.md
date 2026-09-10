@@ -152,7 +152,7 @@ Copia o site atual para `front/home.html`, corrige os caminhos, tira o prazo do 
 - Consome: `css/style.css`, `js/main.js`, `images/`, `fotos-casas/`, `passos/`, `videos-instagram/web/` — todos por `../`
 - Produz: `front/home.html` com os ganchos obrigatórios `#nav`, `#burger`, `#drawer`, `#drawerBackdrop`, `#topo`; a âncora `#casa-pronta`; a classe utilitária `.section--facetada`; o componente `.nav__tag`; a região `FASE 2` no fim do `css/style.css`, onde todas as tarefas seguintes acrescentam CSS
 
-- [ ] **Step 1: Subir o servidor local**
+- [x] **Step 1: Subir o servidor local**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -161,7 +161,7 @@ python -m http.server 8000
 
 Deixe rodando em segundo plano durante todo o plano. Confirme com `http://localhost:8000/index.html` abrindo o site atual.
 
-- [ ] **Step 2: Criar `front/` e copiar o `index.html`**
+- [x] **Step 2: Criar `front/` e copiar o `index.html`**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -169,7 +169,7 @@ mkdir -p front
 cp index.html front/home.html
 ```
 
-- [ ] **Step 3: Corrigir todos os caminhos de asset para `../`**
+- [x] **Step 3: Corrigir todos os caminhos de asset para `../`**
 
 Em `front/home.html`, todo `src` e `href` de asset local ganha `../` na frente:
 
@@ -200,7 +200,7 @@ grep -n 'src="\(css\|js\|images\|fotos-casas\|passos\|videos-instagram\|video-he
 
 Esperado: nenhuma linha.
 
-- [ ] **Step 4: Trocar o `<title>`, as metas e o cache-buster do CSS**
+- [x] **Step 4: Trocar o `<title>`, as metas e o cache-buster do CSS**
 
 Substitua o bloco de `<title>` e as metas por este, que tira o prazo do topo e coloca cada prazo ao lado do nome da sua modalidade:
 
@@ -222,7 +222,7 @@ E o cache-buster, porque a folha vai mudar:
   <link rel="stylesheet" href="../css/style.css?v=13" />
 ```
 
-- [ ] **Step 5: Trocar a lista de links da nav**
+- [x] **Step 5: Trocar a lista de links da nav**
 
 Substitua o `<nav class="nav__links" ...>` inteiro por este. São sete links: "Modelos" vira "Casa Pronta" apontando para a âncora nova, e a Castelo Flex entra como link de página com etiqueta de lançamento.
 
@@ -238,7 +238,7 @@ Substitua o `<nav class="nav__links" ...>` inteiro por este. São sete links: "M
       </nav>
 ```
 
-- [ ] **Step 6: Trocar o drawer mobile**
+- [x] **Step 6: Trocar o drawer mobile**
 
 Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por este:
 
@@ -255,7 +255,7 @@ Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por es
   </div>
 ```
 
-- [ ] **Step 7: Tirar o prazo do hero**
+- [x] **Step 7: Tirar o prazo do hero**
 
 Substitua o bloco `<!-- Beat 2 — ~3s ao fim -->` inteiro por este. A linha "pronta em até 120 dias" morre; o segundo beat fecha a frase pelo benefício, não pelo prazo, e o CTA secundário aponta para o bloco de Modalidades:
 
@@ -273,7 +273,7 @@ Substitua o bloco `<!-- Beat 2 — ~3s ao fim -->` inteiro por este. A linha "pr
         </div>
 ```
 
-- [ ] **Step 8: Renomear a âncora da seção de modelos**
+- [x] **Step 8: Renomear a âncora da seção de modelos**
 
 Uma troca só, para a nav e o drawer não apontarem para o vazio. O conteúdo da seção muda na Tarefa 3.
 
@@ -285,7 +285,7 @@ grep -n 'id="casa-pronta"\|href="#modelos"' home.html
 
 Esperado: uma linha com `id="casa-pronta"` e nenhuma com `href="#modelos"`.
 
-- [ ] **Step 9: Abrir a região FASE 2 no `css/style.css`**
+- [x] **Step 9: Abrir a região FASE 2 no `css/style.css`**
 
 Acrescente no **fim** do `css/style.css`, depois do bloco `@media(prefers-reduced-motion:reduce)`:
 
@@ -329,7 +329,7 @@ Acrescente no **fim** do `css/style.css`, depois do bloco `@media(prefers-reduce
 }
 ```
 
-- [ ] **Step 10: Verificar no navegador**
+- [x] **Step 10: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html`.
 2. `browser_console_messages`. Esperado: nenhuma mensagem de erro. Um `TypeError` aqui quer dizer que um gancho obrigatório do `js/main.js` sumiu na cópia.
@@ -343,7 +343,7 @@ Acrescente no **fim** do `css/style.css`, depois do bloco `@media(prefers-reduce
 10. `browser_evaluate` com `() => getComputedStyle(document.querySelector('.nav__tag')).backgroundColor`. Esperado: `rgb(179, 20, 27)`.
 11. `browser_click` no link "Castelo Flex" da nav. Esperado: 404 do servidor, porque `front/flex.html` só nasce na Tarefa 5. É o resultado correto nesta altura. Volte com `browser_navigate_back`.
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -374,7 +374,7 @@ Entrega o bloco novo que separa Casa Pronta de Castelo Flex logo depois da prova
 - Consome: `.section`, `.section--facetada`, `.container`, `.eyebrow`, `.section__title`, `.section__lead`, `.reveal`, `.btn--primary`, `.facet`
 - Produz: `#modalidades` (alvo do CTA secundário do hero), `.modalidades`, `.modalidades__head`, `.modalidades__grid`, `.modalidade`, `.modalidade--flex`, `.modalidade__tag`, `.modalidade__name`, `.modalidade__prazo`, `.modalidade__text`, `.checklist` e `.checklist--light` (usadas de novo nas Tarefas 6 e 7)
 
-- [ ] **Step 1: Mover a seção de Vantagens para depois de onde a Flex vai entrar**
+- [x] **Step 1: Mover a seção de Vantagens para depois de onde a Flex vai entrar**
 
 A ordem da spec 7.1 é Modalidades, Casa Pronta, Castelo Flex, Vantagens. Hoje Vantagens vem antes de Modelos. Recorte de `front/home.html` o bloco inteiro que começa em `<!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->` e termina no `</section>` que fecha `.vantagens`, junto com a faceta que vem logo depois dele:
 
@@ -391,7 +391,7 @@ Na tag de abertura da seção movida, tire nada e mude nada: continua
   <section class="section vantagens" id="vantagens">
 ```
 
-- [ ] **Step 2: Tirar o respiro de faceta que Vantagens não precisa mais**
+- [x] **Step 2: Tirar o respiro de faceta que Vantagens não precisa mais**
 
 Em `css/style.css`, apague estas duas linhas (a regra e o comentário acima dela), porque não há mais faceta depois de Vantagens e o espaço vira um buraco:
 
@@ -400,7 +400,7 @@ Em `css/style.css`, apague estas duas linhas (a regra e o comentário acima dela
 .vantagens{padding-bottom:calc(var(--sec-pad) + var(--facet-h))}
 ```
 
-- [ ] **Step 3: Inserir a seção de Modalidades**
+- [x] **Step 3: Inserir a seção de Modalidades**
 
 Em `front/home.html`, logo depois de
 
@@ -456,7 +456,7 @@ cole:
   <div class="facet facet--sand" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 4: Acrescentar o CSS na região FASE 2**
+- [x] **Step 4: Acrescentar o CSS na região FASE 2**
 
 No fim do `css/style.css`, dentro da região FASE 2:
 
@@ -505,7 +505,7 @@ No fim do `css/style.css`, dentro da região FASE 2:
 .modalidade .btn{margin-top:28px;align-self:flex-start}
 ```
 
-- [ ] **Step 5: Verificar no navegador**
+- [x] **Step 5: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900. Role até o bloco novo e `browser_take_screenshot` em `f2-t2-1440.png`. Olhe: dois cards lado a lado, o da esquerda branco e o da direita preto; o telhadinho vermelho antes de cada item das listas; o card preto com a etiqueta "Lançamento" vermelha e texto branco; nenhum corte de faceta comendo o topo dos cards.
@@ -518,7 +518,7 @@ No fim do `css/style.css`, dentro da região FASE 2:
 9. Em 1440px, `browser_click` em "Ver modelos e preços" do card Casa Pronta. Esperado: rola até a seção de modelos, agora `#casa-pronta`.
 10. `browser_press_key` `Tab` até chegar nos dois CTAs do bloco e `browser_snapshot`. Esperado: anel de foco visível nos dois botões, inclusive no card preto.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -549,7 +549,7 @@ Renomeia a seção de modelos para Casa Pronta e coloca o prazo de 90 a 120 dias
 - Consome: `.section--sand`, `.section--facetada`, `.section__head`, `.eyebrow`, `.section__title`, `.section__lead`, `.reveal`, `.grid--models`, `.model`
 - Produz: `.stamp` e `.stamp--light` (usados de novo nas Tarefas 5 e 8)
 
-- [ ] **Step 1: Trocar a tag de abertura da seção**
+- [x] **Step 1: Trocar a tag de abertura da seção**
 
 Em `front/home.html`, substitua
 
@@ -563,7 +563,7 @@ por
   <section class="section section--sand section--facetada modelos" id="casa-pronta">
 ```
 
-- [ ] **Step 2: Trocar o cabeçalho da seção**
+- [x] **Step 2: Trocar o cabeçalho da seção**
 
 Substitua o `<div class="section__head">` inteiro dessa seção por este, que renomeia a modalidade no eyebrow e traz o prazo para dentro:
 
@@ -579,7 +579,7 @@ Substitua o `<div class="section__head">` inteiro dessa seção por este, que re
       </div>
 ```
 
-- [ ] **Step 3: Trocar a faceta que vem depois da seção**
+- [x] **Step 3: Trocar a faceta que vem depois da seção**
 
 A seção de modelos passa a ser seguida pela seção escura da Flex. Depois da Tarefa 2 a ordem no arquivo é Modalidades, faceta creme, Casa Pronta, Vantagens, Portfólio. Logo depois do `</section>` que fecha `#casa-pronta`, e antes de `<!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->`, insira:
 
@@ -590,7 +590,7 @@ A seção de modelos passa a ser seguida pela seção escura da Flex. Depois da 
 
 A seção da Flex entra exatamente nesse ponto na Tarefa 4. Até lá a faceta escura encosta nas Vantagens e fica um telhado preto sobre fundo bone: é esperado nesta altura e some na tarefa seguinte.
 
-- [ ] **Step 4: Acrescentar o CSS do selo na região FASE 2**
+- [x] **Step 4: Acrescentar o CSS do selo na região FASE 2**
 
 ```css
 /* ---------- Selo de prazo (vive dentro da seção da modalidade) ---------- */
@@ -611,7 +611,7 @@ A seção da Flex entra exatamente nesse ponto na Tarefa 4. Até lá a faceta es
 }
 ```
 
-- [ ] **Step 5: Verificar no navegador**
+- [x] **Step 5: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#casa-pronta` e `browser_take_screenshot` em `f2-t3-1440.png`. Olhe: o eyebrow diz "Casa Pronta · chave na mão", o selo rosa claro com o relógio e "Pronta pra morar em 90 a 120 dias" aparece abaixo do lead, e os quatro cards de modelo continuam intactos com os preços.
@@ -621,7 +621,7 @@ A seção da Flex entra exatamente nesse ponto na Tarefa 4. Até lá a faceta es
 6. `browser_evaluate` com `() => ({ doc: document.documentElement.scrollWidth, win: window.innerWidth })` em 390px. Esperado: `doc` menor ou igual a `win`.
 7. Em 1440px, `browser_click` no link "Casa Pronta" da nav. Esperado: rola até a seção certa e o link ganha o estado `is-current` do scroll-spy.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -653,7 +653,7 @@ Entrega a seção nova pedida na spec 7.1 item 6: resumo, vídeo explicativo, pr
 
 **Copy provisória.** Todo o texto desta seção sai do material do Instagram e é substituível pelas chaves `flex_titulo`, `flex_texto`, `flex_prazo`, `flex_video` e `flex_video_poster` da tabela `blocos` (contrato §2.2). O vídeo é o `insta-04.mp4`, que já existe no repositório, marcando o lugar do explicativo definitivo.
 
-- [ ] **Step 1: Inserir a seção**
+- [x] **Step 1: Inserir a seção**
 
 Em `front/home.html`, logo depois de
 
@@ -704,7 +704,7 @@ cole:
   <div class="facet facet--bone" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Acrescentar o CSS na região FASE 2**
+- [x] **Step 2: Acrescentar o CSS na região FASE 2**
 
 ```css
 /* ---------- Grid de duas colunas com quebra em coluna única ---------- */
@@ -765,7 +765,7 @@ cole:
 }
 ```
 
-- [ ] **Step 3: Verificar no navegador**
+- [x] **Step 3: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#castelo-flex` e `browser_take_screenshot` em `f2-t4-1440.png`. Olhe: fundo preto com a grade técnica suave, texto à esquerda e o vídeo vertical à direita com no máximo 330px de largura; as três métricas numa linha só, com "45 dias" em vermelho claro; o telhado bone recortando a saída da seção para as Vantagens.
@@ -778,7 +778,7 @@ cole:
 9. Em 1440px, `browser_press_key` `Tab` até os dois CTAs da seção e `browser_snapshot`. Esperado: anel de foco branco visível sobre o fundo escuro (regra `.section--dark a:focus-visible{outline-color:#fff}`) e o botão do vídeo alcançável pelo teclado.
 10. `browser_click` em "Pedir orçamento" da seção. Esperado: o modal `#quoteModal` abre com o foco no campo de nome.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -808,7 +808,7 @@ Cria `front/flex.html` com o esqueleto que a página inteira vai usar: head, nav
 - Consome: `.nav`, `.drawer`, `.footer`, `.qmodal`, `.wpp-float`, `.btn--primary`, `.btn--ghost-light`, `.stamp--light`, `.facet`, `../css/style.css`, `../js/main.js`
 - Produz: `front/flex.html` com `#topo` no hero, os ganchos obrigatórios do `js/main.js`, as âncoras `#o-que-e`, `#passos-flex`, `#modelos-flex`, `#faq`, `#orcamento`, `#contato`, e o componente `.pagehero`
 
-- [ ] **Step 1: Gerar a base a partir da home**
+- [x] **Step 1: Gerar a base a partir da home**
 
 O rodapé, o modal e o botão flutuante são idênticos aos da home. Comece copiando e depois recorte:
 
@@ -828,7 +828,7 @@ até o `</div>` que fecha `#reelbox`.
 
 E o `<link rel="preload" as="video" ...>` do vídeo do hero, que esta página não usa.
 
-- [ ] **Step 2: Trocar o head**
+- [x] **Step 2: Trocar o head**
 
 Substitua `<title>` e as metas de descrição e Open Graph por:
 
@@ -844,7 +844,7 @@ Substitua `<title>` e as metas de descrição e Open Graph por:
   <meta property="og:locale" content="pt_BR" />
 ```
 
-- [ ] **Step 3: Trocar os links da nav para os da página Flex**
+- [x] **Step 3: Trocar os links da nav para os da página Flex**
 
 Substitua o `<nav class="nav__links" ...>` inteiro por:
 
@@ -865,7 +865,7 @@ O logo da nav também deixa de apontar para `#topo` e passa a levar de volta par
       <a href="home.html" class="nav__logo" aria-label="Castello Casas de Madeira">
 ```
 
-- [ ] **Step 4: Trocar o drawer**
+- [x] **Step 4: Trocar o drawer**
 
 Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por:
 
@@ -882,7 +882,7 @@ Substitua o `<div class="drawer" id="drawer" aria-hidden="true">` inteiro por:
   </div>
 ```
 
-- [ ] **Step 5: Inserir o hero da Flex**
+- [x] **Step 5: Inserir o hero da Flex**
 
 Logo depois do fechamento do drawer, cole:
 
@@ -917,7 +917,7 @@ Logo depois do fechamento do drawer, cole:
   <div class="facet facet--bone" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 6: Ajustar a faixa de CTA e o `hidden` do campo de modelo**
+- [x] **Step 6: Ajustar a faixa de CTA e o `hidden` do campo de modelo**
 
 Substitua o bloco `<section class="cta-band">` inteiro por este, que ganha âncora e a copy da Flex:
 
@@ -976,7 +976,7 @@ E o cabeçalho do modal ganha a copy da Flex:
       </div>
 ```
 
-- [ ] **Step 7: Acrescentar o CSS do hero de página na região FASE 2**
+- [x] **Step 7: Acrescentar o CSS do hero de página na região FASE 2**
 
 ```css
 /* ---------- Hero de página interna (Castelo Flex) ---------- */
@@ -1010,7 +1010,7 @@ E o cabeçalho do modal ganha a copy da Flex:
 }
 ```
 
-- [ ] **Step 8: Verificar no navegador**
+- [x] **Step 8: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html`.
 2. `browser_console_messages`. Esperado: nenhum erro. Um `TypeError` aqui quer dizer que `#nav`, `#burger`, `#drawer`, `#drawerBackdrop` ou `#topo` não sobreviveram ao recorte.
@@ -1025,7 +1025,7 @@ E o cabeçalho do modal ganha a copy da Flex:
 11. `browser_press_key` `Escape`. Esperado: o modal fecha e o foco volta para o botão que o abriu.
 12. `browser_click` no link "Casa Pronta" da nav. Esperado: vai para `home.html#casa-pronta` e cai na seção certa.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1058,7 +1058,7 @@ Entrega a seção 3 da spec 7.2: o que é a modalidade, com o vídeo explicativo
 
 **Copy e vídeo provisórios.** Texto escrito a partir do material do Instagram. O vídeo é o mesmo `insta-04.mp4` usado na home, marcando o lugar do explicativo definitivo. Quando o vídeo real chegar e for horizontal, troque `vexp--reel` por `vexp--wide` na `<figure>`.
 
-- [ ] **Step 1: Inserir a seção**
+- [x] **Step 1: Inserir a seção**
 
 Em `front/flex.html`, logo depois de
 
@@ -1104,7 +1104,7 @@ cole:
   <div class="facet facet--sand" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Verificar no navegador**
+- [x] **Step 2: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#o-que-e` e `browser_take_screenshot` em `f2-t6-1440.png`. Olhe: texto à esquerda com o telhadinho vermelho em cada item da lista, vídeo vertical à direita limitado a 330px, legenda cinza abaixo dele, e o telhado creme recortando a saída da seção.
@@ -1116,7 +1116,7 @@ cole:
 8. Em 1440px, `browser_click` no link "A Flex" da nav. Esperado: rola até a seção com o título visível abaixo da nav fixa.
 9. `browser_press_key` `Tab` até o vídeo e `browser_press_key` `Space`. Esperado: o vídeo toca pelo teclado, com anel de foco visível no player.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1147,7 +1147,7 @@ Entrega a seção 4 da spec 7.2, que é o coração da página: deixar claro o q
 
 **Copy provisória.** Os cinco passos e a lista do que fica por conta do cliente entram no banco como `passos` com contexto `flex` e são editáveis pelo painel.
 
-- [ ] **Step 1: Inserir a seção**
+- [x] **Step 1: Inserir a seção**
 
 Em `front/flex.html`, logo depois de
 
@@ -1226,7 +1226,7 @@ cole:
   <div class="facet facet--bone" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Acrescentar o CSS na região FASE 2**
+- [x] **Step 2: Acrescentar o CSS na região FASE 2**
 
 ```css
 /* ---------- Passo a passo da Flex ---------- */
@@ -1301,7 +1301,7 @@ cole:
 .depois__nota a:hover{text-decoration:underline}
 ```
 
-- [ ] **Step 3: Verificar no navegador**
+- [x] **Step 3: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#passos-flex` e `browser_take_screenshot` em `f2-t7-1440.png`. Olhe: cinco cards brancos numa faixa creme, cada um com o número em madeira; abaixo deles a pílula vermelha escura "A entrega da Castello termina aqui" com as duas linhas vermelhas saindo dos lados; depois o bloco "O que fica por sua conta" com quatro itens; e a nota final com o link para a Casa Pronta.
@@ -1315,7 +1315,7 @@ cole:
 10. `browser_press_key` `Tab` até esse link e `browser_snapshot`. Esperado: anel de foco vermelho visível.
 11. `browser_click` no link "Passo a passo" da nav. Esperado: rola até a seção com o título visível.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1347,7 +1347,7 @@ Entrega as seções 5 e 6 da spec 7.2: o catálogo das casas Flex e o bloco de p
 
 **Dados provisórios.** Nomes, áreas e o "Sob consulta" no lugar do preço são marcadores até o cliente enviar a tabela da Flex. Migram para `modelos` com modalidade `flex` (contrato §2), onde a coluna `preco` já é opcional exatamente por causa disso. As fotos são casas Castello reais reaproveitadas, e a legenda da seção avisa na própria página que a tabela está em fechamento.
 
-- [ ] **Step 1: Inserir o catálogo**
+- [x] **Step 1: Inserir o catálogo**
 
 Em `front/flex.html`, logo depois de
 
@@ -1430,7 +1430,7 @@ cole:
   <div class="facet facet--ink" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Inserir o bloco de prazo e diferenciais**
+- [x] **Step 2: Inserir o bloco de prazo e diferenciais**
 
 Logo depois dessa faceta escura, cole:
 
@@ -1477,7 +1477,7 @@ Logo depois dessa faceta escura, cole:
   <div class="facet facet--sand" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 3: Acrescentar o CSS na região FASE 2**
+- [x] **Step 3: Acrescentar o CSS na região FASE 2**
 
 ```css
 /* ---------- Preço ainda sem tabela fechada ---------- */
@@ -1512,7 +1512,7 @@ Logo depois dessa faceta escura, cole:
 .bene p{margin-top:9px;color:var(--muted);font-size:.98rem;line-height:1.55}
 ```
 
-- [ ] **Step 4: Verificar no navegador**
+- [x] **Step 4: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#modelos-flex` e `browser_take_screenshot` em `f2-t8-catalogo.png`. Olhe: três cards de modelo com foto, selo "Semipronta", eyebrow "Entrega em 45 dias", nome, área e "Sob consulta" no lugar do preço, mais a nota abaixo dizendo que a tabela está em fechamento.
@@ -1525,7 +1525,7 @@ Logo depois dessa faceta escura, cole:
 9. `browser_evaluate` com `() => ({ doc: document.documentElement.scrollWidth, win: window.innerWidth })` em 390px. Esperado: `doc` menor ou igual a `win`.
 10. Em 1440px, `browser_click` no link "Casas Flex" da nav. Esperado: rola até `#modelos-flex`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1557,7 +1557,7 @@ Entrega a seção 7 da spec 7.2. Reaproveita o componente de tabs vertical do FA
 
 **Copy provisória.** As cinco perguntas migram para `faq` com contexto `flex`. Os SVG são exatamente os mesmos do FAQ da home, o que garante que o conjunto de ícones continua fechado, como manda a spec 5.3.
 
-- [ ] **Step 1: Inserir o FAQ**
+- [x] **Step 1: Inserir o FAQ**
 
 Em `front/flex.html`, logo depois de
 
@@ -1629,7 +1629,7 @@ e imediatamente **antes** de `<!-- ============ CTA BAND / FORMULÁRIO DA FLEX =
   </section>
 ```
 
-- [ ] **Step 2: Verificar no navegador**
+- [x] **Step 2: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/flex.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#faq` e `browser_take_screenshot` em `f2-t9-1440.png`. Olhe: rail vertical com cinco ícones à esquerda, o primeiro em vermelho cheio, e o painel branco à direita com a primeira pergunta aberta. Logo abaixo, a faixa vermelha de CTA com o telhado recortando a entrada a partir do creme do FAQ: a emenda que ficou torta na Tarefa 5 agora fecha.
@@ -1643,7 +1643,7 @@ e imediatamente **antes** de `<!-- ============ CTA BAND / FORMULÁRIO DA FLEX =
 10. `browser_click` no botão "Tirar uma dúvida sobre a Flex". Esperado: o modal abre.
 11. Em 1440px, `browser_click` no link "Perguntas" da nav. Esperado: rola até o FAQ.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1673,7 +1673,7 @@ Alinha a marcação do formulário ao contrato §6.1 nas duas páginas e faz a p
 - Consome: contrato §6.1 (campos), §6.2 (regras de recusa), `.qform`, `.qform__hp`
 - Produz: um `<form id="quoteForm">` em cada página com exatamente os campos que o `enviar.php` da frente 3 espera receber
 
-- [ ] **Step 1: Trocar o honeypot e acrescentar os campos ocultos, nas duas páginas**
+- [x] **Step 1: Trocar o honeypot e acrescentar os campos ocultos, nas duas páginas**
 
 Em `front/home.html` e em `front/flex.html`, substitua
 
@@ -1703,7 +1703,7 @@ por
 
 Os `<input type="hidden">` não têm `offsetParent`, então o laço de foco do modal no `js/main.js` já os ignora e a ordem de tabulação não muda.
 
-- [ ] **Step 2: Conferir que os dois formulários batem com o contrato**
+- [x] **Step 2: Conferir que os dois formulários batem com o contrato**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello/front"
@@ -1715,7 +1715,7 @@ done
 
 Esperado nos dois arquivos, e nada além disto entre as tags do formulário: `nome`, `whatsapp`, `busca`, `modelo`, `cidade`, `mensagem`, `pagina`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `empresa`, `ts`, `csrf`. Se `_gotcha` ainda aparecer, o passo 1 não pegou nos dois arquivos.
 
-- [ ] **Step 3: Varredura final da home**
+- [x] **Step 3: Varredura final da home**
 
 `browser_navigate` para `http://localhost:8000/front/home.html` e, para **cada** largura da lista 1440, 1180, 1024, 900, 768, 560, 390:
 
@@ -1733,7 +1733,7 @@ Depois, em 1440px:
 9. `browser_evaluate` com `() => [...document.querySelectorAll('a[href^="#"]')].map(a => a.getAttribute('href')).filter(h => h !== '#' && !document.querySelector(h))`. Esperado: lista vazia. Âncora apontando para o nada reprova.
 10. `browser_press_key` `Tab` vinte vezes seguidas, com `browser_snapshot` a cada cinco. Esperado: o foco só entra em elementos visíveis, sempre com anel visível, e nunca cai dentro do drawer fechado nem do modal fechado.
 
-- [ ] **Step 4: Varredura final da página Flex**
+- [x] **Step 4: Varredura final da página Flex**
 
 `browser_navigate` para `http://localhost:8000/front/flex.html` e repita, para as mesmas sete larguras, os passos 1 a 3 do passo anterior, salvando em `f2-t10-flex-<largura>.png`.
 
@@ -1748,7 +1748,7 @@ Depois, em 1440px:
 10. `browser_evaluate` com `() => document.body.innerText.includes('R$')`. Esperado: `false` na página Flex, porque a tabela ainda não está fechada.
 11. `browser_press_key` `Tab` vinte vezes, com `browser_snapshot` a cada cinco. Mesma expectativa da home.
 
-- [ ] **Step 5: Ida e volta entre as duas páginas**
+- [x] **Step 5: Ida e volta entre as duas páginas**
 
 1. Em `home.html`, `browser_click` no link "Castelo Flex" da nav. Esperado: chega em `flex.html` com o hero da Flex.
 2. Em `flex.html`, `browser_click` no logo da nav. Esperado: volta para `home.html`.
@@ -1756,7 +1756,7 @@ Depois, em 1440px:
 4. Em 390px, faça o mesmo caminho pelo drawer nas duas páginas. Esperado: o drawer fecha ao clicar e a navegação acontece.
 5. Nas duas páginas, role até passar do primeiro dobra e confira que o botão flutuante `#wppFloat` aparece. `browser_click` nele. Esperado: o modal de orçamento abre.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
