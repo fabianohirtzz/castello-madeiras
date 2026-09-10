@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Costura do formulario: o modal das duas paginas envia para enviar.php pelo
- * js/formulario.js, e so por ele.
+ * Costura do formulario: o formulario (no modal ou embutido na pagina de
+ * contato) envia para enviar.php pelo js/formulario.js, e so por ele.
  *
  * O teste de ponta a ponta fala com o servidor local (php -S localhost:8000
  * -t public_html). Sem o servidor no ar, ele e pulado, nao falha: os demais
@@ -47,11 +47,11 @@ function envio_pedir(string $caminho, string $jar, ?array $post = null): array
     return [$http, $corpo];
 }
 
-teste('as duas paginas carregam o formulario.js depois do main.js', function (): void {
-    foreach (['index.php', 'flex.php'] as $arquivo) {
+teste('as cinco paginas carregam o formulario.js depois do main.js', function (): void {
+    foreach (['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'] as $arquivo) {
         $html = render(site() . '/' . $arquivo);
-        contem('<script src="js/main.js?v=13"></script>', $html, $arquivo);
-        contem('<script src="js/formulario.js?v=1" defer></script>', $html, $arquivo);
+        contem('<script src="js/main.js?v=14"></script>', $html, $arquivo);
+        contem('<script src="js/formulario.js?v=2" defer></script>', $html, $arquivo);
         verdade(strpos($html, '<script src="js/main.js') < strpos($html, '<script src="js/formulario.js'), "$arquivo: formulario.js vem depois do main.js");
         contem('id="quoteForm" method="post" action="enviar.php"', $html, $arquivo);
     }

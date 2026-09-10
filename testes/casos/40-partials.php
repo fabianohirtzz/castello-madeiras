@@ -45,7 +45,7 @@ teste('o rotulo do botao de orcamento sai no formato do site atual', function ()
     contem('data-modelo="Ampla · 59,75 m² · R$ 97.776"', $html);
 });
 
-teste('partials/portfolio.php imprime o acordeao identico ao site atual', function (): void {
+teste('partials/portfolio.php imprime a grade identica a base conferida no navegador', function (): void {
     igual(norm(base_frag('portfolio')), norm(parcial('portfolio')));
 });
 

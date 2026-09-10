@@ -2,103 +2,99 @@
 declare(strict_types=1);
 
 /**
- * Costura: os partials imprimem a marcacao nova da frente 2.
+ * Partials compartilhados pelas paginas: nav, rodape, modal e formulario.
  *
- * A referencia e a marcacao estatica entregue em front/, com cada trecho
- * dinamico cercado por <!-- inicio:nome --> e <!-- fim:nome -->. Depois da
- * costura o front/ some e a referencia passa a morar em testes/base/.
+ * A saida das listas (modelos, portfolio, passos, avaliacoes, videos, faq) e
+ * comparada byte a byte com testes/base/frag-*.html no caso 40. Aqui ficam os
+ * partials que mudam conforme a pagina.
  */
 
 require_once site() . '/lib/conteudo.php';
 
 banco_com_conteudo();
 
-function referencia(string $pagina): string
-{
-    foreach ([raiz() . '/testes/base/' . $pagina . '-fase2.html', raiz() . '/front/' . $pagina . '.html'] as $caminho) {
-        if (is_file($caminho)) {
-            $html = (string) file_get_contents($caminho);
-            // O front/ enxergava os assets por ../public_html/; o site, pela raiz.
-            return str_replace('../public_html/', '', $html);
-        }
-    }
-    throw new RuntimeException('referencia da pagina ' . $pagina . ' nao encontrada');
-}
-
-function trecho(string $pagina, string $nome): string
-{
-    $ok = preg_match('#<!-- inicio:' . preg_quote($nome, '#') . ' -->(.*?)<!-- fim:' . preg_quote($nome, '#') . ' -->#s', referencia($pagina), $m);
-    verdade($ok === 1 && trim($m[1]) !== '', "a referencia de $pagina precisa marcar o trecho $nome");
-    return $m[1];
-}
-
-function classes_de(string $html): array
-{
-    preg_match_all('#class="([^"]+)"#', $html, $c);
-    $classes = [];
-    foreach ($c[1] as $lista) {
-        foreach (preg_split('/\s+/', trim($lista)) ?: [] as $classe) {
-            if ($classe !== '') {
-                $classes[$classe] = true;
-            }
-        }
-    }
-    return array_keys($classes);
-}
-
 function parcial_costura(string $nome, array $vars = []): string
 {
     return render(site() . '/partials/' . $nome . '.php', $vars);
 }
 
-/** pagina, trecho, partial, variaveis */
-const COSTURA_TRECHOS = [
-    ['home', 'modelos',      'modelos',    ['modalidade' => 'pronta']],
-    ['home', 'portfolio',    'portfolio',  []],
-    ['home', 'passos',       'passos',     ['contexto' => 'pronta']],
-    ['home', 'avaliacoes',   'avaliacoes', []],
-    ['home', 'videos',       'videos',     []],
-    ['home', 'faq',          'faq',        ['contexto' => 'geral']],
-    ['flex', 'modelos-flex', 'modelos',    ['modalidade' => 'flex']],
-    ['flex', 'passos-flex',  'passos',     ['contexto' => 'flex']],
-    ['flex', 'faq-flex',     'faq',        ['contexto' => 'flex']],
+/** chave da pagina => arquivo */
+const PAGINAS_NAV = [
+    'home'      => 'index.php',
+    'pronta'    => 'casa-pronta.php',
+    'flex'      => 'flex.php',
+    'portfolio' => 'portfolio.php',
+    'contato'   => 'contato.php',
 ];
 
-foreach (COSTURA_TRECHOS as [$pagina, $marca, $partial, $vars]) {
-    teste("partial $partial ($marca) imprime toda classe da marcacao nova", function () use ($pagina, $marca, $partial, $vars): void {
-        $esperado = trecho($pagina, $marca);
-        $saida = parcial_costura($partial, $vars);
-        foreach (classes_de($esperado) as $classe) {
-            verdade(str_contains($saida, $classe), "partial $partial nao imprime a classe $classe");
+teste('a nav lista so paginas, sem ancora, e o logo leva a home', function (): void {
+    foreach (PAGINAS_NAV as $chave => $arquivo) {
+        $html = parcial_costura('nav', ['pagina' => $chave]);
+
+        preg_match_all('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
+        verdade(isset($m[1][0]), "$chave: bloco de links");
+        preg_match_all('#href="([^"]+)"#', $m[1][0], $hrefs);
+        igual(['casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $hrefs[1], "$chave: os quatro links de pagina, nesta ordem");
+
+        preg_match_all('#<div class="drawer"[^>]*>(.*?)</div>#s', $html, $g);
+        preg_match_all('#href="([^"]+)"#', $g[1][0], $ghrefs);
+        igual(['casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $ghrefs[1], "$chave: a gaveta tem os mesmos quatro links");
+
+        nao_contem('href="#', $html, "$chave: nenhuma ancora no menu");
+        contem('href="index.php" class="nav__logo"', $html, "$chave: o logo leva a home");
+        contem('class="btn btn--primary nav__cta" data-quote-open', $html, "$chave: CTA de orcamento na nav");
+        contem('<span class="nav__tag">Novo</span>', $html, "$chave: etiqueta da Flex");
+        nao_contem('.html', $html);
+    }
+});
+
+teste('a pagina atual recebe aria-current="page" na nav e na gaveta', function (): void {
+    foreach (PAGINAS_NAV as $chave => $arquivo) {
+        $html = parcial_costura('nav', ['pagina' => $chave]);
+        igual($chave === 'home' ? 1 : 2, substr_count($html, 'aria-current="page"'), "$chave: um na nav e um na gaveta (na home, so o logo)");
+        if ($chave === 'home') {
+            contem('href="index.php" class="nav__logo" aria-label="Castello Casas de Madeira" aria-current="page"', $html);
+        } else {
+            verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '"[^>]*aria-current="page"#', $html) === 1, "$chave: link da nav marcado");
         }
-    });
+    }
+});
 
-    teste("partial $partial ($marca) sai identico ao trecho de referencia", function () use ($pagina, $marca, $partial, $vars): void {
-        if ($partial === 'videos') {
-            config_gravar('videos_na_home', '11');
-        }
-        $saida = parcial_costura($partial, $vars);
-        config_gravar('videos_na_home', '8');
-        igual(norm(trecho($pagina, $marca)), norm($saida));
-    });
-}
+teste('o rodape lista as cinco paginas e marca a atual', function (): void {
+    foreach (PAGINAS_NAV as $chave => $arquivo) {
+        $html = parcial_costura('rodape', ['pagina' => $chave]);
+        preg_match_all('#<ul class="footer__pages">(.*?)</ul>#s', $html, $m);
+        preg_match_all('#href="([^"]+)"#', $m[1][0], $hrefs);
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $hrefs[1], "$chave: paginas do rodape");
+        igual(1, substr_count($html, 'aria-current="page"'), "$chave: uma pagina atual so");
+        verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '" aria-current="page"#', $html) === 1, "$chave: link do rodape marcado");
+        contem('<footer class="footer" id="contato">', $html);
+        contem('wa.me/5548998244494', $html);
+    }
+    contem('footer__map', parcial_costura('rodape', ['pagina' => 'home']), 'a home tem o mapa no rodape');
+    nao_contem('footer__map', parcial_costura('rodape', ['pagina' => 'contato']), 'a pagina de contato ja tem o mapa grande, o rodape nao repete');
+    contem('footer__grid footer__grid--sem-mapa', parcial_costura('rodape', ['pagina' => 'contato']));
+});
 
-teste('a nav muda os links conforme a pagina', function (): void {
-    $home = parcial_costura('nav', ['pagina' => 'home']);
-    contem('href="#casa-pronta"', $home);
-    contem('href="flex.php" class="nav__link--flex"', $home);
-    contem('<span class="nav__tag">Novo</span>', $home);
-    contem('href="#topo" class="nav__logo"', $home);
-    nao_contem('flex.html', $home);
-    nao_contem('href="#modelos"', $home, 'o id antigo #modelos nao existe mais');
+teste('o formulario e um partial so, com os campos do contrato 6.1', function (): void {
+    $html = parcial_costura('formulario', ['form_modalidade' => 'pronta']);
+    contem('<form class="qform" id="quoteForm" method="post" action="enviar.php" novalidate>', $html);
+    foreach (['nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'mensagem'] as $campo) {
+        contem('name="' . $campo . '"', $html, "campo $campo");
+    }
+    contem('name="empresa"', $html, 'honeypot com o nome do contrato');
+    nao_contem('_gotcha', $html, 'o nome antigo do honeypot sai de cena');
+    contem('<input type="hidden" name="csrf" value="" />', $html);
+    foreach (['pagina', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'ts'] as $oculto) {
+        contem('<input type="hidden" name="' . $oculto . '" value="" />', $html, "campo oculto $oculto");
+    }
+    contem('id="quoteDone" hidden', $html, 'a tela de sucesso acompanha o formulario');
+    contem('id="quoteBack"', $html);
+    contem('<option value="Compacta · 39 m² · R$ 69.900">Compacta · 39 m² · R$ 69.900</option>', $html);
+    contem('id="qGroupModelo" hidden', $html);
 
-    $flex = parcial_costura('nav', ['pagina' => 'flex']);
-    contem('href="#o-que-e"', $flex);
-    contem('href="#passos-flex"', $flex);
-    contem('href="#modelos-flex"', $flex);
-    contem('href="index.php#casa-pronta"', $flex);
-    contem('href="index.php" class="nav__logo"', $flex);
-    nao_contem('home.html', $flex);
+    $extra = parcial_costura('formulario', ['form_modalidade' => 'pronta', 'form_opcoes_extra' => ['Quero a Castelo Flex, semipronta']]);
+    contem('<option value="Quero a Castelo Flex, semipronta">Quero a Castelo Flex, semipronta</option>', $extra);
 });
 
 teste('o modal muda o titulo e a lista de modelos conforme a pagina', function (): void {
@@ -106,12 +102,9 @@ teste('o modal muda o titulo e a lista de modelos conforme a pagina', function (
     contem('Vamos falar da sua casa', $home);
     contem('<option value="Compacta · 39 m² · R$ 69.900">Compacta · 39 m² · R$ 69.900</option>', $home);
     contem('id="qGroupModelo" hidden', $home);
-    contem('name="empresa"', $home, 'honeypot com o nome do contrato');
-    nao_contem('_gotcha', $home, 'o nome antigo do honeypot sai de cena');
-    contem('<input type="hidden" name="csrf" value="" />', $home);
-    foreach (['pagina', 'referrer', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'ts'] as $oculto) {
-        contem('<input type="hidden" name="' . $oculto . '" value="" />', $home, "campo oculto $oculto");
-    }
+    contem('id="quoteForm"', $home);
+    contem('id="reelbox"', $home, 'a home tem o lightbox dos reels');
+    contem('id="wppFloat"', $home, 'o botao flutuante vem junto');
 
     $flex = parcial_costura('modal', ['pagina' => 'flex']);
     contem('Vamos falar da sua Castelo Flex', $flex);
@@ -119,6 +112,14 @@ teste('o modal muda o titulo e a lista de modelos conforme a pagina', function (
     contem('<option value="Quero a Casa Pronta, chave na mão">Quero a Casa Pronta, chave na mão</option>', $flex);
     nao_contem('Compacta · 39 m²', $flex, 'na Flex a lista e dos modelos Flex');
     contem('id="qGroupModelo">', $flex, 'na Flex o campo de modelo ja aparece aberto');
+    nao_contem('id="reelbox"', $flex);
+
+    foreach (['pronta', 'portfolio'] as $outra) {
+        $html = parcial_costura('modal', ['pagina' => $outra]);
+        contem('Vamos falar da sua casa', $html, $outra);
+        contem('Compacta · 39 m²', $html, $outra);
+        nao_contem('id="reelbox"', $html, "$outra: so a home tem trilha do Instagram");
+    }
 });
 
 teste('realce() transforma *texto* em destaque e escapa o resto', function (): void {

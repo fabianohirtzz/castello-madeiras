@@ -20,8 +20,17 @@ teste('CASTELLO_URL e uma origem https sem barra no fim', function (): void {
     igual('https://castello.tohospedando.com.br', CASTELLO_URL, 'subdominio de teste ate o dominio final existir');
 });
 
-teste('metatags de producao estao corretas nas duas paginas', function (): void {
-    foreach (['index.php' => '/', 'flex.php' => '/flex.php'] as $arquivo => $caminho) {
+/** arquivo => caminho publico */
+const PRODUCAO_PAGINAS = [
+    'index.php'       => '/',
+    'casa-pronta.php' => '/casa-pronta.php',
+    'flex.php'        => '/flex.php',
+    'portfolio.php'   => '/portfolio.php',
+    'contato.php'     => '/contato.php',
+];
+
+teste('metatags de producao estao corretas nas cinco paginas', function (): void {
+    foreach (PRODUCAO_PAGINAS as $arquivo => $caminho) {
         $html = renderizar_pagina($arquivo);
         $head = substr($html, 0, (int) strpos($html, '</head>'));
 
@@ -38,7 +47,7 @@ teste('metatags de producao estao corretas nas duas paginas', function (): void 
 });
 
 teste('a imagem do og:image existe no site', function (): void {
-    foreach (['index.php', 'flex.php'] as $arquivo) {
+    foreach (array_keys(PRODUCAO_PAGINAS) as $arquivo) {
         $html = renderizar_pagina($arquivo);
         preg_match('#<meta property="og:image" content="' . preg_quote(CASTELLO_URL, '#') . '/([^"]+)" />#', $html, $m);
         verdade(isset($m[1]) && is_file(site() . '/' . $m[1]), "$arquivo: og:image aponta para arquivo inexistente: " . ($m[1] ?? '?'));
