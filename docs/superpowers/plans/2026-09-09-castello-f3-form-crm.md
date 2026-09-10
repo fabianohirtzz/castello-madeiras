@@ -75,7 +75,7 @@ Cria o runner por linha de comando e o arquivo que fornece as funções da frent
 - Consumes: nada.
 - Produces: `db(): PDO`, `e(?string): string`, `agora(): string`, `config_ler(string, ?string): ?string`, `config_gravar(string, string): void`, `csrf_token(): string`, `csrf_validar(?string): bool`, a constante `CASTELLO_DB_TESTE`, e os helpers de teste `t_secao(string)`, `t_ok(string, bool, string)`, `t_igual(string, mixed, mixed)`, `t_resumo(): int`, `teste_banco_apagar(): void`, `teste_banco_limpar(): void`. Toda função é definida dentro de `if (!function_exists(...))`, então quando a lib real da frente 1 for carregada antes, nada aqui entra em ação.
 
-- [ ] **Passo 1: criar as pastas**
+- [x] **Passo 1: criar as pastas**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -84,7 +84,7 @@ mkdir -p public_html/lib public_html/js testes
 
 Se `public_html/` ainda não existir porque a frente 1 não fez o `git mv` da seção 3.1 do contrato, criar assim mesmo. Os arquivos da frente 3 já nascem no lugar definitivo e o `git mv` da frente 1 não conflita com eles.
 
-- [ ] **Passo 2: escrever o apoio da frente 1**
+- [x] **Passo 2: escrever o apoio da frente 1**
 
 Criar `testes/apoio-f1.php`:
 
@@ -223,7 +223,7 @@ if (!function_exists('teste_banco_limpar')) {
 }
 ```
 
-- [ ] **Passo 3: escrever o runner com uma asserção que falha de propósito**
+- [x] **Passo 3: escrever o runner com uma asserção que falha de propósito**
 
 Criar `testes/smoke-f3.php`. A última asserção está errada de propósito, para provar que o runner acusa falha e devolve código de saída 1:
 
@@ -294,7 +294,7 @@ t_igual('FALHA PROPOSITAL', 'a', 'b');
 exit(t_resumo());
 ```
 
-- [ ] **Passo 4: rodar e ver o runner acusar a falha**
+- [x] **Passo 4: rodar e ver o runner acusar a falha**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -303,11 +303,11 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: a linha `FALHA FALHA PROPOSITAL  ->  esperado 'a', obtido 'b'`, o resumo `9/10 passaram` e `codigo de saida: 1`.
 
-- [ ] **Passo 5: remover a asserção falsa**
+- [x] **Passo 5: remover a asserção falsa**
 
 Apagar de `testes/smoke-f3.php` a linha `t_igual('FALHA PROPOSITAL', 'a', 'b');`.
 
-- [ ] **Passo 6: rodar e ver passar**
+- [x] **Passo 6: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -315,7 +315,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: `9/9 passaram` e `codigo de saida: 0`.
 
-- [ ] **Passo 7: commitar**
+- [x] **Passo 7: commitar**
 
 ```bash
 git add testes/apoio-f1.php testes/smoke-f3.php
