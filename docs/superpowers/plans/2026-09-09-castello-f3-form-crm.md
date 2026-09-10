@@ -836,7 +836,7 @@ Uma função só. Lê endpoint, método, cabeçalhos e mapa de campos da tabela 
 
 **Chave de `config` nova:** `crm_timeout`, em segundos, padrão `10`. Não está na tabela 2.1 do contrato. O código funciona sem ela porque `config_ler` devolve o padrão; ela existe para o teste de tempo esgotado não precisar esperar 10 segundos. Ver "Pontos em que o contrato ficou curto", no fim do plano.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -961,7 +961,7 @@ if ($servidor !== null) {
 }
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -970,7 +970,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/lib/crm.php'`.
 
-- [ ] **Passo 3: escrever `public_html/lib/crm.php`**
+- [x] **Passo 3: escrever `public_html/lib/crm.php`**
 
 ```php
 <?php
@@ -1120,7 +1120,7 @@ function crm_cortar(string $texto): string
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -1128,7 +1128,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: toda a seção `lib/crm.php: o conector` com `ok` e `codigo de saida: 0`. O teste de tempo esgotado leva cerca de 2 segundos.
 
-- [ ] **Passo 5: commitar**
+- [x] **Passo 5: commitar**
 
 ```bash
 git add public_html/lib/crm.php testes/smoke-f3.php

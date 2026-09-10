@@ -251,4 +251,123 @@ if ($servidor !== null) {
     crm_falso_derrubar($servidor);
 }
 
+require_once __DIR__ . '/../public_html/lib/crm.php';
+
+t_secao('lib/crm.php: o conector');
+teste_banco_limpar();
+
+$leadExemplo = [
+    'nome'         => 'Fabiano Hirtz',
+    'whatsapp'     => '(48) 99824-4494',
+    'busca'        => 'Modelo pronto do catalogo',
+    'modelo'       => 'Compacta 39 m2',
+    'cidade'       => 'Tubarao / SC',
+    'mensagem'     => 'Tenho terreno.',
+    'pagina'       => '/index.php',
+    'utm_source'   => 'instagram',
+    'utm_campaign' => 'flex-setembro',
+];
+
+$mapaPadrao = '{"nome":"nome","whatsapp":"telefone","busca":"interesse","modelo":"modelo","cidade":"cidade","mensagem":"observacao","utm_source":"origem","utm_campaign":"campanha","pagina":"pagina"}';
+
+/* CRM desligado: nao faz requisicao nenhuma */
+config_gravar('crm_ativo', '0');
+config_gravar('crm_endpoint', crm_falso_url('ok'));
+config_gravar('crm_mapa_campos', $mapaPadrao);
+$r = crm_enviar($leadExemplo);
+t_ok('CRM desligado: ok false', $r['ok'] === false);
+t_igual('CRM desligado: erro crm_desativado', 'crm_desativado', $r['erro']);
+t_igual('CRM desligado: http zero', 0, $r['http']);
+t_igual('CRM desligado: resposta vazia', '', $r['resposta']);
+
+/* endpoint vazio */
+config_gravar('crm_ativo', '1');
+config_gravar('crm_endpoint', '');
+$r = crm_enviar($leadExemplo);
+t_igual('endpoint vazio: erro crm_sem_endpoint', 'crm_sem_endpoint', $r['erro']);
+
+/* mapa de campos invalido */
+config_gravar('crm_endpoint', crm_falso_url('ok'));
+config_gravar('crm_mapa_campos', 'isso nao e json');
+$r = crm_enviar($leadExemplo);
+t_igual('mapa quebrado: erro crm_mapa_invalido', 'crm_mapa_invalido', $r['erro']);
+
+/* cabecalhos invalidos */
+config_gravar('crm_mapa_campos', $mapaPadrao);
+config_gravar('crm_cabecalhos', '{quebrado');
+$r = crm_enviar($leadExemplo);
+t_igual('cabecalhos quebrados: erro crm_cabecalhos_invalidos', 'crm_cabecalhos_invalidos', $r['erro']);
+config_gravar('crm_cabecalhos', '{"Authorization":"Bearer segredo-123"}');
+
+$servidor = crm_falso_subir();
+t_ok('servidor do CRM falso subiu de novo', $servidor !== null);
+
+if ($servidor !== null) {
+    /* CRM responde 200 */
+    config_gravar('crm_endpoint', crm_falso_url('ok'));
+    $r = crm_enviar($leadExemplo);
+    t_ok('CRM 200: ok true', $r['ok'] === true, json_encode($r));
+    t_igual('CRM 200: http 200', 200, $r['http']);
+    t_ok('CRM 200: erro nulo', $r['erro'] === null);
+    t_ok('CRM 200: guarda a resposta bruta', strpos($r['resposta'], 'CRM-') !== false, $r['resposta']);
+
+    /* o mapa de campos e o cabecalho chegaram certos */
+    config_gravar('crm_endpoint', crm_falso_url('eco'));
+    $r = crm_enviar($leadExemplo);
+    $ultima = crm_falso_ultima();
+    $payload = json_decode($ultima['corpo'] ?? '', true);
+    t_igual('mapa: whatsapp virou telefone', '(48) 99824-4494', $payload['telefone'] ?? null);
+    t_igual('mapa: busca virou interesse', 'Modelo pronto do catalogo', $payload['interesse'] ?? null);
+    t_igual('mapa: utm_source virou origem', 'instagram', $payload['origem'] ?? null);
+    t_igual('mapa: mensagem virou observacao', 'Tenho terreno.', $payload['observacao'] ?? null);
+    t_ok('mapa nao manda campo fora do mapa', !array_key_exists('utm_medium', (array) $payload));
+    t_igual('cabecalho de autorizacao chegou', 'Bearer segredo-123', $ultima['cabecalhos']['authorization'] ?? null);
+    t_ok(
+        'content-type e json',
+        strpos((string) ($ultima['cabecalhos']['content-type'] ?? ''), 'application/json') === 0,
+        (string) ($ultima['cabecalhos']['content-type'] ?? '')
+    );
+
+    /* campo do mapa que o lead nao tem vira string vazia, nao some */
+    $payloadMagro = null;
+    $r = crm_enviar(['nome' => 'So o nome', 'whatsapp' => '48999999999', 'busca' => 'Ainda pesquisando']);
+    $payloadMagro = json_decode(crm_falso_ultima()['corpo'] ?? '', true);
+    t_igual('campo ausente vai vazio', '', $payloadMagro['cidade'] ?? null);
+
+    /* CRM responde 500 */
+    config_gravar('crm_endpoint', crm_falso_url('erro500'));
+    $r = crm_enviar($leadExemplo);
+    t_ok('CRM 500: ok false', $r['ok'] === false);
+    t_igual('CRM 500: http 500', 500, $r['http']);
+    t_igual('CRM 500: erro crm_http', 'crm_http', $r['erro']);
+    t_ok('CRM 500: guarda o corpo do erro', strpos($r['resposta'], 'interno') !== false, $r['resposta']);
+
+    /* CRM responde algo que nao e JSON */
+    config_gravar('crm_endpoint', crm_falso_url('invalido'));
+    $r = crm_enviar($leadExemplo);
+    t_ok('CRM invalido: ok false', $r['ok'] === false);
+    t_igual('CRM invalido: http 200', 200, $r['http']);
+    t_igual('CRM invalido: erro crm_resposta_invalida', 'crm_resposta_invalida', $r['erro']);
+    t_ok('CRM invalido: guarda o corpo pra diagnostico', strpos($r['resposta'], 'Manutencao') !== false, $r['resposta']);
+
+    /* CRM estoura o tempo */
+    config_gravar('crm_timeout', '2');
+    config_gravar('crm_endpoint', crm_falso_url('demora', ['seg' => 8]));
+    $inicio = microtime(true);
+    $r = crm_enviar($leadExemplo);
+    $gasto = microtime(true) - $inicio;
+    t_ok('CRM lento: ok false', $r['ok'] === false);
+    t_igual('CRM lento: erro crm_tempo', 'crm_tempo', $r['erro']);
+    t_ok('CRM lento: desistiu perto do limite', $gasto < 6, 'gastou ' . round($gasto, 2) . 's');
+    config_gravar('crm_timeout', '10');
+
+    crm_falso_derrubar($servidor);
+
+    /* servidor fora do ar: erro de conexao, nao de tempo */
+    config_gravar('crm_endpoint', 'http://127.0.0.1:8799/nada');
+    $r = crm_enviar($leadExemplo);
+    t_ok('CRM fora do ar: ok false', $r['ok'] === false);
+    t_igual('CRM fora do ar: erro crm_conexao', 'crm_conexao', $r['erro']);
+}
+
 exit(t_resumo());
