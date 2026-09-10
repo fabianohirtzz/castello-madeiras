@@ -75,7 +75,7 @@ Cria o runner por linha de comando e o arquivo que fornece as funções da frent
 - Consumes: nada.
 - Produces: `db(): PDO`, `e(?string): string`, `agora(): string`, `config_ler(string, ?string): ?string`, `config_gravar(string, string): void`, `csrf_token(): string`, `csrf_validar(?string): bool`, a constante `CASTELLO_DB_TESTE`, e os helpers de teste `t_secao(string)`, `t_ok(string, bool, string)`, `t_igual(string, mixed, mixed)`, `t_resumo(): int`, `teste_banco_apagar(): void`, `teste_banco_limpar(): void`. Toda função é definida dentro de `if (!function_exists(...))`, então quando a lib real da frente 1 for carregada antes, nada aqui entra em ação.
 
-- [ ] **Passo 1: criar as pastas**
+- [x] **Passo 1: criar as pastas**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -84,7 +84,7 @@ mkdir -p public_html/lib public_html/js testes
 
 Se `public_html/` ainda não existir porque a frente 1 não fez o `git mv` da seção 3.1 do contrato, criar assim mesmo. Os arquivos da frente 3 já nascem no lugar definitivo e o `git mv` da frente 1 não conflita com eles.
 
-- [ ] **Passo 2: escrever o apoio da frente 1**
+- [x] **Passo 2: escrever o apoio da frente 1**
 
 Criar `testes/apoio-f1.php`:
 
@@ -223,7 +223,7 @@ if (!function_exists('teste_banco_limpar')) {
 }
 ```
 
-- [ ] **Passo 3: escrever o runner com uma asserção que falha de propósito**
+- [x] **Passo 3: escrever o runner com uma asserção que falha de propósito**
 
 Criar `testes/smoke-f3.php`. A última asserção está errada de propósito, para provar que o runner acusa falha e devolve código de saída 1:
 
@@ -294,7 +294,7 @@ t_igual('FALHA PROPOSITAL', 'a', 'b');
 exit(t_resumo());
 ```
 
-- [ ] **Passo 4: rodar e ver o runner acusar a falha**
+- [x] **Passo 4: rodar e ver o runner acusar a falha**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -303,11 +303,11 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: a linha `FALHA FALHA PROPOSITAL  ->  esperado 'a', obtido 'b'`, o resumo `9/10 passaram` e `codigo de saida: 1`.
 
-- [ ] **Passo 5: remover a asserção falsa**
+- [x] **Passo 5: remover a asserção falsa**
 
 Apagar de `testes/smoke-f3.php` a linha `t_igual('FALHA PROPOSITAL', 'a', 'b');`.
 
-- [ ] **Passo 6: rodar e ver passar**
+- [x] **Passo 6: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -315,7 +315,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: `9/9 passaram` e `codigo de saida: 0`.
 
-- [ ] **Passo 7: commitar**
+- [x] **Passo 7: commitar**
 
 ```bash
 git add testes/apoio-f1.php testes/smoke-f3.php
@@ -348,7 +348,7 @@ A rede de segurança. Grava o lead antes de qualquer integração e registra o r
   - `lead_marcar(int $id, string $status, int $tentativas, ?string $resposta): void`
   - Constantes `LEAD_CAMPOS` (array com os 13 campos de conteúdo, na ordem do schema), `LEAD_TENTATIVAS_MAX` (5) e `LEAD_RESPOSTA_MAX` (2000).
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, **antes** da linha `exit(t_resumo());`:
 
@@ -416,7 +416,7 @@ $cortado = db()->query('SELECT * FROM leads WHERE id = ' . (int) $id)->fetch(PDO
 t_igual('resposta longa cortada em 2000', 2000, mb_strlen((string) $cortado['crm_resposta']));
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -425,7 +425,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/lib/leads.php'`.
 
-- [ ] **Passo 3: escrever `public_html/lib/leads.php`**
+- [x] **Passo 3: escrever `public_html/lib/leads.php`**
 
 ```php
 <?php
@@ -523,7 +523,7 @@ function lead_marcar(int $id, string $status, int $tentativas, ?string $resposta
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -531,7 +531,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: todas as linhas da seção `lib/leads.php: gravacao e marcacao` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: commitar**
+- [x] **Passo 5: commitar**
 
 ```bash
 git add public_html/lib/leads.php testes/smoke-f3.php
@@ -565,7 +565,7 @@ O conector precisa de um alvo real para ser testado de verdade, com socket, cabe
   - Arquivo `sys_get_temp_dir() . '/crm-falso-ultima.json'` com a última requisição recebida: `metodo`, `uri`, `cabecalhos`, `corpo`.
   - Helpers no smoke: `crm_falso_subir(int $porta = 8765)`, `crm_falso_derrubar($processo): void`, `crm_falso_ultima(): array`, `crm_falso_url(string $modo, array $extra = []): string`.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -694,7 +694,7 @@ if ($servidor !== null) {
 }
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -703,7 +703,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: `FALHA servidor de teste subiu na porta 8765` (o `php -S` não acha `testes/crm-falso.php`) e `codigo de saida: 1`.
 
-- [ ] **Passo 3: escrever `testes/crm-falso.php`**
+- [x] **Passo 3: escrever `testes/crm-falso.php`**
 
 ```php
 <?php
@@ -792,7 +792,7 @@ echo json_encode(['status' => 'ok', 'id' => 'CRM-' . substr(md5($corpo), 0, 8)])
 
 O `return` no fim de cada modo funciona porque o arquivo é o script roteador do servidor embutido do PHP, executado no escopo global.
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -802,7 +802,7 @@ Esperado: as onze asserções da seção `testes/crm-falso.php` com `ok` e `codi
 
 Se `servidor de teste subiu` falhar, conferir `sys_get_temp_dir()/crm-falso-saida.log` e, no Windows, se a porta 8765 já está ocupada (`netstat -ano | findstr 8765`).
 
-- [ ] **Passo 5: commitar**
+- [x] **Passo 5: commitar**
 
 ```bash
 git add testes/crm-falso.php testes/smoke-f3.php
@@ -836,7 +836,7 @@ Uma função só. Lê endpoint, método, cabeçalhos e mapa de campos da tabela 
 
 **Chave de `config` nova:** `crm_timeout`, em segundos, padrão `10`. Não está na tabela 2.1 do contrato. O código funciona sem ela porque `config_ler` devolve o padrão; ela existe para o teste de tempo esgotado não precisar esperar 10 segundos. Ver "Pontos em que o contrato ficou curto", no fim do plano.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -961,7 +961,7 @@ if ($servidor !== null) {
 }
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -970,7 +970,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/lib/crm.php'`.
 
-- [ ] **Passo 3: escrever `public_html/lib/crm.php`**
+- [x] **Passo 3: escrever `public_html/lib/crm.php`**
 
 ```php
 <?php
@@ -1120,7 +1120,7 @@ function crm_cortar(string $texto): string
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -1128,7 +1128,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: toda a seção `lib/crm.php: o conector` com `ok` e `codigo de saida: 0`. O teste de tempo esgotado leva cerca de 2 segundos.
 
-- [ ] **Passo 5: commitar**
+- [x] **Passo 5: commitar**
 
 ```bash
 git add public_html/lib/crm.php testes/smoke-f3.php
@@ -1161,7 +1161,7 @@ O e-mail é a garantia de que a Castello vê o contato mesmo quando o CRM falha.
   - `email_corpo_lead(array $lead, array $resultado_crm): string` (usada pelo teste para conferir o texto)
   - `email_remetente(): string`
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -1238,7 +1238,7 @@ t_ok('remetente e um e-mail valido', (bool) filter_var(email_remetente(), FILTER
 putenv('CASTELLO_EMAIL_DIR');
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1247,7 +1247,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/lib/email.php'`.
 
-- [ ] **Passo 3: escrever `public_html/lib/email.php`**
+- [x] **Passo 3: escrever `public_html/lib/email.php`**
 
 ```php
 <?php
@@ -1391,7 +1391,7 @@ function email_remetente(): string
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -1399,7 +1399,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: toda a seção `lib/email.php: aviso de lead novo` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: conferir o e-mail gravado com os próprios olhos**
+- [x] **Passo 5: conferir o e-mail gravado com os próprios olhos**
 
 ```bash
 CASTELLO_EMAIL_DIR="$(php -r 'echo sys_get_temp_dir();')/castello-emails"
@@ -1409,7 +1409,7 @@ cat "$CASTELLO_EMAIL_DIR/$(ls -1 "$CASTELLO_EMAIL_DIR" | tail -1)"
 
 Conferir que o texto está legível, com acento correto, sem travessão e sem emoji. O envio real por `mail()` fica pendente de validação no servidor da EreHost.
 
-- [ ] **Passo 6: commitar**
+- [x] **Passo 6: commitar**
 
 ```bash
 git add public_html/lib/email.php testes/smoke-f3.php
@@ -1447,7 +1447,7 @@ A porta de entrada. Honeypot, time-trap, CSRF, validação, gravação, CRM, e-m
 
 **Decisão sobre relógio adiantado:** o `ts` é o `Date.now()` do navegador, comparado com o relógio do servidor. Quando o relógio do visitante está adiantado, a diferença dá negativa. Nesse caso o envio **passa**, porque perder um lead real é pior que aceitar um envio de robô que já passou pelo honeypot. Só a faixa `0 <= decorrido < 3000` é recusada.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -1614,7 +1614,7 @@ t_ok('cada lead gravado gerou um e-mail', count((array) glob($pastaEmail . '/*.t
 putenv('CASTELLO_EMAIL_DIR');
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1623,7 +1623,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/enviar.php'`.
 
-- [ ] **Passo 3: escrever `public_html/enviar.php`**
+- [x] **Passo 3: escrever `public_html/enviar.php`**
 
 ```php
 <?php
@@ -1807,7 +1807,7 @@ if (PHP_SAPI !== 'cli') {
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -1815,7 +1815,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: toda a seção `enviar.php: o caminho do lead` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: conferir que o arquivo não quebra o interpretador**
+- [x] **Passo 5: conferir que o arquivo não quebra o interpretador**
 
 ```bash
 php -l public_html/enviar.php
@@ -1826,7 +1826,7 @@ php -l public_html/lib/email.php
 
 Esperado: `No syntax errors detected` nos quatro.
 
-- [ ] **Passo 6: commitar**
+- [x] **Passo 6: commitar**
 
 ```bash
 git add public_html/enviar.php testes/smoke-f3.php
@@ -1866,7 +1866,7 @@ Fecha a rede de segurança: o que não entrou no CRM na hora entra depois, por c
 
 **Por que `desativado` entra na lista de pendentes:** um lead que chegou com o CRM desligado precisa subir quando o CRM for ligado. `leads_reenviar()` sai na hora quando `crm_ativo` não é `1`, então esses leads não gastam tentativa enquanto o conector está desligado.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -1970,7 +1970,7 @@ t_ok('reenviar.php compara a chave com hash_equals', strpos($fonte, 'hash_equals
 t_ok('reenviar.php tem modo de linha de comando', strpos($fonte, "PHP_SAPI === 'cli'") !== false);
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1979,7 +1979,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Call to undefined function leads_pendentes()`.
 
-- [ ] **Passo 3: acrescentar as duas funções em `public_html/lib/leads.php`**
+- [x] **Passo 3: acrescentar as duas funções em `public_html/lib/leads.php`**
 
 No topo do arquivo, logo abaixo do bloco de comentário, acrescentar a linha:
 
@@ -2051,7 +2051,7 @@ function leads_reenviar(): array
 }
 ```
 
-- [ ] **Passo 4: escrever `public_html/reenviar.php`**
+- [x] **Passo 4: escrever `public_html/reenviar.php`**
 
 ```php
 <?php
@@ -2117,7 +2117,7 @@ echo json_encode(['ok' => true] + $resumo, JSON_UNESCAPED_UNICODE | JSON_UNESCAP
 
 O cabeçalho usa comentário de linha (`//`) de propósito: a linha do cron contém `*/15`, e dentro de um bloco `/** ... */` esse `*/` fecharia o comentário e quebraria o arquivo. Não converter esse cabeçalho em docblock. O `php -l` do Passo 6 pega o erro caso alguém tente.
 
-- [ ] **Passo 5: rodar e ver passar**
+- [x] **Passo 5: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -2125,7 +2125,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: as seções `leads_pendentes e leads_reenviar` e `reenviar.php` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 6: conferir o modo de linha de comando na mão**
+- [x] **Passo 6: conferir o modo de linha de comando na mão**
 
 ```bash
 php -l public_html/reenviar.php
@@ -2134,7 +2134,7 @@ php public_html/reenviar.php; echo "codigo de saida: $?"
 
 Esperado do `php -l`: `No syntax errors detected`. O `php public_html/reenviar.php` sem a lib da frente 1 imprime `reenviar.php: lib/db.php nao encontrada` e sai com código 2, que é o comportamento correto até a frente 1 entregar `lib/db.php`.
 
-- [ ] **Passo 7: commitar**
+- [x] **Passo 7: commitar**
 
 ```bash
 git add public_html/lib/leads.php public_html/reenviar.php testes/smoke-f3.php
@@ -2191,7 +2191,7 @@ Três consequências para este arquivo:
 
 Este é o acoplamento entre as frentes 1 e 3. Sem o `csrf.php`, todo envio volta 419.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Criar `testes/formulario.test.js`:
 
@@ -2442,7 +2442,7 @@ assincronos.reduce(function (fila, passo) {
 });
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -2451,7 +2451,7 @@ node testes/formulario.test.js; echo "codigo de saida: $?"
 
 Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de saída 1.
 
-- [ ] **Passo 3: escrever `public_html/js/formulario.js`**
+- [x] **Passo 3: escrever `public_html/js/formulario.js`**
 
 ```js
 /* Castello - formulario de orcamento (frente 3).
@@ -2854,7 +2854,7 @@ Esperado: `Cannot find module '.../public_html/js/formulario.js'` e código de s
 })();
 ```
 
-- [ ] **Passo 4: rodar os testes do JS e ver passar**
+- [x] **Passo 4: rodar os testes do JS e ver passar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -2863,7 +2863,7 @@ node testes/formulario.test.js; echo "codigo de saida: $?"
 
 Esperado: `29/29 passaram` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: pendurar o teste do JS no smoke**
+- [x] **Passo 5: pendurar o teste do JS no smoke**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -2880,7 +2880,7 @@ if ($ondeNode === '') {
 }
 ```
 
-- [ ] **Passo 6: rodar o smoke inteiro**
+- [x] **Passo 6: rodar o smoke inteiro**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -2888,7 +2888,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: todas as seções com `ok`, incluindo `node testes/formulario.test.js passa`, e `codigo de saida: 0`.
 
-- [ ] **Passo 7: conferir no navegador que o envio antigo ficou desligado**
+- [x] **Passo 7: conferir no navegador que o envio antigo ficou desligado**
 
 Como `index.php` ainda é da frente 1, a conferência é feita no `index.html` atual sem editá-lo, injetando o arquivo pela mão:
 
@@ -2930,7 +2930,7 @@ sessionStorage.getItem('castello_utm')   // {"utm_source":"instagram","utm_campa
 
 Navegar para `http://localhost:8000/index.html` sem parâmetro, injetar de novo, abrir o modal e conferir que `document.querySelector('#quoteForm [name=utm_source]').value` continua `instagram`. O envio em si só fecha o ciclo quando a frente 1 entregar o `csrf.php`, e isso é conferido na Tarefa 9.
 
-- [ ] **Passo 8: commitar**
+- [x] **Passo 8: commitar**
 
 ```bash
 git add public_html/js/formulario.js testes/formulario.test.js testes/smoke-f3.php
