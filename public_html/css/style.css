@@ -224,6 +224,8 @@ body.drawer-open{overflow:hidden}
   text-shadow:0 2px 50px rgba(0,0,0,.45);
 }
 .hero__headline-sub .hl{color:var(--red-bright)}
+/* no desktop o "chave na mão" desce para a segunda linha; no celular fica corrido */
+@media(min-width:761px){.hero__headline-sub .hl{display:block}}
 .hero__beat--two .hero__actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:36px}
 
 /* Indicador de etapa (01/02) */
