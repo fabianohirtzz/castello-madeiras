@@ -53,7 +53,11 @@ O segmento do meio é o **prazo para iniciar a obra**, o principal critério de 
 
 **Categorias de contato:** Cliente efetivo (4187394), **Cliente em potencial (4187395)**, Concorrente, Fornecedor, Parceiro.
 
-**Produtos:** `CASA PRONTA HORIZONTAL` (2480035) e `CASA PRONTA VERTICAL` (2480036). A Castello pensa os modelos por tipo de parede, não pelos nomes Compacta/Conforto/Família/Ampla propostos no protótipo. Não existe produto de Castelo Flex.
+**Produtos:** `CASA PRONTA HORIZONTAL` (2480035) e `CASA PRONTA VERTICAL` (2480036). Não existe produto de Castelo Flex.
+
+**Horizontal e vertical são tipologias, não paredes** (confirmado pelo cliente em 2026-09-10): **horizontal é casa térrea, vertical é casa com mais de um pavimento, com escada**. A leitura inicial deste documento dizia "tipo de parede", por contaminação da coluna `parede` da tabela `modelos` do site, e estava errada.
+
+A distinção importa além do CRM: é um eixo do catálogo da Castello que **o site hoje não representa em lugar nenhum**. Ver seção 13.
 
 **Nunca preenchidos, em 100% dos 20 negócios:** `leadOrigin`, `value`, `description`, `products`.
 
@@ -370,7 +374,7 @@ Confirmar que `dealStage: 1` põe o negócio em "Contato", e não `dealStage: 38
 
 - **Webhooks do Agendor.** Existem, mas o fluxo é de mão única: site manda, CRM recebe. Nada volta.
 - **Empresas (`/organizations`).** Os 20 negócios lidos são todos de pessoa, nenhum de empresa.
-- **Produtos e valor no negócio.** A conta nunca preenche.
+- **Produtos e valor no negócio.** A conta nunca preenche. E ligar o produto exigiria saber se o interesse é térreo ou sobrado, que é justamente o eixo que o site ainda não representa (13.1). Quando o catálogo for alinhado, mandar `products` no negócio passa a ser barato e vale reabrir.
 - **Atualização de pessoa existente.** Decisão 3.4.
 - **Distribuição automática entre Daiane e Carlos.** As etapas-caixa mostram que a triagem é humana e visual. O site não adivinha rodízio.
 - **Mapear UTM para origem Instagram ou Facebook.** Decisão 3.5.
@@ -381,5 +385,19 @@ Confirmar que `dealStage: 1` põe o negócio em "Contato", e não `dealStage: 38
 
 - **Token do Agendor em produção.** O token usado no diagnóstico precisa ser o mesmo, ou um dedicado ao site, gravado em `config/segredos.php` no servidor.
 - **Confirmar o campo de prazo no formulário.** A decisão de adicionar foi tomada aqui com base no uso real da conta; vale confirmar com a Castello, junto com as outras pendências.
-- **Nomes dos modelos.** Os produtos no CRM são `CASA PRONTA HORIZONTAL` e `CASA PRONTA VERTICAL`, e o site oferece Compacta, Conforto, Família e Ampla. A pendência de confirmar nomes e preços, aberta desde o protótipo, agora tem evidência de que a Castello pensa por tipo de parede. Não bloqueia esta integração.
+- **Catálogo da Casa Pronta.** Assunto separado desta integração, que não a bloqueia, mas que ficou visível durante o diagnóstico e está descrito em detalhe abaixo.
+
+### 13.1 O catálogo da Casa Pronta não segue o material do cliente
+
+O material em `informacoes/drive-flex/` mostra que a Castello trabalha com **cinco projetos, identificados por número e área**: 36,00 / 39,00 / 42,75 / 51,00 / 57,75 m². A tabela manuscrita de setembro de 2026 confirma os preços da Flex, e o banco do site está **fiel a ela** nos cinco modelos Flex (43, 47, 51, 59 e 69 mil).
+
+O lado da Casa Pronta é que destoa, em três pontos:
+
+1. **Os nomes são invenção do protótipo.** Compacta, Conforto, Família e Ampla não aparecem em material nenhum do cliente, que numera os projetos de 1 a 5.
+2. **Uma área não existe no catálogo deles.** O site anuncia um modelo de **59,75 m²**; o material da Castello tem **57,75 m²**. São quatro modelos no site contra cinco projetos no material.
+3. **A tipologia térrea/sobrado não aparece no site**, embora seja como o CRM classifica os produtos. Pior: as fotos cadastradas se contradizem com os nomes. O modelo chamado "Compacta" tem foto descrita como casa "de dois pavimentos", e o "Ampla" tem foto de "sobrado".
+
+Nada disso quebra a integração com o Agendor, que manda o texto do modelo escolhido dentro da descrição do negócio, seja ele qual for. Mas enquanto o catálogo não for alinhado, o campo "Modelo de interesse" leva ao CRM um vocabulário que o time comercial não usa.
+
+O caminho depende de confirmação da Castello: quais dos cinco projetos são vendidos como Casa Pronta, quais são térreos e quais são sobrados, e quanto custa cada um na modalidade pronta. É trabalho de conteúdo e catálogo, com spec própria.
 - **Autorização para o teste de escrita** da seção 11.
