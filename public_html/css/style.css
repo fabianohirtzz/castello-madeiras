@@ -149,9 +149,6 @@ ul,ol{list-style:none}
 .nav__ico{width:16px;height:16px;flex:none;fill:none;stroke:var(--red-bright);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;transition:stroke .22s var(--ease),transform .3s var(--ease)}
 .nav__links a:hover{background:rgba(255,255,255,.12)}
 .nav__links a:hover .nav__ico{transform:translateY(-1px) scale(1.12)}
-/* scroll-spy: seção atual em destaque */
-.nav__links a.is-current{background:rgba(255,255,255,.18)}
-.nav__links a.is-current .nav__ico{stroke:#fff;transform:scale(1.1)}
 .nav:not(.is-scrolled) .nav__links a{text-shadow:0 1px 10px rgba(0,0,0,.4)}
 .nav__cta{padding:12px 22px;font-size:.92rem;border-radius:999px}
 
@@ -161,8 +158,6 @@ ul,ol{list-style:none}
 .nav.is-scrolled .nav__logo-img--dark{display:block}
 .nav.is-scrolled .nav__links a{color:var(--ink)}
 .nav.is-scrolled .nav__links a:hover{background:var(--red-tint);color:var(--red-deep)}
-.nav.is-scrolled .nav__links a.is-current{background:var(--red-tint);color:var(--red-deep)}
-.nav.is-scrolled .nav__links a.is-current .nav__ico{stroke:var(--red-deep)}
 .nav.is-scrolled .nav__ico{stroke:var(--red)}
 /* esconde a nav ao descer, mostra ao subir */
 .nav.is-hidden{transform:translateY(-130%)}
@@ -608,7 +603,7 @@ body.drawer-open{overflow:hidden}
    FOOTER
    ============================================================ */
 .footer{background:var(--ink);color:#fff;padding-top:var(--sec-pad)}
-.footer__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.4fr;gap:40px}
+.footer__grid{display:grid;grid-template-columns:1.5fr .7fr 1fr 1fr 1.3fr;gap:clamp(24px,3vw,40px)}
 .footer__logo{height:152px;width:auto;margin-bottom:24px}
 .footer__brand p{color:rgba(255,255,255,.64);font-size:.95rem;max-width:34ch}
 .footer__ig{display:inline-block;margin-top:16px;color:var(--red-bright);font-weight:600}
@@ -622,6 +617,8 @@ body.drawer-open{overflow:hidden}
 .footer__col h4{font-family:var(--font-display);font-weight:700;font-size:1.05rem;margin-bottom:18px}
 .footer__col li{color:rgba(255,255,255,.68);font-size:.94rem;margin-bottom:14px;line-height:1.5}
 .footer__col a:hover{color:#fff}
+.footer__pages li{margin-bottom:10px}
+.footer__pages a[aria-current="page"]{color:#fff;font-weight:600}
 /* itens com ícone (contato e atendimento) */
 .footer__list li{display:flex;align-items:flex-start;gap:11px}
 .footer__ico{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;
@@ -897,6 +894,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .why__layout{grid-template-columns:1fr;gap:clamp(28px,5vw,40px)}
   .why__intro{position:static}
   .footer__grid{grid-template-columns:1fr 1fr}
+  .footer__brand{grid-column:1/-1}
   .footer__map{grid-column:1/-1;min-height:240px}
   .accordion{height:clamp(380px,50vh,460px)}
   /* scrollytelling no mobile: imagem fixa no topo, passos rolam por baixo.
@@ -999,24 +997,18 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 }
 .nav.is-scrolled .nav__tag{background:var(--red-deep);color:#fff}
 
-/* Sete links com ícone somam cerca de 1510px e a pílula da nav tem no máximo
-   1320px: não cabe em largura nenhuma (medido em 1440: 190px de sobra).
-   O ícone sai em toda largura, o link aperta e a nav encolhe por etapas
-   até o burger assumir, com o CTA sempre à vista. */
+/* O menu lista quatro paginas. O icone continua na marcacao mas nao aparece:
+   com ele os quatro links passam de 860px e nao cabem ao lado do logo e do
+   CTA abaixo de 1300px. Sem icone cabem ate 1000px, onde o burger assume. */
 .nav__ico{display:none}
 .nav__links a{padding:9px 10px;gap:0;font-size:.88rem}
 .nav__inner{gap:clamp(10px,1.4vw,20px)}
-/* Cortes medidos com barra de rolagem de 17px e folga mínima de 14px:
-   7 links cabem de 1354px pra cima; 6 de 1247; 5 de 1126; 4 de 980. */
-@media(max-width:1380px){
-  .nav__links a[href="#instagram"]{display:none}
-}
+/* pagina atual: mesmo destaque que o scroll-spy dava a secao atual */
+.nav__links a[aria-current="page"]{background:rgba(255,255,255,.18)}
+.nav.is-scrolled .nav__links a[aria-current="page"]{background:var(--red-tint);color:var(--red-deep)}
+.drawer a[aria-current="page"]{color:var(--red-bright)}
 @media(max-width:1260px){
-  .nav__links a[href="#portfolio"]{display:none}
   .nav__cta{padding:12px 18px;font-size:.88rem}
-}
-@media(max-width:1140px){
-  .nav__links a[href="#como-funciona"]{display:none}
 }
 /* abaixo de 1000px os links vão todos para o drawer; logo, CTA e burger ficam */
 @media(max-width:1000px){

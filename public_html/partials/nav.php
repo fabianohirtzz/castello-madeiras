@@ -1,7 +1,11 @@
 <?php
 /**
- * Cabecalho, menu e gaveta mobile. Espera: string $pagina ('home' ou 'flex').
- * Os links mudam por pagina; a marcacao e a mesma.
+ * Cabecalho, menu e gaveta mobile. Espera: string $pagina
+ * ('home', 'pronta', 'flex', 'portfolio' ou 'contato').
+ *
+ * O menu lista so paginas, nunca ancora de secao: o site e multipagina e
+ * cada link leva a um arquivo. A pagina atual recebe aria-current="page".
+ * O logo leva sempre a home.
  */
 declare(strict_types=1);
 
@@ -10,50 +14,19 @@ require_once __DIR__ . '/../lib/db.php';
 $pagina = $pagina ?? 'home';
 
 $ico = [
-    'raio'    => '<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/>',
     'casa'    => '<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/>',
     'camadas' => '<path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/>',
     'foto'    => '<path d="M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/>',
-    'insta'   => '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/>',
-    'fluxo'   => '<path d="M6 4v6a4 4 0 0 0 4 4h4a4 4 0 0 1 4 4v2M6 4H4m2 0h2M18 20h-2m2 0h2"/>',
     'fone'    => '<path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/>',
-    'duvida'  => '<path d="M9.1 9a3 3 0 1 1 4.2 2.8c-.8.4-1.3 1.1-1.3 2M12 17.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>',
-    'escudo'  => '<path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/>',
 ];
 
-/* href, rotulo, icone, classe extra, tag */
-if ($pagina === 'flex') {
-    $logo_href = 'index.php';
-    $links = [
-        ['#o-que-e',               'A Flex',        'camadas', '', ''],
-        ['#passos-flex',           'Passo a passo', 'fluxo',   '', ''],
-        ['#modelos-flex',          'Casas Flex',    'casa',    '', ''],
-        ['#faq',                   'Perguntas',     'duvida',  '', ''],
-        ['index.php#casa-pronta',  'Casa Pronta',   'escudo',  '', ''],
-        ['#contato',               'Contato',       'fone',    '', ''],
-    ];
-    $gaveta = [
-        ['#o-que-e', 'A Flex'], ['#passos-flex', 'Passo a passo'], ['#modelos-flex', 'Casas Flex'],
-        ['#faq', 'Perguntas'], ['index.php#casa-pronta', 'Casa Pronta'], ['index.php', 'Voltar para a home'],
-        ['#contato', 'Contato'],
-    ];
-} else {
-    $logo_href = '#topo';
-    $links = [
-        ['#vantagens',     'Vantagens',     'raio',    '', ''],
-        ['#casa-pronta',   'Casa Pronta',   'casa',    '', ''],
-        ['flex.php',       'Castelo Flex',  'camadas', 'nav__link--flex', 'Novo'],
-        ['#portfolio',     'Portfólio',     'foto',    '', ''],
-        ['#instagram',     'Instagram',     'insta',   '', ''],
-        ['#como-funciona', 'Como funciona', 'fluxo',   '', ''],
-        ['#contato',       'Contato',       'fone',    '', ''],
-    ];
-    $gaveta = [
-        ['#vantagens', 'Vantagens'], ['#casa-pronta', 'Casa Pronta'], ['flex.php', 'Castelo Flex'],
-        ['#portfolio', 'Portfólio'], ['#instagram', 'Instagram'], ['#como-funciona', 'Como funciona'],
-        ['#contato', 'Contato'],
-    ];
-}
+/* chave da pagina, href, rotulo, icone, classe extra, etiqueta */
+$menu = [
+    ['pronta',    'casa-pronta.php', 'Casa Pronta',  'casa',    '',                ''],
+    ['flex',      'flex.php',        'Castelo Flex', 'camadas', 'nav__link--flex', 'Novo'],
+    ['portfolio', 'portfolio.php',   'Portfólio',    'foto',    '',                ''],
+    ['contato',   'contato.php',     'Contato',      'fone',    '',                ''],
+];
 ?>
   <!-- sprite: logo do Google (multicolor) reutilizado nas avaliações -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -68,14 +41,14 @@ if ($pagina === 'flex') {
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
     <div class="nav__inner container">
-      <a href="<?= e($logo_href) ?>" class="nav__logo" aria-label="Castello Casas de Madeira">
+      <a href="index.php" class="nav__logo" aria-label="Castello Casas de Madeira"<?= $pagina === 'home' ? ' aria-current="page"' : '' ?>>
         <img src="images/logo-horizontal-branco.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--light" />
         <img src="images/logo-horizontal-colorido.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--dark" />
       </a>
 
       <nav class="nav__links" aria-label="Navegação principal">
-<?php foreach ($links as [$href, $rotulo, $icone, $classe, $tag]): ?>
-        <a href="<?= e($href) ?>"<?= $classe !== '' ? ' class="' . e($classe) . '"' : '' ?>><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><?= $ico[$icone] ?></svg><?= e($rotulo) ?><?= $tag !== '' ? '<span class="nav__tag">' . e($tag) . '</span>' : '' ?></a>
+<?php foreach ($menu as [$chave, $href, $rotulo, $icone, $classe, $tag]): ?>
+        <a href="<?= e($href) ?>"<?= $classe !== '' ? ' class="' . e($classe) . '"' : '' ?><?= $pagina === $chave ? ' aria-current="page"' : '' ?>><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><?= $ico[$icone] ?></svg><?= e($rotulo) ?><?= $tag !== '' ? '<span class="nav__tag">' . e($tag) . '</span>' : '' ?></a>
 <?php endforeach; ?>
       </nav>
 
@@ -93,8 +66,8 @@ if ($pagina === 'flex') {
   <!-- mobile drawer -->
   <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
   <div class="drawer" id="drawer" aria-hidden="true">
-<?php foreach ($gaveta as [$href, $rotulo]): ?>
-    <a href="<?= e($href) ?>"><?= e($rotulo) ?></a>
+<?php foreach ($menu as [$chave, $href, $rotulo]): ?>
+    <a href="<?= e($href) ?>"<?= $pagina === $chave ? ' aria-current="page"' : '' ?>><?= e($rotulo) ?></a>
 <?php endforeach; ?>
     <button type="button" class="btn btn--primary" data-quote-open>Pedir orçamento</button>
   </div>

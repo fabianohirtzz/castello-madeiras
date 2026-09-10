@@ -401,37 +401,6 @@
     renderWhy();
   }
 
-  /* ---------- Scroll-spy: destaca o link da seção atual ---------- */
-  var spyLinks = Array.prototype.slice.call(document.querySelectorAll('.nav__links a[href^="#"]'));
-  var spyMap = {};
-  var spyTargets = [];
-  spyLinks.forEach(function (a) {
-    var id = a.getAttribute('href').slice(1);
-    var sec = document.getElementById(id);
-    if (sec) { spyMap[id] = a; spyTargets.push(sec); }
-  });
-  if (spyTargets.length && 'IntersectionObserver' in window) {
-    var current = null;
-    function setCurrent(id) {
-      if (id === current) return;
-      current = id;
-      spyLinks.forEach(function (a) {
-        a.classList.toggle('is-current', a.getAttribute('href') === '#' + id);
-      });
-    }
-    var spyObs = new IntersectionObserver(function (entries) {
-      // escolhe a seção mais visível no centro da viewport
-      var best = null, bestRatio = 0;
-      entries.forEach(function (e) {
-        if (e.isIntersecting && e.intersectionRatio > bestRatio) {
-          bestRatio = e.intersectionRatio; best = e.target;
-        }
-      });
-      if (best) setCurrent(best.id);
-    }, { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.25, 0.5, 1] });
-    spyTargets.forEach(function (s) { spyObs.observe(s); });
-  }
-
   /* ---------- Float WhatsApp: aparece após o hero ---------- */
   var wpp = document.getElementById('wppFloat');
   if (wpp && 'IntersectionObserver' in window) {

@@ -1,9 +1,27 @@
 <?php
+/**
+ * Rodape com contato, atendimento, mapa e a lista de paginas do site.
+ * Espera: string $pagina (mesma chave da nav) para marcar a pagina atual.
+ * Na pagina de contato o mapa do rodape some: ela ja traz o mapa grande.
+ */
 declare(strict_types=1);
+
+require_once __DIR__ . '/../lib/db.php';
+
+$pagina = $pagina ?? 'home';
+
+/* chave da pagina, href, rotulo */
+$rodape_paginas = [
+    ['home',      'index.php',       'Início'],
+    ['pronta',    'casa-pronta.php', 'Casa Pronta'],
+    ['flex',      'flex.php',        'Castelo Flex'],
+    ['portfolio', 'portfolio.php',   'Portfólio'],
+    ['contato',   'contato.php',     'Contato'],
+];
 ?>
   <!-- ============ FOOTER / CONTATO ============ -->
   <footer class="footer" id="contato">
-    <div class="container footer__grid">
+    <div class="container footer__grid<?= $pagina === 'contato' ? ' footer__grid--sem-mapa' : '' ?>">
       <div class="footer__brand">
         <img src="images/logo-vertical-branco.png" alt="Castello Casas de Madeira" class="footer__logo" />
         <p>Casas de madeira chave na mão. Projeto, execução e pós-venda numa empresa só, há 12 anos em Tubarão e região.</p>
@@ -18,6 +36,15 @@ declare(strict_types=1);
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
           </a>
         </div>
+      </div>
+
+      <div class="footer__col">
+        <h4>Páginas</h4>
+        <ul class="footer__pages">
+<?php foreach ($rodape_paginas as [$chave, $href, $rotulo]): ?>
+          <li><a href="<?= e($href) ?>"<?= $pagina === $chave ? ' aria-current="page"' : '' ?>><?= e($rotulo) ?></a></li>
+<?php endforeach; ?>
+        </ul>
       </div>
 
       <div class="footer__col">
@@ -52,12 +79,14 @@ declare(strict_types=1);
         </ul>
       </div>
 
+<?php if ($pagina !== 'contato'): ?>
       <div class="footer__map">
         <iframe
           src="https://www.google.com/maps?q=Av.%20Patr%C3%ADcio%20Lima%20843%20Tubar%C3%A3o%20SC&output=embed"
           title="Localização da Castello Casas de Madeira em Tubarão, SC"
           loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
+<?php endif; ?>
     </div>
 
     <div class="footer__bottom container">
