@@ -8,9 +8,44 @@
 
 ## 1. Ambiente e convenções
 
-- **PHP 8.3** (verificado local: 8.3.32). Sem framework, sem Composer, sem dependência externa.
+Dois ambientes, verificados por sondagem em 2026-09-09.
+
+| | Local (desenvolvimento) | Servidor de teste |
+|---|---|---|
+| PHP | 8.3.32, CLI | **8.5.9**, LiteSpeed |
+| SQLite | do PHP local | **3.26.0** |
+| `ZipArchive` | **ausente** | presente |
+| `mail()` | não entrega | presente |
+| `upload_max_filesize` | padrão | 64M |
+| `post_max_size` | padrão | 64M |
+| `memory_limit` | padrão | 1G |
+| `max_execution_time` | 0 | **60s** |
+| ffmpeg | não | **não** |
+
+- **Piso de compatibilidade: PHP 8.1.** Não use recurso exclusivo de 8.2 ou mais novo. O código roda em 8.3 local e 8.5 no servidor de teste, mas a hospedagem final do cliente é desconhecida e pode ser mais velha. Escrever para 8.1 é o que garante que a migração seja copiar a pasta.
+- Sem framework, sem Composer, sem dependência externa.
 - Extensões usadas: `pdo_sqlite`, `fileinfo`, `gd`, `curl`, `mbstring`, `session`.
-- **`ZipArchive` não existe no ambiente local** e `phar.readonly` está ligado. O backup por zip só pode ser validado no servidor. Todo código que usa `ZipArchive` deve checar `class_exists('ZipArchive')` e devolver um erro claro quando ausente, nunca um fatal.
+
+### 1.1 SQLite 3.26 é velho e limita a sintaxe
+
+O servidor tem SQLite **3.26.0**, de 2018. Estes recursos **não existem** lá e não podem ser usados:
+
+- `INSERT ... RETURNING` (precisa de 3.35). Use `PDO::lastInsertId()`.
+- `ALTER TABLE ... DROP COLUMN` (precisa de 3.35). Migração de schema é criar tabela nova e copiar.
+- Tabelas `STRICT` (precisa de 3.37).
+- `ALTER TABLE ... RENAME COLUMN` (precisa de 3.25, esse funciona).
+
+`UPSERT` com `ON CONFLICT DO UPDATE` funciona (3.24+) e é o jeito de gravar em `config` e `blocos`.
+
+Escrever contra 3.26 é a escolha segura: roda também em qualquer SQLite mais novo.
+
+### 1.2 Consequências práticas
+
+- **`ZipArchive` não existe no ambiente local** e `phar.readonly` está ligado, mas **existe no servidor**. Todo código que usa `ZipArchive` checa `class_exists('ZipArchive')` e devolve erro claro quando ausente, nunca um fatal. O teste local se marca como pulado; a validação do backup é feita no servidor.
+- **`max_execution_time` é 60s.** O tempo limite do curl ao CRM é de **10 segundos**, nunca mais. Um CRM lento não pode segurar a resposta ao visitante.
+- **Não há ffmpeg.** O painel não converte vídeo: recebe `.mp4` já otimizado e avisa o tamanho recomendado no upload.
+- **`upload_max_filesize` é 64M**, então o limite de 30M para vídeo cabe com folga.
+- **`mail()` não entrega na máquina local.** O modo de teste grava o e-mail em arquivo; a validação real é no servidor.
 - Todo arquivo PHP começa com `<?php` e **não** tem `?>` no final.
 - `declare(strict_types=1);` em toda a `lib/`.
 - Codificação UTF-8 sem BOM. Fuso `America/Sao_Paulo`.
@@ -222,7 +257,27 @@ prototipo-site-castello/
   docs/
 ```
 
-`lib/db.php` define `CASTELLO_CONFIG` como `dirname(__DIR__, 2) . '/config'`, o que dá o mesmo caminho local e na EreHost.
+### 3.2 Onde fica o `config/` em cada ambiente
+
+Os dois ambientes têm profundidades diferentes, então o caminho não pode ser fixo. `lib/db.php` resolve `CASTELLO_CONFIG` nesta ordem, parando no primeiro que existir:
+
+1. A variável de ambiente `CASTELLO_CONFIG`.
+2. O arquivo `lib/caminho-config.php`, que devolve um caminho absoluto. Este arquivo é **ignorado pelo git** e existe só no servidor.
+3. O padrão `dirname(__DIR__, 2) . '/config'`.
+
+```php
+// lib/caminho-config.php no servidor de teste
+<?php
+return '/home/freelain/domains/tohospedando.com.br/castello-config';
+```
+
+Local, o padrão já acerta: `<repo>/config`.
+
+No servidor de teste, o caminho **precisa** ser esse absoluto. A raiz do subdomínio é `/home/freelain/domains/tohospedando.com.br/public_html/castello`, e a pasta acima dela, `public_html`, é a raiz pública do próprio `tohospedando.com.br`. Deixar o `config/` ali publicaria o banco em `https://tohospedando.com.br/config/castello.db`.
+
+O usuário de FTP está preso ao `public_html` e **não consegue criar** a pasta `castello-config`, que fica um nível acima. Quem cria é o PHP: `db()` faz `mkdir` do diretório de configuração quando ele não existe, com permissão `0700`. A sondagem confirmou que o PHP tem permissão de escrita nesse nível.
+
+Depois de criar, confirme que o banco não é alcançável pelo navegador. É a Task de verificação de segurança da frente 4.
 
 **Consequência:** o site sai do GitHub Pages. Depois desta mudança, o `main` deixa de servir o site em `fabianohirtzz.github.io`, porque a raiz muda e o conteúdo vira PHP, que o Pages não executa. O ambiente de demonstração passa a ser o subdomínio de teste na EreHost. O `.gitignore` recebe `config/castello.db`, `config/segredos.php` e `public_html/uploads/`.
 

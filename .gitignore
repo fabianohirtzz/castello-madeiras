@@ -22,3 +22,13 @@ video-hero/video-hero.original.mp4
 
 # Backups de vídeos brutos (pre otimização web)
 videos-instagram/web/*.original.mp4
+
+# Fase 2: banco, segredos e uploads (nunca versionar)
+config/castello.db
+config/castello.db-*
+config/segredos.php
+public_html/uploads/
+.credenciais-deploy
+
+# Caminho do config no servidor (nao versionar)
+public_html/lib/caminho-config.php
