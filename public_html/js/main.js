@@ -414,6 +414,71 @@
     wpp.classList.add('is-visible');
   }
 
+  /* ---------- Galeria do portfólio: grade + foto em tela cheia ---------- */
+  var galeria = document.getElementById('galeria');
+  var fotobox = document.getElementById('fotobox');
+  if (galeria && fotobox) {
+    var fotos = [].slice.call(galeria.querySelectorAll('.galeria__item'));
+    var fbImg = document.getElementById('fotoboxImg');
+    var fbCat = document.getElementById('fotoboxCat');
+    var fbTitle = document.getElementById('fotoboxTitle');
+    var fbCount = document.getElementById('fotoboxCount');
+    var fbIdx = 0, fbLast = null;
+
+    function showFoto(i) {
+      fbIdx = (i + fotos.length) % fotos.length;
+      var item = fotos[fbIdx];
+      var img = item.querySelector('img');
+      fbImg.src = img.getAttribute('src');
+      fbImg.alt = img.getAttribute('alt') || '';
+      fbCat.textContent = item.getAttribute('data-categoria') || '';
+      fbTitle.textContent = item.getAttribute('data-titulo') || '';
+      fbCount.textContent = (fbIdx + 1) + ' / ' + fotos.length;
+    }
+    function openFoto(i, trigger) {
+      fbLast = trigger || null;
+      fotobox.hidden = false;
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(function () { fotobox.classList.add('is-open'); });
+      showFoto(i);
+      setTimeout(function () { document.getElementById('fotoboxClose').focus({ preventScroll: true }); }, 60);
+    }
+    function closeFoto() {
+      if (fotobox.hidden) return;
+      fotobox.classList.remove('is-open');
+      document.body.classList.remove('modal-open');
+      setTimeout(function () { fotobox.hidden = true; fbImg.removeAttribute('src'); }, 300);
+      if (fbLast) fbLast.focus({ preventScroll: true });
+    }
+
+    fotos.forEach(function (item, i) {
+      item.addEventListener('click', function () { openFoto(i, item); });
+    });
+    document.getElementById('fotoboxClose').addEventListener('click', closeFoto);
+    document.getElementById('fotoboxPrev').addEventListener('click', function () { showFoto(fbIdx - 1); });
+    document.getElementById('fotoboxNext').addEventListener('click', function () { showFoto(fbIdx + 1); });
+    fotobox.addEventListener('click', function (e) { if (e.target === fotobox || e.target.classList.contains('fotobox__stage')) closeFoto(); });
+    document.addEventListener('keydown', function (e) {
+      if (fotobox.hidden) return;
+      if (e.key === 'Escape') closeFoto();
+      else if (e.key === 'ArrowRight') showFoto(fbIdx + 1);
+      else if (e.key === 'ArrowLeft') showFoto(fbIdx - 1);
+    });
+    // swipe horizontal
+    var fx = 0, fy = 0, fTracking = false;
+    fotobox.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) return;
+      fTracking = true; fx = e.touches[0].clientX; fy = e.touches[0].clientY;
+    }, { passive: true });
+    fotobox.addEventListener('touchend', function (e) {
+      if (!fTracking) return;
+      fTracking = false;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - fx, dy = t.clientY - fy;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) showFoto(fbIdx + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
   /* ---------- FAQ: tabs verticais (uma aba ativa por vez) ---------- */
   var faqTabs = document.getElementById('faqTabs');
   if (faqTabs) {

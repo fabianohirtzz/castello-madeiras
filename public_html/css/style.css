@@ -1246,6 +1246,8 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 
 /* faceta branca: a cena das avaliações começa em branco puro */
 .facet--white::before{background:#fff}
+/* faixa de CTA logo depois de uma seção clara: o recorte do telhado sai em bone, não em sand */
+.cta-band--bone::before{background:var(--bone)}
 
 /* ---------- Home: resumo da Casa Pronta (texto + foto do modelo em destaque) ---------- */
 .prontahome .checklist{margin-top:26px}
@@ -1294,5 +1296,73 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 @media(max-width:520px){
   .incluso__lista{grid-template-columns:1fr}
   .incluso__side .bene{flex-direction:column;gap:14px}
+}
+
+/* ---------- Portfólio: grade de casas entregues ---------- */
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:clamp(14px,2vw,24px)}
+.galeria__item{
+  position:relative;display:block;width:100%;aspect-ratio:4/3;padding:0;border:0;cursor:pointer;
+  background:var(--ink);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-soft);
+  text-align:left;color:#fff;-webkit-tap-highlight-color:transparent;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+}
+.galeria__item:hover,.galeria__item:focus-visible{transform:translateY(-5px);box-shadow:var(--shadow-card)}
+.galeria__item:focus-visible{outline:3px solid var(--red-bright);outline-offset:3px}
+.galeria__item img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.galeria__item:hover img{transform:scale(1.05)}
+.galeria__veil{position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(20,20,20,.28) 68%,rgba(20,20,20,.84))}
+.galeria__cap{position:absolute;left:0;right:0;bottom:0;padding:20px 22px;display:flex;flex-direction:column;gap:6px}
+.galeria__eyebrow{font:600 .68rem/1 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--red-bright)}
+.galeria__title{font:700 clamp(1.05rem,1.4vw,1.25rem)/1.1 var(--font-display);letter-spacing:-.02em}
+.galeria__zoom{
+  position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;background:rgba(20,20,20,.5);border:1px solid rgba(255,255,255,.18);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  opacity:0;transform:scale(.8);transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.galeria__zoom svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.galeria__item:hover .galeria__zoom,.galeria__item:focus-visible .galeria__zoom{opacity:1;transform:none}
+@media(hover:none){.galeria__zoom{opacity:1;transform:none}}
+.galeria__nota{margin-top:38px;text-align:center;color:var(--muted);font-size:.95rem;max-width:64ch;margin-inline:auto}
+.galeria__nota-link{color:var(--red-deep);font-weight:600;white-space:nowrap;background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:inherit}
+.galeria__nota-link:hover{text-decoration:underline}
+@media(max-width:560px){.galeria{grid-template-columns:1fr}}
+
+/* foto em tela cheia (mesma linguagem do lightbox dos reels) */
+.fotobox{
+  position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+  gap:clamp(10px,3vw,34px);padding:clamp(14px,3vw,32px);
+  background:rgba(8,8,8,.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  opacity:0;transition:opacity .3s var(--ease);
+}
+.fotobox[hidden]{display:none}
+.fotobox.is-open{opacity:1}
+.fotobox__stage{position:relative;display:flex;flex-direction:column;align-items:center;max-width:min(1180px,100%);max-height:100%}
+.fotobox__img{max-width:100%;max-height:min(78svh,78vh);width:auto;height:auto;border-radius:var(--r-lg);box-shadow:0 40px 90px -30px rgba(0,0,0,.9);background:#000}
+.fotobox__cap{margin-top:16px;text-align:center;color:#fff;display:flex;flex-direction:column;gap:4px}
+.fotobox__cat{font:600 .7rem/1 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--red-bright)}
+.fotobox__title{font:700 1.15rem/1.15 var(--font-display);letter-spacing:-.02em}
+.fotobox__count{margin-top:6px;font-family:var(--font-display);font-weight:600;font-size:.82rem;color:rgba(255,255,255,.6);letter-spacing:.06em}
+.fotobox__nav{
+  flex:none;width:clamp(46px,5vw,58px);height:clamp(46px,5vw,58px);border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  transition:background .25s var(--ease),transform .25s var(--ease),border-color .25s var(--ease);
+}
+.fotobox__nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.fotobox__nav:hover{background:var(--red);border-color:var(--red);transform:scale(1.07)}
+.fotobox__close{
+  position:absolute;top:clamp(14px,2.4vw,26px);right:clamp(14px,2.4vw,26px);z-index:2;
+  width:46px;height:46px;border-radius:50%;cursor:pointer;display:grid;place-items:center;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);transition:.25s var(--ease);
+}
+.fotobox__close svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.fotobox__close:hover{background:var(--red);border-color:var(--red);transform:rotate(90deg)}
+@media(max-width:760px){
+  .fotobox{flex-direction:column;gap:14px;padding:64px 12px 84px}
+  .fotobox__img{max-height:min(calc(100svh - 220px),70vh)}
+  .fotobox__nav{position:absolute;bottom:18px;z-index:2;width:52px;height:52px;background:rgba(20,20,20,.72)}
+  .fotobox__nav--prev{left:calc(50% - 96px)}
+  .fotobox__nav--next{right:calc(50% - 96px)}
 }
 
