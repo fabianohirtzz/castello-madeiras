@@ -5330,7 +5330,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: `config_ler()`, `config_gravar()`, `bloco()`, `db()`, `csrf_token()`, `csrf_validar()`, `auth_exigir()`.
 - Produz: `painel_config_campos(): array`, `painel_config_validar(array $entrada): array` devolvendo `array{valores: array<string,string>, erros: array<string,string>}`, `painel_textos_gravar(array $entrada): int` (quantas chaves foram gravadas), `painel_fixas(): array` (mapa `chave => rótulo` das telas que não são de conteúdo).
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao final de `testes/casos/80-painel.php`:
 
@@ -5464,12 +5464,12 @@ teste('painel_fixas traz as quatro telas que nao sao de conteudo', function (): 
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: os 27 anteriores passam e os 8 novos falham com `Call to undefined function painel_textos_gravar()`.
 
-- [ ] **Passo 3: Acrescentar as funções ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as funções ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -5620,7 +5620,7 @@ function painel_config_validar(array $entrada): array
 }
 ```
 
-- [ ] **Passo 4: Ligar as telas fixas ao menu do `painel.php`**
+- [x] **Passo 4: Ligar as telas fixas ao menu do `painel.php`**
 
 Em `public_html/painel/painel.php`, troque a linha
 
@@ -5636,7 +5636,7 @@ $abas = painel_abas() + painel_fixas();
 
 O roteamento que já está escrito manda as telas fixas para `telas/<tela>.php`, então nada mais muda ali.
 
-- [ ] **Passo 5: Escrever a tela de Textos**
+- [x] **Passo 5: Escrever a tela de Textos**
 
 Crie `public_html/painel/telas/textos.php`:
 
@@ -5670,7 +5670,7 @@ $blocos = db()->query('SELECT chave, rotulo, valor, tipo FROM blocos ORDER BY ro
 </form>
 ```
 
-- [ ] **Passo 6: Escrever a tela de Configurações**
+- [x] **Passo 6: Escrever a tela de Configurações**
 
 Crie `public_html/painel/telas/config.php`:
 
@@ -5739,7 +5739,7 @@ $ativos = (int) db()->query('SELECT COUNT(*) FROM videos WHERE ativo = 1')->fetc
 </form>
 ```
 
-- [ ] **Passo 7: Escrever as duas ações**
+- [x] **Passo 7: Escrever as duas ações**
 
 Crie `public_html/painel/acoes/textos.php`:
 
@@ -5796,12 +5796,12 @@ header('Location: ../painel.php?tela=config&ok=' . rawurlencode('Configurações
 exit;
 ```
 
-- [ ] **Passo 8: Rodar e ver passar**
+- [x] **Passo 8: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 35 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 9: Conferir no navegador**
+- [x] **Passo 9: Conferir no navegador**
 
 1. Abra Textos. Mude o Prazo da Casa Pronta para `90 a 110 dias` e salve. A faixa verde diz `21 textos salvos.` e o valor persiste ao recarregar. Volte para `90 a 120 dias`.
 2. Abra Configurações. Coloque `0` em quantos vídeos aparecem e salve. O campo volta marcado com `Escolha um número de 1 a 24.` e o resto do formulário fica como você deixou.
@@ -5809,7 +5809,7 @@ Esperado: 35 ok, 0 falha, 0 pulado.
 4. Escreva `{quebrado` nos cabeçalhos do CRM e salve. Mensagem de JSON inválido, nada gravado.
 5. Escreva um e-mail sem arroba e salve. Mensagem de e-mail inválido.
 
-- [ ] **Passo 10: Rodar a suíte e commitar**
+- [x] **Passo 10: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.

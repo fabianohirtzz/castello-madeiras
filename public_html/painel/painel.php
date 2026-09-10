@@ -6,7 +6,7 @@ require_once __DIR__ . '/tabelas.php';
 
 auth_exigir();
 
-$abas = painel_abas();
+$abas = painel_abas() + painel_fixas();
 
 $tela = (string) ($_GET['tela'] ?? 'modelos');
 if (!isset($abas[$tela])) {

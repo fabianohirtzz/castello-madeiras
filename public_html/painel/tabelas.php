@@ -361,3 +361,151 @@ function painel_reordenar(string $chave, array $ids): int
 
     return $mudaram;
 }
+
+/** Telas do painel que nao sao de conteudo. */
+function painel_fixas(): array
+{
+    return [
+        'textos' => 'Textos',
+        'config' => 'Configurações',
+        'backup' => 'Backup',
+        'senha'  => 'Trocar senha',
+    ];
+}
+
+/** Grava os textos avulsos. So chaves que ja existem em blocos sao aceitas. */
+function painel_textos_gravar(array $entrada): int
+{
+    $chaves = db()->query('SELECT chave FROM blocos ORDER BY rowid')->fetchAll(PDO::FETCH_COLUMN);
+    $st = db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?');
+    $gravadas = 0;
+
+    foreach ($chaves as $chave) {
+        if (!array_key_exists($chave, $entrada)) {
+            continue;
+        }
+        $st->execute([trim((string) $entrada[$chave]), $chave]);
+        $gravadas++;
+    }
+
+    return $gravadas;
+}
+
+/** As dez chaves de config que o cliente edita, com rotulo e tipo. */
+function painel_config_campos(): array
+{
+    return [
+        'videos_na_home' => ['rotulo' => 'Quantos vídeos aparecem na home', 'tipo' => 'numero',
+                             'min' => 1, 'max' => 24,
+                             'ajuda' => 'De 1 a 24. Quanto mais vídeos, mais devagar a página carrega'],
+        'email_aviso'    => ['rotulo' => 'E-mail que recebe aviso de pedido novo', 'tipo' => 'texto'],
+        'email_dominio'  => ['rotulo' => 'Domínio usado no remetente', 'tipo' => 'texto',
+                             'ajuda' => 'Só o domínio, como castellomadeiras.com.br'],
+        'crm_ativo'      => ['rotulo' => 'Enviar os pedidos para o CRM', 'tipo' => 'sim_nao',
+                             'ajuda' => 'Deixe desligado enquanto o CRM não estiver configurado. O pedido continua sendo gravado e enviado por e-mail'],
+        'crm_endpoint'   => ['rotulo' => 'Endereço do CRM', 'tipo' => 'texto',
+                             'ajuda' => 'A URL completa, começando com https://'],
+        'crm_metodo'     => ['rotulo' => 'Método HTTP', 'tipo' => 'selecao',
+                             'opcoes' => ['POST' => 'POST', 'PUT' => 'PUT', 'PATCH' => 'PATCH']],
+        'crm_cabecalhos' => ['rotulo' => 'Cabeçalhos do CRM', 'tipo' => 'json',
+                             'ajuda' => 'JSON, como {"Authorization":"Bearer sua-chave"}'],
+        'crm_mapa_campos' => ['rotulo' => 'De para dos campos', 'tipo' => 'json',
+                              'ajuda' => 'JSON ligando o campo do site ao nome que o CRM espera'],
+        'crm_timeout'    => ['rotulo' => 'Segundos de espera pelo CRM', 'tipo' => 'numero',
+                             'min' => 1, 'max' => 10,
+                             'ajuda' => 'De 1 a 10. O servidor derruba a página em 60 segundos, então esperar mais que 10 pelo CRM faria o visitante esperar junto'],
+        'reenvio_chave'  => ['rotulo' => 'Chave do reenvio de pendentes', 'tipo' => 'texto',
+                             'ajuda' => 'Autoriza o reenvio dos pedidos que não chegaram ao CRM. Apague o campo e salve para gerar uma chave nova'],
+    ];
+}
+
+/**
+ * Valida a configuracao enviada pelo formulario.
+ *
+ * @return array{valores: array<string,string>, erros: array<string,string>}
+ */
+function painel_config_validar(array $entrada): array
+{
+    $valores = [];
+    $erros   = [];
+
+    foreach (painel_config_campos() as $chave => $campo) {
+        $bruto = trim((string) ($entrada[$chave] ?? ''));
+
+        if ($chave === 'videos_na_home') {
+            $numero = (int) $bruto;
+            if ($numero < 1 || $numero > 24) {
+                $erros[$chave] = 'Escolha um número de 1 a 24.';
+                continue;
+            }
+            $valores[$chave] = (string) $numero;
+            continue;
+        }
+
+        if ($chave === 'crm_timeout') {
+            $numero = (int) $bruto;
+            if ($numero < 1) {
+                $numero = $bruto === '' || !ctype_digit($bruto) ? 10 : 1;
+            }
+            if ($numero > 10) {
+                $numero = 10;
+            }
+            $valores[$chave] = (string) $numero;
+            continue;
+        }
+
+        if ($chave === 'email_aviso') {
+            if ($bruto === '' || filter_var($bruto, FILTER_VALIDATE_EMAIL) === false) {
+                $erros[$chave] = 'Escreva um e-mail válido, como contato@castellomadeiras.com.br';
+                continue;
+            }
+            $valores[$chave] = $bruto;
+            continue;
+        }
+
+        if ($chave === 'email_dominio') {
+            if ($bruto === '' || !preg_match('/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i', $bruto)) {
+                $erros[$chave] = 'Escreva só o domínio, como castellomadeiras.com.br';
+                continue;
+            }
+            $valores[$chave] = mb_strtolower($bruto);
+            continue;
+        }
+
+        if ($chave === 'reenvio_chave') {
+            $valores[$chave] = strlen($bruto) >= 32 ? $bruto : bin2hex(random_bytes(16));
+            continue;
+        }
+
+        if ($chave === 'crm_ativo') {
+            $valores[$chave] = $bruto === '1' ? '1' : '0';
+            continue;
+        }
+
+        if ($chave === 'crm_endpoint') {
+            if ($bruto !== '' && filter_var($bruto, FILTER_VALIDATE_URL) === false) {
+                $erros[$chave] = 'Escreva a URL completa, começando com https://';
+                continue;
+            }
+            $valores[$chave] = $bruto;
+            continue;
+        }
+
+        if ($chave === 'crm_metodo') {
+            $valores[$chave] = isset($campo['opcoes'][$bruto]) ? $bruto : 'POST';
+            continue;
+        }
+
+        $decodificado = json_decode($bruto === '' ? '{}' : $bruto, true);
+        if (!is_array($decodificado)) {
+            $erros[$chave] = 'Este campo precisa ser um JSON válido, como {"chave":"valor"}.';
+            continue;
+        }
+        // Array vazio viraria "[]" no json_encode; o CRM espera objeto, entao "{}".
+        $valores[$chave] = $decodificado === []
+            ? '{}'
+            : (string) json_encode($decodificado, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    return ['valores' => $valores, 'erros' => $erros];
+}
