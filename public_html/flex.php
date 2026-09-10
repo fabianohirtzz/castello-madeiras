@@ -7,7 +7,7 @@ declare(strict_types=1);
  * pelos blocos flex_* e flexpg_*. O que o cliente ainda nao cadastrou some
  * sem quebrar a pagina.
  *
- * Nao existe formulario embutido: o site tem um formulario so, no modal.
+ * O formulario e o do modal compartilhado (partials/modal.php).
  */
 
 require_once __DIR__ . '/lib/conteudo.php';
@@ -47,7 +47,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=14" />
+  <link rel="stylesheet" href="css/style.css?v=15" />
 </head>
 <body>
 
@@ -157,7 +157,7 @@ $flex_faq     = faq('flex');
       </div>
 
       <p class="depois__nota reveal">Quer tudo isso incluso e a chave na mão no fim? Então a sua modalidade é a
-        <a href="index.php#casa-pronta">Casa Pronta, completa em <?= e(bloco('pronta_prazo', '90 a 120 dias')) ?></a>.
+        <a href="casa-pronta.php">Casa Pronta, completa em <?= e(bloco('pronta_prazo', '90 a 120 dias')) ?></a>.
       </p>
     </div>
   </section>
@@ -269,7 +269,7 @@ $flex_faq     = faq('flex');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=13"></script>
-  <script src="js/formulario.js?v=1" defer></script>
+  <script src="js/main.js?v=14"></script>
+  <script src="js/formulario.js?v=2" defer></script>
 </body>
 </html>
