@@ -102,19 +102,31 @@ function crm_campo(array $lead, string $chave): string
 function crm_payload_pessoa(array $lead): array
 {
     $payload = [
-        'name'       => crm_campo($lead, 'nome'),
         'leadOrigin' => (int) config_ler('crm_origem', '2656389'),
         'category'   => (int) config_ler('crm_categoria', '4187395'),
     ];
+    $nome = crm_campo($lead, 'nome');
+    if ($nome !== '') {
+        $payload['name'] = $nome;
+    }
 
     $contato = [];
-    $comDdi = crm_whatsapp_ddi(crm_campo($lead, 'whatsapp'));
+    $telefoneBruto = crm_campo($lead, 'whatsapp');
+    $comDdi = crm_whatsapp_ddi($telefoneBruto);
     if ($comDdi !== '') {
         $contato['whatsapp'] = $comDdi;
     }
-    $semDdi = crm_campo($lead, 'whatsapp');
-    if (crm_whatsapp_busca($semDdi) !== '') {
-        $contato['mobile'] = $semDdi;
+    $buscaTelefone = crm_whatsapp_busca($telefoneBruto);
+    if ($buscaTelefone !== '') {
+        /* O bruto (como o visitante digitou) so e seguro quando os digitos
+           dele batem com a chave de busca. Quando o visitante ja digita com
+           o 55 na frente, whatsapp e mobile ficariam iguais e com DDI, e a
+           busca (que e sempre sem DDI) nunca mais reencontraria essa pessoa:
+           cada envio criaria uma pessoa nova, sem erro nenhum aparecer. Por
+           isso aqui cai para os digitos normalizados quando os dois formatos
+           divergem. Achado da revisao de 2026-09-10. */
+        $digitosBrutos = preg_replace('/\D+/', '', $telefoneBruto) ?? '';
+        $contato['mobile'] = $digitosBrutos === $buscaTelefone ? $telefoneBruto : $buscaTelefone;
     }
     if ($contato !== []) {
         $payload['contact'] = $contato;
@@ -168,7 +180,11 @@ function crm_titulo_negocio(array $lead): string
     $prefixo = $marcador . ($meio !== '' ? ' - ' . $meio : '') . ' - ';
     $sobra = CRM_TITULO_MAX - mb_strlen($prefixo);
 
-    return $prefixo . mb_substr($nome, 0, max(1, $sobra));
+    $titulo = $prefixo . mb_substr($nome, 0, max(1, $sobra));
+
+    /* $sobra so garante o corte quando o prefixo sozinho cabe no teto; sem
+       este corte final, um marcador ou prazo compridos furavam o limite. */
+    return mb_substr($titulo, 0, CRM_TITULO_MAX);
 }
 
 /** Corpo em texto do negocio. A conta nao tem campo customizado de negocio. */
@@ -307,13 +323,18 @@ function crm_requisitar(string $metodo, string $caminho, ?array $corpo, float $p
         $cabecalhos[] = 'X-Falso-Modo: ' . $modoTeste;
     }
 
+    /* Piso, nao teto: arredondar para cima furava o orcamento total em ate
+       1s. O minimo de 1 evita CURLOPT_TIMEOUT=0, que para o curl e "sem
+       limite". */
+    $timeoutChamada = max(1, (int) floor($restante));
+
     $ch = curl_init($base . $caminho);
     $opcoes = [
         CURLOPT_CUSTOMREQUEST  => $metodo,
         CURLOPT_HTTPHEADER     => $cabecalhos,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => (int) ceil($restante),
-        CURLOPT_CONNECTTIMEOUT => (int) min(5, ceil($restante)),
+        CURLOPT_TIMEOUT        => $timeoutChamada,
+        CURLOPT_CONNECTTIMEOUT => min(5, $timeoutChamada),
         CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_SSL_VERIFYHOST => 2,
@@ -326,12 +347,13 @@ function crm_requisitar(string $metodo, string $caminho, ?array $corpo, float $p
 
     $bruto = curl_exec($ch);
     $erroNum = curl_errno($ch);
+    $erroTexto = curl_error($ch);
     $http = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     curl_close($ch);
 
     if ($erroNum !== 0) {
         $erro = $erroNum === CURLE_OPERATION_TIMEDOUT ? 'crm_tempo' : 'crm_conexao';
-        return ['ok' => false, 'http' => $http, 'bruto' => 'curl ' . $erroNum, 'dados' => null, 'erro' => $erro];
+        return ['ok' => false, 'http' => $http, 'bruto' => 'curl ' . $erroNum . ': ' . $erroTexto, 'dados' => null, 'erro' => $erro];
     }
 
     $texto = is_string($bruto) ? $bruto : '';

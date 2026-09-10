@@ -16,7 +16,10 @@ declare(strict_types=1);
  * E justamente isso que o conector precisa acertar.
  *
  * Falhas pelo cabecalho X-Falso-Modo: erro500, auth401, limite429, invalido,
- * demora:<segundos>.
+ * demora:<segundos>. Qualquer modo pode ser escopado a um metodo com
+ * @METODO (ex.: auth401@GET), para falhar so aquela chamada da cadeia e
+ * deixar as outras passarem normalmente - e o que prova que a busca de
+ * duplicata tolera falha sem contaminar a criacao que vem depois.
  *
  * Estado das pessoas em sys_get_temp_dir()/crm-falso-pessoas.json, para a
  * pessoa criada numa requisicao ser encontrada na seguinte.
@@ -86,27 +89,35 @@ falso_gravar(FALSO_TODAS, $todas);
 
 /* ---------- modos de falha ---------- */
 
-$modo = $cabecalhos['x-falso-modo'] ?? '';
+$modoCompleto = $cabecalhos['x-falso-modo'] ?? '';
+$modo = $modoCompleto;
+$escopoMetodo = null;
+if (str_contains($modoCompleto, '@')) {
+    [$modo, $escopoMetodo] = explode('@', $modoCompleto, 2);
+}
+/* Sem @METODO o modo vale para qualquer chamada, como sempre foi. Com
+   @METODO, so essa chamada falha; as outras da cadeia seguem normais. */
+$modoVale = $escopoMetodo === null || $escopoMetodo === '' || strtoupper($escopoMetodo) === $metodo;
 
-if ($modo === 'erro500') {
+if ($modoVale && $modo === 'erro500') {
     falso_responder(500, ['errors' => ['erro interno']]);
     return;
 }
-if ($modo === 'auth401') {
+if ($modoVale && $modo === 'auth401') {
     falso_responder(401, ['errors' => ['Token could not be authenticated']]);
     return;
 }
-if ($modo === 'limite429') {
+if ($modoVale && $modo === 'limite429') {
     falso_responder(429, ['errors' => ['Too many requests']]);
     return;
 }
-if ($modo === 'invalido') {
+if ($modoVale && $modo === 'invalido') {
     http_response_code(200);
     header('Content-Type: text/html; charset=utf-8');
     echo '<html><body>Manutencao programada. Volte mais tarde.</body></html>';
     return;
 }
-if (str_starts_with($modo, 'demora:')) {
+if ($modoVale && str_starts_with($modo, 'demora:')) {
     sleep(max(1, min(30, (int) substr($modo, 7))));
 }
 

@@ -373,6 +373,38 @@ teste('crm_payload_pessoa monta o objeto aninhado que o Agendor espera', functio
     config_gravar('crm_responsavel', '989735');
     igual('989735', crm_payload_pessoa(LEAD_EXEMPLO)['ownerUser']);
     config_gravar('crm_responsavel', '');
+
+    /* Nome vazio tambem fica de fora, como qualquer outro campo vazio. */
+    falso(array_key_exists('name', crm_payload_pessoa(['whatsapp' => '48999999999'])), 'nome vazio nao vai no payload');
+});
+
+teste('crm_payload_pessoa nunca guarda o mobile com DDI, mesmo quando o visitante digita com 55', function (): void {
+    crm_teste_config();
+
+    /* Achado da revisao 2026-09-10: quando o bruto e a busca divergem (o
+       visitante digitou com o codigo do pais), guardar o bruto faz whatsapp
+       e mobile carregarem o mesmo 55 - e a busca, que e sempre sem DDI,
+       nunca mais reencontra essa pessoa. O mobile tem que sempre bater com
+       a chave que a busca usa. */
+    /* Lista de pares, nao mapa: '5548998244494' e puramente numerico e o PHP
+       converteria essa chave de array para int, o que quebraria a tipagem
+       string de crm_whatsapp_busca(). */
+    $casos = [
+        ['(48) 99824-4494', '(48) 99824-4494'],       // digitos do bruto ja batem com a busca: guarda formatado
+        ['+55 (48) 99824-4494', '48998244494'],        // bruto tem o 55 a mais que a busca: guarda normalizado
+        ['5548998244494', '48998244494'],              // idem, sem formatacao nenhuma
+        ['55 48 3632-8743', '4836328743'],              // fixo com DDI: idem
+    ];
+    foreach ($casos as [$entrada, $mobileEsperado]) {
+        $p = crm_payload_pessoa(['nome' => 'Teste', 'whatsapp' => $entrada]);
+        igual($mobileEsperado, $p['contact']['mobile'], "mobile de '{$entrada}'");
+
+        /* A invariante de verdade: os digitos do que foi gravado tem que
+           bater com a chave que a busca de duplicata usa, formatado ou nao.
+           Era isso que a regressao do DDI quebrava em silencio. */
+        $digitosGravados = preg_replace('/\D+/', '', (string) $p['contact']['mobile']) ?? '';
+        igual(crm_whatsapp_busca($entrada), $digitosGravados, "os digitos do mobile de '{$entrada}' batem com a busca");
+    }
 });
 
 teste('crm_titulo_negocio segue a convencao do funil', function (): void {
@@ -395,6 +427,14 @@ teste('crm_titulo_negocio segue a convencao do funil', function (): void {
     $titulo = crm_titulo_negocio($longo);
     verdade(mb_strlen($titulo) <= 120, 'titulo cortado em 120: ' . mb_strlen($titulo));
     verdade(str_starts_with($titulo, '[SITE] - Imediato - '), 'o corte tira do nome, nao do marcador nem do prazo');
+
+    /* O prefixo sozinho (marcador + prazo) maior que o teto tambem tem que
+       sair cortado: o $sobra do nome nao e o unico lugar que protege o
+       limite de 120. */
+    config_gravar('crm_marcador', str_repeat('X', 150));
+    $tituloGigante = crm_titulo_negocio(['nome' => 'A', 'prazo' => '']);
+    igual(120, mb_strlen($tituloGigante), 'prefixo maior que 120 sozinho ainda sai cortado em 120');
+    config_gravar('crm_marcador', '[SITE]');
 });
 
 teste('crm_descricao_negocio junta o lead num texto legivel e omite o vazio', function (): void {
@@ -501,23 +541,46 @@ teste('crm_enviar com crm_pessoa_id pula direto para o negocio', function (): vo
 teste('crm_enviar trata 401, 429, resposta invalida e busca que falha', function (): void {
     $servidor = crm_falso_subir();
     try {
-        crm_teste_limpar();
-        crm_teste_config();
+        /* A busca falhando (por qualquer motivo que nao seja tempo) e
+           tolerada: o conector segue e cria a pessoa e o negocio normalmente.
+           Escopado a GET (com @GET) para nao contaminar as chamadas de
+           criacao que vem depois - sem o escopo, o mesmo modo tambem faria a
+           criacao falhar, e o teste passaria mesmo se a busca NAO fosse
+           tolerada, so porque tudo falha do mesmo jeito. */
+        foreach (['auth401', 'limite429', 'erro500', 'invalido'] as $modo) {
+            crm_teste_limpar();
+            crm_teste_config();
+            putenv('CASTELLO_AGENDOR_TESTE_MODO=' . $modo . '@GET');
 
-        putenv('CASTELLO_AGENDOR_TESTE_MODO=auth401');
-        $r = crm_enviar(LEAD_EXEMPLO);
-        falso($r['ok'], '401: ok false');
-        igual('crm_auth', $r['erro']);
-        igual(401, $r['http']);
+            $r = crm_enviar(LEAD_EXEMPLO);
+            verdade($r['ok'] === true, "busca com {$modo} e tolerada, o envio continua: " . json_encode($r));
+            verdade(is_int($r['pessoa_id']) && $r['pessoa_id'] > 0, "{$modo}: cria pessoa e negocio depois da busca falhar");
+        }
 
-        putenv('CASTELLO_AGENDOR_TESTE_MODO=limite429');
-        igual('crm_limite', crm_enviar(LEAD_EXEMPLO)['erro']);
+        /* Falha na CRIACAO da pessoa (POST /people) precisa aparecer de
+           verdade, com o codigo traduzido certo. Escopada a POST (@POST) e
+           com telefone proprio por caso, para a busca (que aqui roda de
+           verdade, sem falha) nunca achar uma pessoa de um caso anterior e
+           pular a criacao que o teste quer observar. */
+        $casos = [
+            'auth401'   => ['crm_auth', 401],
+            'limite429' => ['crm_limite', 429],
+            'erro500'   => ['crm_http', 500],
+            'invalido'  => ['crm_resposta_invalida', 200],
+        ];
+        $indice = 0;
+        foreach ($casos as $modo => [$erroEsperado, $httpEsperado]) {
+            crm_teste_limpar();
+            crm_teste_config();
+            putenv('CASTELLO_AGENDOR_TESTE_MODO=' . $modo . '@POST');
 
-        putenv('CASTELLO_AGENDOR_TESTE_MODO=erro500');
-        igual('crm_http', crm_enviar(LEAD_EXEMPLO)['erro']);
-
-        putenv('CASTELLO_AGENDOR_TESTE_MODO=invalido');
-        igual('crm_resposta_invalida', crm_enviar(LEAD_EXEMPLO)['erro']);
+            $indice++;
+            $leadFalha = ['nome' => 'Falha ' . $modo, 'whatsapp' => '489900000' . str_pad((string) $indice, 2, '0', STR_PAD_LEFT)];
+            $r = crm_enviar($leadFalha);
+            falso($r['ok'], "{$modo} na criacao: ok false");
+            igual($erroEsperado, $r['erro'], "{$modo}: erro traduzido");
+            igual($httpEsperado, $r['http'], "{$modo}: http");
+        }
 
         putenv('CASTELLO_AGENDOR_TESTE_MODO');
     } finally {
@@ -537,8 +600,15 @@ teste('crm_enviar respeita o orcamento de tempo do conjunto', function (): void 
     try {
         crm_teste_limpar();
         crm_teste_config();
-        config_gravar('crm_timeout', '3');
-        putenv('CASTELLO_AGENDOR_TESTE_MODO=demora:8');
+        /* Atraso curto (2s) em TODA chamada, com orcamento (5s) menor que a
+           soma das tres (6s). Um atraso unico maior que o proprio orcamento
+           (como o teste antigo fazia) so prova o timeout POR CHAMADA, que o
+           conector antigo ja tinha - nao prova nada sobre o orcamento ser
+           compartilhado entre as tres. Com estes numeros a busca e a criacao
+           da pessoa acontecem de verdade (2 chamadas reais), e so o negocio
+           fica sem tempo de ser sequer tentado. */
+        config_gravar('crm_timeout', '5');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=demora:2');
 
         $inicio = microtime(true);
         $r = crm_enviar(LEAD_EXEMPLO);
@@ -546,7 +616,10 @@ teste('crm_enviar respeita o orcamento de tempo do conjunto', function (): void 
 
         falso($r['ok'], 'CRM lento: ok false');
         igual('crm_tempo', $r['erro']);
-        verdade($gasto < 8, 'desistiu dentro do orcamento, gastou ' . round($gasto, 2) . 's');
+        verdade($gasto < 5, 'desistiu dentro do orcamento, gastou ' . round($gasto, 2) . 's');
+
+        $chamadas = crm_falso_todas();
+        igual(2, count($chamadas), 'busca e criacao consumiram o orcamento; o negocio nem chegou a ser tentado');
     } finally {
         putenv('CASTELLO_AGENDOR_TESTE_MODO');
         config_gravar('crm_timeout', '10');
