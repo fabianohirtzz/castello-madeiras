@@ -1367,7 +1367,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 > **Portfólio: são 6, e isso já foi confirmado.** A spec antiga falava em 5 casas entregues; o `index.html` tem 6 botões `.accordion__item`, a spec foi corrigida e os 6 migram.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/20-migracao.php`:
 
@@ -1578,12 +1578,12 @@ teste('migrar_usuario cria o acesso do painel uma vez so', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 20-migracao`
 Esperado: erro fatal `Failed opening required .../public_html/migrar.php`.
 
-- [ ] **Passo 3: Escrever o `migrar.php`**
+- [x] **Passo 3: Escrever o `migrar.php`**
 
 Crie `public_html/migrar.php`. Todo o conteúdo abaixo é cópia literal do que está no `index.html` de hoje.
 
@@ -1914,12 +1914,12 @@ if (realpath((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === realpath(__FILE__
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 20-migracao`
 Esperado: 14 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 5: Rodar a migração de verdade, no banco local**
+- [x] **Passo 5: Rodar a migração de verdade, no banco local**
 
 ```bash
 php public_html/migrar.php
@@ -1936,7 +1936,7 @@ ls public_html/uploads/videos | wc -l
 
 Esperado: 4 fotos em `modelos`, 6 em `portfolio`, 5 em `passos`, 22 arquivos em `videos` (11 mp4 mais 11 jpg), e nenhum `insta-06.original.mp4`.
 
-- [ ] **Passo 6: Rodar a suíte inteira e commitar**
+- [x] **Passo 6: Rodar a suíte inteira e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
