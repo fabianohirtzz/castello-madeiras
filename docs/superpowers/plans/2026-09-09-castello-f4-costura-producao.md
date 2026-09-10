@@ -387,7 +387,7 @@ git commit -m "$(printf 'feat: formulario ligado nas duas paginas com captura de
 - Consumes: o `migrar.php` da frente 1.
 - Produces: prova de que nenhum conteúdo real se perdeu na migração.
 
-- [ ] **Step 1: Escrever o teste de contagem**
+- [x] **Step 1: Escrever o teste de contagem**
 
 ```php
 teste('conteudo real migrou por inteiro', function () {
@@ -404,7 +404,7 @@ teste('conteudo real migrou por inteiro', function () {
 
 Os números saem da seção 5 da spec: 4 modelos, 6 itens de portfólio, 14 avaliações reais do Google, 11 vídeos, 7 perguntas de FAQ, 5 passos.
 
-- [ ] **Step 2: Rodar**
+- [x] **Step 2: Rodar**
 
 ```bash
 php testes/smoke.php
@@ -412,7 +412,7 @@ php testes/smoke.php
 
 Se falhar, o problema está no `migrar.php` da frente 1. Corrija lá, não crie conteúdo à mão.
 
-- [ ] **Step 3: Conferir as 14 avaliações uma a uma**
+- [x] **Step 3: Conferir as 14 avaliações uma a uma**
 
 ```bash
 php -r "require 'public_html/lib/db.php'; foreach (db()->query('SELECT nome, substr(texto,1,60) t FROM avaliacoes ORDER BY ordem') as \$a) { echo \$a['nome'], ' | ', \$a['t'], PHP_EOL; }"
@@ -420,11 +420,11 @@ php -r "require 'public_html/lib/db.php'; foreach (db()->query('SELECT nome, sub
 
 Compare com a seção `#depoimentos` do `index.html` no commit anterior à migração. São avaliações reais de clientes no Google: um nome trocado ou um texto cortado é erro grave, não detalhe.
 
-- [ ] **Step 4: Conferir que os 11 vídeos tocam**
+- [x] **Step 4: Conferir que os 11 vídeos tocam**
 
 Com Playwright, abrir a home, rolar até a seção do Instagram, confirmar que os 8 primeiros aparecem, que os posters carregam e que um deles toca ao clicar. O limite de 8 é o `config.videos_na_home` acordado na reunião.
 
-- [ ] **Step 5: Commitar**
+- [x] **Step 5: Commitar**
 
 ```bash
 git add testes/smoke.php

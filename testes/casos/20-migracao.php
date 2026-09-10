@@ -231,3 +231,15 @@ teste('migrar_usuario cria o acesso do painel uma vez so', function (): void {
     nao_contem('senha-de-teste-123', $u['senha_hash'], 'senha nunca em texto puro');
     verdade((bool) preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $u['criado_em']));
 });
+
+teste('conteudo real migrou por inteiro, sem item de portfolio sem alt', function (): void {
+    $esperado = ['modelos' => 4, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11, 'faq' => 7, 'passos' => 5];
+    foreach ($esperado as $tabela => $quantos) {
+        $tem = (int) db()->query("SELECT COUNT(*) FROM {$tabela} WHERE ativo = 1")->fetchColumn();
+        verdade($tem >= $quantos, "{$tabela}: esperado ao menos {$quantos}, tem {$tem}");
+    }
+    $sem_alt = (int) db()->query("SELECT COUNT(*) FROM portfolio WHERE foto_alt IS NULL OR foto_alt = ''")->fetchColumn();
+    igual(0, $sem_alt, 'ha item de portfolio sem texto alternativo');
+    $sem_alt = (int) db()->query("SELECT COUNT(*) FROM modelos WHERE foto_alt IS NULL OR foto_alt = ''")->fetchColumn();
+    igual(0, $sem_alt, 'ha modelo sem texto alternativo');
+});
