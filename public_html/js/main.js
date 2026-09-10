@@ -414,24 +414,6 @@
     wpp.classList.add('is-visible');
   }
 
-  /* ---------- Accordion de imagens (portfólio) ---------- */
-  var accordion = document.getElementById('accordion');
-  if (accordion) {
-    var accItems = [].slice.call(accordion.querySelectorAll('.accordion__item'));
-    function setAccActive(el) {
-      accItems.forEach(function (it) {
-        var on = it === el;
-        it.classList.toggle('is-active', on);
-        it.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
-    }
-    accItems.forEach(function (it) {
-      it.addEventListener('mouseenter', function () { setAccActive(it); });
-      it.addEventListener('focus', function () { setAccActive(it); });
-      it.addEventListener('click', function () { setAccActive(it); });
-    });
-  }
-
   /* ---------- FAQ: tabs verticais (uma aba ativa por vez) ---------- */
   var faqTabs = document.getElementById('faqTabs');
   if (faqTabs) {

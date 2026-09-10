@@ -4,6 +4,10 @@ declare(strict_types=1);
 /**
  * Home. Marcacao da fase 2 (frente 2) com o conteudo vindo do banco: as
  * listas pelos partials, os textos editaveis pelos blocos.
+ *
+ * Desde o site multipagina a home resume a Casa Pronta (a grade de modelos
+ * mora em casa-pronta.php) e nao traz mais portfolio nem passo a passo, que
+ * ganharam pagina propria.
  */
 
 require_once __DIR__ . '/lib/conteudo.php';
@@ -12,6 +16,19 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
 $prazo_flex   = bloco('flex_prazo', '45 dias');
 $flex_video   = bloco('flex_video');
 $flex_poster  = bloco('flex_video_poster');
+
+// A foto do resumo da Casa Pronta e a do modelo em destaque (ou a do primeiro).
+$pronta_modelos  = modelos('pronta');
+$pronta_destaque = null;
+foreach ($pronta_modelos as $m) {
+    if ((int) $m['destaque'] === 1) {
+        $pronta_destaque = $m;
+        break;
+    }
+}
+if ($pronta_destaque === null && $pronta_modelos !== []) {
+    $pronta_destaque = $pronta_modelos[0];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -41,7 +58,7 @@ $flex_poster  = bloco('flex_video_poster');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=14" />
+  <link rel="stylesheet" href="css/style.css?v=15" />
 </head>
 <body>
 
@@ -145,7 +162,7 @@ $flex_poster  = bloco('flex_video_poster');
             <li>Obra completa do primeiro ao último dia</li>
             <li>Quatro modelos com preço de referência</li>
           </ul>
-          <a href="#casa-pronta" class="btn btn--primary">Ver modelos e preços</a>
+          <a href="casa-pronta.php" class="btn btn--primary">Ver modelos e preços</a>
         </article>
 
         <article class="modalidade modalidade--flex reveal">
@@ -167,22 +184,40 @@ $flex_poster  = bloco('flex_video_poster');
   <!-- faceta: transição para a Casa Pronta -->
   <div class="facet facet--sand" aria-hidden="true"></div>
 
-  <!-- ============ MODELOS ============ -->
-  <section class="section section--sand section--facetada modelos" id="casa-pronta">
+  <!-- ============ CASA PRONTA (resumo; a grade de modelos fica em casa-pronta.php) ============ -->
+  <section class="section section--sand section--facetada prontahome" id="casa-pronta">
     <div class="container">
-      <div class="section__head">
-        <span class="eyebrow reveal">Casa Pronta · chave na mão</span>
-        <h2 class="section__title reveal"><?= e(bloco('pronta_titulo', 'Escolha o tamanho. A gente entrega completa.')) ?></h2>
-        <p class="section__lead reveal"><?= e(bloco('pronta_texto')) ?></p>
-        <p class="stamp reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-          Pronta pra morar em <strong><?= e($prazo_pronta) ?></strong>
-        </p>
+      <div class="split2">
+        <div>
+          <span class="eyebrow reveal">Casa Pronta · chave na mão</span>
+          <h2 class="section__title reveal"><?= e(bloco('pronta_titulo', 'Escolha o tamanho. A gente entrega completa.')) ?></h2>
+          <p class="section__lead reveal"><?= e(bloco('pronta_texto')) ?></p>
+          <p class="stamp reveal">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Pronta pra morar em <strong><?= e($prazo_pronta) ?></strong>
+          </p>
+          <ul class="checklist reveal">
+            <li>Laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas inclusos</li>
+            <li>Quatro tamanhos, de 39 a 59,75 m², com preço de referência</li>
+            <li>Planta 100% personalizável e prego galvanizado em toda a estrutura</li>
+          </ul>
+          <div class="prontahome__actions reveal">
+            <a href="casa-pronta.php" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>
+          </div>
+        </div>
+
+<?php if ($pronta_destaque !== null): ?>
+        <figure class="prontahome__media reveal reveal--mask">
+          <img src="<?= e($pronta_destaque['foto']) ?>" alt="<?= e($pronta_destaque['foto_alt']) ?>" loading="lazy" />
+          <figcaption class="prontahome__cap">
+            <span class="prontahome__cap-eyebrow">Modelo <?= e($pronta_destaque['nome']) ?> · <?= e(str_replace(',00 ', ' ', (string) $pronta_destaque['area'])) ?></span>
+<?php if (trim((string) $pronta_destaque['preco']) !== ''): ?>
+            <span class="prontahome__cap-price">A partir de <strong>R$ <?= e($pronta_destaque['preco']) ?></strong></span>
+<?php endif; ?>
+          </figcaption>
+        </figure>
+<?php endif; ?>
       </div>
-
-<?php $modalidade = 'pronta'; include __DIR__ . '/partials/modelos.php'; ?>
-
-      <p class="modelos__note reveal">Valores de referência para casa completa. O orçamento final varia conforme a personalização, o terreno e a região. Fale com a gente e receba uma proposta sob medida.</p>
     </div>
   </section>
 
@@ -230,7 +265,7 @@ $flex_poster  = bloco('flex_video_poster');
   <div class="facet facet--bone" aria-hidden="true"></div>
 
   <!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->
-  <section class="section vantagens" id="vantagens">
+  <section class="section section--facetada vantagens" id="vantagens">
     <div class="container">
       <div class="why__layout">
         <div class="why__intro">
@@ -287,36 +322,8 @@ $flex_poster  = bloco('flex_video_poster');
     </div>
   </section>
 
-  <!-- ============ PORTFÓLIO (galeria editorial assimétrica) ============ -->
-  <section class="section portfolio" id="portfolio">
-    <div class="container">
-      <div class="section__head">
-        <span class="eyebrow reveal">Casas reais entregues</span>
-        <h2 class="section__title reveal">Projetos que já viraram&nbsp;lar.</h2>
-        <p class="section__lead reveal">Cada casa abaixo foi projetada, construída e entregue pela Castello para famílias de Santa Catarina e região.</p>
-      </div>
-
-<?php include __DIR__ . '/partials/portfolio.php'; ?>
-    </div>
-  </section>
-
-  <!-- faceta: transição escura para o scrollytelling -->
-  <div class="facet facet--ink" aria-hidden="true"></div>
-
-  <!-- ============ DO TERRENO À CHAVE (scrollytelling sticky) ============ -->
-  <section class="section process" id="como-funciona">
-    <div class="container">
-      <div class="process__head">
-        <span class="eyebrow eyebrow--light reveal">Do terreno à chave</span>
-        <h2 class="section__title reveal">Cinco passos. Zero dor de cabeça.</h2>
-        <p class="section__lead reveal">Você conta o sonho, a Castello cuida de cada etapa. Acompanhe a obra do projeto até o dia de receber a chave.</p>
-      </div>
-
-      <div class="process__inner">
-<?php $contexto = 'pronta'; include __DIR__ . '/partials/passos.php'; ?>
-      </div>
-    </div>
-  </section>
+  <!-- faceta: transição para as avaliações (o topo da cena é branco) -->
+  <div class="facet facet--white" aria-hidden="true"></div>
 
   <!-- ============ DEPOIMENTOS (carrossel) ============ -->
   <section class="section section--sand reviews" id="depoimentos">
@@ -440,7 +447,7 @@ $flex_poster  = bloco('flex_video_poster');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=13"></script>
-  <script src="js/formulario.js?v=1" defer></script>
+  <script src="js/main.js?v=14"></script>
+  <script src="js/formulario.js?v=2" defer></script>
 </body>
 </html>
