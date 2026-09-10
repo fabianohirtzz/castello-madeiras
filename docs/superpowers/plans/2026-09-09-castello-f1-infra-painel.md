@@ -3678,7 +3678,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **A ideia central:** uma entrada em `painel_tabelas()` gera lista, formulário, salvar, desativar, reativar e reordenar. Nenhuma tela é copiada. Os nomes de tabela e de coluna usados no SQL vêm sempre dessa descrição, nunca da requisição, e é isso que torna a interpolação de nome de tabela no SQL segura.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/80-painel.php`:
 
@@ -3798,12 +3798,12 @@ teste('painel_linha traz uma linha pelo id e null quando nao existe', function (
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: erro fatal `Failed opening required .../public_html/painel/tabelas.php`.
 
-- [ ] **Passo 3: Escrever `painel/tabelas.php`**
+- [x] **Passo 3: Escrever `painel/tabelas.php`**
 
 ```php
 <?php
@@ -3987,12 +3987,12 @@ function painel_linha(string $chave, int $id): ?array
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar a parte de lógica**
+- [x] **Passo 4: Rodar e ver passar a parte de lógica**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 11 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 5: Escrever o CSS do painel**
+- [x] **Passo 5: Escrever o CSS do painel**
 
 Crie `public_html/painel/assets/painel.css`:
 
@@ -4108,7 +4108,7 @@ a { color: var(--p-vermelho-fundo); }
 }
 ```
 
-- [ ] **Passo 6: Escrever a tela de login**
+- [x] **Passo 6: Escrever a tela de login**
 
 Crie `public_html/painel/index.php`:
 
@@ -4181,7 +4181,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 </html>
 ```
 
-- [ ] **Passo 7: Escrever o shell e o `sair.php`**
+- [x] **Passo 7: Escrever o shell e o `sair.php`**
 
 Crie `public_html/painel/painel.php`:
 
@@ -4266,7 +4266,7 @@ header('Location: index.php');
 exit;
 ```
 
-- [ ] **Passo 8: Escrever a tela de lista genérica**
+- [x] **Passo 8: Escrever a tela de lista genérica**
 
 Crie `public_html/painel/telas/lista.php`. Espera, por escopo: `string $tela` e `array $def`.
 
@@ -4350,7 +4350,7 @@ foreach ($linhas as $linha) {
 
 O `<strong>` acima imprime uma tag HTML depois do `e()`. Isso é proposital e seguro: o dado passou por `e()` e o `<span class="p-tag">` é markup fixo escrito aqui, não vem do banco.
 
-- [ ] **Passo 9: Conferir no navegador**
+- [x] **Passo 9: Conferir no navegador**
 
 ```bash
 php -S localhost:8000 -t public_html
@@ -4367,7 +4367,7 @@ Abra `http://localhost:8000/painel/`. Faça, nesta ordem:
 7. Abra em um celular ou na visão responsiva com 390 px de largura. O menu rola na horizontal e a lista continua legível.
 8. Abra `http://localhost:8000/painel/painel.php` em uma janela anônima. Tem que redirecionar para o login.
 
-- [ ] **Passo 10: Rodar a suíte e commitar**
+- [x] **Passo 10: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
