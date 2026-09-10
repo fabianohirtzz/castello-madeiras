@@ -996,6 +996,72 @@ teste('leads_reenviar sobe a fila e desiste depois do limite de tentativas', fun
     }
 });
 
+teste('leads_reenviar pausa entre um lead e outro, para nao rajar a API', function (): void {
+    $servidor = crm_falso_subir();
+    verdade($servidor !== null, 'servidor do CRM falso subiu para o teste de pausa');
+
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $ids = [
+            semear_lead('Pausa Um', 'pendente', 0),
+            semear_lead('Pausa Dois', 'pendente', 0),
+            semear_lead('Pausa Tres', 'pendente', 0),
+        ];
+        /* Telefones diferentes, para as tres buscas nao se confundirem. */
+        foreach ($ids as $i => $id) {
+            db()->prepare('UPDATE leads SET whatsapp = ? WHERE id = ?')
+                ->execute(['4899000010' . $i, $id]);
+        }
+
+        $inicio = microtime(true);
+        $r = leads_reenviar();
+        $gasto = microtime(true) - $inicio;
+
+        igual(3, $r['tentados']);
+        igual(3, $r['enviados']);
+        /* Duas pausas entre tres leads. Margem folgada (80% do valor
+           nominal) para nao dar falso negativo por variacao de agenda do SO. */
+        $minimoEsperado = 2 * (LEAD_REENVIO_PAUSA_US / 1000000) * 0.8;
+        verdade($gasto >= $minimoEsperado, "reenvio de 3 leads levou {$gasto}s, esperado pelo menos {$minimoEsperado}s de pausa");
+    } finally {
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('leads_reenviar nao consome tentativa quando o CRM responde com limite de requisicoes', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $id = semear_lead('Vai tomar 429', 'erro', 2);
+
+        /* Escopado a POST: a busca (GET) roda normal e nao acha ninguem: so
+           a criacao da pessoa esbarra no 429, que e o que crm_enviar traduz
+           para crm_limite. */
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=limite429@POST');
+        $r = leads_reenviar();
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+
+        igual(1, $r['tentados']);
+        igual(0, $r['enviados']);
+        igual(1, $r['falhas']);
+
+        $lead = lead_por_id($id);
+        igual('erro', $lead['crm_status']);
+        igual(2, (int) $lead['crm_tentativas'], 'crm_limite nao consome tentativa: continua em 2, nao virou 3');
+        contem('crm_limite', (string) $lead['crm_resposta']);
+
+        $pendentes = array_column(leads_pendentes(), 'id');
+        verdade(in_array($id, array_map('intval', $pendentes), true), 'o lead rejeitado por limite continua na fila');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        crm_falso_derrubar($servidor);
+    }
+});
+
 teste('o reenvio de um lead com pessoa conhecida nao cria pessoa de novo', function (): void {
     $servidor = crm_falso_subir();
     try {

@@ -24,6 +24,18 @@ const LEAD_CAMPOS = [
 /** Depois de 5 tentativas malsucedidas o lead para de ser reenviado. */
 const LEAD_TENTATIVAS_MAX = 5;
 
+/**
+ * Pausa entre um lead e outro no reenvio, para nao rajar a API do Agendor.
+ *
+ * O limite da conta e 4 requisicoes por segundo (ver docs/superpowers/specs/
+ * 2026-09-10-castello-agendor-design.md, secao 2). leads_reenviar() processa
+ * ate 20 leads por rodada, cada um com ate 3 chamadas ao CRM: sem pausa, isso
+ * e uma rajada de ate 60 chamadas de uma vez. Mesmo principio e mesmo valor
+ * do ferramentas/agendor-ler.php (AGENDOR_PAUSA_US), que ja pausa entre
+ * chamadas pelo mesmo motivo.
+ */
+const LEAD_REENVIO_PAUSA_US = 300000;
+
 /** Tamanho maximo guardado em crm_resposta, para nao inchar o banco. */
 const LEAD_RESPOSTA_MAX = 2000;
 
@@ -141,6 +153,12 @@ function leads_pendentes(int $limite = 20): array
  * Sai na hora quando o conector esta desligado, para nao gastar tentativa dos
  * leads que so estao esperando o CRM ser configurado.
  *
+ * Pausa LEAD_REENVIO_PAUSA_US entre um lead e outro (nao entre as chamadas de
+ * um mesmo lead, que ja sao no maximo 3 e correm dentro do orcamento de
+ * lib/crm.php), para uma rodada de reenvio nao rajar a API acima do limite de
+ * 4 req/s. E o cenario que mais importa: quando o CRM e ligado pela primeira
+ * vez com uma fila de leads acumulados enquanto estava desligado.
+ *
  * @return array{tentados: int, enviados: int, falhas: int}
  */
 function leads_reenviar(): array
@@ -151,19 +169,35 @@ function leads_reenviar(): array
         return $resumo;
     }
 
+    $primeiro = true;
     foreach (leads_pendentes(20) as $lead) {
+        if (!$primeiro) {
+            usleep(LEAD_REENVIO_PAUSA_US);
+        }
+        $primeiro = false;
+
         $resumo['tentados']++;
         $resultado = crm_enviar($lead);
         if (!empty($resultado['pessoa_id'])) {
             lead_marcar_pessoa((int) $lead['id'], (int) $resultado['pessoa_id']);
         }
-        $tentativas = ((int) ($lead['crm_tentativas'] ?? 0)) + 1;
+        $tentativasAtuais = (int) ($lead['crm_tentativas'] ?? 0);
 
         if (!empty($resultado['ok'])) {
-            lead_marcar((int) $lead['id'], 'enviado', $tentativas, (string) $resultado['resposta']);
+            lead_marcar((int) $lead['id'], 'enviado', $tentativasAtuais + 1, (string) $resultado['resposta']);
             $resumo['enviados']++;
             continue;
         }
+
+        /*
+         * crm_limite (HTTP 429) e culpa nossa: fomos rapidos demais para a
+         * API, nao o lead que esta errado. Nao pode consumir uma das cinco
+         * tentativas, senao o proprio ritmo do reenvio empurraria leads bons
+         * para fora da fila. crm_tempo e crm_conexao continuam contando como
+         * sempre contaram: sao falhas de transporte de verdade, e o teto de
+         * tentativas existe para nao deixar a fila crescer para sempre.
+         */
+        $tentativas = ($resultado['erro'] ?? '') === 'crm_limite' ? $tentativasAtuais : $tentativasAtuais + 1;
 
         $motivo = trim((string) ($resultado['erro'] ?? '') . ' ' . (string) ($resultado['resposta'] ?? ''));
         lead_marcar((int) $lead['id'], 'erro', $tentativas, $motivo !== '' ? $motivo : null);
