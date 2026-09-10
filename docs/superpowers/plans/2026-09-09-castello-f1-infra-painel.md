@@ -3164,7 +3164,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 Códigos de erro devolvidos, todos em `snake_case`: `pasta_invalida`, `tipo_invalido`, `sem_arquivo`, `erro_upload`, `tamanho`, `tipo`, `finfo_indisponivel`, `gravacao`.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/70-upload.php`:
 
@@ -3324,12 +3324,12 @@ teste('os limites sao os do contrato', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 70-upload`
 Esperado: erro fatal `Failed opening required .../public_html/lib/upload.php`.
 
-- [ ] **Passo 3: Escrever o `lib/upload.php`**
+- [x] **Passo 3: Escrever o `lib/upload.php`**
 
 ```php
 <?php
@@ -3471,7 +3471,7 @@ function upload_slug(string $nome): string
 }
 ```
 
-- [ ] **Passo 4: Rodar e ver passar**
+- [x] **Passo 4: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 70-upload`
 Esperado: 12 ok, 0 falha, 0 pulado.
@@ -3479,7 +3479,7 @@ Esperado: 12 ok, 0 falha, 0 pulado.
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 5: Commit**
+- [x] **Passo 5: Commit**
 
 ```bash
 git add public_html/lib/upload.php testes/casos/70-upload.php
