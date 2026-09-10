@@ -264,7 +264,10 @@ body.drawer-open{overflow:hidden}
    clip-path em camada composta deixava uma fenda de 1px físico na aresta,
    por onde o fundo escuro do hero vazava como uma linha preta. O traço da
    mesma cor cobre a borda serrilhada. Mesmo polígono de --facet-roof. */
-.facet::before{content:"";position:absolute;inset:-1px 0 0;background-repeat:no-repeat;background-size:100% 100%}
+/* inset negativo embaixo: o SVG avanca 4px na secao seguinte, que tem a mesma
+   cor. Em tela 2x/3x a ultima linha do raster fica semi-transparente e, sem
+   isso, deixava o fundo da pagina aparecer como um fio claro no mobile. */
+.facet::before{content:"";position:absolute;inset:-1px 0 -4px;background-repeat:no-repeat;background-size:100% 100%}
 .facet--bone::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23FAF7F2' stroke='%23FAF7F2' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
 .facet--sand::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23EFE7DB' stroke='%23EFE7DB' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
 .facet--ink::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,100 18,34 40,72 62,22 82,60 100,30 100,100' fill='%23141414' stroke='%23141414' stroke-width='1.5' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
