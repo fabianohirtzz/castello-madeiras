@@ -76,13 +76,25 @@ function crm_falso_ultima(): array
     return is_array($dados) ? $dados : [];
 }
 
+function crm_falso_todas(): array
+{
+    $arquivo = sys_get_temp_dir() . '/crm-falso-todas.json';
+    $dados = json_decode(is_file($arquivo) ? (string) file_get_contents($arquivo) : '', true);
+    return is_array($dados) ? $dados : [];
+}
+
 function crm_falso_subir(?int $porta = null)
 {
     if ($porta === null) {
         $porta = crm_falso_porta();
     }
     $GLOBALS['crm_falso_porta'] = $porta;
+    /* Limpa o estado anterior. A pessoa criada numa requisicao precisa ser
+       encontrada na requisicao seguinte dentro do mesmo bloco, mas nao pode
+       vazar para o bloco seguinte. */
     @unlink(crm_falso_arquivo());
+    @unlink(sys_get_temp_dir() . '/crm-falso-todas.json');
+    @unlink(sys_get_temp_dir() . '/crm-falso-pessoas.json');
     $comando = escapeshellarg(PHP_BINARY) . ' -S 127.0.0.1:' . $porta . ' ' . escapeshellarg(raiz() . '/testes/crm-falso.php');
     $tubos = [];
     /* bypass_shell e obrigatorio no Windows: sem ele o proc_open passa pelo
@@ -120,16 +132,18 @@ function crm_falso_derrubar($processo): void
     $GLOBALS['crm_falso_porta'] = crm_falso_porta() + 1;
 }
 
-function crm_falso_pedir(string $url, string $corpo = '{}', array $cabecalhos = []): array
+function crm_falso_pedir(string $url, string $corpo = '{}', array $cabecalhos = [], string $metodo = 'POST'): array
 {
     $ch = curl_init($url);
     curl_setopt_array($ch, [
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $corpo,
+        CURLOPT_CUSTOMREQUEST  => $metodo,
         CURLOPT_HTTPHEADER     => array_merge(['Content-Type: application/json'], $cabecalhos),
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 20,
     ]);
+    if ($metodo !== 'GET') {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $corpo);
+    }
     $resposta = (string) curl_exec($ch);
     $http = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $tipo = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
@@ -238,36 +252,57 @@ teste('lead_marcar grava status, tentativas, resposta e carimbo', function (): v
 
 /* ================= testes/crm-falso.php ================= */
 
-teste('o CRM falso responde em cada modo e registra a requisicao', function (): void {
+teste('o Agendor falso responde as tres rotas e imita a busca por telefone', function (): void {
     $servidor = crm_falso_subir();
     verdade($servidor !== null, 'servidor de teste subiu na porta ' . crm_falso_porta());
 
     try {
-        $r = crm_falso_pedir(crm_falso_url('ok'));
-        igual(200, $r['http'], 'modo ok responde 200');
-        $j = json_decode($r['corpo'], true);
-        verdade(is_array($j) && ($j['status'] ?? '') === 'ok', 'modo ok devolve JSON com status ok: ' . $r['corpo']);
+        $base = 'http://127.0.0.1:' . crm_falso_porta();
 
-        $r = crm_falso_pedir(crm_falso_url('erro500'));
-        igual(500, $r['http'], 'modo erro500 responde 500');
+        /* pessoa nova */
+        $r = crm_falso_pedir($base . '/people', '{"name":"Fabiano","contact":{"mobile":"(48) 99824-4494"}}');
+        igual(201, $r['http'], 'POST /people responde 201');
+        $criada = json_decode($r['corpo'], true);
+        verdade(is_int($criada['data']['id'] ?? null), 'devolve data.id inteiro: ' . $r['corpo']);
+        $idPessoa = (int) $criada['data']['id'];
 
-        $r = crm_falso_pedir(crm_falso_url('invalido'));
-        igual(200, $r['http'], 'modo invalido responde 200');
+        /* busca com os digitos sem DDI: acha */
+        $r = crm_falso_pedir($base . '/people?phone=48998244494', '', [], 'GET');
+        $achou = json_decode($r['corpo'], true);
+        igual(1, count($achou['data'] ?? []), 'busca sem DDI encontra: ' . $r['corpo']);
+        igual($idPessoa, (int) ($achou['data'][0]['id'] ?? 0));
+
+        /* busca com 55 na frente: vazio, como na conta real */
+        $r = crm_falso_pedir($base . '/people?phone=5548998244494', '', [], 'GET');
+        igual(0, count(json_decode($r['corpo'], true)['data'] ?? []), 'busca com DDI volta vazia');
+
+        /* telefone desconhecido: vazio */
+        $r = crm_falso_pedir($base . '/people?phone=48900000000', '', [], 'GET');
+        igual(0, count(json_decode($r['corpo'], true)['data'] ?? []), 'telefone desconhecido volta vazio');
+
+        /* negocio na pessoa */
+        $r = crm_falso_pedir($base . '/people/' . $idPessoa . '/deals', '{"title":"[SITE] - Imediato - Fabiano"}');
+        igual(201, $r['http'], 'POST /people/{id}/deals responde 201');
+        $negocio = json_decode($r['corpo'], true);
+        verdade(is_int($negocio['data']['id'] ?? null), 'negocio tem id');
+        contem('web.agendor.com.br', (string) ($negocio['data']['_webUrl'] ?? ''), 'negocio traz _webUrl');
+
+        /* modos de falha */
+        igual(500, crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: erro500'])['http']);
+        igual(401, crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: auth401'])['http']);
+        igual(429, crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: limite429'])['http']);
+
+        $r = crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: invalido']);
         verdade(json_decode($r['corpo'], true) === null, 'modo invalido devolve corpo que nao e JSON');
 
         $inicio = microtime(true);
-        $r = crm_falso_pedir(crm_falso_url('demora', ['seg' => 2]));
-        $gasto = microtime(true) - $inicio;
-        verdade($gasto >= 1.8, 'modo demora segura a resposta, gastou ' . round($gasto, 2) . 's');
-        igual(200, $r['http'], 'modo demora responde 200 no fim');
+        crm_falso_pedir($base . '/people', '{}', ['X-Falso-Modo: demora:2']);
+        verdade(microtime(true) - $inicio >= 1.8, 'modo demora segura a resposta');
 
-        $r = crm_falso_pedir(crm_falso_url('eco'), '{"nome":"Fabiano"}', ['Authorization: Bearer segredo-123']);
-        $j = json_decode($r['corpo'], true);
-        verdade(is_array($j) && (($j['recebido']['nome'] ?? '') === 'Fabiano'), 'modo eco devolve o que recebeu: ' . $r['corpo']);
-
+        /* registro */
         $ultima = crm_falso_ultima();
         igual('POST', $ultima['metodo'] ?? '', 'registrou o metodo');
-        igual('Bearer segredo-123', $ultima['cabecalhos']['authorization'] ?? '', 'registrou o cabecalho Authorization');
+        verdade(count(crm_falso_todas()) >= 8, 'registrou todas as requisicoes da rodada');
     } finally {
         crm_falso_derrubar($servidor);
     }
