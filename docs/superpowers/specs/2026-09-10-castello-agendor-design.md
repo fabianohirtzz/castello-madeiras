@@ -138,7 +138,18 @@ Se `crm_ativo` estiver desligado, nada disso roda: o lead é gravado e o e-mail 
 | `customFields.pretende_iniciar_a_obra_em` | `prazo` | campo novo do formulário, seção 7 |
 | `customFields.anuncio_de_origem` | UTM | `utm_campaign`, senão `utm_source`, senão `direto` |
 
-**Normalização do WhatsApp.** O `enviar.php` já valida 10 ou 11 dígitos. Para `contact.whatsapp`: extrair dígitos; se tiver 10 ou 11, prefixar `55`; se já tiver 12 ou 13 começando em `55`, manter. Campos vazios não são enviados: nada de `customFields` com string vazia sobrescrevendo dado bom numa pessoa nova.
+**Normalização do WhatsApp: dois formatos, de propósito.** Esta é a parte da integração que mais silenciosamente pode dar errado, e a seção 11 mostra a medição que a sustenta.
+
+O `enviar.php` já valida 10 ou 11 dígitos.
+
+- `contact.whatsapp` recebe **com DDI**: `5548998244494`. É o que a documentação do Agendor pede, e é o que faz o botão de WhatsApp dentro do CRM abrir a conversa certa.
+- `contact.mobile` recebe **sem DDI**, como o visitante digitou: `(48) 99824-4494`.
+
+Os dois são obrigatórios, e o motivo é a deduplicação. O filtro `GET /people?phone=` **não encontra nada quando a busca leva o prefixo `55`**, e a busca do site usa os 10 ou 11 dígitos sem DDI, que é o formato em que os leads do Meta já estão gravados na base. Como o filtro `phone` varre **todos** os campos de telefone, é o `contact.mobile` que faz o site reencontrar os próprios leads na visita seguinte.
+
+Gravar só o `contact.whatsapp` com DDI deixaria a integração incapaz de achar as pessoas que ela mesma criou, e o efeito seria uma pessoa nova a cada formulário enviado, sem erro nenhum aparecendo.
+
+**Campos vazios não são enviados**, nem como string vazia: nada de `customFields` em branco ocupando o lugar de dado bom.
 
 ### 5.2 Negócio — `POST /people/{id}/deals`
 
@@ -315,7 +326,8 @@ Casos a cobrir:
 5. Reenvio de lead com `crm_pessoa_id` preenchido: vai direto ao negócio, não cria pessoa de novo.
 6. HTTP 401: erro `crm_auth`, lead preservado, e-mail enviado.
 7. Token ausente: erro `crm_sem_token`, nada de requisição.
-8. Formato do payload: `contact.whatsapp` com DDI, `customFields` com os três identificadores certos, campos vazios ausentes do JSON.
+8. Formato do payload: `contact.whatsapp` **com** DDI e `contact.mobile` **sem**, `customFields` com os três identificadores certos, campos vazios ausentes do JSON.
+8b. Ida e volta da deduplicação: criar uma pessoa pelo conector e, no envio seguinte com o mesmo telefone, conferir que a busca a encontra. É o teste que pegaria a regressão descrita em 5.1, e o servidor falso precisa imitar o comportamento medido em 11.1, incluindo devolver vazio quando a busca chega com `55`.
 9. Formato do título: com prazo, sem prazo (cai para `busca`), e nome longo cortado em 120 caracteres.
 10. Migração idempotente: rodar duas vezes sobre um banco que já tem as colunas não falha.
 
@@ -325,11 +337,32 @@ E o `node testes/formulario.test.js` cobre o campo novo no lado do JS.
 
 ## 11. Validação contra a conta real
 
-Dois pontos não se resolvem com servidor falso, porque dependem de como o Agendor de verdade se comporta.
+Dois pontos não se resolvem com servidor falso, porque dependem de como o Agendor de verdade se comporta. O primeiro **já foi medido**; o segundo continua aberto.
 
-**Formato do filtro de telefone (só leitura).** O `GET /people?phone=` precisa ser testado com um telefone que já existe na base, para descobrir se ele espera dígitos puros, com DDI, ou formatado. Se o formato estiver errado, a busca volta vazia sempre e a deduplicação simplesmente não acontece, em silêncio. É uma leitura, não altera nada na conta.
+### 11.1 Filtro de telefone — MEDIDO em 2026-09-10
 
-**`dealStage`: sequência ou id (exige escrita).** Confirmar que `dealStage: 1` põe o negócio em "Contato". A única forma é criar um negócio de verdade e apagar em seguida. É a **única escrita** proposta neste documento, e acontece só com autorização explícita, anunciada antes e com a limpeza confirmada depois. Sem essa validação, o erro só apareceria no primeiro lead real, na etapa errada.
+Leitura feita contra a conta real, tomando como referência uma pessoa que já existe na base, com telefone de 11 dígitos gravado no campo `work`:
+
+| Filtro | Formato buscado | Resultado |
+|---|---|---|
+| `phone` | 11 dígitos, sem DDI | **encontra** |
+| `phone` | número formatado `(48) 9xxxx-xxxx` | **encontra** |
+| `phone` | 13 dígitos, com `55` | vazio |
+| `phone` | `+55...` | vazio |
+| `whatsapp` | qualquer formato | vazio |
+| `mobile_phone` | qualquer formato | vazio |
+
+Três conclusões, todas já refletidas na seção 5.1:
+
+1. **O filtro é `phone`**, não `whatsapp` nem `mobile_phone`. Os dois últimos não acharam nem a pessoa de referência, porque o telefone dela mora no campo `work`. Só o `phone` varre todos os campos.
+2. **A busca vai sem DDI.** Com `55` na frente, o retorno é vazio.
+3. O filtro ignora a pontuação, então dígitos puros e número formatado dão no mesmo.
+
+Foi esta medição que revelou o defeito corrigido em 5.1: gravar o telefone só com DDI tornaria a integração incapaz de reencontrar as pessoas que ela mesma cria.
+
+### 11.2 `dealStage`: sequência ou id — ABERTO, exige escrita
+
+Confirmar que `dealStage: 1` põe o negócio em "Contato", e não `dealStage: 3845540`. A única forma é criar um negócio de verdade e apagar em seguida. É a **única escrita** proposta neste documento, e acontece anunciada antes e com a limpeza confirmada depois. Sem essa validação, o erro só apareceria no primeiro lead real, na etapa errada.
 
 ---
 
