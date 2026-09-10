@@ -549,7 +549,7 @@ Renomeia a seção de modelos para Casa Pronta e coloca o prazo de 90 a 120 dias
 - Consome: `.section--sand`, `.section--facetada`, `.section__head`, `.eyebrow`, `.section__title`, `.section__lead`, `.reveal`, `.grid--models`, `.model`
 - Produz: `.stamp` e `.stamp--light` (usados de novo nas Tarefas 5 e 8)
 
-- [ ] **Step 1: Trocar a tag de abertura da seção**
+- [x] **Step 1: Trocar a tag de abertura da seção**
 
 Em `front/home.html`, substitua
 
@@ -563,7 +563,7 @@ por
   <section class="section section--sand section--facetada modelos" id="casa-pronta">
 ```
 
-- [ ] **Step 2: Trocar o cabeçalho da seção**
+- [x] **Step 2: Trocar o cabeçalho da seção**
 
 Substitua o `<div class="section__head">` inteiro dessa seção por este, que renomeia a modalidade no eyebrow e traz o prazo para dentro:
 
@@ -579,7 +579,7 @@ Substitua o `<div class="section__head">` inteiro dessa seção por este, que re
       </div>
 ```
 
-- [ ] **Step 3: Trocar a faceta que vem depois da seção**
+- [x] **Step 3: Trocar a faceta que vem depois da seção**
 
 A seção de modelos passa a ser seguida pela seção escura da Flex. Depois da Tarefa 2 a ordem no arquivo é Modalidades, faceta creme, Casa Pronta, Vantagens, Portfólio. Logo depois do `</section>` que fecha `#casa-pronta`, e antes de `<!-- ============ POR QUE MADEIRA (editorial assimétrico) ============ -->`, insira:
 
@@ -590,7 +590,7 @@ A seção de modelos passa a ser seguida pela seção escura da Flex. Depois da 
 
 A seção da Flex entra exatamente nesse ponto na Tarefa 4. Até lá a faceta escura encosta nas Vantagens e fica um telhado preto sobre fundo bone: é esperado nesta altura e some na tarefa seguinte.
 
-- [ ] **Step 4: Acrescentar o CSS do selo na região FASE 2**
+- [x] **Step 4: Acrescentar o CSS do selo na região FASE 2**
 
 ```css
 /* ---------- Selo de prazo (vive dentro da seção da modalidade) ---------- */
@@ -611,7 +611,7 @@ A seção da Flex entra exatamente nesse ponto na Tarefa 4. Até lá a faceta es
 }
 ```
 
-- [ ] **Step 5: Verificar no navegador**
+- [x] **Step 5: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#casa-pronta` e `browser_take_screenshot` em `f2-t3-1440.png`. Olhe: o eyebrow diz "Casa Pronta · chave na mão", o selo rosa claro com o relógio e "Pronta pra morar em 90 a 120 dias" aparece abaixo do lead, e os quatro cards de modelo continuam intactos com os preços.
@@ -621,7 +621,7 @@ A seção da Flex entra exatamente nesse ponto na Tarefa 4. Até lá a faceta es
 6. `browser_evaluate` com `() => ({ doc: document.documentElement.scrollWidth, win: window.innerWidth })` em 390px. Esperado: `doc` menor ou igual a `win`.
 7. Em 1440px, `browser_click` no link "Casa Pronta" da nav. Esperado: rola até a seção certa e o link ganha o estado `is-current` do scroll-spy.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
