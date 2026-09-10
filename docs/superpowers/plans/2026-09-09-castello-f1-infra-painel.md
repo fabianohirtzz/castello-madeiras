@@ -5843,7 +5843,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
 **Checkpoint do WAL antes de zipar.** O banco roda em modo WAL, então parte das últimas gravações pode estar no arquivo `.db-wal` e não no `.db`. Sem `PRAGMA wal_checkpoint(TRUNCATE)` antes de zipar, o backup sairia desatualizado sem ninguém perceber.
 
-- [ ] **Passo 1: Escrever o teste que falha**
+- [x] **Passo 1: Escrever o teste que falha**
 
 Crie `testes/casos/90-backup.php`:
 
@@ -5942,12 +5942,12 @@ teste('trocar senha de usuario inexistente devolve erro, nao fatal', function ()
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 90-backup`
 Esperado: falha com `Call to undefined function painel_backup()`.
 
-- [ ] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as duas funções ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -6042,7 +6042,7 @@ function painel_trocar_senha(int $usuarioId, string $atual, string $nova, string
 }
 ```
 
-- [ ] **Passo 4: Escrever a tela de Backup**
+- [x] **Passo 4: Escrever a tela de Backup**
 
 Crie `public_html/painel/telas/backup.php`:
 
@@ -6094,7 +6094,7 @@ $emMega = static fn (int $bytes): string => number_format($bytes / 1048576, 1, '
 <?php endif; ?>
 ```
 
-- [ ] **Passo 5: Escrever a ação de Backup**
+- [x] **Passo 5: Escrever a ação de Backup**
 
 Crie `public_html/painel/acoes/backup.php`:
 
@@ -6132,7 +6132,7 @@ unlink($arquivo);
 exit;
 ```
 
-- [ ] **Passo 6: Escrever a tela e a ação de Trocar senha**
+- [x] **Passo 6: Escrever a tela e a ação de Trocar senha**
 
 Crie `public_html/painel/telas/senha.php`:
 
@@ -6203,7 +6203,7 @@ header('Location: ../painel.php?tela=senha&ok=' . rawurlencode('Senha trocada. U
 exit;
 ```
 
-- [ ] **Passo 7: Rodar e ver passar**
+- [x] **Passo 7: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 90-backup`
 Esperado no ambiente local: 5 ok, 0 falha, **1 pulado**, e a linha do pulado dizendo `ZipArchive nao existe no PHP local e phar.readonly esta ligado, entao o zip so pode ser validado no servidor`.
@@ -6211,7 +6211,7 @@ Esperado no ambiente local: 5 ok, 0 falha, **1 pulado**, e a linha do pulado diz
 Rode a suíte inteira: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.
 
-- [ ] **Passo 8: Conferir no navegador**
+- [x] **Passo 8: Conferir no navegador**
 
 1. Abra Backup. A tela mostra a contagem de arquivos e os dois tamanhos, e no ambiente local mostra a faixa vermelha avisando que falta o ZipArchive. Isso está certo: o download só funciona no servidor.
 2. Abra Trocar senha. Digite a senha atual errada e salve: mensagem `A senha atual está errada.`.
@@ -6219,7 +6219,7 @@ Esperado: `todos os casos passaram`.
 4. Digite uma senha nova de 10 caracteres com confirmação diferente: mensagem sobre a confirmação.
 5. Troque de verdade. Saia e entre com a senha nova. A antiga não entra mais.
 
-- [ ] **Passo 9: Commit**
+- [x] **Passo 9: Commit**
 
 ```bash
 git add public_html/painel testes/casos/90-backup.php

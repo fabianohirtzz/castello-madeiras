@@ -509,3 +509,92 @@ function painel_config_validar(array $entrada): array
 
     return ['valores' => $valores, 'erros' => $erros];
 }
+
+/**
+ * Gera um zip com o banco e a pasta uploads.
+ *
+ * ZipArchive nao existe no PHP local, so no servidor. Por isso a checagem:
+ * sem a classe, devolve erro claro em vez de derrubar a pagina.
+ *
+ * @return array{ok: bool, arquivo: ?string, erro: ?string}
+ */
+function painel_backup(): array
+{
+    if (!class_exists('ZipArchive')) {
+        return [
+            'ok'      => false,
+            'arquivo' => null,
+            'erro'    => 'A extensão ZipArchive não está instalada neste servidor, então não consigo gerar o arquivo. Peça à hospedagem para ligar a extensão zip do PHP.',
+        ];
+    }
+
+    // O banco roda em WAL: sem o checkpoint, as ultimas gravacoes ficariam so
+    // no arquivo .db-wal e o backup sairia desatualizado.
+    db()->exec('PRAGMA wal_checkpoint(TRUNCATE)');
+
+    $destino = rtrim(sys_get_temp_dir(), "/\\") . '/castello-backup-' . date('Y-m-d-His') . '.zip';
+
+    $zip = new ZipArchive();
+    if ($zip->open($destino, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+        return ['ok' => false, 'arquivo' => null, 'erro' => 'Não consegui criar o arquivo de backup em disco.'];
+    }
+
+    $banco = CASTELLO_CONFIG . '/castello.db';
+    if (is_file($banco)) {
+        $zip->addFile($banco, 'castello.db');
+    }
+
+    if (is_dir(CASTELLO_UPLOADS)) {
+        $itens = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(CASTELLO_UPLOADS, FilesystemIterator::SKIP_DOTS)
+        );
+        $corte = strlen(CASTELLO_UPLOADS) + 1;
+
+        foreach ($itens as $item) {
+            if (!$item->isFile()) {
+                continue;
+            }
+            $relativo = 'uploads/' . str_replace('\\', '/', substr($item->getPathname(), $corte));
+            $zip->addFile($item->getPathname(), $relativo);
+        }
+    }
+
+    if (!$zip->close()) {
+        return ['ok' => false, 'arquivo' => null, 'erro' => 'Não consegui fechar o arquivo de backup.'];
+    }
+
+    return ['ok' => true, 'arquivo' => $destino, 'erro' => null];
+}
+
+/**
+ * Troca a senha do unico usuario do painel.
+ *
+ * @return array{ok: bool, erro: ?string}
+ */
+function painel_trocar_senha(int $usuarioId, string $atual, string $nova, string $confirma): array
+{
+    $st = db()->prepare('SELECT senha_hash FROM usuarios WHERE id = ?');
+    $st->execute([$usuarioId]);
+    $hash = $st->fetchColumn();
+
+    if ($hash === false) {
+        return ['ok' => false, 'erro' => 'Usuário não encontrado.'];
+    }
+    if (!password_verify($atual, (string) $hash)) {
+        return ['ok' => false, 'erro' => 'A senha atual está errada.'];
+    }
+    if (mb_strlen($nova) < 8) {
+        return ['ok' => false, 'erro' => 'A senha nova precisa ter pelo menos 8 caracteres.'];
+    }
+    if ($nova !== $confirma) {
+        return ['ok' => false, 'erro' => 'A confirmação não bate com a senha nova.'];
+    }
+    if ($nova === $atual) {
+        return ['ok' => false, 'erro' => 'A senha nova precisa ser diferente da atual.'];
+    }
+
+    db()->prepare('UPDATE usuarios SET senha_hash = ? WHERE id = ?')
+        ->execute([password_hash($nova, PASSWORD_BCRYPT), $usuarioId]);
+
+    return ['ok' => true, 'erro' => null];
+}
