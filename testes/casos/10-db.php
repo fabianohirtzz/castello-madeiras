@@ -152,3 +152,31 @@ teste('o banco real do runner ja tem as colunas novas', function (): void {
     verdade(in_array('prazo', $colunas, true), 'prazo no banco do runner');
     verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id no banco do runner');
 });
+
+teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', function (): void {
+    /* Banco em memoria com o leads ANTIGO. */
+    $pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdo->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+
+    /* Outra requisicao (ou thread) acrescenta prazo entre a leitura do PRAGMA e o ALTER. */
+    $pdo->exec('ALTER TABLE leads ADD COLUMN prazo TEXT');
+
+    /* Esta requisicao vai tentar acrescentar prazo e crm_pessoa_id, mas prazo ja existe. */
+    $pegou_excecao = false;
+    try {
+        $acrescentadas = db_garantir_colunas($pdo);
+    } catch (PDOException $ex) {
+        $pegou_excecao = true;
+    }
+
+    falso($pegou_excecao, 'nao deve lancar excecao quando coluna duplicada');
+
+    /* Apenas crm_pessoa_id foi acrescentado nesta chamada; prazo foi achado ja existente. */
+    sort($acrescentadas);
+    igual(['crm_pessoa_id'], $acrescentadas, 'so crm_pessoa_id foi acrescentado');
+
+    /* As duas colunas existem agora. */
+    $colunas = array_column($pdo->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo existe');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe');
+});

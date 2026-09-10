@@ -93,8 +93,18 @@ function db_garantir_colunas(PDO $pdo): array
             if (in_array($coluna, $existentes, true)) {
                 continue;
             }
-            $pdo->exec('ALTER TABLE ' . $tabela . ' ADD COLUMN ' . $coluna . ' ' . $tipo);
-            $acrescentadas[] = $coluna;
+            try {
+                $pdo->exec('ALTER TABLE ' . $tabela . ' ADD COLUMN ' . $coluna . ' ' . $tipo);
+                $acrescentadas[] = $coluna;
+            } catch (PDOException $ex) {
+                // Outra requisicao pode ter acrescentado a coluna entre o PRAGMA e o ALTER,
+                // especialmente logo apos o deploy. SQLite responde com "duplicate column name".
+                if (strpos($ex->getMessage(), 'duplicate column name') === false) {
+                    throw $ex; // erro de disco, permissao ou outro; precisa subir
+                }
+                // Se foi coluna duplicada, a coluna ja existe: outra requisicao venceu nesta.
+                // Nao incluimos na lista de acrescentadas, porque nao foi esta chamada.
+            }
         }
     }
 
