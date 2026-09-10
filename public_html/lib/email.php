@@ -100,6 +100,12 @@ function email_corpo_lead(array $lead, array $resultado_crm): string
     $linhas[] = '';
     $linhas[] = '-----';
     $linhas[] = email_linha_crm($resultado_crm);
+
+    $link = $resultado_crm['negocio_url'] ?? null;
+    if (is_string($link) && $link !== '') {
+        $linhas[] = 'Abrir no CRM: ' . $link;
+    }
+
     $linhas[] = '';
     $linhas[] = 'Este lead esta gravado no banco do site. Se o CRM falhou, a rotina de';
     $linhas[] = 'reenvio tenta de novo sozinha. Nenhum contato se perde.';

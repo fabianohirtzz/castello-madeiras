@@ -680,6 +680,27 @@ teste('o corpo do e-mail traz o lead e o resultado do CRM', function (): void {
     contem('CRM: desligado', $corpoOff);
 });
 
+teste('o e-mail traz o prazo e o link do negocio no CRM', function (): void {
+    $comPrazo = LEAD_EMAIL + ['prazo' => 'Até 3 meses'];
+
+    $corpo = email_corpo_lead($comPrazo, [
+        'ok' => true, 'http' => 201, 'resposta' => '{"data":{"id":90000001}}', 'erro' => null,
+        'pessoa_id' => 71397195, 'negocio_url' => 'https://web.agendor.com.br/negocio/90000001',
+    ]);
+    contem('Quer iniciar a obra: Até 3 meses', $corpo);
+    contem('https://web.agendor.com.br/negocio/90000001', $corpo, 'link direto para o negocio');
+    contem('CRM: entregue', $corpo);
+
+    /* Sem link, o corpo nao pode ficar com rotulo orfao. */
+    $semLink = email_corpo_lead($comPrazo, [
+        'ok' => false, 'http' => 500, 'resposta' => 'interno', 'erro' => 'crm_http',
+        'pessoa_id' => null, 'negocio_url' => null,
+    ]);
+    nao_contem('web.agendor.com.br', $semLink);
+    contem('CRM: falhou', $semLink);
+    contem('crm_http', $semLink);
+});
+
 teste('email_lead_novo grava em arquivo no modo de teste e recusa destino invalido', function (): void {
     crm_teste_limpar();
     emails_limpar();
