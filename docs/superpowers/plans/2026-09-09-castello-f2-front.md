@@ -653,7 +653,7 @@ Entrega a seção nova pedida na spec 7.1 item 6: resumo, vídeo explicativo, pr
 
 **Copy provisória.** Todo o texto desta seção sai do material do Instagram e é substituível pelas chaves `flex_titulo`, `flex_texto`, `flex_prazo`, `flex_video` e `flex_video_poster` da tabela `blocos` (contrato §2.2). O vídeo é o `insta-04.mp4`, que já existe no repositório, marcando o lugar do explicativo definitivo.
 
-- [ ] **Step 1: Inserir a seção**
+- [x] **Step 1: Inserir a seção**
 
 Em `front/home.html`, logo depois de
 
@@ -704,7 +704,7 @@ cole:
   <div class="facet facet--bone" aria-hidden="true"></div>
 ```
 
-- [ ] **Step 2: Acrescentar o CSS na região FASE 2**
+- [x] **Step 2: Acrescentar o CSS na região FASE 2**
 
 ```css
 /* ---------- Grid de duas colunas com quebra em coluna única ---------- */
@@ -765,7 +765,7 @@ cole:
 }
 ```
 
-- [ ] **Step 3: Verificar no navegador**
+- [x] **Step 3: Verificar no navegador**
 
 1. `browser_navigate` para `http://localhost:8000/front/home.html` e `browser_console_messages`. Esperado: nenhum erro.
 2. `browser_resize` 1440x900, role até `#castelo-flex` e `browser_take_screenshot` em `f2-t4-1440.png`. Olhe: fundo preto com a grade técnica suave, texto à esquerda e o vídeo vertical à direita com no máximo 330px de largura; as três métricas numa linha só, com "45 dias" em vermelho claro; o telhado bone recortando a saída da seção para as Vantagens.
@@ -778,7 +778,7 @@ cole:
 9. Em 1440px, `browser_press_key` `Tab` até os dois CTAs da seção e `browser_snapshot`. Esperado: anel de foco branco visível sobre o fundo escuro (regra `.section--dark a:focus-visible{outline-color:#fff}`) e o botão do vídeo alcançável pelo teclado.
 10. `browser_click` em "Pedir orçamento" da seção. Esperado: o modal `#quoteModal` abre com o foco no campo de nome.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"

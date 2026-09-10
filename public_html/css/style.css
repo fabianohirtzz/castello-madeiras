@@ -1083,3 +1083,62 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 @media(max-width:420px){
   .stamp{font-size:.9rem;padding:10px 16px}
 }
+
+/* ---------- Grid de duas colunas com quebra em coluna única ---------- */
+.split2{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:clamp(30px,5vw,72px);align-items:center;
+}
+@media(max-width:900px){.split2{grid-template-columns:1fr}}
+
+/* ---------- Vídeo explicativo (home e página Flex) ---------- */
+.vexp{margin:0}
+.vexp__frame{
+  position:relative;border-radius:var(--r-lg);overflow:hidden;
+  box-shadow:var(--shadow-card);background:#000;
+}
+.vexp__frame video{
+  display:block;width:100%;height:auto;aspect-ratio:9/16;
+  object-fit:cover;background:#000;
+}
+.vexp--wide .vexp__frame video{aspect-ratio:16/9}
+/* reel vertical não pode virar uma torre de 900px numa coluna larga */
+.vexp--reel{max-width:330px;margin-inline:auto}
+.vexp__cap{margin-top:14px;font-size:.9rem;color:var(--muted);line-height:1.5;text-align:center}
+.vexp__cap--light{color:rgba(255,255,255,.72)}
+
+/* ---------- Castelo Flex na home ---------- */
+/* mesma grade técnica do process e do insta, para a seção escura não ficar chapada */
+.flexhome{position:relative}
+.flexhome::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 56% at 50% 30%,#000 35%,transparent 100%);
+  mask-image:radial-gradient(ellipse 78% 56% at 50% 30%,#000 35%,transparent 100%);
+}
+.flexhome .container{position:relative;z-index:1}
+.flexhome__title{
+  font-family:var(--font-display);font-weight:800;
+  font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.03;letter-spacing:-.03em;color:#fff;
+}
+.flexhome__lead{
+  margin-top:20px;color:rgba(255,255,255,.78);
+  font-size:clamp(1.02rem,1.35vw,1.2rem);line-height:1.6;max-width:46ch;
+}
+.flexhome__facts{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:18px;
+  margin-top:30px;padding-top:26px;border-top:1px solid rgba(255,255,255,.14);
+}
+.flexhome__fact strong{
+  display:block;font-family:var(--font-display);font-weight:800;
+  font-size:1.3rem;line-height:1.1;letter-spacing:-.02em;color:var(--red-bright);
+}
+.flexhome__fact span{display:block;margin-top:5px;color:rgba(255,255,255,.72);font-size:.9rem;line-height:1.45}
+/* a regra antiga de foco branco no escuro só cobre <a>; o botão de orçamento também precisa */
+.section--dark button:focus-visible{outline-color:#fff}
+.flexhome__actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
+@media(max-width:520px){
+  .flexhome__actions{flex-direction:column;align-items:stretch}
+  .flexhome__actions .btn{width:100%}
+}
