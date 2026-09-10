@@ -154,29 +154,55 @@ teste('o banco real do runner ja tem as colunas novas', function (): void {
 });
 
 teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', function (): void {
-    /* Banco em memoria com o leads ANTIGO. */
-    $pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-    $pdo->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+    /* Banco real com a coluna ja adicionada (simulando outra requisicao que venceu). */
+    $pdo_real = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdo_real->exec('CREATE TABLE leads (id INTEGER PRIMARY KEY, nome TEXT, crm_status TEXT)');
+    $pdo_real->exec('ALTER TABLE leads ADD COLUMN prazo TEXT'); // Outra requisicao adicionou
 
-    /* Outra requisicao (ou thread) acrescenta prazo entre a leitura do PRAGMA e o ALTER. */
-    $pdo->exec('ALTER TABLE leads ADD COLUMN prazo TEXT');
+    /* Mock que faz o PRAGMA table_info mentir e dizer que prazo nao existe ainda.
+       Quando a funcao tentar ALTER TABLE, vai falhar com "duplicate column name". */
+    class MockPDOForRaceCondition extends PDO {
+        private $pdo_real;
+        public function __construct($pdo) {
+            $this->pdo_real = $pdo;
+        }
+        #[\ReturnTypeWillChange]
+        public function query(string $sql, ...$args) {
+            // PRAGMA table_info(leads) retorna resultado forjado sem prazo e sem crm_pessoa_id
+            if (strpos($sql, 'PRAGMA table_info') !== false) {
+                return $this->pdo_real->query(
+                    "SELECT 'id' AS name UNION ALL SELECT 'nome' UNION ALL SELECT 'crm_status'"
+                );
+            }
+            // Outro SQL vai pro banco de verdade, onde a coluna ja existe
+            return $this->pdo_real->query($sql, ...$args);
+        }
+        public function exec(string $sql): int {
+            return $this->pdo_real->exec($sql);
+        }
+    }
 
-    /* Esta requisicao vai tentar acrescentar prazo e crm_pessoa_id, mas prazo ja existe. */
+    $pdo_mock = new MockPDOForRaceCondition($pdo_real);
+
+    /* A funcao vai achar que prazo falta (mentira do PRAGMA), tentar adicionar (ALTER TABLE),
+       e falhar com "duplicate column name" porque prazo ja existe no banco de verdade.
+       O try/catch tem que engolir a excecao silenciosamente. */
     $pegou_excecao = false;
     try {
-        $acrescentadas = db_garantir_colunas($pdo);
+        $acrescentadas = db_garantir_colunas($pdo_mock);
     } catch (PDOException $ex) {
         $pegou_excecao = true;
     }
 
-    falso($pegou_excecao, 'nao deve lancar excecao quando coluna duplicada');
+    falso($pegou_excecao, 'nao deve lancar excecao; coluna duplicada e engolida no catch');
 
-    /* Apenas crm_pessoa_id foi acrescentado nesta chamada; prazo foi achado ja existente. */
+    /* Apenas crm_pessoa_id entrou na lista de acrescentadas.
+       Prazo foi recusado silenciosamente pelo catch de coluna duplicada. */
     sort($acrescentadas);
-    igual(['crm_pessoa_id'], $acrescentadas, 'so crm_pessoa_id foi acrescentado');
+    igual(['crm_pessoa_id'], $acrescentadas, 'apenas crm_pessoa_id foi acrescentado nesta chamada');
 
-    /* As duas colunas existem agora. */
-    $colunas = array_column($pdo->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
-    verdade(in_array('prazo', $colunas, true), 'prazo existe');
-    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe');
+    /* Ambas as colunas existem agora no banco de verdade. */
+    $colunas = array_column($pdo_real->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('prazo', $colunas, true), 'prazo existe no banco');
+    verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id existe no banco');
 });
