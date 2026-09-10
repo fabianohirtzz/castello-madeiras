@@ -28,6 +28,13 @@ if (is_array($rascunho) && ($rascunho['tela'] ?? '') === $tela && (int) ($rascun
 
 $filtro = (string) ($_GET['filtro'] ?? '');
 $voltar = 'painel.php?tela=' . rawurlencode($tela) . ($filtro !== '' ? '&filtro=' . rawurlencode($filtro) : '');
+
+// Item novo aberto a partir de um filtro (Casa Pronta, Flex, Home) ja nasce
+// naquela modalidade, em vez de cair na primeira opcao da lista.
+if ($id === 0 && isset($def['filtro']) && $filtro !== '' && isset($def['filtro']['opcoes'][$filtro])
+    && !array_key_exists($def['filtro']['coluna'], $valores)) {
+    $valores[$def['filtro']['coluna']] = $filtro;
+}
 ?>
 <h1><?= $id > 0 ? 'Editar' : 'Adicionar' ?> <?= e($def['singular']) ?></h1>
 <p class="p-sub"><a href="<?= e($voltar) ?>">Voltar para <?= e($def['rotulo']) ?></a></p>
@@ -62,7 +69,7 @@ $voltar = 'painel.php?tela=' . rawurlencode($tela) . ($filtro !== '' ? '&filtro=
     <textarea id="<?= e($idc) ?>" name="<?= e($coluna) ?>" rows="5"><?= e($valor) ?></textarea>
 
 <?php elseif ($campo['tipo'] === 'numero'): ?>
-    <input type="number" id="<?= e($idc) ?>" name="<?= e($coluna) ?>" value="<?= e($valor) ?>" min="0" step="1" />
+    <input type="number" id="<?= e($idc) ?>" name="<?= e($coluna) ?>" value="<?= e($valor) ?>" min="<?= (int) ($campo['min'] ?? 0) ?>"<?= isset($campo['max']) ? ' max="' . (int) $campo['max'] . '"' : '' ?> step="1" />
 
 <?php elseif ($campo['tipo'] === 'selecao'): ?>
     <select id="<?= e($idc) ?>" name="<?= e($coluna) ?>">

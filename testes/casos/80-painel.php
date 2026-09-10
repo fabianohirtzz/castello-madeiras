@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once site() . '/painel/tabelas.php';
+require_once site() . '/lib/auth.php';
 
 banco_com_conteudo();
 
@@ -464,4 +465,36 @@ teste('painel_fixas traz as quatro telas que nao sao de conteudo', function (): 
     igual(['textos', 'config', 'backup', 'senha'], array_keys(painel_fixas()));
     igual('Textos', painel_fixas()['textos']);
     igual('Configurações', painel_fixas()['config']);
+});
+
+teste('estrelas fora de 1 a 5 e recusado e vazio vira 5', function (): void {
+    $def = painel_tabela('avaliacoes');
+    $v = painel_valores($def, ['nome' => 'Teste', 'texto' => 'Texto', 'estrelas' => '9']);
+    verdade(isset(painel_erros($def, $v)['estrelas']), '9 estrelas tem que dar erro');
+    $v = painel_valores($def, ['nome' => 'Teste', 'texto' => 'Texto', 'estrelas' => '0']);
+    verdade(isset(painel_erros($def, $v)['estrelas']), '0 estrelas tem que dar erro');
+    $v = painel_valores($def, ['nome' => 'Teste', 'texto' => 'Texto', 'estrelas' => '']);
+    igual(5, $v['estrelas'], 'vazio cai no padrao 5');
+    igual([], painel_erros($def, $v));
+    igual(3, painel_valores($def, ['estrelas' => '3'])['estrelas']);
+});
+
+teste('painel_bytes le os valores do php.ini', function (): void {
+    igual(8388608, painel_bytes('8M'));
+    igual(67108864, painel_bytes('64M'));
+    igual(2048, painel_bytes('2K'));
+    igual(1073741824, painel_bytes('1G'));
+    igual(123, painel_bytes('123'));
+    igual(0, painel_bytes('-1'));
+    igual(0, painel_bytes(''));
+});
+
+teste('o formulario de item novo nasce com o filtro da lista', function (): void {
+    $_GET = ['tela' => 'modelos', 'novo' => '1', 'filtro' => 'flex'];
+    $html = render(site() . '/painel/telas/form.php', ['tela' => 'modelos', 'def' => painel_tabela('modelos'), 'id' => 0, 'linha' => null]);
+    contem('<option value="flex" selected>', $html, 'novo modelo aberto do filtro Flex ja vem como Flex');
+    $_GET = ['tela' => 'modelos', 'novo' => '1'];
+    $html = render(site() . '/painel/telas/form.php', ['tela' => 'modelos', 'def' => painel_tabela('modelos'), 'id' => 0, 'linha' => null]);
+    nao_contem('<option value="flex" selected>', $html, 'sem filtro, nada e semeado e o navegador mostra a primeira opcao');
+    $_GET = [];
 });

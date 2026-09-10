@@ -65,9 +65,25 @@
     ev.preventDefault();
   });
 
+  /* Lista mais alta que a tela: perto da borda de cima ou de baixo, a pagina
+     rola sozinha enquanto o dedo fica parado, senao nao da para levar um item
+     do fim ao topo num gesto so no celular. */
+  var rolagem = 0, rolando = null;
+  function rolar() {
+    if (!item || rolagem === 0) { rolando = null; return; }
+    window.scrollBy(0, rolagem);
+    rolando = requestAnimationFrame(rolar);
+  }
+  function ajustarRolagem(y) {
+    var borda = 70, h = window.innerHeight;
+    rolagem = y < borda ? -Math.ceil((borda - y) / 5) : (y > h - borda ? Math.ceil((y - (h - borda)) / 5) : 0);
+    if (rolagem !== 0 && rolando === null) { rolando = requestAnimationFrame(rolar); }
+  }
+
   lista.addEventListener('pointermove', function (ev) {
     if (!item) { return; }
     ev.preventDefault();
+    ajustarRolagem(ev.clientY);
 
     var vizinho = vizinhoAbaixoDe(ev.clientY);
     if (vizinho === item) { return; }
@@ -80,6 +96,7 @@
   });
 
   function soltar() {
+    rolagem = 0;
     if (!item) { return; }
     item.classList.remove('is-arrastando');
     item = null;

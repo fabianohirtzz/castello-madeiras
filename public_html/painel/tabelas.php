@@ -66,7 +66,7 @@ function painel_tabelas(): array
             'campos'   => [
                 'nome'     => ['rotulo' => 'Nome do cliente', 'tipo' => 'texto', 'obrigatorio' => true],
                 'texto'    => ['rotulo' => 'Texto da avaliação', 'tipo' => 'texto_longo', 'obrigatorio' => true],
-                'estrelas' => ['rotulo' => 'Estrelas', 'tipo' => 'numero', 'ajuda' => 'De 1 a 5'],
+                'estrelas' => ['rotulo' => 'Estrelas', 'tipo' => 'numero', 'min' => 1, 'max' => 5, 'padrao' => 5, 'ajuda' => 'De 1 a 5'],
             ],
         ],
 
@@ -196,7 +196,9 @@ function painel_valores(array $def, array $entrada): array
 
         $valores[$coluna] = match ($campo['tipo']) {
             'sim_nao'   => ((string) $bruto === '1') ? 1 : 0,
-            'numero'    => (int) $bruto,
+            'numero'    => ($bruto === null || trim((string) $bruto) === '') && isset($campo['padrao'])
+                             ? (int) $campo['padrao']
+                             : (int) $bruto,
             'selecao'   => isset($campo['opcoes'][(string) $bruto])
                              ? (string) $bruto
                              : (string) array_key_first($campo['opcoes']),
@@ -267,6 +269,14 @@ function painel_erros(array $def, array $valores): array
     $erros = [];
 
     foreach ($def['campos'] as $coluna => $campo) {
+        if ($campo['tipo'] === 'numero' && (isset($campo['min']) || isset($campo['max']))) {
+            $n = (int) ($valores[$coluna] ?? 0);
+            if ((isset($campo['min']) && $n < $campo['min']) || (isset($campo['max']) && $n > $campo['max'])) {
+                $erros[$coluna] = $campo['rotulo'] . ' precisa ser de ' . ($campo['min'] ?? 0) . ' a ' . ($campo['max'] ?? '') . '.';
+                continue;
+            }
+        }
+
         if (empty($campo['obrigatorio'])) {
             continue;
         }
@@ -597,4 +607,21 @@ function painel_trocar_senha(int $usuarioId, string $atual, string $nova, string
         ->execute([password_hash($nova, PASSWORD_BCRYPT), $usuarioId]);
 
     return ['ok' => true, 'erro' => null];
+}
+
+/** Converte um valor de php.ini como 8M ou 64M para bytes. Zero quando ilimitado. */
+function painel_bytes(string $valor): int
+{
+    $valor = trim($valor);
+    if ($valor === '' || $valor === '-1') {
+        return 0;
+    }
+    $unidade = strtolower(substr($valor, -1));
+    $numero  = (int) $valor;
+    return match ($unidade) {
+        'g' => $numero * 1073741824,
+        'm' => $numero * 1048576,
+        'k' => $numero * 1024,
+        default => $numero,
+    };
 }

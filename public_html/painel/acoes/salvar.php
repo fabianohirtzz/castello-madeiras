@@ -17,7 +17,19 @@ if ($def === null) {
 }
 
 $lista = '../painel.php?tela=' . rawurlencode($tela) . ($filtro !== '' ? '&filtro=' . rawurlencode($filtro) : '');
-$form  = '../painel.php?tela=' . rawurlencode($tela) . ($id > 0 ? '&editar=' . $id : '&novo=1');
+$form  = '../painel.php?tela=' . rawurlencode($tela) . ($id > 0 ? '&editar=' . $id : '&novo=1')
+       . ($filtro !== '' ? '&filtro=' . rawurlencode($filtro) : '');
+
+// POST acima de post_max_size chega com $_POST vazio, e o erro pareceria ser
+// de sessao. Avisa do tamanho antes de qualquer outra coisa.
+$limite = painel_bytes((string) ini_get('post_max_size'));
+if ($limite > 0 && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $limite) {
+    header('Location: ../painel.php?erro=' . rawurlencode(sprintf(
+        'O arquivo passou do limite do servidor (%d MB). Reduza o arquivo e tente de novo.',
+        (int) floor($limite / 1048576)
+    )));
+    exit;
+}
 
 if (!csrf_validar($_POST['csrf'] ?? null)) {
     header('Location: ' . $lista . '&erro=' . rawurlencode('A sessão expirou. Entre de novo e repita o envio.'));
@@ -46,9 +58,7 @@ if ($erros !== []) {
 
 painel_salvar($tela, $id > 0 ? $id : null, $valores);
 
-$recado = $id > 0
-    ? 'Alterações salvas.'
-    : mb_strtoupper(mb_substr($def['singular'], 0, 1)) . mb_substr($def['singular'], 1) . ' adicionado.';
+$recado = $id > 0 ? 'Alterações salvas.' : 'Adicionado: ' . $def['singular'] . '.';
 
 header('Location: ' . $lista . '&ok=' . rawurlencode($recado));
 exit;
