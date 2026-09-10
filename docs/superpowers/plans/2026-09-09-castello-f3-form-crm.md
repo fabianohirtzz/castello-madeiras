@@ -348,7 +348,7 @@ A rede de segurança. Grava o lead antes de qualquer integração e registra o r
   - `lead_marcar(int $id, string $status, int $tentativas, ?string $resposta): void`
   - Constantes `LEAD_CAMPOS` (array com os 13 campos de conteúdo, na ordem do schema), `LEAD_TENTATIVAS_MAX` (5) e `LEAD_RESPOSTA_MAX` (2000).
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, **antes** da linha `exit(t_resumo());`:
 
@@ -416,7 +416,7 @@ $cortado = db()->query('SELECT * FROM leads WHERE id = ' . (int) $id)->fetch(PDO
 t_igual('resposta longa cortada em 2000', 2000, mb_strlen((string) $cortado['crm_resposta']));
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -425,7 +425,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Failed opening required '.../public_html/lib/leads.php'`.
 
-- [ ] **Passo 3: escrever `public_html/lib/leads.php`**
+- [x] **Passo 3: escrever `public_html/lib/leads.php`**
 
 ```php
 <?php
@@ -523,7 +523,7 @@ function lead_marcar(int $id, string $status, int $tentativas, ?string $resposta
 }
 ```
 
-- [ ] **Passo 4: rodar e ver passar**
+- [x] **Passo 4: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -531,7 +531,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: todas as linhas da seção `lib/leads.php: gravacao e marcacao` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 5: commitar**
+- [x] **Passo 5: commitar**
 
 ```bash
 git add public_html/lib/leads.php testes/smoke-f3.php

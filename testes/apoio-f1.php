@@ -127,6 +127,11 @@ if (!function_exists('teste_banco_limpar')) {
     {
         db()->exec('DELETE FROM leads');
         db()->exec('DELETE FROM config');
-        db()->exec("DELETE FROM sqlite_sequence WHERE name = 'leads'");
+        /* O schema do contrato usa INTEGER PRIMARY KEY sem AUTOINCREMENT, entao
+           sqlite_sequence normalmente nem existe. So limpa se existir. */
+        $temSequencia = db()->query("SELECT name FROM sqlite_master WHERE name = 'sqlite_sequence'")->fetchColumn();
+        if ($temSequencia) {
+            db()->exec("DELETE FROM sqlite_sequence WHERE name = 'leads'");
+        }
     }
 }
