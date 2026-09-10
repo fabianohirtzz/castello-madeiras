@@ -1104,6 +1104,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .vexp--wide .vexp__frame video{aspect-ratio:16/9}
 /* reel vertical não pode virar uma torre de 900px numa coluna larga */
 .vexp--reel{max-width:330px;margin-inline:auto}
+.vexp__frame video:focus-visible{outline:3px solid var(--red-bright);outline-offset:3px}
 .vexp__cap{margin-top:14px;font-size:.9rem;color:var(--muted);line-height:1.5;text-align:center}
 .vexp__cap--light{color:rgba(255,255,255,.72)}
 

@@ -476,8 +476,20 @@
       </div>
 
       <form class="qform" id="quoteForm" novalidate>
-        <!-- honeypot anti-spam: humanos não veem, não preencher -->
-        <input type="text" name="_gotcha" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <!-- honeypot anti-spam (contrato 6.1: precisa chegar vazio). Humanos não veem. -->
+        <input type="text" name="empresa" class="qform__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+        <!-- Ocultos do contrato 6.1. Nascem vazios de propósito: quem preenche é
+             o js/formulario.js da frente 3, e o csrf é impresso pelo PHP na costura. -->
+        <input type="hidden" name="pagina" value="" />
+        <input type="hidden" name="referrer" value="" />
+        <input type="hidden" name="utm_source" value="" />
+        <input type="hidden" name="utm_medium" value="" />
+        <input type="hidden" name="utm_campaign" value="" />
+        <input type="hidden" name="utm_term" value="" />
+        <input type="hidden" name="utm_content" value="" />
+        <input type="hidden" name="ts" value="" />
+        <input type="hidden" name="csrf" value="" />
 
         <div class="qform__row">
           <div class="qform__group">

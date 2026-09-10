@@ -1673,7 +1673,7 @@ Alinha a marcação do formulário ao contrato §6.1 nas duas páginas e faz a p
 - Consome: contrato §6.1 (campos), §6.2 (regras de recusa), `.qform`, `.qform__hp`
 - Produz: um `<form id="quoteForm">` em cada página com exatamente os campos que o `enviar.php` da frente 3 espera receber
 
-- [ ] **Step 1: Trocar o honeypot e acrescentar os campos ocultos, nas duas páginas**
+- [x] **Step 1: Trocar o honeypot e acrescentar os campos ocultos, nas duas páginas**
 
 Em `front/home.html` e em `front/flex.html`, substitua
 
@@ -1703,7 +1703,7 @@ por
 
 Os `<input type="hidden">` não têm `offsetParent`, então o laço de foco do modal no `js/main.js` já os ignora e a ordem de tabulação não muda.
 
-- [ ] **Step 2: Conferir que os dois formulários batem com o contrato**
+- [x] **Step 2: Conferir que os dois formulários batem com o contrato**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello/front"
@@ -1715,7 +1715,7 @@ done
 
 Esperado nos dois arquivos, e nada além disto entre as tags do formulário: `nome`, `whatsapp`, `busca`, `modelo`, `cidade`, `mensagem`, `pagina`, `referrer`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `empresa`, `ts`, `csrf`. Se `_gotcha` ainda aparecer, o passo 1 não pegou nos dois arquivos.
 
-- [ ] **Step 3: Varredura final da home**
+- [x] **Step 3: Varredura final da home**
 
 `browser_navigate` para `http://localhost:8000/front/home.html` e, para **cada** largura da lista 1440, 1180, 1024, 900, 768, 560, 390:
 
@@ -1733,7 +1733,7 @@ Depois, em 1440px:
 9. `browser_evaluate` com `() => [...document.querySelectorAll('a[href^="#"]')].map(a => a.getAttribute('href')).filter(h => h !== '#' && !document.querySelector(h))`. Esperado: lista vazia. Âncora apontando para o nada reprova.
 10. `browser_press_key` `Tab` vinte vezes seguidas, com `browser_snapshot` a cada cinco. Esperado: o foco só entra em elementos visíveis, sempre com anel visível, e nunca cai dentro do drawer fechado nem do modal fechado.
 
-- [ ] **Step 4: Varredura final da página Flex**
+- [x] **Step 4: Varredura final da página Flex**
 
 `browser_navigate` para `http://localhost:8000/front/flex.html` e repita, para as mesmas sete larguras, os passos 1 a 3 do passo anterior, salvando em `f2-t10-flex-<largura>.png`.
 
@@ -1748,7 +1748,7 @@ Depois, em 1440px:
 10. `browser_evaluate` com `() => document.body.innerText.includes('R$')`. Esperado: `false` na página Flex, porque a tabela ainda não está fechada.
 11. `browser_press_key` `Tab` vinte vezes, com `browser_snapshot` a cada cinco. Mesma expectativa da home.
 
-- [ ] **Step 5: Ida e volta entre as duas páginas**
+- [x] **Step 5: Ida e volta entre as duas páginas**
 
 1. Em `home.html`, `browser_click` no link "Castelo Flex" da nav. Esperado: chega em `flex.html` com o hero da Flex.
 2. Em `flex.html`, `browser_click` no logo da nav. Esperado: volta para `home.html`.
@@ -1756,7 +1756,7 @@ Depois, em 1440px:
 4. Em 390px, faça o mesmo caminho pelo drawer nas duas páginas. Esperado: o drawer fecha ao clicar e a navegação acontece.
 5. Nas duas páginas, role até passar do primeiro dobra e confira que o botão flutuante `#wppFloat` aparece. `browser_click` nele. Esperado: o modal de orçamento abre.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
