@@ -6,7 +6,7 @@
 
 **Architecture:** A frente 2 entregou marcação estática em `front/`. A frente 1 entregou os partials e o painel. A frente 3 entregou o formulário e o conector. Esta frente transplanta a marcação nova para dentro dos partials, gera o `index.php` e o `flex.php` definitivos, funde os testes, e fecha o checklist de lançamento.
 
-**Tech Stack:** PHP 8.3, SQLite, HTML, CSS, JS vanilla. Playwright para o QA de navegador.
+**Tech Stack:** PHP escrito para 8.1 (roda em 8.3 local e 8.5 no servidor), SQLite 3.26 no servidor, HTML, CSS, JS vanilla. Playwright para o QA de navegador.
 
 **Spec:** [2026-09-09-castello-fase2-design.md](../specs/2026-09-09-castello-fase2-design.md)
 **Contrato:** [2026-09-09-castello-contrato.md](2026-09-09-castello-contrato.md)
@@ -15,7 +15,7 @@
 
 ## Global Constraints
 
-- PHP 8.3, sem framework, sem Composer, sem dependência externa.
+- Piso de compatibilidade PHP 8.1, sem framework, sem Composer, sem dependência externa. SQLite do servidor é 3.26: sem `RETURNING`, sem `ALTER TABLE DROP COLUMN`.
 - `declare(strict_types=1);` em toda a `lib/`. Sem `?>` no fim de arquivo PHP.
 - Toda saída de dado do banco no HTML passa por `e()`.
 - Caminhos de mídia sempre relativos ao `public_html`, começando por `uploads/`.
@@ -312,7 +312,33 @@ php testes/smoke.php
 
 Esperado: FALHA, porque as páginas ainda não carregam o `js/formulario.js` nem apontam o formulário para `enviar.php`.
 
-- [ ] **Step 3: Carregar o script e apontar o formulário**
+- [ ] **Step 3: Limpar a lógica antiga de formulário do `js/main.js`**
+
+O `js/main.js` traz, desde o protótipo, uma implementação própria de envio: abertura do modal, máscara de WhatsApp, honeypot `_gotcha`, time-trap e a constante `FORM_ENDPOINT`. A frente 3 escreveu a versão definitiva em `js/formulario.js`. Deixar as duas no ar faz duas rotinas disputarem o mesmo evento de `submit`.
+
+Nenhuma frente podia fazer esta remoção: o arquivo é da frente 2, que não mexe em lógica de formulário, e a frente 3 foi proibida de tocar no arquivo. É tarefa da costura.
+
+Apague de `js/main.js`, no bloco entre as linhas 683 e 860 do arquivo original:
+- o `addEventListener('submit', ...)` do `#quoteForm` e tudo que ele chama para enviar;
+- a constante `FORM_ENDPOINT`;
+- a checagem do honeypot `_gotcha`, que virou letra morta quando o campo passou a se chamar `empresa`;
+- o time-trap.
+
+Mantenha em `js/main.js`, porque é comportamento de interface e não de envio:
+- a abertura e o fechamento do modal por `data-quote-open`, incluindo Esc e backdrop;
+- o laço de foco do modal;
+- a máscara de WhatsApp;
+- o campo condicional de modelo de interesse.
+
+- [ ] **Step 4: Confirmar que só uma rotina responde ao envio**
+
+```bash
+grep -n "addEventListener('submit'\|FORM_ENDPOINT\|_gotcha" public_html/js/main.js public_html/js/formulario.js
+```
+
+Esperado: nenhuma ocorrência em `main.js`, e o `submit` aparecendo uma única vez, em `formulario.js`.
+
+- [ ] **Step 5: Carregar o script e apontar o formulário**
 
 Nas duas páginas, antes do `</body>`:
 
@@ -326,7 +352,7 @@ E no formulário:
 <form id="quoteForm" method="post" action="enviar.php" novalidate>
 ```
 
-- [ ] **Step 4: Rodar o teste até passar e conferir no navegador**
+- [ ] **Step 6: Rodar o teste até passar e conferir no navegador**
 
 ```bash
 php testes/smoke.php
@@ -334,11 +360,11 @@ php testes/smoke.php
 
 Depois, com Playwright: preencher e enviar o formulário na home e na página Flex, conferir a mensagem de sucesso acessível, e conferir no banco que os dois leads chegaram com o campo `pagina` diferente.
 
-- [ ] **Step 5: Conferir a captura de UTM**
+- [ ] **Step 7: Conferir a captura de UTM**
 
 Abra `http://localhost:8000/?utm_source=meta&utm_campaign=flex-setembro`, navegue para a página Flex sem parâmetro na URL, envie o formulário de lá, e confira no banco que `utm_source` e `utm_campaign` do lead vieram preenchidos. É o comportamento de `sessionStorage` da seção 6.4 do contrato, e é o que a reunião pediu ao trocar WhatsApp por formulário.
 
-- [ ] **Step 6: Commitar**
+- [ ] **Step 8: Commitar**
 
 ```bash
 git add public_html/index.php public_html/flex.php testes/smoke.php
@@ -469,7 +495,13 @@ Suba o servidor local e peça uma auditoria completa de `http://localhost:8000/`
 
 Mesma auditoria em `http://localhost:8000/painel/`, logado, cobrindo cada tela. O painel é usado no celular, então a checagem em 390px não é opcional.
 
-- [ ] **Step 3: Registrar os achados**
+- [ ] **Step 3: Conferir o contraste de branco sobre vermelho**
+
+A frente 2 mediu o branco sobre `--red` em `.model__flag` e na faixa `.proof`, componentes que já estão no ar desde o protótipo: **4,33:1**, que reprova AA para texto normal, apesar de a skill `castello-design` afirmar que passa. Os componentes novos da frente 2 já usam `--red-deep`, que mede 6,9:1.
+
+Meça os dois de novo e, se confirmar, troque o fundo dos componentes antigos para `--red-deep` também. Corrija a afirmação na skill `castello-design`, senão o erro se repete no próximo componente.
+
+- [ ] **Step 4: Registrar os achados**
 
 Escreva `docs/qa-fase2.md` com os achados por severidade e o que foi feito com cada um.
 

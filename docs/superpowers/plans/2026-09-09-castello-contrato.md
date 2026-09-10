@@ -195,6 +195,9 @@ CREATE INDEX IF NOT EXISTS idx_leads_pendentes ON leads (crm_status, criado_em);
 | `crm_metodo` | `POST` | Método HTTP |
 | `crm_cabecalhos` | `{}` | JSON de cabeçalhos, ex: `{"Authorization":"Bearer xxx"}` |
 | `crm_mapa_campos` | ver abaixo | JSON que liga campo do site a campo do CRM |
+| `crm_timeout` | `10` | Segundos de espera pelo CRM. Nunca acima de 10, porque `max_execution_time` é 60 |
+| `reenvio_chave` | gerada na instalação | Chave que autoriza o reenvio de pendentes por URL |
+| `email_dominio` | `castellomadeiras.com.br` | Domínio usado no remetente do aviso |
 
 Valor inicial de `crm_mapa_campos`:
 
@@ -218,6 +221,17 @@ Valor inicial de `crm_mapa_campos`:
 | `flex_prazo` | Prazo da Castelo Flex | `texto` |
 | `flex_video` | Vídeo explicativo da Flex | `texto` |
 | `flex_video_poster` | Capa do vídeo da Flex | `texto` |
+| `flexpg_hero_titulo` | Título do topo da página Flex | `texto` |
+| `flexpg_hero_texto` | Texto do topo da página Flex | `texto_longo` |
+| `flexpg_oque_titulo` | Título de "o que é a Castelo Flex" | `texto` |
+| `flexpg_oque_texto` | Texto de "o que é a Castelo Flex" | `texto_longo` |
+| `flexpg_depois_titulo` | Título de "o que fica por sua conta" | `texto` |
+| `flexpg_depois_texto` | Texto de "o que fica por sua conta" | `texto_longo` |
+| `flexpg_catalogo_nota` | Nota abaixo do catálogo Flex | `texto` |
+| `flexpg_cta_titulo` | Título da faixa de orçamento da Flex | `texto` |
+| `flexpg_cta_texto` | Texto da faixa de orçamento da Flex | `texto_longo` |
+
+As nove chaves `flexpg_*` cobrem a página Flex inteira. Sem elas, metade da página ficaria fixa no PHP e o cliente não conseguiria editá-la pelo painel, o que contraria o motivo de o painel existir.
 
 Valores iniciais: `pronta_prazo` = `90 a 120 dias`, `flex_prazo` = `45 dias`. Os demais saem do texto que já está no `index.html` atual, exceto os da Flex, que a frente 2 escreve.
 
@@ -411,7 +425,21 @@ O HTML impresso por cada partial tem que ser **idêntico** ao que está hoje no 
 | `utm_source` `utm_medium` `utm_campaign` `utm_term` `utm_content` | JS, da URL ou do `sessionStorage` | não |
 | `empresa` | honeypot, tem que chegar vazio | — |
 | `ts` | JS, `Date.now()` na abertura do formulário | sim |
-| `csrf` | campo oculto impresso pelo PHP | sim |
+| `csrf` | campo oculto, preenchido pelo JS a partir da metatag | sim |
+
+**De onde o JS tira o token de CSRF.** A **frente 1 imprime esta metatag no `<head>` de toda página que tem formulário**:
+
+```php
+<meta name="csrf-token" content="<?= e(csrf_token()) ?>" />
+```
+
+Isto não é opcional. A frente 3 não pode escrever em `index.php` nem em `flex.php`, então sem a metatag todo envio volta 419 e nada funciona. É o único acoplamento duro entre as duas frentes.
+
+**Honeypot, nome de transição.** O contrato define `empresa`, mas o `index.html` de hoje usa `_gotcha`. Até a costura unificar, o `enviar.php` aceita os dois e recusa se qualquer um vier preenchido, e o JS envia os dois vazios. Depois da costura, só `empresa` permanece.
+
+**Recusa silenciosa.** Quando o honeypot vem preenchido ou o time-trap dispara, a resposta é `{"ok":true,"id":0}`. Parece sucesso para o robô, e o `id` zero distingue do lead real para quem lê o log. Nada é gravado.
+
+**Time-trap e o relógio do visitante.** O `ts` vem do navegador, então um relógio adiantado produz diferença negativa. Nesse caso o envio **passa**. Perder um lead real por causa do relógio de quem está comprando uma casa é pior do que aceitar um robô que já passou pelo honeypot.
 
 ### 6.2 Regras de recusa
 
@@ -449,10 +477,22 @@ Nenhuma frente escreve arquivo de outra.
 |---|---|
 | 1 | `lib/db.php` `lib/conteudo.php` `lib/auth.php` `lib/upload.php` `lib/schema.sql` `partials/` `painel/` `index.php` `flex.php` `migrar.php` |
 | 2 | `css/style.css` `js/main.js` `front/home.html` `front/flex.html` |
-| 3 | `enviar.php` `lib/leads.php` `lib/crm.php` `lib/email.php` `testes/crm-falso.php` `js/formulario.js` |
+| 3 | `enviar.php` `reenviar.php` `lib/leads.php` `lib/crm.php` `lib/email.php` `testes/crm-falso.php` `js/formulario.js` |
 
 A frente 2 **não** toca em `index.php` nem em `flex.php`. Entrega marcação estática em `front/`, que a costura converte.
 A frente 3 **não** toca em `js/main.js`. O JS do formulário vive em `js/formulario.js`, carregado à parte.
+
+### 7.1 O formulário já existe no `js/main.js`, e isso é um cruzamento
+
+O `js/main.js` de hoje já traz, entre as linhas 683 e 860, a abertura do modal, a máscara de WhatsApp, o honeypot, o time-trap e a constante `FORM_ENDPOINT`. A frente 3 escreve a versão nova em `js/formulario.js`, mas **nenhuma frente está autorizada a apagar o bloco antigo**: o arquivo é da frente 2, e a frente 2 não mexe em lógica de formulário.
+
+Resolução: a **costura** faz a mudança, numa tarefa própria. Ela move o que continua valendo (abertura do modal, máscara, foco) e apaga o que a frente 3 substituiu (envio, honeypot, time-trap). Até a costura acontecer, as duas implementações coexistem no repositório sem se encontrar, porque `js/formulario.js` só é carregado nas páginas que a costura monta.
+
+O honeypot muda de nome: era `_gotcha` no `main.js`, passa a ser `empresa`. `_gotcha` é nome conhecido de biblioteca e bot moderno reconhece. A checagem no `main.js` antigo vira letra morta assim que o campo muda, o que é mais um motivo para a costura apagar aquele bloco. A defesa que vale é a do servidor, no `enviar.php`.
+
+### 7.2 O site tem um formulário só, em modal
+
+Não existe formulário embutido em página. Todos os CTAs, na home e na página Flex, abrem o mesmo `#quoteModal` por `data-quote-open`. Onde a spec fala em "formulário" numa seção, leia "faixa de chamada que abre o modal". Um segundo `<form>` inline duplicaria `id`, laço de foco e contrato de envio.
 
 ---
 
