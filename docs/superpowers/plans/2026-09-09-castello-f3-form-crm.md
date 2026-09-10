@@ -1866,7 +1866,7 @@ Fecha a rede de segurança: o que não entrou no CRM na hora entra depois, por c
 
 **Por que `desativado` entra na lista de pendentes:** um lead que chegou com o CRM desligado precisa subir quando o CRM for ligado. `leads_reenviar()` sai na hora quando `crm_ativo` não é `1`, então esses leads não gastam tentativa enquanto o conector está desligado.
 
-- [ ] **Passo 1: escrever os testes que falham**
+- [x] **Passo 1: escrever os testes que falham**
 
 Inserir em `testes/smoke-f3.php`, antes de `exit(t_resumo());`:
 
@@ -1970,7 +1970,7 @@ t_ok('reenviar.php compara a chave com hash_equals', strpos($fonte, 'hash_equals
 t_ok('reenviar.php tem modo de linha de comando', strpos($fonte, "PHP_SAPI === 'cli'") !== false);
 ```
 
-- [ ] **Passo 2: rodar e ver falhar**
+- [x] **Passo 2: rodar e ver falhar**
 
 ```bash
 cd "E:/Clientes/Castello Madeiras/prototipo-site-castello"
@@ -1979,7 +1979,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: erro fatal `Call to undefined function leads_pendentes()`.
 
-- [ ] **Passo 3: acrescentar as duas funções em `public_html/lib/leads.php`**
+- [x] **Passo 3: acrescentar as duas funções em `public_html/lib/leads.php`**
 
 No topo do arquivo, logo abaixo do bloco de comentário, acrescentar a linha:
 
@@ -2051,7 +2051,7 @@ function leads_reenviar(): array
 }
 ```
 
-- [ ] **Passo 4: escrever `public_html/reenviar.php`**
+- [x] **Passo 4: escrever `public_html/reenviar.php`**
 
 ```php
 <?php
@@ -2117,7 +2117,7 @@ echo json_encode(['ok' => true] + $resumo, JSON_UNESCAPED_UNICODE | JSON_UNESCAP
 
 O cabeçalho usa comentário de linha (`//`) de propósito: a linha do cron contém `*/15`, e dentro de um bloco `/** ... */` esse `*/` fecharia o comentário e quebraria o arquivo. Não converter esse cabeçalho em docblock. O `php -l` do Passo 6 pega o erro caso alguém tente.
 
-- [ ] **Passo 5: rodar e ver passar**
+- [x] **Passo 5: rodar e ver passar**
 
 ```bash
 php testes/smoke-f3.php; echo "codigo de saida: $?"
@@ -2125,7 +2125,7 @@ php testes/smoke-f3.php; echo "codigo de saida: $?"
 
 Esperado: as seções `leads_pendentes e leads_reenviar` e `reenviar.php` com `ok` e `codigo de saida: 0`.
 
-- [ ] **Passo 6: conferir o modo de linha de comando na mão**
+- [x] **Passo 6: conferir o modo de linha de comando na mão**
 
 ```bash
 php -l public_html/reenviar.php
@@ -2134,7 +2134,7 @@ php public_html/reenviar.php; echo "codigo de saida: $?"
 
 Esperado do `php -l`: `No syntax errors detected`. O `php public_html/reenviar.php` sem a lib da frente 1 imprime `reenviar.php: lib/db.php nao encontrada` e sai com código 2, que é o comportamento correto até a frente 1 entregar `lib/db.php`.
 
-- [ ] **Passo 7: commitar**
+- [x] **Passo 7: commitar**
 
 ```bash
 git add public_html/lib/leads.php public_html/reenviar.php testes/smoke-f3.php

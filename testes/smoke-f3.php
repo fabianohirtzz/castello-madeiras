@@ -602,4 +602,102 @@ t_ok('cada lead gravado gerou um e-mail', count((array) glob($pastaEmail . '/*.t
 
 putenv('CASTELLO_EMAIL_DIR');
 
+t_secao('leads_pendentes e leads_reenviar');
+teste_banco_limpar();
+config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+config_gravar('crm_mapa_campos', $mapaPadrao);
+
+function semear_lead(string $nome, string $status, int $tentativas): int
+{
+    $id = lead_gravar([
+        'nome'     => $nome,
+        'whatsapp' => '48998244494',
+        'busca'    => 'Ainda estou pesquisando',
+    ]);
+    if ($status !== 'pendente' || $tentativas !== 0) {
+        lead_marcar($id, $status, $tentativas, null);
+    }
+    return $id;
+}
+
+$idPendente   = semear_lead('Pendente', 'pendente', 0);
+$idErro       = semear_lead('Com erro', 'erro', 2);
+$idDesativado = semear_lead('CRM desligado', 'desativado', 0);
+$idEnviado    = semear_lead('Ja entregue', 'enviado', 1);
+$idDesistido  = semear_lead('Cansou de tentar', 'erro', LEAD_TENTATIVAS_MAX);
+
+$pendentes = leads_pendentes();
+$ids = array_map('intval', array_column($pendentes, 'id'));
+t_ok('pendente entra na lista', in_array($idPendente, $ids, true));
+t_ok('erro entra na lista', in_array($idErro, $ids, true));
+t_ok('desativado entra na lista', in_array($idDesativado, $ids, true));
+t_ok('enviado fica de fora', !in_array($idEnviado, $ids, true));
+t_ok('quem estourou as tentativas fica de fora', !in_array($idDesistido, $ids, true));
+t_igual('a lista tem exatamente tres', 3, count($pendentes));
+t_igual('o mais antigo vem primeiro', $idPendente, (int) $pendentes[0]['id']);
+t_igual('o limite e respeitado', 2, count(leads_pendentes(2)));
+
+/* CRM desligado: nao mexe em nada */
+config_gravar('crm_ativo', '0');
+$r = leads_reenviar();
+t_igual('CRM desligado: nada tentado', 0, $r['tentados']);
+t_igual('CRM desligado: nada enviado', 0, $r['enviados']);
+t_igual('CRM desligado: nada falhou', 0, $r['falhas']);
+t_igual('CRM desligado: os pendentes continuam la', 3, count(leads_pendentes()));
+
+$servidor = crm_falso_subir();
+t_ok('servidor do CRM falso subiu para o reenvio', $servidor !== null);
+
+if ($servidor !== null) {
+    /* CRM ligado e respondendo: todos sobem */
+    config_gravar('crm_ativo', '1');
+    config_gravar('crm_endpoint', crm_falso_url('ok'));
+    $r = leads_reenviar();
+    t_igual('reenvio: tentou os tres', 3, $r['tentados']);
+    t_igual('reenvio: enviou os tres', 3, $r['enviados']);
+    t_igual('reenvio: nenhuma falha', 0, $r['falhas']);
+    t_igual('reenvio: nao sobrou pendente', 0, count(leads_pendentes()));
+
+    $subiu = db()->query('SELECT * FROM leads WHERE id = ' . (int) $idErro)->fetch(PDO::FETCH_ASSOC);
+    t_igual('reenvio: status virou enviado', 'enviado', $subiu['crm_status']);
+    t_igual('reenvio: tentativa somou uma', 3, (int) $subiu['crm_tentativas']);
+
+    $intacto = db()->query('SELECT * FROM leads WHERE id = ' . (int) $idDesistido)->fetch(PDO::FETCH_ASSOC);
+    t_igual('reenvio: nao mexeu em quem desistiu', LEAD_TENTATIVAS_MAX, (int) $intacto['crm_tentativas']);
+
+    /* CRM ligado e falhando: soma tentativa e continua pendente */
+    teste_banco_limpar();
+    config_gravar('crm_ativo', '1');
+    config_gravar('crm_mapa_campos', $mapaPadrao);
+    config_gravar('crm_endpoint', crm_falso_url('erro500'));
+    $idFalha = semear_lead('Vai falhar', 'pendente', 0);
+    $r = leads_reenviar();
+    t_igual('reenvio com falha: tentou um', 1, $r['tentados']);
+    t_igual('reenvio com falha: enviou zero', 0, $r['enviados']);
+    t_igual('reenvio com falha: contou uma falha', 1, $r['falhas']);
+    $falhou = db()->query('SELECT * FROM leads WHERE id = ' . (int) $idFalha)->fetch(PDO::FETCH_ASSOC);
+    t_igual('reenvio com falha: status erro', 'erro', $falhou['crm_status']);
+    t_igual('reenvio com falha: uma tentativa', 1, (int) $falhou['crm_tentativas']);
+    t_ok('reenvio com falha: guardou o motivo', strpos((string) $falhou['crm_resposta'], 'crm_http') !== false);
+    t_igual('reenvio com falha: continua na fila', 1, count(leads_pendentes()));
+
+    /* insistindo ate estourar o limite, o lead sai da fila sozinho */
+    for ($volta = 0; $volta < LEAD_TENTATIVAS_MAX; $volta++) {
+        leads_reenviar();
+    }
+    t_igual('depois do limite o lead sai da fila', 0, count(leads_pendentes()));
+
+    crm_falso_derrubar($servidor);
+}
+
+t_secao('reenviar.php');
+t_ok('reenviar.php existe', is_file(__DIR__ . '/../public_html/reenviar.php'));
+$saida = [];
+$codigo = 0;
+exec(escapeshellarg(PHP_BINARY) . ' -l ' . escapeshellarg(__DIR__ . '/../public_html/reenviar.php') . ' 2>&1', $saida, $codigo);
+t_ok('reenviar.php compila', $codigo === 0, implode(' | ', $saida));
+$fonte = (string) file_get_contents(__DIR__ . '/../public_html/reenviar.php');
+t_ok('reenviar.php compara a chave com hash_equals', strpos($fonte, 'hash_equals') !== false);
+t_ok('reenviar.php tem modo de linha de comando', strpos($fonte, "PHP_SAPI === 'cli'") !== false);
+
 exit(t_resumo());

@@ -12,6 +12,8 @@ declare(strict_types=1);
  * nao carrega a lib: quem carrega e o ponto de entrada.
  */
 
+require_once __DIR__ . '/crm.php';
+
 /** Campos de conteudo do lead, na ordem do schema. */
 const LEAD_CAMPOS = [
     'nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'mensagem',
@@ -90,4 +92,64 @@ function lead_marcar(int $id, string $status, int $tentativas, ?string $resposta
         ':resposta'   => $resposta,
         ':id'         => $id,
     ]);
+}
+
+/**
+ * Leads que ainda precisam subir para o CRM, mais antigos primeiro.
+ *
+ * Entram os status pendente, erro e desativado. O desativado entra porque um
+ * lead que chegou com o conector desligado precisa subir quando ele for ligado.
+ * Sai da fila quem ja foi entregue e quem estourou LEAD_TENTATIVAS_MAX.
+ */
+function leads_pendentes(int $limite = 20): array
+{
+    $limite = max(1, min(200, $limite));
+
+    $st = db()->prepare(
+        "SELECT * FROM leads
+          WHERE crm_status IN ('pendente','erro','desativado')
+            AND crm_tentativas < :maximo
+          ORDER BY criado_em ASC, id ASC
+          LIMIT :limite"
+    );
+    $st->bindValue(':maximo', LEAD_TENTATIVAS_MAX, PDO::PARAM_INT);
+    $st->bindValue(':limite', $limite, PDO::PARAM_INT);
+    $st->execute();
+
+    return $st->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Tenta subir a fila de pendentes.
+ *
+ * Sai na hora quando o conector esta desligado, para nao gastar tentativa dos
+ * leads que so estao esperando o CRM ser configurado.
+ *
+ * @return array{tentados: int, enviados: int, falhas: int}
+ */
+function leads_reenviar(): array
+{
+    $resumo = ['tentados' => 0, 'enviados' => 0, 'falhas' => 0];
+
+    if ((string) config_ler('crm_ativo', '0') !== '1') {
+        return $resumo;
+    }
+
+    foreach (leads_pendentes(20) as $lead) {
+        $resumo['tentados']++;
+        $resultado = crm_enviar($lead);
+        $tentativas = ((int) ($lead['crm_tentativas'] ?? 0)) + 1;
+
+        if (!empty($resultado['ok'])) {
+            lead_marcar((int) $lead['id'], 'enviado', $tentativas, (string) $resultado['resposta']);
+            $resumo['enviados']++;
+            continue;
+        }
+
+        $motivo = trim((string) ($resultado['erro'] ?? '') . ' ' . (string) ($resultado['resposta'] ?? ''));
+        lead_marcar((int) $lead['id'], 'erro', $tentativas, $motivo !== '' ? $motivo : null);
+        $resumo['falhas']++;
+    }
+
+    return $resumo;
 }
