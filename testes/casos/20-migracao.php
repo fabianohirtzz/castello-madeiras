@@ -193,7 +193,7 @@ teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function ()
     igual('A casa dos seus sonhos', bloco('hero_titulo'));
     igual('pronta pra morar, *chave na mão*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
     contem('45 dias', bloco('flex_titulo'), 'copy provisoria da Flex ja vem preenchida');
-    igual('uploads/videos/insta-04.mp4', bloco('flex_video'));
+    igual('uploads/videos/insta-12.mp4', bloco('flex_video'));
     foreach (['modalidades_titulo', 'modalidades_texto', 'flex_texto', 'flexpg_hero_titulo', 'flexpg_hero_texto', 'flexpg_oque_titulo',
               'flexpg_oque_texto', 'flexpg_depois_titulo', 'flexpg_depois_texto', 'flexpg_catalogo_nota', 'flexpg_cta_titulo', 'flexpg_cta_texto'] as $chave) {
         verdade(bloco($chave) !== '', "o bloco $chave precisa nascer preenchido");
