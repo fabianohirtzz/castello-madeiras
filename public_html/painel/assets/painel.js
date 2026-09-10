@@ -1,3 +1,44 @@
+/* Gaveta do menu no celular. No desktop a coluna e fixa e nada disso roda. */
+(function () {
+  'use strict';
+
+  var app = document.querySelector('.p-app');
+  if (!app) { return; }
+
+  app.classList.add('tem-js');
+
+  var botao = document.getElementById('pAbrir');
+  var lado  = document.getElementById('pLado');
+  var veu   = document.getElementById('pVeu');
+  if (!botao || !lado || !veu) { return; }
+
+  function mostrar(aberto) {
+    app.classList.toggle('is-menu-aberto', aberto);
+    botao.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+    veu.hidden = !aberto;
+    if (aberto) {
+      var primeiro = lado.querySelector('.p-lado__link');
+      if (primeiro) { primeiro.focus(); }
+    } else {
+      botao.focus();
+    }
+  }
+
+  botao.addEventListener('click', function () {
+    mostrar(!app.classList.contains('is-menu-aberto'));
+  });
+
+  veu.addEventListener('click', function () { mostrar(false); });
+
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape' && app.classList.contains('is-menu-aberto')) { mostrar(false); }
+  });
+
+  lado.addEventListener('click', function (ev) {
+    if (ev.target.closest('a')) { app.classList.remove('is-menu-aberto'); }
+  });
+}());
+
 /* Reordenar arrastando, com ponteiro unico: funciona no mouse e no toque. */
 (function () {
   'use strict';

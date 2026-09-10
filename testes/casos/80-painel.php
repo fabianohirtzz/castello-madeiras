@@ -498,3 +498,44 @@ teste('o formulario de item novo nasce com o filtro da lista', function (): void
     nao_contem('<option value="flex" selected>', $html, 'sem filtro, nada e semeado e o navegador mostra a primeira opcao');
     $_GET = [];
 });
+
+teste('painel_grupos junta as telas em Conteudo e Sistema, sem perder nenhuma', function (): void {
+    $grupos = painel_grupos();
+    igual(['Conteúdo', 'Sistema'], array_column($grupos, 'titulo'));
+    igual(array_keys(painel_abas()), array_keys($grupos[0]['itens']), 'o grupo Conteudo e exatamente painel_abas');
+    igual(array_keys(painel_fixas()), array_keys($grupos[1]['itens']), 'o grupo Sistema e exatamente painel_fixas');
+
+    $todas = array_keys(painel_abas() + painel_fixas());
+    $noMenu = array_merge(array_keys($grupos[0]['itens']), array_keys($grupos[1]['itens']));
+    igual($todas, $noMenu, 'toda tela chegavel pelo painel.php precisa estar no menu');
+});
+
+teste('toda tela do menu tem um icone proprio', function (): void {
+    $vistos = [];
+    foreach (array_keys(painel_abas() + painel_fixas()) as $chave) {
+        $svg = painel_icone($chave);
+        verdade(str_starts_with($svg, '<svg'), "a tela $chave precisa de um icone");
+        verdade(!in_array($svg, $vistos, true), "o icone de $chave esta repetido");
+        $vistos[] = $svg;
+    }
+});
+
+teste('a sidebar lista as dez telas, marca so a atual e leva para sair', function (): void {
+    $html = render(site() . '/painel/menu.php', ['tela' => 'portfolio']);
+
+    contem('>Conteúdo<', $html, 'o grupo Conteudo aparece');
+    contem('>Sistema<', $html, 'o grupo Sistema aparece');
+
+    foreach (painel_abas() + painel_fixas() as $chave => $rotulo) {
+        contem('painel.php?tela=' . $chave, $html, "falta o link da tela $chave");
+        contem($rotulo, $html, "falta o rotulo da tela $chave");
+    }
+
+    igual(1, substr_count($html, 'is-ativo'), 'so uma tela pode estar ativa');
+    contem('aria-current="page"', $html, 'a tela atual se anuncia como pagina atual');
+    verdade((bool) preg_match('/tela=portfolio"[^>]*is-ativo|is-ativo[^>]*tela=portfolio/u', $html),
+        'a ativa tem que ser a tela pedida');
+
+    contem('sair.php', $html, 'a sidebar leva para sair');
+    contem('id="pLado"', $html, 'a gaveta precisa de id para o botao do celular apontar');
+});

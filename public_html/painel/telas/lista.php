@@ -81,5 +81,4 @@ foreach ($linhas as $linha) {
   </li>
 <?php endforeach; ?>
 </ul>
-<script src="assets/painel.js?v=1"></script>
 <?php endif; ?>

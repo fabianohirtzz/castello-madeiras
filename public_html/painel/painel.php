@@ -36,19 +36,19 @@ $alerta = (string) ($_GET['erro'] ?? '');
   <meta name="robots" content="noindex, nofollow" />
   <title><?= e($abas[$tela] ?? 'Painel') ?> | Painel Castello</title>
   <link rel="icon" type="image/png" href="../images/icone-colorido.png" />
-  <link rel="stylesheet" href="assets/painel.css?v=1" />
+  <link rel="stylesheet" href="assets/painel.css?v=2" />
 </head>
-<body>
+<body class="p-app">
   <header class="p-topo">
-    <strong>Painel Castello</strong>
-    <a href="sair.php">Sair</a>
+    <button class="p-abrir" type="button" id="pAbrir" aria-controls="pLado" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg>
+      <span class="p-so-leitor">Abrir o menu</span>
+    </button>
+    <strong><?= e($abas[$tela] ?? 'Painel') ?></strong>
   </header>
 
-  <nav class="p-menu" aria-label="Seções do painel">
-<?php foreach ($abas as $chave => $rotulo): ?>
-    <a href="painel.php?tela=<?= e($chave) ?>"<?= $chave === $tela ? ' class="is-ativo"' : '' ?>><?= e($rotulo) ?></a>
-<?php endforeach; ?>
-  </nav>
+<?php include __DIR__ . '/menu.php'; ?>
+  <div class="p-veu" id="pVeu" hidden></div>
 
   <main class="p-corpo">
 <?php if ($recado !== ''): ?>
@@ -60,5 +60,7 @@ $alerta = (string) ($_GET['erro'] ?? '');
 
 <?php include $arquivo; ?>
   </main>
+
+  <script src="assets/painel.js?v=2" defer></script>
 </body>
 </html>

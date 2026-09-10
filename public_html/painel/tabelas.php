@@ -383,6 +383,39 @@ function painel_fixas(): array
     ];
 }
 
+/** As telas do menu lateral, na ordem, agrupadas por assunto. */
+function painel_grupos(): array
+{
+    return [
+        ['titulo' => 'Conteúdo', 'itens' => painel_abas()],
+        ['titulo' => 'Sistema',  'itens' => painel_fixas()],
+    ];
+}
+
+/** Icone de uma tela, para o menu lateral. Traco simples, herda a cor do link. */
+function painel_icone(string $tela): string
+{
+    $desenhos = [
+        'modelos'    => '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/>',
+        'portfolio'  => '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m3 16 4.5-4 4 3.5L15.5 11 21 16.5"/>',
+        'avaliacoes' => '<path d="m12 3.5 2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L3.5 9.7l5.9-.9z"/>',
+        'videos'     => '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.2v5.6l4.5-2.8z"/>',
+        'faq'        => '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.4"/><path d="M12 16.8h.01"/>',
+        'passos'     => '<rect x="4" y="6" width="3.5" height="3.5" rx="1"/><rect x="4" y="14.5" width="3.5" height="3.5" rx="1"/><path d="M11 7.8h9"/><path d="M11 16.3h9"/>',
+        'textos'     => '<path d="M5 4.5h14"/><path d="M12 4.5V19"/><path d="M9 19h6"/>',
+        'config'     => '<path d="M4 7.5h4.5M13 7.5h7"/><path d="M4 16.5h7M15.5 16.5H20"/><circle cx="10.75" cy="7.5" r="2.25"/><circle cx="13.25" cy="16.5" r="2.25"/>',
+        'backup'     => '<path d="M12 3.5v9"/><path d="m8.5 9.5 3.5 3 3.5-3"/><path d="M4 15.5v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+        'senha'      => '<rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/>',
+    ];
+
+    if (!isset($desenhos[$tela])) {
+        return '';
+    }
+
+    return '<svg class="p-lado__icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'
+        . $desenhos[$tela] . '</svg>';
+}
+
 /** Grava os textos avulsos. So chaves que ja existem em blocos sao aceitas. */
 function painel_textos_gravar(array $entrada): int
 {

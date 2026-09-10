@@ -8,6 +8,7 @@
   --p-texto: #2A2724;
   --p-suave: #6E675E;
   --p-ok: #1F7A44;
+  --p-lado-largura: 232px;
 }
 
 * { box-sizing: border-box; }
@@ -21,24 +22,72 @@ body {
 
 a { color: var(--p-vermelho-fundo); }
 
-.p-topo {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 12px 16px; background: var(--p-preto); color: #fff;
+/* Layout de sistema: coluna preta fixa a esquerda, conteudo a direita. */
+.p-app {
+  display: grid;
+  grid-template-columns: var(--p-lado-largura) 1fr;
+  grid-template-areas: "lado corpo";
+  min-height: 100vh;
 }
-.p-topo strong { font-size: 15px; letter-spacing: .02em; }
-.p-topo a { color: #fff; text-decoration: none; font-size: 14px; }
 
-.p-menu {
-  display: flex; gap: 4px; overflow-x: auto; padding: 8px 12px;
-  background: #fff; border-bottom: 1px solid var(--p-borda);
+.p-lado {
+  grid-area: lado;
+  position: sticky; top: 0; align-self: start;
+  display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto;
+  padding: 18px 12px 12px;
+  background: var(--p-preto); color: #fff;
 }
-.p-menu a {
-  white-space: nowrap; padding: 8px 12px; border-radius: 999px;
-  text-decoration: none; color: var(--p-suave); font-size: 14px;
-}
-.p-menu a.is-ativo { background: var(--p-vermelho); color: #fff; }
 
-.p-corpo { max-width: 900px; margin: 0 auto; padding: 16px; }
+.p-lado__marca {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 7px;
+  padding: 2px 10px 20px; text-decoration: none; color: #fff;
+}
+.p-lado__marca img { height: 34px; width: auto; }
+.p-lado__marca span {
+  font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255, 255, 255, .45);
+}
+
+.p-lado__nav { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; }
+
+.p-lado__grupo {
+  margin: 16px 0 6px; padding: 0 10px;
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255, 255, 255, .38);
+}
+.p-lado__nav .p-lado__grupo:first-child { margin-top: 0; }
+
+.p-lado__link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  text-decoration: none; color: rgba(255, 255, 255, .78); font-size: 14px;
+}
+.p-lado__link:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.p-lado__link.is-ativo { background: var(--p-vermelho); color: #fff; font-weight: 600; }
+.p-lado__link:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+.p-lado__icone {
+  width: 19px; height: 19px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+.p-lado__pe {
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+/* Barra do celular. No desktop nao existe. */
+.p-topo { display: none; grid-area: topo; }
+.p-veu { display: none; }
+
+.p-so-leitor {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+.p-corpo { grid-area: corpo; width: 100%; max-width: 900px; margin: 0 auto; padding: 28px 24px 48px; }
 .p-corpo h1 { font-size: 22px; margin: 0 0 4px; }
 .p-corpo .p-sub { color: var(--p-suave); font-size: 14px; margin: 0 0 16px; }
 
@@ -100,8 +149,65 @@ a { color: var(--p-vermelho-fundo); }
 .p-atual { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--p-suave); }
 .p-atual img, .p-atual video { width: 70px; height: 70px; object-fit: cover; border-radius: 6px; }
 
+body:not(.p-app) { display: block; }
+
 .p-login { max-width: 360px; margin: 12vh auto; padding: 0 16px; }
 .p-login img { display: block; height: 54px; margin: 0 auto 20px; }
+
+/* Ate 900px a coluna vira gaveta, aberta pelo botao da barra de topo. */
+@media (max-width: 900px) {
+  .p-app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "topo" "corpo";
+  }
+
+  .p-topo {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 30;
+    padding: 10px 14px; background: var(--p-preto); color: #fff;
+  }
+  .p-topo strong { font-size: 15px; letter-spacing: .02em; }
+
+  .p-abrir {
+    display: grid; place-items: center; cursor: pointer;
+    width: 40px; height: 40px; padding: 0; flex: none;
+    border: 0; border-radius: 8px; background: transparent; color: #fff;
+  }
+  .p-abrir svg {
+    width: 22px; height: 22px;
+    fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round;
+  }
+
+  .p-lado {
+    position: fixed; top: 0; left: 0; z-index: 50;
+    width: var(--p-lado-largura); height: 100dvh;
+    transform: translateX(-100%);
+    transition: transform .22s ease;
+  }
+  .p-app.is-menu-aberto .p-lado { transform: translateX(0); }
+
+  .p-veu {
+    display: block; position: fixed; inset: 0; z-index: 40;
+    background: rgba(20, 20, 20, .5);
+  }
+  .p-veu[hidden] { display: none; }
+
+  .p-corpo { padding: 20px 16px 40px; }
+}
+
+/* Sem JS a gaveta nao abre, entao ela fica visivel de vez. */
+@media (max-width: 900px) {
+  .p-app:not(.tem-js) { grid-template-areas: "lado" "corpo"; }
+  .p-app:not(.tem-js) .p-lado {
+    grid-area: lado; position: static; width: auto; height: auto; transform: none;
+  }
+  .p-app:not(.tem-js) .p-topo { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p-lado { transition: none; }
+}
 
 @media (max-width: 560px) {
   .p-item { flex-wrap: wrap; }
