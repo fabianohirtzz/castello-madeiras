@@ -1,10 +1,10 @@
-/* Castello - formulario de orcamento (frente 3).
+/* Castello - formulario de orcamento.
    Carregado depois de js/main.js, em arquivo proprio.
 
-   Este arquivo NAO edita js/main.js. Ele desliga o envio antigo escutando
-   submit no document em fase de captura e chamando stopPropagation: o evento
-   nunca chega ao form, entao o listener do main.js nao roda. Abrir e fechar o
-   modal, foco preso e selecao condicional de modelo continuam com o main.js.
+   Aqui vive tudo que e envio: token de CSRF, campos ocultos, utm, time-trap,
+   validacao, POST em enviar.php e a tela de sucesso. Abrir e fechar o modal,
+   foco preso, mascara do WhatsApp e o campo condicional de modelo ficam com o
+   main.js, que e so interface.
 
    As funcoes puras ficam em window.CastelloFormulario (e em module.exports,
    quando rodando no Node) para poderem ser testadas sem navegador. */
@@ -162,7 +162,6 @@
   var doneMsg = document.getElementById('quoteDoneMsg');
   var doneTitulo = painelDone ? painelDone.querySelector('h3') : null;
   var wppLink = document.getElementById('quoteWppLink');
-  var campoWpp = document.getElementById('q-whatsapp');
   var abertoEm = Date.now();
 
   /* Guarda a utm logo na chegada, mesmo que o visitante nunca abra o modal:
@@ -322,11 +321,6 @@
     preencherOcultos();
 
     var fd = new FormData(form);
-    /* O contrato chama o honeypot de empresa; a marcacao antiga usa _gotcha.
-       Manda os dois, com o mesmo valor, para o servidor barrar de qualquer jeito. */
-    var isca = (fd.get('empresa') || fd.get('_gotcha') || '').toString();
-    fd.set('empresa', isca);
-
     var dados = dadosDoForm(fd);
     limparErros();
 
@@ -363,16 +357,12 @@
     postar(fd, dados);
   }
 
-  /* Captura no document: o evento e interrompido antes de chegar ao form,
-     entao o listener de submit do js/main.js nao roda. */
-  document.addEventListener('submit', function (ev) {
-    if (ev.target !== form) return;
+  form.addEventListener('submit', function (ev) {
     ev.preventDefault();
-    ev.stopPropagation();
     enviar();
-  }, true);
+  });
 
-  /* Marca a hora de abertura para o time-trap. Sem stopPropagation: o main.js
+  /* Marca a hora de abertura para o time-trap e busca o token. O main.js
      continua abrindo o modal normalmente. */
   document.addEventListener('click', function (ev) {
     var abridor = ev.target && ev.target.closest ? ev.target.closest('[data-quote-open]') : null;
@@ -383,16 +373,6 @@
       garantirToken();
     }, 0);
   }, true);
-
-  /* Mascara do WhatsApp. O main.js tambem aplica a dele; a transformacao e
-     idempotente, entao os dois juntos dao o mesmo resultado. */
-  if (campoWpp && !campoWpp.dataset.mascaraF3) {
-    campoWpp.dataset.mascaraF3 = '1';
-    campoWpp.addEventListener('input', function () {
-      campoWpp.value = api.mascaraWhatsapp(campoWpp.value);
-      campoWpp.classList.remove('is-error');
-    });
-  }
 
   preencherOcultos();
 })();

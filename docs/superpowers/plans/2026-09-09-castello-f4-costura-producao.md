@@ -291,7 +291,7 @@ git commit -m "$(printf 'feat: home e pagina flex montadas a partir do banco\n\n
 - Consumes: `js/formulario.js` e `enviar.php` da frente 3.
 - Produces: envio real funcionando nas duas páginas.
 
-- [ ] **Step 1: Escrever o teste de ponta a ponta do envio**
+- [x] **Step 1: Escrever o teste de ponta a ponta do envio**
 
 ```php
 teste('envio de lead pela home grava no banco', function () {
@@ -308,7 +308,7 @@ teste('envio de lead pela home grava no banco', function () {
 });
 ```
 
-- [ ] **Step 2: Rodar com o servidor local ligado e ver falhar**
+- [x] **Step 2: Rodar com o servidor local ligado e ver falhar**
 
 ```bash
 php -S localhost:8000 -t public_html &
@@ -317,7 +317,7 @@ php testes/smoke.php
 
 Esperado: FALHA, porque as páginas ainda não carregam o `js/formulario.js` nem apontam o formulário para `enviar.php`.
 
-- [ ] **Step 3: Limpar a lógica antiga de formulário do `js/main.js`**
+- [x] **Step 3: Limpar a lógica antiga de formulário do `js/main.js`**
 
 O `js/main.js` traz, desde o protótipo, uma implementação própria de envio: abertura do modal, máscara de WhatsApp, honeypot `_gotcha`, time-trap e a constante `FORM_ENDPOINT`. A frente 3 escreveu a versão definitiva em `js/formulario.js`. Deixar as duas no ar faz duas rotinas disputarem o mesmo evento de `submit`.
 
@@ -335,7 +335,7 @@ Mantenha em `js/main.js`, porque é comportamento de interface e não de envio:
 - a máscara de WhatsApp;
 - o campo condicional de modelo de interesse.
 
-- [ ] **Step 4: Confirmar que só uma rotina responde ao envio**
+- [x] **Step 4: Confirmar que só uma rotina responde ao envio**
 
 ```bash
 grep -n "addEventListener('submit'\|FORM_ENDPOINT\|_gotcha" public_html/js/main.js public_html/js/formulario.js
@@ -343,7 +343,7 @@ grep -n "addEventListener('submit'\|FORM_ENDPOINT\|_gotcha" public_html/js/main.
 
 Esperado: nenhuma ocorrência em `main.js`, e o `submit` aparecendo uma única vez, em `formulario.js`.
 
-- [ ] **Step 5: Carregar o script e apontar o formulário**
+- [x] **Step 5: Carregar o script e apontar o formulário**
 
 Nas duas páginas, antes do `</body>`:
 
@@ -357,7 +357,7 @@ E no formulário:
 <form id="quoteForm" method="post" action="enviar.php" novalidate>
 ```
 
-- [ ] **Step 6: Rodar o teste até passar e conferir no navegador**
+- [x] **Step 6: Rodar o teste até passar e conferir no navegador**
 
 ```bash
 php testes/smoke.php
@@ -365,11 +365,11 @@ php testes/smoke.php
 
 Depois, com Playwright: preencher e enviar o formulário na home e na página Flex, conferir a mensagem de sucesso acessível, e conferir no banco que os dois leads chegaram com o campo `pagina` diferente.
 
-- [ ] **Step 7: Conferir a captura de UTM**
+- [x] **Step 7: Conferir a captura de UTM**
 
 Abra `http://localhost:8000/?utm_source=meta&utm_campaign=flex-setembro`, navegue para a página Flex sem parâmetro na URL, envie o formulário de lá, e confira no banco que `utm_source` e `utm_campaign` do lead vieram preenchidos. É o comportamento de `sessionStorage` da seção 6.4 do contrato, e é o que a reunião pediu ao trocar WhatsApp por formulário.
 
-- [ ] **Step 8: Commitar**
+- [x] **Step 8: Commitar**
 
 ```bash
 git add public_html/index.php public_html/flex.php testes/smoke.php

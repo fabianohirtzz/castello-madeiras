@@ -267,5 +267,6 @@ $flex_faq     = faq('flex');
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=13"></script>
+  <script src="js/formulario.js?v=1" defer></script>
 </body>
 </html>

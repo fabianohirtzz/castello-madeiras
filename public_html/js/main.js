@@ -680,19 +680,15 @@
     }
   }
 
-  /* ---------- Modal de orçamento ----------
-     Mesmo modelo do projeto NOX: honeypot + time-trap, status acessível e
-     WhatsApp como caminho de envio. O endpoint fica em FORM_ENDPOINT: com o
-     site em GitHub Pages (sem backend) ele fica vazio e o envio monta a
-     mensagem pro WhatsApp. Quando existir backend, basta apontar a URL. */
+  /* ---------- Modal de orçamento (só interface) ----------
+     Abrir e fechar, foco preso, máscara do WhatsApp e o campo condicional de
+     modelo. O envio, o honeypot, o time-trap e a tela de sucesso vivem em
+     js/formulario.js, carregado depois deste arquivo. */
   var qModal = document.getElementById('quoteModal');
   if (qModal) {
-    var WA_PHONE = '5548998244494';
-    var FORM_ENDPOINT = '';                      // ex.: 'enviar.php' quando houver backend
     var qForm = document.getElementById('quoteForm');
     var qPanelForm = qForm;
     var qDone = document.getElementById('quoteDone');
-    var qDoneMsg = document.getElementById('quoteDoneMsg');
     var qWppLink = document.getElementById('quoteWppLink');
     var qStatus = document.getElementById('quoteStatus');
     var qSubmit = document.getElementById('quoteSubmit');
@@ -700,7 +696,7 @@
     var qModeloGroup = document.getElementById('qGroupModelo');
     var qModelo = document.getElementById('q-modelo');
     var qWpp = document.getElementById('q-whatsapp');
-    var qLastFocus = null, qOpenedAt = 0;
+    var qLastFocus = null;
 
     function qSetStatus(msg) { if (qStatus) qStatus.textContent = msg || ''; }
 
@@ -735,7 +731,6 @@
       }
       qModal.hidden = false;
       document.body.classList.add('modal-open');
-      qOpenedAt = new Date().getTime();
       requestAnimationFrame(function () { qModal.classList.add('is-open'); });
       setTimeout(function () {
         var first = qDone.hidden ? document.getElementById('q-nome') : qWppLink;
@@ -770,72 +765,12 @@
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
 
-    function qResumo(fd) {
-      var L = [['nome', 'Nome'], ['whatsapp', 'WhatsApp'], ['busca', 'O que busca'],
-               ['modelo', 'Modelo de interesse'], ['cidade', 'Cidade/região'], ['mensagem', 'Mensagem']];
-      return L.map(function (p) {
-        var v = (fd.get(p[0]) || '').toString().trim();
-        return v ? p[1] + ': ' + v : null;
-      }).filter(Boolean).join('\n');
-    }
-
-    function qShowDone(sent, fd) {
-      qPanelForm.hidden = true;
-      qDone.hidden = false;
-      if (sent) {
-        qDone.querySelector('h3').textContent = 'Pedido enviado';
-        qDoneMsg.textContent = 'Recebemos seu pedido. A Castello responde em até 1 dia útil. Se preferir adiantar, chame no WhatsApp.';
-        qWppLink.lastChild.textContent = ' Falar no WhatsApp';
-      }
-      qWppLink.href = 'https://wa.me/' + WA_PHONE + '?text=' +
-        encodeURIComponent('Olá! Quero um orçamento de casa de madeira.\n\n' + qResumo(fd));
-      qWppLink.focus({ preventScroll: true });
-    }
-
     document.getElementById('quoteBack').addEventListener('click', function () {
       qDone.hidden = true;
       qPanelForm.hidden = false;
       qSetStatus('');
       qSubmit.disabled = false;
       document.getElementById('q-nome').focus({ preventScroll: true });
-    });
-
-    qForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var fd = new FormData(qForm);
-      if ((fd.get('_gotcha') || '').toString().trim()) return;             // robô
-      if (new Date().getTime() - qOpenedAt < 2500) return;                 // time-trap
-
-      var nome = (fd.get('nome') || '').toString().trim();
-      var tel = (fd.get('whatsapp') || '').toString().replace(/\D/g, '');
-      var busca = (fd.get('busca') || '').toString().trim();
-      var bad = null;
-      document.getElementById('q-nome').classList.remove('is-error');
-      qWpp.classList.remove('is-error');
-      qBusca.classList.remove('is-error');
-      if (!nome) { document.getElementById('q-nome').classList.add('is-error'); bad = 'Preencha seu nome.'; }
-      else if (tel.length < 10) { qWpp.classList.add('is-error'); bad = 'Informe um WhatsApp com DDD.'; }
-      else if (!busca) { qBusca.classList.add('is-error'); bad = 'Escolha o que você busca.'; }
-      if (bad) { qSetStatus(bad); return; }
-
-      if (!FORM_ENDPOINT) { qShowDone(false, fd); return; }                // sem backend ainda
-
-      qSubmit.disabled = true;
-      var original = qSubmit.textContent;
-      qSubmit.textContent = 'Enviando...';
-      qSetStatus('');
-      fetch(FORM_ENDPOINT, { method: 'POST', body: fd, headers: { Accept: 'application/json' } })
-        .then(function (r) { return r.ok ? r.json().catch(function () { return { ok: true }; }) : Promise.reject(r); })
-        .then(function (data) {
-          if (data && data.ok === false) return Promise.reject(data);
-          qShowDone(true, fd);
-        })
-        .catch(function () {
-          qSubmit.disabled = false;
-          qSubmit.textContent = original;
-          qSetStatus('Não deu pra enviar pelo site agora. Vamos pelo WhatsApp:');
-          qShowDone(false, fd);
-        });
     });
   }
 
