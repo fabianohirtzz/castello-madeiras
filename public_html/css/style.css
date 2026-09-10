@@ -1269,3 +1269,30 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .prontahome__actions .btn{width:100%}
 }
 
+/* ---------- Casa Pronta: o que está incluso no chave na mão ---------- */
+.incluso__grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(18px,2.6vw,32px);align-items:start}
+.incluso__card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-card);padding:clamp(26px,3.4vw,42px);position:relative;overflow:hidden;
+}
+/* topo facetado, assinatura do telhado */
+.incluso__card::before{content:"";position:absolute;left:0;right:0;top:0;height:14px;background:var(--red);clip-path:polygon(0 0,100% 0,100% 100%,86% 38%,68% 100%,50% 30%,32% 100%,14% 40%,0 100%)}
+.incluso__card h3{margin-top:8px;font-family:var(--font-display);font-weight:800;font-size:clamp(1.3rem,2.2vw,1.7rem);letter-spacing:-.02em;line-height:1.1}
+.incluso__card>p{margin-top:10px;color:var(--muted);font-size:1rem;line-height:1.55}
+.incluso__lista{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;margin-top:24px}
+.incluso__lista li{position:relative;padding-left:30px;font-family:var(--font-display);font-weight:600;font-size:1rem;line-height:1.4}
+.incluso__lista li::before{content:"";position:absolute;left:0;top:3px;width:20px;height:20px;border-radius:6px;background:var(--red-tint)}
+.incluso__lista li::after{content:"";position:absolute;left:6px;top:9px;width:9px;height:5px;border-left:2px solid var(--red-deep);border-bottom:2px solid var(--red-deep);transform:rotate(-45deg)}
+.incluso__side{display:grid;gap:clamp(12px,1.6vw,18px)}
+.incluso__side .bene{display:flex;gap:18px;align-items:flex-start;padding:22px 22px 24px}
+.incluso__side .bene__ico{flex:none}
+.incluso__side .bene h3{margin-top:0}
+.incluso__side .bene p{margin-top:6px}
+@media(max-width:900px){
+  .incluso__grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .incluso__lista{grid-template-columns:1fr}
+  .incluso__side .bene{flex-direction:column;gap:14px}
+}
+
