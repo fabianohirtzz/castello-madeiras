@@ -4396,7 +4396,7 @@ Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 - Consome: `painel_tabela()`, `painel_linha()`, `painel_listar()` da Tarefa 10; `upload_receber()`, `UPLOAD_TIPOS` da Tarefa 8; `csrf_token()`, `csrf_validar()`, `auth_exigir()`, `auth_iniciar()` da Tarefa 7; `CASTELLO_ICONES_FAQ` da Tarefa 3.
 - Produz: `painel_valores(array $def, array $entrada): array`, `painel_arquivos(array $def, array $arquivos): array` devolvendo `array{valores: array<string,string>, erros: array<string,string>}`, `painel_erro_upload(string $erro, string $tipo): string`, `painel_erros(array $def, array $valores): array` (mapa `coluna => mensagem`), `painel_salvar(string $chave, ?int $id, array $valores): int` (devolve o id gravado).
 
-- [ ] **Passo 1: Escrever os testes que falham**
+- [x] **Passo 1: Escrever os testes que falham**
 
 Acrescente ao final de `testes/casos/80-painel.php`:
 
@@ -4555,12 +4555,12 @@ teste('painel_erro_upload fala a lingua do cliente', function (): void {
 });
 ```
 
-- [ ] **Passo 2: Rodar e ver falhar**
+- [x] **Passo 2: Rodar e ver falhar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: os 11 testes da Tarefa 10 continuam passando e os 11 novos falham com `Call to undefined function painel_valores()`.
 
-- [ ] **Passo 3: Acrescentar as funções de escrita ao `painel/tabelas.php`**
+- [x] **Passo 3: Acrescentar as funções de escrita ao `painel/tabelas.php`**
 
 Cole ao final de `public_html/painel/tabelas.php`:
 
@@ -4710,7 +4710,7 @@ function painel_salvar(string $chave, ?int $id, array $valores): int
 }
 ```
 
-- [ ] **Passo 4: Escrever a tela de formulário**
+- [x] **Passo 4: Escrever a tela de formulário**
 
 Crie `public_html/painel/telas/form.php`:
 
@@ -4832,7 +4832,7 @@ $voltar = 'painel.php?tela=' . rawurlencode($tela) . ($filtro !== '' ? '&filtro=
 </form>
 ```
 
-- [ ] **Passo 5: Escrever a ação de salvar**
+- [x] **Passo 5: Escrever a ação de salvar**
 
 Crie `public_html/painel/acoes/salvar.php`:
 
@@ -4893,12 +4893,12 @@ header('Location: ' . $lista . '&ok=' . rawurlencode($recado));
 exit;
 ```
 
-- [ ] **Passo 6: Rodar e ver passar**
+- [x] **Passo 6: Rodar e ver passar**
 
 Rode: `php testes/smoke.php 80-painel`
 Esperado: 22 ok, 0 falha, 0 pulado.
 
-- [ ] **Passo 7: Conferir no navegador**
+- [x] **Passo 7: Conferir no navegador**
 
 Com `php -S localhost:8000 -t public_html` no ar e logado no painel:
 
@@ -4911,7 +4911,7 @@ Com `php -S localhost:8000 -t public_html` no ar e logado no painel:
 7. **Vídeos:** adicione um vídeo MP4 e uma capa. Confira que aparece na lista com miniatura.
 8. Abra o painel no celular e repita o passo 2. O formulário e o seletor de ícone precisam ser usáveis com o polegar.
 
-- [ ] **Passo 8: Rodar a suíte e commitar**
+- [x] **Passo 8: Rodar a suíte e commitar**
 
 Rode: `php testes/smoke.php`
 Esperado: `todos os casos passaram`.

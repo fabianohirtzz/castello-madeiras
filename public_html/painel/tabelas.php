@@ -177,3 +177,147 @@ function painel_linha(string $chave, int $id): ?array
 
     return $linha === false ? null : $linha;
 }
+
+/**
+ * Extrai da entrada apenas as colunas descritas, ja convertidas para o tipo
+ * de cada campo. Campos de arquivo ficam de fora: eles entram por
+ * painel_arquivos(). Colunas de controle (id, ativo, ordem) nunca entram.
+ */
+function painel_valores(array $def, array $entrada): array
+{
+    $valores = [];
+
+    foreach ($def['campos'] as $coluna => $campo) {
+        if (in_array($campo['tipo'], ['imagem', 'video'], true)) {
+            continue;
+        }
+
+        $bruto = $entrada[$coluna] ?? null;
+
+        $valores[$coluna] = match ($campo['tipo']) {
+            'sim_nao'   => ((string) $bruto === '1') ? 1 : 0,
+            'numero'    => (int) $bruto,
+            'selecao'   => isset($campo['opcoes'][(string) $bruto])
+                             ? (string) $bruto
+                             : (string) array_key_first($campo['opcoes']),
+            'icone_faq' => icone_faq((string) $bruto) !== '' ? (string) $bruto : 'relogio',
+            default     => trim((string) $bruto),
+        };
+    }
+
+    return $valores;
+}
+
+/**
+ * Processa os campos de arquivo do formulario.
+ *
+ * @return array{valores: array<string,string>, erros: array<string,string>}
+ */
+function painel_arquivos(array $def, array $arquivos): array
+{
+    $valores = [];
+    $erros   = [];
+
+    foreach ($def['campos'] as $coluna => $campo) {
+        if (!in_array($campo['tipo'], ['imagem', 'video'], true)) {
+            continue;
+        }
+        if (!isset($arquivos[$coluna])) {
+            continue;
+        }
+        if ((int) ($arquivos[$coluna]['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+
+        $r = upload_receber($arquivos[$coluna], (string) $campo['pasta'], $campo['tipo']);
+
+        if ($r['ok']) {
+            $valores[$coluna] = (string) $r['caminho'];
+        } else {
+            $erros[$coluna] = painel_erro_upload((string) $r['erro'], $campo['tipo']);
+        }
+    }
+
+    return ['valores' => $valores, 'erros' => $erros];
+}
+
+/** Traduz o codigo de erro do upload para uma frase que o cliente entende. */
+function painel_erro_upload(string $erro, string $tipo): string
+{
+    return match ($erro) {
+        'tamanho' => $tipo === 'video'
+            ? 'O vídeo passa de 30 MB. Reduza o arquivo e envie de novo.'
+            : 'A imagem passa de 5 MB. Reduza o arquivo e envie de novo.',
+        'tipo' => $tipo === 'video'
+            ? 'Este arquivo não é um vídeo MP4. Envie o vídeo em MP4.'
+            : 'Este arquivo não é uma imagem. Envie em JPG, PNG ou WEBP.',
+        'gravacao'    => 'Não consegui gravar o arquivo no servidor. Tente de novo.',
+        'sem_arquivo' => 'Nenhum arquivo chegou.',
+        default       => 'O envio do arquivo não deu certo. Tente de novo.',
+    };
+}
+
+/**
+ * Campos obrigatorios que chegaram vazios.
+ *
+ * @return array<string,string> coluna para mensagem
+ */
+function painel_erros(array $def, array $valores): array
+{
+    $erros = [];
+
+    foreach ($def['campos'] as $coluna => $campo) {
+        if (empty($campo['obrigatorio'])) {
+            continue;
+        }
+
+        $valor = $valores[$coluna] ?? '';
+        if ($valor === '' || $valor === null) {
+            $erros[$coluna] = $campo['rotulo'] . ' precisa ser preenchido.';
+        }
+    }
+
+    return $erros;
+}
+
+/**
+ * Insere ou atualiza uma linha. Devolve o id gravado.
+ *
+ * Item novo nasce ativo e no fim da ordem. Atualizar nunca mexe em ativo nem
+ * em ordem: para isso existem painel_estado() e painel_reordenar().
+ */
+function painel_salvar(string $chave, ?int $id, array $valores): int
+{
+    $def = painel_tabela($chave);
+    if ($def === null) {
+        throw new InvalidArgumentException('tela de conteudo desconhecida: ' . $chave);
+    }
+
+    $colunas = array_values(array_intersect(array_keys($def['campos']), array_keys($valores)));
+    if ($colunas === []) {
+        throw new InvalidArgumentException('nada para gravar em ' . $chave);
+    }
+
+    $parametros = array_map(static fn (string $coluna) => $valores[$coluna], $colunas);
+
+    if ($id === null || $id <= 0) {
+        $ordem = (int) db()->query('SELECT COALESCE(MAX(ordem), 0) + 1 FROM ' . $chave)->fetchColumn();
+
+        $sql = 'INSERT INTO ' . $chave . ' (' . implode(', ', $colunas) . ', ativo, ordem) VALUES ('
+             . implode(', ', array_fill(0, count($colunas), '?')) . ', 1, ?)';
+
+        $parametros[] = $ordem;
+        db()->prepare($sql)->execute($parametros);
+
+        return (int) db()->lastInsertId();
+    }
+
+    $sql = 'UPDATE ' . $chave . ' SET '
+         . implode(', ', array_map(static fn (string $coluna): string => $coluna . ' = ?', $colunas))
+         . ' WHERE id = ?';
+
+    $parametros[] = $id;
+    db()->prepare($sql)->execute($parametros);
+
+    return $id;
+}

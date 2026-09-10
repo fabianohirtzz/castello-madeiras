@@ -111,3 +111,156 @@ teste('painel_linha traz uma linha pelo id e null quando nao existe', function (
     igual(null, painel_linha('modelos', 999999));
     igual(null, painel_linha('usuarios', 1));
 });
+
+teste('painel_valores so deixa passar as colunas descritas', function (): void {
+    $def = painel_tabela('portfolio');
+
+    $v = painel_valores($def, [
+        'titulo'    => '  Casa nova  ',
+        'categoria' => 'Térrea',
+        'foto_alt'  => 'Alt da foto',
+        'id'        => '7',
+        'ativo'     => '0',
+        'ordem'     => '99',
+        'inventada' => 'x',
+    ]);
+
+    igual(['titulo', 'categoria', 'foto_alt'], array_keys($v), 'campos de arquivo e colunas de fora nao entram');
+    igual('Casa nova', $v['titulo'], 'texto e aparado');
+});
+
+teste('painel_valores converte cada tipo do jeito certo', function (): void {
+    $modelos = painel_tabela('modelos');
+
+    igual(1, painel_valores($modelos, ['destaque' => '1'])['destaque']);
+    igual(0, painel_valores($modelos, ['destaque' => '0'])['destaque']);
+    igual(0, painel_valores($modelos, [])['destaque'], 'checkbox ausente vira 0');
+
+    igual('pronta', painel_valores($modelos, ['modalidade' => 'pronta'])['modalidade']);
+    igual('flex', painel_valores($modelos, ['modalidade' => 'flex'])['modalidade']);
+    igual('pronta', painel_valores($modelos, ['modalidade' => 'invasao'])['modalidade'], 'selecao invalida cai na primeira opcao');
+
+    igual(5, painel_valores(painel_tabela('avaliacoes'), ['estrelas' => '5'])['estrelas']);
+    igual(0, painel_valores(painel_tabela('avaliacoes'), ['estrelas' => 'texto'])['estrelas']);
+
+    igual('chave', painel_valores(painel_tabela('faq'), ['icone' => 'chave'])['icone']);
+    igual('relogio', painel_valores(painel_tabela('faq'), ['icone' => 'inventado'])['icone'], 'icone fora do conjunto cai em relogio');
+});
+
+teste('painel_erros aponta so os campos obrigatorios vazios', function (): void {
+    $def = painel_tabela('avaliacoes');
+
+    igual([], painel_erros($def, ['nome' => 'Ana', 'texto' => 'Muito bom', 'estrelas' => 5]));
+
+    $erros = painel_erros($def, ['nome' => '', 'texto' => '', 'estrelas' => 5]);
+    igual(['nome', 'texto'], array_keys($erros));
+    contem('Nome do cliente', $erros['nome']);
+});
+
+teste('painel_salvar insere ativo, no fim da ordem, e devolve o id', function (): void {
+    $antes = count(painel_listar('portfolio'));
+
+    $id = painel_salvar('portfolio', null, [
+        'titulo'    => 'Casa de teste',
+        'categoria' => 'Teste',
+        'foto'      => 'uploads/portfolio/casa1.png',
+        'foto_alt'  => 'Alt de teste',
+    ]);
+
+    verdade($id > 0);
+    igual($antes + 1, count(painel_listar('portfolio')));
+
+    $linha = painel_linha('portfolio', $id);
+    igual('Casa de teste', $linha['titulo']);
+    igual(1, (int) $linha['ativo'], 'item novo nasce ativo');
+
+    $maior = (int) db()->query('SELECT MAX(ordem) FROM portfolio')->fetchColumn();
+    igual($maior, (int) $linha['ordem'], 'item novo entra no fim da ordem');
+});
+
+teste('painel_salvar com id atualiza e nao mexe em ativo nem em ordem', function (): void {
+    $id = painel_salvar('portfolio', null, ['titulo' => 'Antes', 'categoria' => 'A', 'foto' => '', 'foto_alt' => '']);
+    db()->prepare('UPDATE portfolio SET ativo = 0, ordem = 42 WHERE id = ?')->execute([$id]);
+
+    $mesmo = painel_salvar('portfolio', $id, ['titulo' => 'Depois', 'categoria' => 'B', 'foto' => '', 'foto_alt' => '']);
+    igual($id, $mesmo, 'atualizar devolve o mesmo id');
+
+    $linha = painel_linha('portfolio', $id);
+    igual('Depois', $linha['titulo']);
+    igual(0, (int) $linha['ativo'], 'salvar nao reativa sozinho');
+    igual(42, (int) $linha['ordem'], 'salvar nao muda a ordem');
+});
+
+teste('painel_salvar recusa tabela que nao esta na descricao', function (): void {
+    foreach (['usuarios', 'leads', 'config', 'portfolio; DROP TABLE portfolio'] as $chave) {
+        $pegou = false;
+        try {
+            painel_salvar($chave, null, ['x' => 'y']);
+        } catch (InvalidArgumentException $ex) {
+            $pegou = true;
+        }
+        verdade($pegou, "painel_salvar tinha que recusar a chave $chave");
+    }
+
+    igual(1, (int) db()->query("SELECT COUNT(*) FROM sqlite_master WHERE name = 'portfolio'")->fetchColumn(),
+        'a tabela portfolio continua de pe');
+    igual(0, (int) db()->query('SELECT COUNT(*) FROM usuarios')->fetchColumn(), 'nada foi escrito em usuarios');
+});
+
+teste('painel_salvar ignora coluna que nao esta na descricao', function (): void {
+    $id = painel_salvar('avaliacoes', null, [
+        'nome'     => 'Cliente teste',
+        'texto'    => 'Texto de teste',
+        'estrelas' => 5,
+        'ativo'    => 0,
+        'ordem'    => 1,
+    ]);
+
+    igual(1, (int) painel_linha('avaliacoes', $id)['ativo'], 'ativo nao pode vir do formulario');
+});
+
+teste('painel_arquivos grava o upload valido e devolve o caminho relativo', function (): void {
+    $img = imagecreatetruecolor(40, 40);
+    ob_start();
+    imagejpeg($img);
+    $bytes = (string) ob_get_clean();
+    imagedestroy($img);
+
+    $tmp = tempnam(sys_get_temp_dir(), 'castello-pan');
+    file_put_contents($tmp, $bytes);
+
+    $r = painel_arquivos(painel_tabela('portfolio'), [
+        'foto' => ['name' => 'Casa Nova.jpg', 'tmp_name' => $tmp, 'error' => UPLOAD_ERR_OK, 'size' => strlen($bytes)],
+    ]);
+
+    igual([], $r['erros']);
+    verdade(str_starts_with($r['valores']['foto'], 'uploads/portfolio/'));
+});
+
+teste('painel_arquivos devolve mensagem em portugues quando o tipo esta errado', function (): void {
+    $tmp = tempnam(sys_get_temp_dir(), 'castello-pan');
+    file_put_contents($tmp, "<?php echo 1; ");
+
+    $r = painel_arquivos(painel_tabela('portfolio'), [
+        'foto' => ['name' => 'shell.jpg', 'tmp_name' => $tmp, 'error' => UPLOAD_ERR_OK, 'size' => 14],
+    ]);
+
+    igual([], $r['valores']);
+    contem('JPG, PNG ou WEBP', $r['erros']['foto']);
+});
+
+teste('painel_arquivos ignora campo de arquivo que veio vazio', function (): void {
+    $r = painel_arquivos(painel_tabela('portfolio'), [
+        'foto' => ['name' => '', 'tmp_name' => '', 'error' => UPLOAD_ERR_NO_FILE, 'size' => 0],
+    ]);
+
+    igual([], $r['valores'], 'campo vazio nao apaga a foto que ja estava la');
+    igual([], $r['erros']);
+});
+
+teste('painel_erro_upload fala a lingua do cliente', function (): void {
+    contem('30 MB', painel_erro_upload('tamanho', 'video'));
+    contem('5 MB', painel_erro_upload('tamanho', 'imagem'));
+    contem('MP4', painel_erro_upload('tipo', 'video'));
+    nao_contem('finfo', painel_erro_upload('tipo', 'imagem'));
+});
