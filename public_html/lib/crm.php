@@ -243,3 +243,182 @@ function crm_payload_negocio(array $lead): array
 
     return $payload;
 }
+
+/** Monta o array de retorno sempre com as mesmas chaves. */
+function crm_resultado(
+    bool $ok,
+    int $http,
+    string $resposta,
+    ?string $erro,
+    ?int $pessoaId = null,
+    ?string $negocioUrl = null
+): array {
+    return [
+        'ok'          => $ok,
+        'http'        => $http,
+        'resposta'    => crm_cortar($resposta),
+        'erro'        => $erro,
+        'pessoa_id'   => $pessoaId,
+        'negocio_url' => $negocioUrl,
+    ];
+}
+
+/** Corta a resposta sem quebrar caractere UTF-8 no meio. */
+function crm_cortar(string $texto): string
+{
+    return mb_substr($texto, 0, CRM_RESPOSTA_MAX);
+}
+
+/** Traduz o HTTP num codigo de erro nosso. */
+function crm_erro_http(int $http): string
+{
+    if ($http === 401 || $http === 403) {
+        return 'crm_auth';
+    }
+    if ($http === 429) {
+        return 'crm_limite';
+    }
+    return 'crm_http';
+}
+
+/**
+ * Uma chamada a API, dentro do que sobrou do orcamento de tempo.
+ *
+ * @param float $prazoFinal instante (microtime) em que o conjunto expira
+ * @return array{ok: bool, http: int, bruto: string, dados: ?array, erro: ?string}
+ */
+function crm_requisitar(string $metodo, string $caminho, ?array $corpo, float $prazoFinal): array
+{
+    $restante = $prazoFinal - microtime(true);
+    if ($restante < CRM_MINIMO_POR_CHAMADA) {
+        return ['ok' => false, 'http' => 0, 'bruto' => '', 'dados' => null, 'erro' => 'crm_tempo'];
+    }
+
+    $base = rtrim((string) config_ler('crm_base', CRM_BASE_PADRAO), '/');
+    $cabecalhos = [
+        'Authorization: Token ' . crm_token(),
+        'Accept: application/json',
+        'Content-Type: application/json; charset=utf-8',
+    ];
+
+    /* So existe em teste: manda o servidor falso simular uma falha. */
+    $modoTeste = getenv('CASTELLO_AGENDOR_TESTE_MODO');
+    if (is_string($modoTeste) && $modoTeste !== '') {
+        $cabecalhos[] = 'X-Falso-Modo: ' . $modoTeste;
+    }
+
+    $ch = curl_init($base . $caminho);
+    $opcoes = [
+        CURLOPT_CUSTOMREQUEST  => $metodo,
+        CURLOPT_HTTPHEADER     => $cabecalhos,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => (int) ceil($restante),
+        CURLOPT_CONNECTTIMEOUT => (int) min(5, ceil($restante)),
+        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_SSL_VERIFYPEER => true,
+        CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_USERAGENT      => 'castello-site/1.0',
+    ];
+    if ($corpo !== null) {
+        $opcoes[CURLOPT_POSTFIELDS] = (string) json_encode($corpo, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+    curl_setopt_array($ch, $opcoes);
+
+    $bruto = curl_exec($ch);
+    $erroNum = curl_errno($ch);
+    $http = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    if ($erroNum !== 0) {
+        $erro = $erroNum === CURLE_OPERATION_TIMEDOUT ? 'crm_tempo' : 'crm_conexao';
+        return ['ok' => false, 'http' => $http, 'bruto' => 'curl ' . $erroNum, 'dados' => null, 'erro' => $erro];
+    }
+
+    $texto = is_string($bruto) ? $bruto : '';
+
+    if ($http < 200 || $http >= 300) {
+        return ['ok' => false, 'http' => $http, 'bruto' => $texto, 'dados' => null, 'erro' => crm_erro_http($http)];
+    }
+
+    $dados = json_decode($texto, true);
+    if (!is_array($dados)) {
+        return ['ok' => false, 'http' => $http, 'bruto' => $texto, 'dados' => null, 'erro' => 'crm_resposta_invalida'];
+    }
+
+    return ['ok' => true, 'http' => $http, 'bruto' => $texto, 'dados' => $dados, 'erro' => null];
+}
+
+/**
+ * Manda o lead para o Agendor.
+ *
+ * Tres passos: procura a pessoa pelo telefone, cria se nao achar, cria o
+ * negocio nela. Lead que ja tem crm_pessoa_id pula os dois primeiros, para o
+ * reenvio nao duplicar pessoa quando a primeira tentativa criou a pessoa e
+ * morreu antes do negocio.
+ *
+ * A busca e o unico passo tolerante a falha: um lead duplicado no CRM e menos
+ * grave que um lead perdido.
+ */
+function crm_enviar(array $lead): array
+{
+    if ((string) config_ler('crm_ativo', '0') !== '1') {
+        return crm_resultado(false, 0, '', 'crm_desativado');
+    }
+    if (crm_token() === '') {
+        return crm_resultado(false, 0, '', 'crm_sem_token');
+    }
+
+    $telefone = crm_whatsapp_busca(crm_campo($lead, 'whatsapp'));
+    $pessoaId = (int) ($lead['crm_pessoa_id'] ?? 0);
+
+    if ($pessoaId <= 0 && $telefone === '') {
+        return crm_resultado(false, 0, '', 'crm_sem_telefone');
+    }
+
+    $timeout = (int) config_ler('crm_timeout', (string) CRM_TIMEOUT_MAX);
+    $timeout = max(CRM_MINIMO_POR_CHAMADA, min(CRM_TIMEOUT_MAX, $timeout));
+    $prazoFinal = microtime(true) + $timeout;
+
+    /* 1. procura duplicata. Falha aqui nao interrompe: segue e cria. */
+    if ($pessoaId <= 0) {
+        $busca = crm_requisitar('GET', '/people?phone=' . rawurlencode($telefone), null, $prazoFinal);
+        if ($busca['ok']) {
+            $primeira = $busca['dados']['data'][0]['id'] ?? null;
+            if (is_int($primeira) || (is_string($primeira) && ctype_digit($primeira))) {
+                $pessoaId = (int) $primeira;
+            }
+        } elseif ($busca['erro'] === 'crm_tempo') {
+            return crm_resultado(false, $busca['http'], $busca['bruto'], 'crm_tempo');
+        }
+    }
+
+    /* 2. cria a pessoa quando nao existe */
+    if ($pessoaId <= 0) {
+        $criacao = crm_requisitar('POST', '/people', crm_payload_pessoa($lead), $prazoFinal);
+        if (!$criacao['ok']) {
+            return crm_resultado(false, $criacao['http'], $criacao['bruto'], $criacao['erro']);
+        }
+        $novo = $criacao['dados']['data']['id'] ?? null;
+        if (!is_int($novo) && !(is_string($novo) && ctype_digit($novo))) {
+            return crm_resultado(false, $criacao['http'], $criacao['bruto'], 'crm_resposta_invalida');
+        }
+        $pessoaId = (int) $novo;
+    }
+
+    /* 3. cria o negocio. E ele que aparece no funil. */
+    $negocio = crm_requisitar('POST', '/people/' . $pessoaId . '/deals', crm_payload_negocio($lead), $prazoFinal);
+    if (!$negocio['ok']) {
+        return crm_resultado(false, $negocio['http'], $negocio['bruto'], $negocio['erro'], $pessoaId);
+    }
+
+    $url = $negocio['dados']['data']['_webUrl'] ?? null;
+
+    return crm_resultado(
+        true,
+        $negocio['http'],
+        $negocio['bruto'],
+        null,
+        $pessoaId,
+        is_string($url) && $url !== '' ? $url : null
+    );
+}

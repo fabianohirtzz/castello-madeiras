@@ -413,6 +413,147 @@ teste('crm_descricao_negocio junta o lead num texto legivel e omite o vazio', fu
     contem('Ainda estou pesquisando', $magro);
 });
 
+teste('crm_enviar recusa sem fazer requisicao quando falta config', function (): void {
+    crm_teste_limpar();
+    crm_teste_config();
+
+    config_gravar('crm_ativo', '0');
+    $r = crm_enviar(LEAD_EXEMPLO);
+    falso($r['ok'], 'CRM desligado: ok false');
+    igual('crm_desativado', $r['erro']);
+    igual(0, $r['http']);
+
+    config_gravar('crm_ativo', '1');
+    putenv('CASTELLO_AGENDOR_TOKEN');
+    igual('crm_sem_token', crm_enviar(LEAD_EXEMPLO)['erro'], 'ligado sem token e configuracao incompleta');
+    putenv('CASTELLO_AGENDOR_TOKEN=token-de-teste');
+
+    igual('crm_sem_telefone', crm_enviar(['nome' => 'Sem telefone', 'whatsapp' => '12'])['erro']);
+});
+
+teste('crm_enviar cria pessoa e negocio, e reencontra a pessoa na volta', function (): void {
+    $servidor = crm_falso_subir();
+    verdade($servidor !== null, 'agendor falso subiu');
+
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        /* Primeira vez: busca vazia, cria pessoa, cria negocio. */
+        $r = crm_enviar(LEAD_EXEMPLO);
+        verdade($r['ok'] === true, 'primeiro envio deu certo: ' . json_encode($r));
+        verdade(is_int($r['pessoa_id']) && $r['pessoa_id'] > 0, 'devolve o id da pessoa');
+        contem('web.agendor.com.br', (string) $r['negocio_url'], 'devolve o link do negocio');
+
+        $chamadas = crm_falso_todas();
+        igual(3, count($chamadas), 'foram tres chamadas: busca, pessoa, negocio');
+        igual('GET', $chamadas[0]['metodo']);
+        contem('phone=48998244494', $chamadas[0]['uri'], 'a busca vai sem DDI');
+        igual('POST', $chamadas[1]['metodo']);
+        igual('/people', $chamadas[1]['caminho']);
+        igual('Token token-de-teste', $chamadas[1]['cabecalhos']['authorization'] ?? '', 'cabecalho de autenticacao');
+        verdade(str_contains($chamadas[2]['caminho'], '/deals'), 'terceira chamada cria o negocio');
+
+        $corpoNegocio = json_decode($chamadas[2]['corpo'], true);
+        igual(904296, $corpoNegocio['funnel'] ?? null);
+        igual(1, $corpoNegocio['dealStage'] ?? null, 'a etapa vai como sequencia');
+        igual('[SITE] - Ate 3 meses - Fabiano Hirtz', $corpoNegocio['title'] ?? null);
+
+        $pessoaCriada = (int) $r['pessoa_id'];
+
+        /* Segunda vez, mesmo telefone: a busca acha e NAO cria pessoa nova.
+           E o teste que pega a regressao do DDI descrita na secao 5.1. */
+        $r2 = crm_enviar(LEAD_EXEMPLO);
+        verdade($r2['ok'] === true, 'segundo envio deu certo');
+        igual($pessoaCriada, (int) $r2['pessoa_id'], 'reaproveitou a mesma pessoa');
+
+        $depois = crm_falso_todas();
+        $criacoes = 0;
+        foreach ($depois as $c) {
+            if ($c['metodo'] === 'POST' && $c['caminho'] === '/people') {
+                $criacoes++;
+            }
+        }
+        igual(1, $criacoes, 'a pessoa foi criada uma vez so nas duas visitas');
+    } finally {
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('crm_enviar com crm_pessoa_id pula direto para o negocio', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $r = crm_enviar(LEAD_EXEMPLO + ['crm_pessoa_id' => 71397195]);
+        verdade($r['ok'] === true, 'envio com pessoa conhecida deu certo: ' . json_encode($r));
+        igual(71397195, $r['pessoa_id'], 'manteve a pessoa que ja tinha');
+
+        $chamadas = crm_falso_todas();
+        igual(1, count($chamadas), 'uma chamada so: nem busca nem criacao de pessoa');
+        contem('/people/71397195/deals', $chamadas[0]['caminho']);
+    } finally {
+        crm_falso_derrubar($servidor);
+    }
+});
+
+teste('crm_enviar trata 401, 429, resposta invalida e busca que falha', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=auth401');
+        $r = crm_enviar(LEAD_EXEMPLO);
+        falso($r['ok'], '401: ok false');
+        igual('crm_auth', $r['erro']);
+        igual(401, $r['http']);
+
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=limite429');
+        igual('crm_limite', crm_enviar(LEAD_EXEMPLO)['erro']);
+
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=erro500');
+        igual('crm_http', crm_enviar(LEAD_EXEMPLO)['erro']);
+
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=invalido');
+        igual('crm_resposta_invalida', crm_enviar(LEAD_EXEMPLO)['erro']);
+
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        crm_falso_derrubar($servidor);
+    }
+
+    /* Servidor fora do ar: erro de conexao, nao de tempo. */
+    crm_teste_limpar();
+    crm_teste_config();
+    config_gravar('crm_base', 'http://127.0.0.1:8799');
+    igual('crm_conexao', crm_enviar(LEAD_EXEMPLO)['erro']);
+});
+
+teste('crm_enviar respeita o orcamento de tempo do conjunto', function (): void {
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+        config_gravar('crm_timeout', '3');
+        putenv('CASTELLO_AGENDOR_TESTE_MODO=demora:8');
+
+        $inicio = microtime(true);
+        $r = crm_enviar(LEAD_EXEMPLO);
+        $gasto = microtime(true) - $inicio;
+
+        falso($r['ok'], 'CRM lento: ok false');
+        igual('crm_tempo', $r['erro']);
+        verdade($gasto < 8, 'desistiu dentro do orcamento, gastou ' . round($gasto, 2) . 's');
+    } finally {
+        putenv('CASTELLO_AGENDOR_TESTE_MODO');
+        config_gravar('crm_timeout', '10');
+        crm_falso_derrubar($servidor);
+    }
+});
+
 /* ================= lib/email.php: aviso de lead novo ================= */
 
 $GLOBALS['pasta_email'] = sys_get_temp_dir() . '/castello-emails-' . getmypid();
