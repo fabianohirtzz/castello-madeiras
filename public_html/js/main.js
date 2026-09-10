@@ -117,6 +117,13 @@
   }
 
   if (heroTrack && heroVideo && !reduce) {
+    // No celular o scrub usa uma versao menor do video (2,5 MB em vez de 8,9).
+    // O preload nasce em metadata, entao a troca acontece antes de baixar o arquivo.
+    var heroSource = heroVideo.querySelector('source');
+    if (heroSource && heroSource.getAttribute('data-src-mobile') && window.matchMedia('(max-width: 760px)').matches) {
+      heroSource.setAttribute('src', heroSource.getAttribute('data-src-mobile'));
+    }
+    heroVideo.preload = 'auto';
     var vReady = false;
     var vDur = 6;
     var targetT = 0, curT = 0, lastSeek = -1;
@@ -704,7 +711,8 @@
       var on = qBusca.value === 'Modelo pronto do catálogo';
       qModeloGroup.hidden = !on;
     }
-    qBusca.addEventListener('change', function () { qToggleModelo(); qBusca.classList.remove('is-error'); });
+    qBusca.addEventListener('change', function () { qToggleModelo(); qBusca.classList.remove('is-error'); qBusca.removeAttribute('aria-invalid'); });
+    document.getElementById('q-nome').addEventListener('input', function () { this.classList.remove('is-error'); this.removeAttribute('aria-invalid'); });
 
     // máscara de telefone: (48) 99999-9999
     qWpp.addEventListener('input', function () {
@@ -714,6 +722,7 @@
       if (d.length > 7) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, d.length > 10 ? 7 : 6) + '-' + d.slice(d.length > 10 ? 7 : 6);
       qWpp.value = out;
       qWpp.classList.remove('is-error');
+      qWpp.removeAttribute('aria-invalid');
     });
 
     function qOpen(trigger) {

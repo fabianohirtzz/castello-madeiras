@@ -26,23 +26,23 @@ if (!defined('CASTELLO_UPLOADS')) {
  * e foto emprestada das casas prontas, ate o cliente mandar o material.
  */
 const MIGRAR_MODELOS = [
-    ['pronta', 'Compacta', '39,00 m²', 'Parede vertical', '69.900', '90 a 120 dias', 'fotos-casas/casa4.png', 'Casa de madeira compacta de dois pavimentos da Castello', 0],
-    ['pronta', 'Conforto', '42,75 m²', 'Parede dupla', '79.988', '90 a 120 dias', 'fotos-casas/casa2.png', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
-    ['pronta', 'Família', '51,00 m²', 'Parede dupla', '87.997', '90 a 120 dias', 'fotos-casas/casa5.png', 'Casa de madeira Castello com varanda ampla em volta e jardim', 1],
-    ['pronta', 'Ampla', '59,75 m²', 'Parede dupla', '97.776', '90 a 120 dias', 'fotos-casas/casa3.png', 'Sobrado de madeira Castello à beira da água com vista para a ponte', 0],
-    ['flex', 'Castelo Flex 36', '36,00 m²', '', '', '45 dias', 'fotos-casas/casa4.png', 'Casa de madeira Castello compacta de dois pavimentos', 0],
-    ['flex', 'Castelo Flex 48', '48,00 m²', '', '', '45 dias', 'fotos-casas/casa2.png', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
-    ['flex', 'Castelo Flex 60', '60,00 m²', '', '', '45 dias', 'fotos-casas/casa6.png', 'Casa de madeira Castello térrea com varanda ampla e garagem coberta', 0],
+    ['pronta', 'Compacta', '39,00 m²', 'Parede vertical', '69.900', '90 a 120 dias', 'fotos-casas/casa4.webp', 'Casa de madeira compacta de dois pavimentos da Castello', 0],
+    ['pronta', 'Conforto', '42,75 m²', 'Parede dupla', '79.988', '90 a 120 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
+    ['pronta', 'Família', '51,00 m²', 'Parede dupla', '87.997', '90 a 120 dias', 'fotos-casas/casa5.webp', 'Casa de madeira Castello com varanda ampla em volta e jardim', 1],
+    ['pronta', 'Ampla', '59,75 m²', 'Parede dupla', '97.776', '90 a 120 dias', 'fotos-casas/casa3.webp', 'Sobrado de madeira Castello à beira da água com vista para a ponte', 0],
+    ['flex', 'Castelo Flex 36', '36,00 m²', '', '', '45 dias', 'fotos-casas/casa4.webp', 'Casa de madeira Castello compacta de dois pavimentos', 0],
+    ['flex', 'Castelo Flex 48', '48,00 m²', '', '', '45 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
+    ['flex', 'Castelo Flex 60', '60,00 m²', '', '', '45 dias', 'fotos-casas/casa6.webp', 'Casa de madeira Castello térrea com varanda ampla e garagem coberta', 0],
 ];
 
 /** titulo, categoria, foto de origem, alt */
 const MIGRAR_PORTFOLIO = [
-    ['Sobrado à beira da água', 'Beira da água', 'fotos-casas/casa3.png', 'Sobrado de madeira à beira da água com vista para a ponte'],
-    ['Sobrado com sacada', 'Dois pavimentos', 'fotos-casas/casa7.png', 'Sobrado de madeira com sacada e fachada de réguas'],
-    ['Varanda ampla e garagem', 'Térrea', 'fotos-casas/casa6.png', 'Casa de madeira térrea com varanda ampla e garagem coberta'],
-    ['Casa de campo com varanda', 'No campo', 'fotos-casas/casa-8.png', 'Casa de madeira de campo com varanda e cerca branca'],
-    ['Varanda com pergolado', 'Área externa', 'fotos-casas/casa1.png', 'Casa de madeira com pergolado e varanda ao sol'],
-    ['Chalé com varanda', 'Na natureza', 'fotos-casas/casa5.png', 'Casa de madeira com varanda em volta e mata ao fundo'],
+    ['Sobrado à beira da água', 'Beira da água', 'fotos-casas/casa3.webp', 'Sobrado de madeira à beira da água com vista para a ponte'],
+    ['Sobrado com sacada', 'Dois pavimentos', 'fotos-casas/casa7.webp', 'Sobrado de madeira com sacada e fachada de réguas'],
+    ['Varanda ampla e garagem', 'Térrea', 'fotos-casas/casa6.webp', 'Casa de madeira térrea com varanda ampla e garagem coberta'],
+    ['Casa de campo com varanda', 'No campo', 'fotos-casas/casa-8.webp', 'Casa de madeira de campo com varanda e cerca branca'],
+    ['Varanda com pergolado', 'Área externa', 'fotos-casas/casa1.webp', 'Casa de madeira com pergolado e varanda ao sol'],
+    ['Chalé com varanda', 'Na natureza', 'fotos-casas/casa5.webp', 'Casa de madeira com varanda em volta e mata ao fundo'],
 ];
 
 /** nome, texto. Avaliacoes reais do Google Meu Negocio, 5,0 estrelas. */
@@ -89,7 +89,7 @@ const MIGRAR_PASSOS = [
     ['pronta', 'Fundação', 'Preparamos a base da casa com técnica e segurança, prontos para receber a estrutura.', 'passos/passo-2.jpg', 'Início da estrutura de madeira sobre a fundação'],
     ['pronta', 'Estrutura e montagem', 'Montamos a casa com madeira de qualidade e prego galvanizado, no padrão Castello.', 'passos/passo-3.jpg', 'Estrutura e montagem da casa de madeira'],
     ['pronta', 'Acabamento', 'Elétrica, hidráulica, revestimentos, vidros e os detalhes finos que fazem do seu jeito.', 'passos/passo-4.jpg', 'Equipe no acabamento do telhado e fachada da casa'],
-    ['pronta', 'Chave na mão', 'Você recebe a casa pronta pra morar, completa, em 90 a 120 dias.', 'passos/passo-5.png', 'Chaves da casa de madeira pronta, chave na mão'],
+    ['pronta', 'Chave na mão', 'Você recebe a casa pronta pra morar, completa, em 90 a 120 dias.', 'passos/passo-5.jpg', 'Chaves da casa de madeira pronta, chave na mão'],
     ['flex', 'Projeto e modelo', 'Você escolhe o modelo Flex e a gente ajusta a planta ao seu terreno e ao seu orçamento.', '', ''],
     ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
     ['flex', 'Estrutura montada', 'Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.', '', ''],

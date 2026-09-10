@@ -220,7 +220,10 @@
   function limparErros() {
     ['q-nome', 'q-whatsapp', 'q-busca'].forEach(function (id) {
       var el = document.getElementById(id);
-      if (el) el.classList.remove('is-error');
+      if (el) {
+        el.classList.remove('is-error');
+        el.removeAttribute('aria-invalid');
+      }
     });
   }
 
@@ -228,7 +231,10 @@
     var mapa = { nome: 'q-nome', whatsapp: 'q-whatsapp', busca: 'q-busca' };
     (campos || []).forEach(function (campo) {
       var el = document.getElementById(mapa[campo]);
-      if (el) el.classList.add('is-error');
+      if (el) {
+        el.classList.add('is-error');
+        el.setAttribute('aria-invalid', 'true');
+      }
     });
     var primeiro = document.getElementById(mapa[(campos || [])[0]]);
     if (primeiro) primeiro.focus({ preventScroll: true });
@@ -289,6 +295,9 @@
       })
       .then(function (r) {
         if (r.http === 200 && r.dados && r.dados.ok === true) {
+          /* Restaura o botao antes de esconder o form: quem volta para revisar
+             nao pode encontrar "Enviando..." e nem reenviar sem querer. */
+          restaurar(rotulo);
           mostrarDone(true, dados);
           return;
         }

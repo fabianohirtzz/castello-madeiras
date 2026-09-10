@@ -266,7 +266,7 @@ body.drawer-open{overflow:hidden}
 .facet--bone::before{background:var(--bone)}
 .facet--sand::before{background:var(--sand)}
 .facet--ink::before{background:var(--ink)}
-.facet--red::before{background:var(--red)}
+.facet--red::before{background:var(--red-deep)}
 
 /* ============================================================
    SECTIONS base
@@ -285,7 +285,7 @@ body.drawer-open{overflow:hidden}
 /* ============================================================
    PROVA SOCIAL (faixa)
    ============================================================ */
-.proof{background:var(--red);color:#fff;padding-block:var(--sec-pad) calc(var(--sec-pad) + var(--facet-h))}
+.proof{background:var(--red-deep);color:#fff;padding-block:var(--sec-pad) calc(var(--sec-pad) + var(--facet-h))}
 .proof__wrap{display:grid;gap:clamp(28px,4vh,44px)}
 .proof__lead{max-width:46ch;color:#fff;font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.25;letter-spacing:-.01em}
 .proof__inner{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px);padding-top:clamp(20px,3vh,32px);border-top:1px solid rgba(255,255,255,.22)}
@@ -342,7 +342,7 @@ body.drawer-open{overflow:hidden}
 .model--featured{border:0;box-shadow:0 36px 80px -34px rgba(179,20,27,.5);outline:2px solid var(--red)}
 /* topo facetado no card em destaque — assinatura */
 .model--featured .model__media::before{content:"";position:absolute;left:0;right:0;top:0;height:20px;background:var(--red);clip-path:polygon(0 0,100% 0,100% 100%,86% 38%,68% 100%,50% 30%,32% 100%,14% 40%,0 100%);z-index:3}
-.model__flag{position:absolute;top:18px;left:18px;z-index:4;background:var(--red);color:#fff;font-family:var(--font-display);font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border-radius:999px;box-shadow:0 8px 20px -8px rgba(179,20,27,.7)}
+.model__flag{position:absolute;top:18px;left:18px;z-index:4;background:var(--red-deep);color:#fff;font-family:var(--font-display);font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border-radius:999px;box-shadow:0 8px 20px -8px rgba(179,20,27,.7)}
 .model__media{position:relative;aspect-ratio:4/3;overflow:hidden}
 .model__media img{width:100%;height:100%;object-fit:cover;transition:transform .55s var(--ease)}
 .model:hover .model__media img{transform:scale(1.06)}
@@ -591,14 +591,14 @@ body.drawer-open{overflow:hidden}
   max-width:920px;margin:clamp(28px,4vh,44px) 0 0;
   color:var(--muted);font-size:1rem;line-height:1.6;
 }
-.faq__foot a,.faq__foot-link{color:var(--red);font-weight:600;white-space:nowrap}
+.faq__foot a,.faq__foot-link{color:var(--red-deep);font-weight:600;white-space:nowrap}
 .faq__foot a:hover,.faq__foot-link:hover{text-decoration:underline}
 .faq__foot-link{background:none;border:0;padding:0;cursor:pointer;font-family:inherit;font-size:inherit}
 
 /* ============================================================
    CTA BAND — faixa vermelha facetada (assinatura)
    ============================================================ */
-.cta-band{position:relative;background:linear-gradient(135deg,var(--red-bright),var(--red-deep));color:#fff;padding-top:calc(var(--sec-pad) + clamp(58px,7.5vw,108px));padding-bottom:var(--sec-pad)}
+.cta-band{position:relative;background:linear-gradient(135deg,var(--red-deep),#8E1015);color:#fff;padding-top:calc(var(--sec-pad) + clamp(58px,7.5vw,108px));padding-bottom:var(--sec-pad)}
 .cta-band::before{content:"";position:absolute;left:0;right:0;top:-1px;height:clamp(58px,7.5vw,108px);background:var(--sand);clip-path:var(--facet-cta-top)}
 .cta-band__inner{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px}
 .cta-band h2{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.025em;line-height:1.03;max-width:18ch}

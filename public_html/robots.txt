@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /painel/
+Disallow: /enviar.php
+Disallow: /csrf.php
+Disallow: /reenviar.php
+
+# TROCAR NO DEPLOY FINAL junto com CASTELLO_URL
+Sitemap: https://castello.tohospedando.com.br/sitemap.xml

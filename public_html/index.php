@@ -26,21 +26,22 @@ $flex_poster  = bloco('flex_video_poster');
   <meta property="og:title" content="Castello Casas de Madeira | Casa Pronta e Castelo Flex" />
   <meta property="og:description" content="Casa Pronta chave na mão em 90 a 120 dias e Castelo Flex semipronta em 45 dias. 5,0 estrelas no Google." />
   <meta property="og:url" content="<?= CASTELLO_URL . '/' ?>" />
-  <meta property="og:image" content="<?= CASTELLO_URL ?>/fotos-casas/casa3.png" />
+  <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-home.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Castello Casas de Madeira" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
   <link rel="canonical" href="<?= CASTELLO_URL . '/' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
-
-  <!-- hero video pronto para scrub no scroll desde o primeiro frame -->
-  <link rel="preload" as="video" href="video-hero/video-hero.mp4?v=3" type="video/mp4" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=13" />
+  <link rel="stylesheet" href="css/style.css?v=14" />
 </head>
 <body>
 
@@ -51,8 +52,8 @@ $flex_poster  = bloco('flex_video_poster');
     <div class="hero__track" id="heroTrack">
       <div class="hero__pin">
         <div class="hero__media" id="heroMedia">
-          <video id="heroVideo" class="hero__video" muted playsinline preload="auto" disableremoteplayback poster="fotos-casas/casa3.png" aria-hidden="true">
-            <source src="video-hero/video-hero.mp4?v=3" type="video/mp4" />
+          <video id="heroVideo" class="hero__video" muted playsinline preload="metadata" disableremoteplayback poster="video-hero/poster.jpg" aria-hidden="true">
+            <source src="video-hero/video-hero.mp4?v=3" data-src-mobile="video-hero/video-mobile.mp4?v=2" type="video/mp4" />
           </video>
         </div>
         <div class="hero__overlay" aria-hidden="true"></div>

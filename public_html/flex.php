@@ -32,7 +32,11 @@ $flex_faq     = faq('flex');
   <meta property="og:title" content="Castelo Flex | Casa de madeira semipronta em 45 dias" />
   <meta property="og:description" content="Estrutura montada, coberta e fechada no seu terreno em 45 dias. O acabamento fica no seu ritmo." />
   <meta property="og:url" content="<?= CASTELLO_URL . '/flex.php' ?>" />
-  <meta property="og:image" content="<?= CASTELLO_URL ?>/fotos-casas/casa7.png" />
+  <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-flex.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Castello Casas de Madeira" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
   <link rel="canonical" href="<?= CASTELLO_URL . '/flex.php' ?>" />
@@ -43,7 +47,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=13" />
+  <link rel="stylesheet" href="css/style.css?v=14" />
 </head>
 <body>
 
@@ -53,7 +57,7 @@ $flex_faq     = faq('flex');
   <!-- Copy provisória: entra pelo painel quando o material da Flex chegar. -->
   <section class="pagehero" id="topo" aria-label="Castelo Flex">
     <div class="pagehero__media">
-      <img src="fotos-casas/casa7.png" alt="Sobrado de madeira Castello com sacada e fachada de réguas" />
+      <img src="fotos-casas/casa7.webp" alt="Sobrado de madeira Castello com sacada e fachada de réguas" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 

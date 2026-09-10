@@ -58,7 +58,7 @@ teste('as fotos dos modelos foram copiadas para uploads e o caminho e relativo',
         verdade(is_file(CASTELLO_UPLOADS . '/modelos/' . basename($m['foto'])), 'arquivo copiado: ' . $m['foto']);
         verdade($m['foto_alt'] !== '' && $m['foto_alt'] !== null, 'todo modelo tem alt escrito');
     }
-    igual('uploads/modelos/casa5.png', modelos('pronta')[2]['foto']);
+    igual('uploads/modelos/casa5.webp', modelos('pronta')[2]['foto']);
 });
 
 teste('o portfolio trouxe as seis casas entregues, com categoria e alt', function (): void {
@@ -68,7 +68,7 @@ teste('o portfolio trouxe as seis casas entregues, com categoria e alt', functio
     igual('Beira da água', $lista[0]['categoria']);
     igual('Sobrado de madeira à beira da água com vista para a ponte', $lista[0]['foto_alt']);
     igual('Chalé com varanda', $lista[5]['titulo']);
-    igual('uploads/portfolio/casa-8.png', $lista[3]['foto']);
+    igual('uploads/portfolio/casa-8.webp', $lista[3]['foto']);
 });
 
 teste('as 14 avaliacoes reais do Google chegaram inteiras', function (): void {
@@ -145,7 +145,7 @@ teste('os 5 passos do Como funciona chegaram com imagem', function (): void {
     igual('Acabamento', $lista[3]['titulo']);
     igual('Chave na mão', $lista[4]['titulo']);
     igual('uploads/passos/passo-1.jpg', $lista[0]['imagem']);
-    igual('uploads/passos/passo-5.png', $lista[4]['imagem']);
+    igual('uploads/passos/passo-5.jpg', $lista[4]['imagem']);
     contem('90 a 120 dias', $lista[4]['texto']);
     $flex = passos('flex');
     igual(5, count($flex), 'passo a passo provisorio da Flex');
