@@ -119,27 +119,54 @@ function enviar_processar(array $post): array
     $lead['id'] = $id;
     $lead['criado_em'] = agora();
 
-    /* 6. so entao o CRM. O visitante nunca ve falha de integracao. */
-    $resultado = crm_enviar($lead);
-    if (!empty($resultado['pessoa_id'])) {
-        lead_marcar_pessoa($id, (int) $resultado['pessoa_id']);
-    }
-    if (!empty($resultado['ok'])) {
-        $status = 'enviado';
-        $tentativas = 1;
-        $registro = (string) $resultado['resposta'];
-    } elseif (($resultado['erro'] ?? '') === 'crm_desativado') {
-        $status = 'desativado';
-        $tentativas = 0;
-        $registro = 'crm_desativado';
-    } else {
-        $status = 'erro';
-        $tentativas = 1;
-        $registro = trim((string) ($resultado['erro'] ?? '') . ' ' . (string) ($resultado['resposta'] ?? ''));
-    }
-    lead_marcar($id, $status, $tentativas, $registro !== '' ? $registro : null);
+    /*
+     * 6. so entao o CRM. O visitante nunca ve falha de integracao.
+     *
+     * Daqui pra frente roda dentro de um try: o lead ja esta gravado, e se
+     * algo inesperado explodir (na pratica, so uma falha de banco em
+     * lead_marcar ou lead_marcar_pessoa) o e-mail de aviso e a ultima rede de
+     * seguranca da promessa "o lead nunca se perde" e nao pode deixar de
+     * tentar sair so porque o resto do fluxo quebrou.
+     */
+    $resultado = null;
+    try {
+        if (getenv('CASTELLO_TESTE_FALHA_APOS_GRAVAR') === '1') {
+            // Existe so para o teste provar o catch abaixo: nunca fica ativo
+            // fora de smoke.php.
+            throw new RuntimeException('falha forcada para teste: excecao apos gravar o lead');
+        }
 
-    /* 7. o e-mail sai sempre */
+        $resultado = crm_enviar($lead);
+        if (!empty($resultado['pessoa_id'])) {
+            lead_marcar_pessoa($id, (int) $resultado['pessoa_id']);
+        }
+        if (!empty($resultado['ok'])) {
+            $status = 'enviado';
+            $tentativas = 1;
+            $registro = (string) $resultado['resposta'];
+        } elseif (($resultado['erro'] ?? '') === 'crm_desativado') {
+            $status = 'desativado';
+            $tentativas = 0;
+            $registro = 'crm_desativado';
+        } else {
+            $status = 'erro';
+            $tentativas = 1;
+            $registro = trim((string) ($resultado['erro'] ?? '') . ' ' . (string) ($resultado['resposta'] ?? ''));
+        }
+        lead_marcar($id, $status, $tentativas, $registro !== '' ? $registro : null);
+    } catch (Throwable $falha) {
+        /* Best effort: o e-mail tenta sair mesmo assim, mas uma falha nele
+           nao pode mascarar a excecao original, que precisa subir para o
+           enviar.php responder 500 e registrar o erro de verdade. */
+        try {
+            email_lead_novo($lead, $resultado ?? ['ok' => false, 'http' => 0, 'resposta' => '', 'erro' => 'crm_excecao']);
+        } catch (Throwable $ignorada) {
+            // Ver comentario acima: o e-mail aqui e best-effort, nao pode subir.
+        }
+        throw $falha;
+    }
+
+    /* 7. o e-mail sai sempre, no caminho feliz */
     email_lead_novo($lead, $resultado);
 
     return ['http' => 200, 'corpo' => ['ok' => true, 'id' => $id]];

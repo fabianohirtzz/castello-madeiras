@@ -762,6 +762,33 @@ teste('enviar_processar no caminho feliz grava, marca desativado e dispara o e-m
     igual(1, count(emails_gravados()), 'CRM desligado disparou o e-mail assim mesmo');
 });
 
+teste('quando algo excepcional acontece depois do lead gravado, o e-mail ainda sai antes da excecao subir', function (): void {
+    crm_teste_limpar();
+    emails_limpar();
+    putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+    config_gravar('crm_ativo', '0');
+    config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+    $antes = contar_leads();
+    putenv('CASTELLO_TESTE_FALHA_APOS_GRAVAR=1');
+
+    $excecaoSubiu = false;
+    try {
+        enviar_processar(post_valido());
+    } catch (Throwable $falha) {
+        $excecaoSubiu = true;
+        contem('falha forcada', $falha->getMessage(), 'a excecao original chega ate aqui, nao mascarada');
+    } finally {
+        putenv('CASTELLO_TESTE_FALHA_APOS_GRAVAR');
+    }
+
+    verdade($excecaoSubiu, 'a excecao tem que subir, nao ser engolida em silencio');
+    igual($antes + 1, contar_leads(), 'o lead foi gravado antes da excecao acontecer');
+    igual(1, count(emails_gravados()), 'o e-mail de aviso saiu mesmo com a excecao depois de gravar o lead');
+
+    putenv('CASTELLO_EMAIL_DIR');
+});
+
 teste('honeypot e time-trap respondem sucesso falso sem gravar', function (): void {
     $antes = contar_leads();
 
