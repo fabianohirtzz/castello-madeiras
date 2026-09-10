@@ -31,3 +31,6 @@ public_html/uploads/
 
 # Caminho absoluto do config no servidor. Existe só lá, nunca no git.
 public_html/lib/caminho-config.php
+
+# Worktrees dos agentes (efemeros)
+.claude/
