@@ -255,3 +255,13 @@ teste('o formulario tem o campo oculto de csrf, vazio para o JS preencher', func
         igual(1, substr_count($html, 'name="csrf"'), 'um campo csrf so, em ' . $arquivo);
     }
 });
+
+teste('o campo de prazo aparece nas cinco paginas com os valores do CRM', function (): void {
+    foreach (PAGINAS_SITE as $arquivo) {
+        $html = render(site() . '/' . $arquivo);
+        contem('name="prazo"', $html, $arquivo . ' tem o campo de prazo');
+        foreach (['Imediato', 'Até 3 meses', 'Até 6 meses', 'Só pesquisando'] as $opcao) {
+            contem('<option value="' . $opcao . '">' . $opcao . '</option>', $html, $arquivo . ' oferece ' . $opcao);
+        }
+    }
+});

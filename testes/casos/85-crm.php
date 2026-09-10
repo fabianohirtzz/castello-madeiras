@@ -875,6 +875,31 @@ teste('o id da pessoa fica gravado mesmo quando o negocio falha', function (): v
     }
 });
 
+teste('o prazo entra na lista fechada e valor inventado nao derruba o lead', function (): void {
+    crm_teste_limpar();
+    emails_limpar();
+    putenv('CASTELLO_EMAIL_DIR=' . $GLOBALS['pasta_email']);
+    config_gravar('crm_ativo', '0');
+    config_gravar('email_aviso', 'contato@castellomadeiras.com.br');
+
+    igual(['Imediato', 'Até 3 meses', 'Até 6 meses', 'Só pesquisando'], ENVIAR_PRAZOS, 'os quatro valores, literais como no CRM');
+
+    $r = enviar_processar(post_valido(['prazo' => 'Até 3 meses']));
+    igual('Até 3 meses', lead_por_id((int) $r['corpo']['id'])['prazo']);
+
+    /* Campo opcional: ausente passa. */
+    $r = enviar_processar(post_valido(['prazo' => '']));
+    igual(200, $r['http']);
+    igual('', lead_por_id((int) $r['corpo']['id'])['prazo']);
+
+    /* POST adulterado nao pode custar o lead: vira vazio, nao 422. */
+    $r = enviar_processar(post_valido(['prazo' => 'Semana que vem']));
+    igual(200, $r['http'], 'prazo fora da lista nao vira erro');
+    igual('', lead_por_id((int) $r['corpo']['id'])['prazo'], 'prazo fora da lista vira vazio');
+
+    putenv('CASTELLO_EMAIL_DIR');
+});
+
 /* ================= leads_pendentes e leads_reenviar ================= */
 
 teste('leads_pendentes lista quem ainda precisa subir, do mais antigo ao mais novo', function (): void {

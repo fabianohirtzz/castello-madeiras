@@ -16,7 +16,7 @@ require_once __DIR__ . '/crm.php';
 
 /** Campos de conteudo do lead, na ordem do schema. */
 const LEAD_CAMPOS = [
-    'nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'mensagem',
+    'nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'prazo', 'mensagem',
     'pagina', 'referrer',
     'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
 ];

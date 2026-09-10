@@ -21,6 +21,7 @@ const EMAIL_ROTULOS = [
     'busca'        => 'O que busca',
     'modelo'       => 'Modelo de interesse',
     'cidade'       => 'Cidade ou regiao',
+    'prazo'        => 'Quer iniciar a obra',
     'mensagem'     => 'Mensagem',
     'pagina'       => 'Pagina de origem',
     'referrer'     => 'Veio de',

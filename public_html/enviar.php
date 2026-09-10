@@ -33,10 +33,18 @@ const ENVIAR_LIMITES = [
     'busca'    => 120,
     'modelo'   => 120,
     'cidade'   => 120,
+    'prazo'    => 60,
     'mensagem' => 4000,
     'pagina'   => 200,
     'referrer' => 400,
 ];
+
+/**
+ * Os quatro prazos, exatamente como estao no CRM da Castello. Valor fora da
+ * lista vira vazio em vez de 422: o campo e opcional e um POST adulterado nao
+ * pode custar o lead.
+ */
+const ENVIAR_PRAZOS = ['Imediato', 'Até 3 meses', 'Até 6 meses', 'Só pesquisando'];
 
 /**
  * Roda o fluxo inteiro e devolve o que deve virar resposta HTTP.
@@ -85,6 +93,9 @@ function enviar_processar(array $post): array
     }
     foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'] as $utm) {
         $campos[$utm] = mb_substr($texto($post[$utm] ?? ''), 0, 200);
+    }
+    if (!in_array($campos['prazo'], ENVIAR_PRAZOS, true)) {
+        $campos['prazo'] = '';
     }
 
     $digitos = preg_replace('/\D+/', '', $campos['whatsapp']) ?? '';
