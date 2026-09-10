@@ -8,6 +8,15 @@ require_once __DIR__ . '/db.php';
  * associativas ja filtradas por ativo = 1 e ordenadas por ordem, id.
  */
 
+/**
+ * Origem publica do site, sem barra no fim. Usada em canonical, og:url e
+ * og:image, que precisam ser absolutos.
+ *
+ * TROCAR NO DEPLOY FINAL: enquanto o dominio definitivo (castellomadeiras.com.br)
+ * nao aponta para esta hospedagem, o valor e o subdominio de teste.
+ */
+const CASTELLO_URL = 'https://castello.tohospedando.com.br';
+
 /** Conjunto fechado de icones do FAQ. Chaves fixadas pelo contrato. */
 const CASTELLO_ICONES_FAQ = [
     'relogio'  => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>',

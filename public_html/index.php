@@ -18,9 +18,6 @@ $flex_poster  = bloco('flex_video_poster');
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- PROTÓTIPO: noindex enquanto não for produção -->
-  <meta name="robots" content="noindex, nofollow" />
-
   <title>Castello Casas de Madeira | Casa Pronta e Castelo Flex em Tubarão SC</title>
   <meta name="description" content="Casas de madeira em Tubarão e região. Casa Pronta chave na mão em 90 a 120 dias e Castelo Flex semipronta em 45 dias. 5,0 estrelas no Google, 56 avaliações." />
 
@@ -28,9 +25,11 @@ $flex_poster  = bloco('flex_video_poster');
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Castello Casas de Madeira | Casa Pronta e Castelo Flex" />
   <meta property="og:description" content="Casa Pronta chave na mão em 90 a 120 dias e Castelo Flex semipronta em 45 dias. 5,0 estrelas no Google." />
-  <meta property="og:image" content="fotos-casas/casa3.png" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/' ?>" />
+  <meta property="og:image" content="<?= CASTELLO_URL ?>/fotos-casas/casa3.png" />
   <meta property="og:locale" content="pt_BR" />
 
+  <link rel="canonical" href="<?= CASTELLO_URL . '/' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- hero video pronto para scrub no scroll desde o primeiro frame -->

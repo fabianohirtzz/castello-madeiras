@@ -441,7 +441,7 @@ git commit -m "$(printf 'test: confere que o conteudo real migrou por inteiro\n\
 **Interfaces:**
 - Produces: site pronto para ser indexado e medido.
 
-- [ ] **Step 1: Escrever o teste das metatags**
+- [x] **Step 1: Escrever o teste das metatags**
 
 ```php
 teste('metatags de producao estao corretas', function () {
@@ -457,7 +457,7 @@ teste('metatags de producao estao corretas', function () {
 });
 ```
 
-- [ ] **Step 2: Rodar e ver falhar**
+- [x] **Step 2: Rodar e ver falhar**
 
 ```bash
 php testes/smoke.php
@@ -465,11 +465,11 @@ php testes/smoke.php
 
 Esperado: FALHA. O `noindex` está no site desde o protótipo, listado como pendência no `CLAUDE.md`.
 
-- [ ] **Step 3: Remover o `noindex` e ajustar canonical e og:image**
+- [x] **Step 3: Remover o `noindex` e ajustar canonical e og:image**
 
 Tire a metatag de `noindex` das duas páginas. Adicione o canonical de cada uma e troque o `og:image` relativo por URL absoluta. O domínio de produção é `castellomadeiras.com.br`; enquanto o site estiver no subdomínio de teste, use o domínio de teste e troque no deploy final.
 
-- [ ] **Step 4: Forçar HTTPS no `.htaccess`**
+- [x] **Step 4: Forçar HTTPS no `.htaccess`**
 
 ```apache
 RewriteEngine On
@@ -477,7 +477,7 @@ RewriteCond %{HTTPS} !=on
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 ```
 
-- [ ] **Step 5: Rodar até passar e commitar**
+- [x] **Step 5: Rodar até passar e commitar**
 
 ```bash
 php testes/smoke.php

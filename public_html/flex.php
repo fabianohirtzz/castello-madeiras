@@ -24,9 +24,6 @@ $flex_faq     = faq('flex');
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- PROTÓTIPO: noindex enquanto não for produção -->
-  <meta name="robots" content="noindex, nofollow" />
-
   <title>Castelo Flex | Casa de madeira semipronta em 45 dias | Castello</title>
   <meta name="description" content="Castelo Flex é a casa de madeira semipronta da Castello: estrutura montada, coberta e fechada no seu terreno em 45 dias. Você faz o acabamento no seu ritmo." />
 
@@ -34,9 +31,11 @@ $flex_faq     = faq('flex');
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Castelo Flex | Casa de madeira semipronta em 45 dias" />
   <meta property="og:description" content="Estrutura montada, coberta e fechada no seu terreno em 45 dias. O acabamento fica no seu ritmo." />
-  <meta property="og:image" content="fotos-casas/casa7.png" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/flex.php' ?>" />
+  <meta property="og:image" content="<?= CASTELLO_URL ?>/fotos-casas/casa7.png" />
   <meta property="og:locale" content="pt_BR" />
 
+  <link rel="canonical" href="<?= CASTELLO_URL . '/flex.php' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->
