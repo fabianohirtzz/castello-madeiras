@@ -24,6 +24,7 @@ const CASTELLO_ICONES_FAQ = [
     'planta'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h2M10 12h10M4 18h9M17 18h3"/><circle cx="13" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="2" fill="currentColor" stroke="none"/></svg>',
     'clima'    => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M17.7 6.3l1.4-1.4M4.9 19.1l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>',
     'escudo'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg>',
+    'parede'   => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z"/><path d="M3 9.7h9M3 14.3h9M16.4 5v14"/></svg>',
     'fundacao' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/></svg>',
     'garantia' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.1 1.5 2.6-.2.9 2.4 2.3 1.3-.6 2.5.6 2.5-2.3 1.3-.9 2.4-2.6-.2L12 21l-2.1-1.5-2.6.2-.9-2.4-2.3-1.3.6-2.5-.6-2.5 2.3-1.3.9-2.4 2.6.2L12 3Z"/><path d="m9 12 2 2 4-4"/></svg>',
 ];

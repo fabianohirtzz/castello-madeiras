@@ -61,10 +61,10 @@ teste('modelos e passos filtram por modalidade e contexto', function (): void {
     igual(null, painel_tabela('portfolio')['filtro'] ?? null, 'portfolio nao tem filtro');
 });
 
-teste('o FAQ usa o seletor visual de icone com as sete chaves fechadas', function (): void {
+teste('o FAQ usa o seletor visual de icone com as oito chaves fechadas', function (): void {
     igual('icone_faq', painel_tabela('faq')['campos']['icone']['tipo']);
     verdade((bool) (painel_tabela('faq')['campos']['icone']['obrigatorio'] ?? false), 'icone e obrigatorio');
-    igual(7, count(CASTELLO_ICONES_FAQ));
+    igual(8, count(CASTELLO_ICONES_FAQ));
 });
 
 teste('painel_tabela devolve null para chave inventada', function (): void {

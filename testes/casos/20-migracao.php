@@ -10,7 +10,7 @@ teste('a migracao insere a quantidade exata de cada tabela', function () use ($c
     igual(6,  $contagens['portfolio']);
     igual(14, $contagens['avaliacoes']);
     igual(11, $contagens['videos']);
-    igual(12, $contagens['faq'], '7 gerais e 5 da Flex');
+    igual(13, $contagens['faq'], '8 gerais e 5 da Flex');
     igual(10, $contagens['passos'], '5 da Casa Pronta e 5 da Flex');
     igual(21, $contagens['blocos']);
 });
@@ -21,11 +21,12 @@ teste('os quatro modelos Casa Pronta chegaram com preco, area e parede', functio
 
     igual('Compacta', $lista[0]['nome']);
     igual('39,00 m²', $lista[0]['area']);
-    igual('Parede vertical', $lista[0]['parede']);
+    igual('Madeira vertical', $lista[0]['parede']);
     igual('69.900', $lista[0]['preco']);
     igual('90 a 120 dias', $lista[0]['prazo']);
 
     igual('Conforto', $lista[1]['nome']);
+    igual('Madeira horizontal', $lista[1]['parede'], 'so a Compacta e vertical');
     igual('79.988', $lista[1]['preco']);
 
     igual('Família', $lista[2]['nome']);
@@ -111,9 +112,9 @@ teste('a home mostra 8 videos por causa do limite acordado na reuniao', function
     igual(11, count(videos(0)), 'os 11 continuam cadastrados e ativos');
 });
 
-teste('as 7 perguntas do FAQ chegaram com o icone certo em cada uma', function (): void {
+teste('as 8 perguntas do FAQ chegaram com o icone certo em cada uma', function (): void {
     $lista = faq('geral');
-    igual(7, count($lista));
+    igual(8, count($lista));
 
     $esperado = [
         ['Quanto tempo leva pra minha casa ficar pronta?', 'relogio'],
@@ -121,6 +122,7 @@ teste('as 7 perguntas do FAQ chegaram com o icone certo em cada uma', function (
         ['Posso personalizar a planta e os acabamentos?',  'planta'],
         ['Casa de madeira é confortável o ano todo?',      'clima'],
         ['A casa é resistente e dura com o tempo?',        'escudo'],
+        ['Qual a diferença entre madeira vertical e horizontal?', 'parede'],
         ['Vocês cuidam da fundação e do terreno?',         'fundacao'],
         ['Que garantias eu tenho com a Castello?',         'garantia'],
     ];

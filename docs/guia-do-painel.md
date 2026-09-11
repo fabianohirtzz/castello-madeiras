@@ -50,7 +50,7 @@ No celular o menu fica escondido: toque no botão de três risquinhos, no canto 
    - **Modalidade**: Casa Pronta ou Castelo Flex.
    - **Nome do modelo**: como Compacta, Família.
    - **Área**: escreva com a unidade, como `39,00 m²`.
-   - **Parede**: `Parede vertical` ou `Parede dupla`. Na Flex pode deixar vazio: o site mostra o prazo no lugar.
+   - **Parede**: `Madeira vertical` ou `Madeira horizontal`, que é o sentido das tábuas na parede. Na Flex pode deixar vazio: o site mostra o prazo no lugar.
    - **Preço**: só o número, como `69.900`. O site coloca o R$ sozinho. Deixe vazio para o site mostrar **Sob consulta** (é assim que a Flex está hoje).
    - **Prazo**: como `90 a 120 dias` ou `45 dias`.
    - **Foto**: JPG, PNG ou WEBP, até 5 MB. Foto na horizontal fica melhor no card.

@@ -240,9 +240,11 @@ Valores iniciais: `pronta_prazo` = `90 a 120 dias`, `flex_prazo` = `45 dias`. Os
 
 Conjunto fechado. O campo `faq.icone` só aceita estas chaves:
 
-`relogio`, `chave`, `planta`, `clima`, `escudo`, `fundacao`, `garantia`
+`relogio`, `chave`, `planta`, `clima`, `escudo`, `parede`, `fundacao`, `garantia`
 
 O SVG de cada uma sai do `index.html` atual, na seção `#faq`, na ordem em que as perguntas aparecem.
+O `parede` é o único desenhado depois, para a pergunta sobre madeira vertical e horizontal
+que entrou em 2026-09-11.
 
 ---
 

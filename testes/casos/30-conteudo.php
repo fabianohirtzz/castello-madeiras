@@ -123,13 +123,13 @@ teste('bloco devolve o valor e cai no padrao quando vazio', function (): void {
     igual('reserva', bloco('chave_inexistente', 'reserva'));
 });
 
-teste('icone_faq devolve o SVG das sete chaves fechadas', function (): void {
-    foreach (['relogio', 'chave', 'planta', 'clima', 'escudo', 'fundacao', 'garantia'] as $chave) {
+teste('icone_faq devolve o SVG das oito chaves fechadas', function (): void {
+    foreach (['relogio', 'chave', 'planta', 'clima', 'escudo', 'parede', 'fundacao', 'garantia'] as $chave) {
         $svg = icone_faq($chave);
         contem('<svg viewBox="0 0 24 24" aria-hidden="true">', $svg, "icone $chave");
         contem('</svg>', $svg, "icone $chave");
     }
-    igual(7, count(CASTELLO_ICONES_FAQ));
+    igual(8, count(CASTELLO_ICONES_FAQ));
 });
 
 teste('icone_faq devolve string vazia para chave desconhecida', function (): void {

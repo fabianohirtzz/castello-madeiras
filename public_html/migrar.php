@@ -26,10 +26,10 @@ if (!defined('CASTELLO_UPLOADS')) {
  * fachada, planta baixa e a tabela de precos de setembro de 2026.
  */
 const MIGRAR_MODELOS = [
-    ['pronta', 'Compacta', '39,00 m²', 'Parede vertical', '69.900', '90 a 120 dias', 'fotos-casas/casa4.webp', 'Casa de madeira compacta de dois pavimentos da Castello', 0],
-    ['pronta', 'Conforto', '42,75 m²', 'Parede dupla', '79.988', '90 a 120 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
-    ['pronta', 'Família', '51,00 m²', 'Parede dupla', '87.997', '90 a 120 dias', 'fotos-casas/casa5.webp', 'Casa de madeira Castello com varanda ampla em volta e jardim', 1],
-    ['pronta', 'Ampla', '59,75 m²', 'Parede dupla', '97.776', '90 a 120 dias', 'fotos-casas/casa3.webp', 'Sobrado de madeira Castello à beira da água com vista para a ponte', 0],
+    ['pronta', 'Compacta', '39,00 m²', 'Madeira vertical', '69.900', '90 a 120 dias', 'fotos-casas/casa4.webp', 'Casa de madeira compacta de dois pavimentos da Castello', 0],
+    ['pronta', 'Conforto', '42,75 m²', 'Madeira horizontal', '79.988', '90 a 120 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
+    ['pronta', 'Família', '51,00 m²', 'Madeira horizontal', '87.997', '90 a 120 dias', 'fotos-casas/casa5.webp', 'Casa de madeira Castello com varanda ampla em volta e jardim', 1],
+    ['pronta', 'Ampla', '59,75 m²', 'Madeira horizontal', '97.776', '90 a 120 dias', 'fotos-casas/casa3.webp', 'Sobrado de madeira Castello à beira da água com vista para a ponte', 0],
     ['flex', 'Castelo Flex 36', '36,00 m²', '', '43.000', '45 dias', 'fotos-flex/flex-36.webp', 'Castelo Flex de 36 m²: casa de madeira térrea com varanda coberta e janela com veneziana', 0],
     ['flex', 'Castelo Flex 39', '39,00 m²', '', '47.000', '45 dias', 'fotos-flex/flex-39.webp', 'Castelo Flex de 39 m²: casa de madeira térrea com varanda ampla na frente', 0],
     ['flex', 'Castelo Flex 42', '42,75 m²', '', '51.000', '45 dias', 'fotos-flex/flex-42.webp', 'Castelo Flex de 42,75 m²: casa de madeira térrea com telhado de telha cerâmica e varanda', 0],
@@ -72,6 +72,7 @@ const MIGRAR_FAQ = [
     ['geral', 'Posso personalizar a planta e os acabamentos?', 'Sim, 100% personalizável. Planta, acabamentos, revestimentos, janelas, portas e piso são escolhidos do seu jeito. Cada projeto Castello é exclusivo e desenhado pra sua rotina e o seu gosto.', 'planta'],
     ['geral', 'Casa de madeira é confortável o ano todo?', 'É um dos maiores diferenciais. A madeira mantém o ambiente fresco no calor e aconchegante no frio, com um conforto térmico bem acima da alvenaria comum em todas as estações.', 'clima'],
     ['geral', 'A casa é resistente e dura com o tempo?', 'Construímos com madeira de qualidade e prego galvanizado em toda a estrutura, com equipe experiente na obra todo dia. Bem cuidada, a casa atravessa gerações e ainda valoriza como patrimônio.', 'escudo'],
+    ['geral', 'Qual a diferença entre madeira vertical e horizontal?', 'Muda o sentido das tábuas na parede. Na vertical a parede é simples e a fiação desce por perfis aparentes por dentro da casa. Na horizontal a parede é mais resistente e pode ser duplada, com a fiação embutida em conduíte. Duplar a parede é opcional, a gente combina no projeto.', 'parede'],
     ['geral', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte do processo. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança em cada etapa, do primeiro passo até a chave na mão.', 'fundacao'],
     ['geral', 'Que garantias eu tenho com a Castello?', 'Você tem a garantia da construção, o compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo com uma empresa só.', 'garantia'],
     ['flex', 'Em quanto tempo a Castelo Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.', 'relogio'],
