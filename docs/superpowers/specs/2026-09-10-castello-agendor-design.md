@@ -403,13 +403,16 @@ A recusa passou a contar como entrega: a pessoa está no CRM e o negócio com aq
 
 O CRM falso não pegava o caso porque imitava só o caminho feliz. Agora impõe a restrição.
 
-### 11.5 Campos customizados — NÃO VERIFICÁVEL pela API
+### 11.5 Campos customizados — CONFERIDO no painel web em 2026-09-10
 
-O conector manda `customFields` exatamente como o swagger documenta: um mapa de `identifier` para valor. Não há como confirmar pela API que o valor gravou, porque **o Agendor não devolve valores de campo customizado em pessoa nenhuma**: nas 50 pessoas lidas da conta, criadas pela própria equipe da Castello pelo CRM, a chave `customFields` não aparece em nenhuma, embora o `PersonEntity` do swagger a documente. Não existe endpoint que leia esses valores; `/custom_fields/people` devolve só as definições.
+O conector manda `customFields` como o swagger documenta: um mapa de `identifier` para valor. **Grava.** Conferido na pessoa de teste pelo painel web do Agendor.
 
-Some-se a isso que `anuncio_de_origem` está com `accessLevel: "read_only"` na conta, o que pode significar que a API não o aceita em escrita — e não se sabe se um campo recusado invalida o objeto `customFields` inteiro ou só aquela chave.
+A conferência precisou ser visual porque a API não ajuda: **o Agendor não devolve valores de campo customizado em pessoa nenhuma**. Nas 50 pessoas lidas da conta, criadas pela própria equipe da Castello pelo CRM, a chave `customFields` não aparece em nenhuma, embora o `PersonEntity` do swagger a documente, e não existe endpoint que leia esses valores — `/custom_fields/people` devolve só as definições.
 
-**Só o painel web do Agendor responde.** Fica como conferência para a Castello, descrita em 13.
+Duas consequências para quem mexer nisso depois:
+
+1. **Nenhum teste automatizado cobre a gravação desses três campos contra a API real.** O que a suíte cobre é o payload: `crm_payload_pessoa` monta o `customFields` certo. Que o Agendor aceite é fato observado uma vez, no painel, não medido continuamente.
+2. `anuncio_de_origem` está com `accessLevel: "read_only"` na conta e ainda assim a escrita passou. Ou seja, `read_only` ali restringe a edição por usuário no painel, não a escrita por integração. Não tirar essa chave do payload achando que ela é recusada.
 
 ---
 
@@ -426,8 +429,8 @@ Some-se a isso que `anuncio_de_origem` está com `accessLevel: "read_only"` na c
 
 ## 13. Pendências que dependem do cliente
 
-- **Conferir os três campos customizados no painel do Agendor.** Só o painel web responde (11.5). Abrir a pessoa de teste em `https://web.agendor.com.br/sistema/pessoas/historico.php?id=71415566` e olhar "Cidade da Obra" (esperado: `Tubarão / SC`), "Pretende iniciar a obra em:" (esperado: `Até 3 meses`) e "Anúncio de Origem" (esperado: `direto`). Se vierem vazios, o conector está mandando para o vazio e o remédio depende de qual falhou: se só o "Anúncio de Origem", tirar essa chave do payload resolve, porque ela é `read_only`; se os três, o formato do `customFields` precisa ser revisto com o suporte do Agendor.
-- **Apagar os registros de teste.** A API não apaga negócio, só pessoa, então três negócios ficaram órfãos no funil, renomeados para `APAGAR - teste de integracao do site 1/2/3 (nao e cliente)`. Some-se a pessoa de teste `TESTE INTEGRACAO Site C DDD55`, que fica de propósito até a conferência acima. Todos saem em segundos pelo painel do Agendor.
+- ~~Conferir os três campos customizados no painel do Agendor.~~ **Feito em 2026-09-10**, ver 11.5: gravam.
+- ~~Apagar os registros de teste.~~ **Feito em 2026-09-10.** Fica a lição, para a próxima validação em conta de cliente: a API do Agendor apaga pessoa (`DELETE /people/{id}`) mas **não apaga negócio** — `/deals/{id}` só aceita `get` e `put`. Apagar a pessoa deixa o negócio órfão no funil, visível para a equipe de vendas. Quem for testar de novo já sabe que a limpeza final passa pelo painel web.
 - **Token do Agendor em produção.** O token já está gravado em `config/segredos.php` no servidor de teste, por `ferramentas/instalar-token.php`. Quando o site mudar para o domínio definitivo, repetir esse passo no servidor novo.
 - **Confirmar o campo de prazo no formulário.** A decisão de adicionar foi tomada aqui com base no uso real da conta; vale confirmar com a Castello, junto com as outras pendências.
 - **Catálogo da Casa Pronta.** Assunto separado desta integração, que não a bloqueia, mas que ficou visível durante o diagnóstico e está descrito em detalhe abaixo.
