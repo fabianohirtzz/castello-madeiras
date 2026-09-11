@@ -104,6 +104,7 @@ function crm_falso_subir(?int $porta = null)
     @unlink(crm_falso_arquivo());
     @unlink(sys_get_temp_dir() . '/crm-falso-todas.json');
     @unlink(sys_get_temp_dir() . '/crm-falso-pessoas.json');
+    @unlink(sys_get_temp_dir() . '/crm-falso-negocios.json');
     $comando = escapeshellarg(PHP_BINARY) . ' -S 127.0.0.1:' . $porta . ' ' . escapeshellarg(raiz() . '/testes/crm-falso.php');
     $tubos = [];
     /* bypass_shell e obrigatorio no Windows: sem ele o proc_open passa pelo
@@ -583,6 +584,48 @@ teste('crm_enviar trata 401, 429, resposta invalida e busca que falha', function
     crm_teste_config();
     config_gravar('crm_base', 'http://127.0.0.1:8799');
     igual('crm_conexao', crm_enviar(LEAD_EXEMPLO)['erro']);
+});
+
+teste('o mesmo lead mandado duas vezes nao vira falha eterna na fila', function (): void {
+    /* Encontrado no teste em producao de 2026-09-10: o Agendor recusa um
+       segundo negocio com o mesmo titulo para a mesma pessoa (HTTP 400). O
+       titulo sai de marcador + prazo + nome, entao duas vezes o mesmo
+       formulario produzem o mesmo titulo. Antes da correcao o lead ficava
+       em erro e o reenvio gastava as cinco tentativas sem nenhuma chance de
+       sucesso, porque a resposta nunca mudaria.
+
+       O certo e tratar como entregue: a pessoa esta no CRM, o negocio com
+       aquele titulo esta no funil, e o e-mail de aviso (que sai sempre, em
+       enviar.php) leva a mensagem nova para a equipe. */
+    $servidor = crm_falso_subir();
+    try {
+        crm_teste_limpar();
+        crm_teste_config();
+
+        $lead = ['nome' => 'Repetido da Silva', 'whatsapp' => '(48) 98888-7777', 'prazo' => 'Imediato'];
+
+        $primeiro = crm_enviar($lead);
+        verdade($primeiro['ok'] === true, 'primeiro envio entra normalmente: ' . json_encode($primeiro));
+        $pessoa = (int) $primeiro['pessoa_id'];
+        verdade($pessoa > 0, 'primeiro envio devolve a pessoa');
+
+        $segundo = crm_enviar($lead);
+        verdade($segundo['ok'] === true, 'segundo envio identico e tratado como entregue: ' . json_encode($segundo));
+        igual(null, $segundo['erro'], 'segundo envio nao reporta erro');
+        igual($pessoa, (int) $segundo['pessoa_id'], 'segundo envio reaproveita a mesma pessoa');
+        contem('only be one deal with this title', (string) $segundo['resposta'],
+            'a resposta guardada preserva o motivo, para a auditoria saber que nao nasceu negocio novo');
+
+        /* Um titulo diferente para a MESMA pessoa continua criando negocio:
+           a regra e por titulo, nao por pessoa. Sem esta metade, a correcao
+           poderia estar engolindo qualquer 400 do negocio. */
+        $outro = crm_enviar(['nome' => 'Repetido da Silva', 'whatsapp' => '(48) 98888-7777', 'prazo' => 'Até 6 meses']);
+        verdade($outro['ok'] === true, 'prazo diferente muda o titulo e cria negocio de verdade');
+        igual(null, $outro['erro'], 'esse nao e o caso de repetido');
+        falso(str_contains((string) $outro['resposta'], 'only be one deal'), 'e negocio novo mesmo, nao repetido');
+    } finally {
+        crm_falso_derrubar($servidor);
+    }
 });
 
 teste('crm_enviar respeita o orcamento de tempo do conjunto', function (): void {

@@ -38,9 +38,10 @@ declare(strict_types=1);
  * pessoa criada numa requisicao ser encontrada na seguinte.
  */
 
-const FALSO_PESSOAS = '/crm-falso-pessoas.json';
-const FALSO_ULTIMA  = '/crm-falso-ultima.json';
-const FALSO_TODAS   = '/crm-falso-todas.json';
+const FALSO_PESSOAS  = '/crm-falso-pessoas.json';
+const FALSO_ULTIMA   = '/crm-falso-ultima.json';
+const FALSO_TODAS    = '/crm-falso-todas.json';
+const FALSO_NEGOCIOS = '/crm-falso-negocios.json';
 
 function falso_arquivo(string $nome): string
 {
@@ -194,6 +195,29 @@ if ($metodo === 'POST' && $caminho === '/people') {
 
 if ($metodo === 'POST' && preg_match('#^/people/(\d+)/deals$#', $caminho, $partes) === 1) {
     $entrada = json_decode($corpo, true);
+
+    /* Regra da API de verdade, medida na conta da Castello em 2026-09-10:
+       um segundo negocio com o MESMO titulo para a MESMA pessoa e recusado
+       com HTTP 400 e esta mensagem, sem criar nada. Como o titulo sai de
+       marcador + prazo + nome, quem manda o formulario duas vezes com os
+       mesmos dados cai exatamente aqui.
+
+       Esta fake nao impunha a regra, e por isso a suite inteira passava
+       enquanto o caso quebrava em producao. Foi o teste na conta real que
+       encontrou, e a licao ficou aqui: a fake imita a restricao, nao so o
+       caminho feliz. */
+    $titulo   = (string) (is_array($entrada) ? ($entrada['title'] ?? '') : '');
+    $chave    = $partes[1] . '|' . $titulo;
+    $negocios = falso_ler(FALSO_NEGOCIOS);
+    if (in_array($chave, $negocios, true)) {
+        falso_responder(400, ['errors' => [
+            'Title There can only be one deal with this title for this organization/person',
+        ]]);
+        return;
+    }
+    $negocios[] = $chave;
+    falso_gravar(FALSO_NEGOCIOS, $negocios);
+
     $id = 90000000 + count(falso_ler(FALSO_TODAS));
     falso_responder(201, ['data' => [
         'id'      => $id,

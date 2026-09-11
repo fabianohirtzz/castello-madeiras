@@ -40,6 +40,13 @@ const CRM_CAMPO_ANUNCIO = 'anuncio_de_origem';
 const CRM_CAMPO_PRAZO = 'pretende_iniciar_a_obra_em';
 
 /**
+ * Trecho da mensagem com que o Agendor recusa um negocio repetido. Medido na
+ * conta da Castello em 2026-09-10; a mensagem inteira e "Title There can only
+ * be one deal with this title for this organization/person".
+ */
+const CRM_ERRO_TITULO_REPETIDO = 'only be one deal with this title';
+
+/**
  * Token da conta.
  *
  * O ambiente vem primeiro para o teste poder trocar sem redefinir constante,
@@ -285,6 +292,46 @@ function crm_cortar(string $texto): string
     return mb_substr($texto, 0, CRM_RESPOSTA_MAX);
 }
 
+/**
+ * O Agendor recusou o negocio so porque ja existe um com o mesmo titulo
+ * para aquela pessoa?
+ *
+ * Medido na conta real da Castello em 2026-09-10: a API devolve HTTP 400 com
+ * "Title There can only be one deal with this title for this
+ * organization/person". Como crm_titulo_negocio monta o titulo a partir de
+ * marcador, prazo e nome, o mesmo visitante mandando o formulario duas vezes
+ * com os mesmos dados produz o mesmo titulo e cai aqui.
+ *
+ * A comparacao e pelo texto porque o 400 sozinho nao distingue este caso de
+ * um payload invalido de verdade, que precisa continuar sendo erro.
+ *
+ * O corpo e lido de 'bruto', e nao de 'dados': crm_requisitar so decodifica o
+ * JSON quando a resposta foi de sucesso, entao numa recusa 'dados' vem nulo.
+ */
+function crm_negocio_repetido(array $resposta): bool
+{
+    if (($resposta['http'] ?? 0) !== 400) {
+        return false;
+    }
+
+    $bruto = (string) ($resposta['bruto'] ?? '');
+    $dados = json_decode($bruto, true);
+    $erros = is_array($dados) ? ($dados['errors'] ?? null) : null;
+
+    if (is_array($erros)) {
+        foreach ($erros as $erro) {
+            if (is_string($erro) && stripos($erro, CRM_ERRO_TITULO_REPETIDO) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /* Corpo em formato inesperado: cai para o texto cru em vez de desistir,
+       porque errar aqui custa um lead marcado como falha eterna. */
+    return stripos($bruto, CRM_ERRO_TITULO_REPETIDO) !== false;
+}
+
 /** Traduz o HTTP num codigo de erro nosso. */
 function crm_erro_http(int $http): string
 {
@@ -430,6 +477,16 @@ function crm_enviar(array $lead): array
     /* 3. cria o negocio. E ele que aparece no funil. */
     $negocio = crm_requisitar('POST', '/people/' . $pessoaId . '/deals', crm_payload_negocio($lead), $prazoFinal);
     if (!$negocio['ok']) {
+        /* Negocio repetido nao e falha: a pessoa esta no CRM e o negocio com
+           aquele titulo ja esta no funil. Reenviar nunca ia adiantar, porque
+           o titulo e sempre o mesmo, entao tratar como erro so queimaria as
+           cinco tentativas da fila e deixaria o lead marcado em vermelho para
+           sempre. A equipe fica sabendo do novo contato pelo e-mail de aviso,
+           que sai sempre. Guardamos o corpo da recusa na resposta para a
+           auditoria enxergar que nenhum negocio novo nasceu. */
+        if (crm_negocio_repetido($negocio)) {
+            return crm_resultado(true, $negocio['http'], $negocio['bruto'], null, $pessoaId);
+        }
         return crm_resultado(false, $negocio['http'], $negocio['bruto'], $negocio['erro'], $pessoaId);
     }
 
