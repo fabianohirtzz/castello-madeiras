@@ -353,7 +353,7 @@ E o `node testes/formulario.test.js` cobre o campo novo no lado do JS.
 
 ## 11. Validação contra a conta real
 
-Dois pontos não se resolvem com servidor falso, porque dependem de como o Agendor de verdade se comporta. O primeiro **já foi medido**; o segundo continua aberto.
+Nada aqui se resolve com servidor falso: depende de como o Agendor de verdade se comporta. Em 2026-09-10 a integração foi ligada no servidor de teste e quatro leads reais foram enviados pelo formulário publicado. Tudo abaixo, menos 11.5, está medido contra a conta da Castello.
 
 ### 11.1 Filtro de telefone — MEDIDO em 2026-09-10
 
@@ -370,15 +370,46 @@ Leitura feita contra a conta real, tomando como referência uma pessoa que já e
 
 Três conclusões, todas já refletidas na seção 5.1:
 
-1. **O filtro é `phone`**, não `whatsapp` nem `mobile_phone`. Os dois últimos não acharam nem a pessoa de referência, porque o telefone dela mora no campo `work`. Só o `phone` varre todos os campos.
+1. **O filtro é `phone`**, não `whatsapp` nem `mobile_phone`. Os dois últimos não acharam nem a pessoa de referência, porque o telefone dela mora no campo `work`. Que o `phone` varra todos os campos veio da documentação, não desta medição; a medição no campo que o site usa está em 11.3.
 2. **A busca vai sem DDI.** Com `55` na frente, o retorno é vazio.
 3. O filtro ignora a pontuação, então dígitos puros e número formatado dão no mesmo.
 
 Foi esta medição que revelou o defeito corrigido em 5.1: gravar o telefone só com DDI tornaria a integração incapaz de reencontrar as pessoas que ela mesma cria.
 
-### 11.2 `dealStage`: sequência ou id — ABERTO, exige escrita
+### 11.2 `dealStage`: sequência ou id — MEDIDO em 2026-09-10
 
-Confirmar que `dealStage: 1` põe o negócio em "Contato", e não `dealStage: 3845540`. A única forma é criar um negócio de verdade e apagar em seguida. É a **única escrita** proposta neste documento, e acontece anunciada antes e com a limpeza confirmada depois. Sem essa validação, o erro só apareceria no primeiro lead real, na etapa errada.
+**Sequência.** Com `crm_etapa = 1`, o negócio nasceu em `dealStage: {"id": 3845540, "name": "Contato", "sequence": 1}`, dentro do funil 904296. Se a API quisesse o id, `1` não corresponderia a etapa nenhuma. Medido com leads de verdade enviados pelo formulário do site publicado, listados em 11.4.
+
+### 11.3 Dedup por telefone gravado em `contact.mobile` — MEDIDO em 2026-09-10
+
+Esta era a única afirmação da seção 11.1 que vinha da documentação e não de medição: o filtro `phone` foi medido contra uma pessoa cujo telefone morava em `contact.work`, e o conector grava a chave de busca em `contact.mobile`.
+
+Agora está medido no campo certo. O formulário foi enviado duas vezes com o mesmo telefone, e o `GET /people?phone=48990000001` encontrou a pessoa que o próprio site tinha criado, com `contact.mobile` gravado como `(48) 99000-0001`. O segundo envio **não criou pessoa nova**: anexou um segundo negócio à mesma pessoa.
+
+O mesmo teste rodou com um número de DDD 55 (`(55) 99000-0002`, Santa Maria/RS), que é o caso em que a normalização poderia confundir DDD com DDI. Uma pessoa, um negócio, sem duplicata.
+
+### 11.4 Título repetido recusa o negócio — MEDIDO em 2026-09-10
+
+Descoberto no teste em produção, e o achado mais caro desta validação. O Agendor **recusa um segundo negócio com o mesmo título para a mesma pessoa**:
+
+```
+HTTP 400
+{"errors":["Title There can only be one deal with this title for this organization/person"]}
+```
+
+O título sai de marcador + prazo + nome (seção 5.2), então é inteiramente determinístico: o mesmo visitante mandando o formulário duas vezes com os mesmos dados produz o mesmo título. Antes da correção o lead ficava com `crm_status = 'erro'` e a fila de reenvio gastava as cinco tentativas sem nenhuma chance de sucesso, porque a resposta nunca mudaria.
+
+A recusa passou a contar como entrega: a pessoa está no CRM e o negócio com aquele título já está no funil. A equipe fica sabendo do contato novo pelo e-mail de aviso, que sai sempre, antes de qualquer chamada ao CRM. O corpo da recusa continua guardado em `crm_resposta`, para a auditoria enxergar que nenhum negócio novo nasceu.
+
+O CRM falso não pegava o caso porque imitava só o caminho feliz. Agora impõe a restrição.
+
+### 11.5 Campos customizados — NÃO VERIFICÁVEL pela API
+
+O conector manda `customFields` exatamente como o swagger documenta: um mapa de `identifier` para valor. Não há como confirmar pela API que o valor gravou, porque **o Agendor não devolve valores de campo customizado em pessoa nenhuma**: nas 50 pessoas lidas da conta, criadas pela própria equipe da Castello pelo CRM, a chave `customFields` não aparece em nenhuma, embora o `PersonEntity` do swagger a documente. Não existe endpoint que leia esses valores; `/custom_fields/people` devolve só as definições.
+
+Some-se a isso que `anuncio_de_origem` está com `accessLevel: "read_only"` na conta, o que pode significar que a API não o aceita em escrita — e não se sabe se um campo recusado invalida o objeto `customFields` inteiro ou só aquela chave.
+
+**Só o painel web do Agendor responde.** Fica como conferência para a Castello, descrita em 13.
 
 ---
 
@@ -395,7 +426,9 @@ Confirmar que `dealStage: 1` põe o negócio em "Contato", e não `dealStage: 38
 
 ## 13. Pendências que dependem do cliente
 
-- **Token do Agendor em produção.** O token usado no diagnóstico precisa ser o mesmo, ou um dedicado ao site, gravado em `config/segredos.php` no servidor.
+- **Conferir os três campos customizados no painel do Agendor.** Só o painel web responde (11.5). Abrir a pessoa de teste em `https://web.agendor.com.br/sistema/pessoas/historico.php?id=71415566` e olhar "Cidade da Obra" (esperado: `Tubarão / SC`), "Pretende iniciar a obra em:" (esperado: `Até 3 meses`) e "Anúncio de Origem" (esperado: `direto`). Se vierem vazios, o conector está mandando para o vazio e o remédio depende de qual falhou: se só o "Anúncio de Origem", tirar essa chave do payload resolve, porque ela é `read_only`; se os três, o formato do `customFields` precisa ser revisto com o suporte do Agendor.
+- **Apagar os registros de teste.** A API não apaga negócio, só pessoa, então três negócios ficaram órfãos no funil, renomeados para `APAGAR - teste de integracao do site 1/2/3 (nao e cliente)`. Some-se a pessoa de teste `TESTE INTEGRACAO Site C DDD55`, que fica de propósito até a conferência acima. Todos saem em segundos pelo painel do Agendor.
+- **Token do Agendor em produção.** O token já está gravado em `config/segredos.php` no servidor de teste, por `ferramentas/instalar-token.php`. Quando o site mudar para o domínio definitivo, repetir esse passo no servidor novo.
 - **Confirmar o campo de prazo no formulário.** A decisão de adicionar foi tomada aqui com base no uso real da conta; vale confirmar com a Castello, junto com as outras pendências.
 - **Catálogo da Casa Pronta.** Assunto separado desta integração, que não a bloqueia, mas que ficou visível durante o diagnóstico e está descrito em detalhe abaixo.
 
