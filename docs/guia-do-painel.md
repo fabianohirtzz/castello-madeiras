@@ -25,7 +25,7 @@ O menu da esquerda tem uma tela para cada parte do site, em dois grupos. **Conte
 
 | Tela | O que muda no site |
 |---|---|
-| **Modelos** *(Conteúdo)* | Os cards de casa com área, parede e preço. Tem um filtro para Casa Pronta e outro para Castelo Flex. |
+| **Modelos** *(Conteúdo)* | Os cards de casa com área, parede e preço. Tem um filtro para Casa Pronta e outro para Castello Flex. |
 | **Portfólio** *(Conteúdo)* | A galeria de casas entregues. |
 | **Avaliações** *(Conteúdo)* | Os depoimentos do Google que rolam na home. |
 | **Vídeos** *(Conteúdo)* | Os vídeos do Instagram na home. |
@@ -44,10 +44,10 @@ No celular o menu fica escondido: toque no botão de três risquinhos, no canto 
 
 ## 3. Cadastrar um modelo de casa
 
-1. Tela **Modelos**. Escolha o filtro **Casa Pronta** ou **Castelo Flex**.
+1. Tela **Modelos**. Escolha o filtro **Casa Pronta** ou **Castello Flex**.
 2. Toque em **Adicionar modelo**.
 3. Preencha:
-   - **Modalidade**: Casa Pronta ou Castelo Flex.
+   - **Modalidade**: Casa Pronta ou Castello Flex.
    - **Nome do modelo**: como Compacta, Família.
    - **Área**: escreva com a unidade, como `39,00 m²`.
    - **Parede**: `Madeira vertical` ou `Madeira horizontal`, que é o sentido das tábuas na parede. Na Flex pode deixar vazio: o site mostra o prazo no lugar.
@@ -87,7 +87,7 @@ Os itens desativados aparecem no fim da lista, marcados como inativos.
 
 ## 7. Editar os textos
 
-Tela **Textos**. Cada campo tem um rótulo dizendo onde ele aparece no site, por exemplo *Título do topo* ou *Prazo da Castelo Flex*. Mude o que quiser e toque em **Salvar textos**.
+Tela **Textos**. Cada campo tem um rótulo dizendo onde ele aparece no site, por exemplo *Título do topo* ou *Prazo da Castello Flex*. Mude o que quiser e toque em **Salvar textos**.
 
 Dois detalhes:
 

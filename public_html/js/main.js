@@ -704,6 +704,201 @@
     }
   }
 
+  /* ---------- Ver mais do modelo (galeria + descrição) ----------
+     Cada card traz um <template> com o conteúdo do popup; abrir clona o
+     template para dentro de #modelbox, então as fotos grandes só baixam quando
+     alguém pede. O botão de orçamento de dentro fecha o popup antes de o
+     modal de orçamento abrir (o listener do documento vem depois deste). */
+  var modelbox = document.getElementById('modelbox');
+  if (modelbox) {
+    var mbConteudo = document.getElementById('modelboxConteudo');
+    var mbVoltar = null;
+    var mbIdx = 0;
+
+    function mbIr(i) {
+      var fotos = mbConteudo.querySelectorAll('.modelbox__foto');
+      var minis = mbConteudo.querySelectorAll('.modelbox__mini');
+      if (!fotos.length) return;
+      mbIdx = (i + fotos.length) % fotos.length;
+      fotos.forEach(function (f, k) { f.classList.toggle('is-active', k === mbIdx); });
+      minis.forEach(function (m, k) {
+        m.classList.toggle('is-active', k === mbIdx);
+        m.setAttribute('aria-current', k === mbIdx ? 'true' : 'false');
+      });
+    }
+    function mbAbrir(botao) {
+      var tpl = document.getElementById(botao.getAttribute('data-modelo-ver'));
+      if (!tpl) return;
+      mbVoltar = botao;
+      mbConteudo.innerHTML = '';
+      mbConteudo.appendChild(tpl.content.cloneNode(true));
+      var nome = mbConteudo.querySelector('.modelbox__nome');
+      modelbox.setAttribute('aria-label', nome ? nome.textContent : 'Detalhes do modelo');
+      mbIr(0);
+      modelbox.hidden = false;
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(function () { modelbox.classList.add('is-open'); });
+      setTimeout(function () { modelbox.querySelector('.modelbox__fechar').focus({ preventScroll: true }); }, 60);
+    }
+    function mbFechar(devolverFoco) {
+      if (modelbox.hidden) return;
+      modelbox.classList.remove('is-open');
+      document.body.classList.remove('modal-open');
+      setTimeout(function () { modelbox.hidden = true; mbConteudo.innerHTML = ''; }, 300);
+      if (devolverFoco && mbVoltar) { try { mbVoltar.focus({ preventScroll: true }); } catch (e) {} }
+    }
+
+    document.addEventListener('click', function (e) {
+      var ver = e.target.closest('[data-modelo-ver]');
+      if (ver) { e.preventDefault(); mbAbrir(ver); }
+    });
+    modelbox.addEventListener('click', function (e) {
+      if (e.target.closest('[data-modelbox-fechar]')) { mbFechar(true); return; }
+      if (e.target.closest('[data-galeria-prev]')) { mbIr(mbIdx - 1); return; }
+      if (e.target.closest('[data-galeria-next]')) { mbIr(mbIdx + 1); return; }
+      var ir = e.target.closest('[data-galeria-ir]');
+      if (ir) { mbIr(parseInt(ir.getAttribute('data-galeria-ir'), 10) || 0); return; }
+      if (e.target.closest('[data-quote-open]')) mbFechar(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (modelbox.hidden) return;
+      if (e.key === 'Escape') mbFechar(true);
+      else if (e.key === 'ArrowLeft') mbIr(mbIdx - 1);
+      else if (e.key === 'ArrowRight') mbIr(mbIdx + 1);
+      else if (e.key === 'Tab') {
+        var f = modelbox.querySelectorAll('button, a[href]');
+        var vis = Array.prototype.filter.call(f, function (el) { return el.offsetParent !== null; });
+        if (!vis.length) return;
+        var first = vis[0], last = vis[vis.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    var mbToque = 0;
+    modelbox.addEventListener('touchstart', function (e) { mbToque = e.changedTouches[0].clientX; }, { passive: true });
+    modelbox.addEventListener('touchend', function (e) {
+      if (!e.target.closest('.modelbox__palco')) return;
+      var dx = e.changedTouches[0].clientX - mbToque;
+      if (Math.abs(dx) > 45) mbIr(mbIdx + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  }
+
+  /* ---------- Carrossel infinito dos modelos (Castello Flex) ----------
+     Três por vez no desktop, dois no tablet, um no celular; anda de um em um.
+     O "infinito" vem de cópias dos cards nas duas pontas: quando a trilha
+     chega numa cópia, salta sem animação para o card original equivalente.
+     As cópias ficam inert, fora do foco e do leitor de tela. */
+  document.querySelectorAll('[data-carrossel]').forEach(function (car) {
+    var viewport = car.querySelector('.mcarrossel__viewport');
+    var track = car.querySelector('.mcarrossel__track');
+    var originais = Array.prototype.slice.call(track.children);
+    var total = originais.length;
+    if (total < 2) { car.classList.add('is-estatico'); return; }
+
+    function marcarCopia(el) {
+      el.setAttribute('aria-hidden', 'true');
+      el.setAttribute('inert', '');
+      el.classList.add('is-copia');
+      el.querySelectorAll('[id]').forEach(function (n) { n.removeAttribute('id'); });
+      el.querySelectorAll('template').forEach(function (t) { t.remove(); });
+      return el;
+    }
+    originais.slice().reverse().forEach(function (c) { track.insertBefore(marcarCopia(c.cloneNode(true)), track.firstChild); });
+    originais.forEach(function (c) { track.appendChild(marcarCopia(c.cloneNode(true))); });
+
+    var idx = total;
+    var andando = false;
+
+    function porVez() { var w = viewport.clientWidth; return w >= 940 ? 3 : w >= 600 ? 2 : 1; }
+    function passo() {
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      return track.children[0].getBoundingClientRect().width + gap;
+    }
+    function posicionar(animar) {
+      track.style.transition = animar && !reduce ? '' : 'none';
+      track.style.transform = 'translateX(' + (-idx * passo()) + 'px)';
+      if (!animar) { void track.offsetWidth; track.style.transition = ''; }
+    }
+    function medir() {
+      car.style.setProperty('--por-vez', porVez());
+      posicionar(false);
+    }
+    function normalizar() {
+      andando = false;
+      if (idx >= 2 * total) idx -= total;
+      else if (idx < total) idx += total;
+      posicionar(false);
+    }
+    function ir(delta) {
+      if (andando) return;
+      idx += delta;
+      if (reduce) { normalizar(); return; }
+      andando = true;
+      posicionar(true);
+    }
+    track.addEventListener('transitionend', function (e) { if (e.target === track) normalizar(); });
+
+    var timer = null, naTela = false, pausado = false;
+    function tocar() { if (!reduce && naTela && !pausado && !timer) timer = setInterval(function () { ir(1); }, 4800); }
+    function parar() { if (timer) { clearInterval(timer); timer = null; } }
+
+    car.querySelector('[data-carrossel-prev]').addEventListener('click', function () { ir(-1); });
+    car.querySelector('[data-carrossel-next]').addEventListener('click', function () { ir(1); });
+
+    var toque = 0;
+    viewport.addEventListener('touchstart', function (e) { toque = e.changedTouches[0].clientX; pausado = true; parar(); }, { passive: true });
+    viewport.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - toque;
+      if (Math.abs(dx) > 40) ir(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    // passa sozinho enquanto está na tela; para no hover, no foco e depois de um toque
+    car.addEventListener('mouseenter', function () { pausado = true; parar(); });
+    car.addEventListener('mouseleave', function () { pausado = false; tocar(); });
+    car.addEventListener('focusin', function () { pausado = true; parar(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) {
+        naTela = en[0].isIntersecting;
+        if (naTela) tocar(); else parar();
+      }, { threshold: 0.3 }).observe(car);
+    }
+
+    medir();
+    window.addEventListener('resize', medir);
+  });
+
+  /* ---------- Vídeos da Castello Flex (um por vez) ---------- */
+  document.querySelectorAll('[data-vcarrossel]').forEach(function (vc) {
+    var slides = Array.prototype.slice.call(vc.querySelectorAll('.vcarrossel__slide'));
+    var pontos = vc.querySelector('.vcarrossel__pontos');
+    var cont = vc.querySelector('.vcarrossel__cont');
+    if (slides.length < 2) return;
+    var atual = 0;
+    var botoes = slides.map(function (s, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'vcarrossel__ponto';
+      b.setAttribute('aria-label', 'Vídeo ' + (i + 1) + ' de ' + slides.length);
+      b.addEventListener('click', function () { mostrar(i); });
+      pontos.appendChild(b);
+      return b;
+    });
+    function mostrar(i) {
+      var antes = slides[atual].querySelector('video');
+      if (antes && !antes.paused) antes.pause();
+      atual = (i + slides.length) % slides.length;
+      slides.forEach(function (s, k) { s.hidden = k !== atual; });
+      botoes.forEach(function (b, k) {
+        b.classList.toggle('is-active', k === atual);
+        b.setAttribute('aria-current', k === atual ? 'true' : 'false');
+      });
+      if (cont) cont.textContent = (atual + 1) + ' / ' + slides.length;
+    }
+    vc.querySelector('[data-vcarrossel-prev]').addEventListener('click', function () { mostrar(atual - 1); });
+    vc.querySelector('[data-vcarrossel-next]').addEventListener('click', function () { mostrar(atual + 1); });
+    mostrar(0);
+  });
+
   /* ---------- Formulário de orçamento (só interface) ----------
      Máscara do WhatsApp, campo condicional de modelo e o botão de voltar da
      tela de sucesso valem para o formulário onde ele estiver: dentro do modal

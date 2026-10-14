@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Empurra o conteudo da Castelo Flex do banco local para um site Castello.
+"""Empurra o conteudo da Castello Flex do banco local para um site Castello.
 
 Usa o proprio painel, por HTTP, com o login do painel: nao sobe nenhum script
 de manutencao para o servidor e faz exatamente o que o cliente faria a mao.

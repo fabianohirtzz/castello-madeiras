@@ -24,10 +24,17 @@ require_once __DIR__ . '/crm.php';
  * os valores sao montados e nao precisa bater com a ordem do CREATE TABLE.
  */
 const LEAD_CAMPOS = [
-    'nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'prazo', 'mensagem',
+    'nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'prazo', 'metragem', 'garagem', 'mensagem',
     'pagina', 'referrer',
     'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',
 ];
+
+/**
+ * Opcoes fechadas dos dois campos que entraram em outubro de 2026. O
+ * formulario imprime estas listas e o enviar.php so aceita valor delas.
+ */
+const FORM_METRAGENS = ['De 36 a 60 m²', 'De 60 a 80 m²', 'Acima de 80 m²'];
+const FORM_GARAGENS  = ['Com garagem', 'Sem garagem'];
 
 /** Depois de 5 tentativas malsucedidas o lead para de ser reenviado. */
 const LEAD_TENTATIVAS_MAX = 5;

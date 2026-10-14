@@ -56,4 +56,22 @@ foreach ($paginas as $chave => $arquivo) {
     echo 'regenerada: pagina-', $chave, '.html (', number_format(filesize($destino)), " bytes)\n";
 }
 
+/*
+ * Os fragmentos do 40-partials.php que mudaram desde o site estatico, com as
+ * mesmas variaveis que o caso usa. Avaliacoes, videos e portfolio ficam de
+ * fora de proposito: a referencia deles ainda e a do site atual, com os
+ * caminhos antigos que o norm() do teste iguala.
+ */
+$fragmentos = [
+    'modelos' => ['modalidade' => 'pronta'],
+    'faq'     => ['contexto' => 'geral'],
+    'passos'  => ['contexto' => 'pronta'],
+];
+
+foreach ($fragmentos as $nome => $vars) {
+    $destino = raiz() . '/testes/base/frag-' . $nome . '.html';
+    file_put_contents($destino, render(site() . '/partials/' . $nome . '.php', $vars));
+    echo 'regenerada: frag-', $nome, '.html (', number_format(filesize($destino)), " bytes)\n";
+}
+
 echo "\nConfira o diff antes de commitar: git diff testes/base/\n";

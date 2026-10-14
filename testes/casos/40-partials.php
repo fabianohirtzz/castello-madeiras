@@ -28,21 +28,43 @@ teste('partials/modelos.php respeita a modalidade recebida', function (): void {
     $flex = parcial('modelos', ['modalidade' => 'flex']);
     igual(5, substr_count($flex, '<article class="model'));
     nao_contem('Sob consulta', $flex, 'os cinco Flex tem preco em tabela');
-    contem('<span class="model__badge">Semipronta</span>', $flex);
-    nao_contem('Compacta', $flex);
-    nao_contem('Chave na mão', $flex);
+    contem('data-carrossel', $flex, 'na Flex a grade vira carrossel');
+    contem('class="grid grid--models mcarrossel__track"', $flex);
+    nao_contem('Semipronta', $flex, 'a palavra saiu do site');
+    nao_contem('Projeto 1 ', $flex);
+    nao_contem('Valor de referência para o projeto inicial', $flex, 'a Flex tem preço fechado de tabela');
+    igual(5, substr_count($flex, '<template id="modelo-'), 'um popup de Ver mais por modelo');
+    igual(5, substr_count($flex, 'modelbox__foto--planta'), 'todo Flex mostra a planta no Ver mais');
+
+    $pronta = parcial('modelos', ['modalidade' => 'pronta']);
+    nao_contem('data-carrossel', $pronta, 'a Casa Pronta continua em grade');
+    igual(12, substr_count($pronta, 'class="model__ver"'));
+    igual(12, substr_count($pronta, '<p class="model__ref">Valor de referência para o projeto inicial.</p>'));
+    contem('<span class="eyebrow">Projeto personalizável</span>', $pronta);
+    igual(1, substr_count($pronta, 'id="modelbox"'), 'um popup so por grade');
 
     db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'flex'");
-    igual('<div class="grid grid--models"></div>', norm(parcial('modelos', ['modalidade' => 'flex'])), 'sem modelo ativo a grade sai vazia');
+    $vazia = norm(parcial('modelos', ['modalidade' => 'flex']));
+    contem('<div class="grid grid--models mcarrossel__track"></div>', $vazia, 'sem modelo ativo a grade sai vazia');
     db()->exec("UPDATE modelos SET ativo = 1 WHERE modalidade = 'flex'");
+});
+
+teste('os ambientes do modelo saem com o icone certo', function (): void {
+    $amb = ambientes_modelo("2 quartos\n1 suíte\nEstúdio aberto com cozinha\nSala de estar\nBanheiro social\nÁrea de serviço\nGaragem\n\n");
+    igual(7, count($amb), 'linha vazia nao vira ambiente');
+    igual('2 quartos', $amb[0][1]);
+    igual($amb[0][0], $amb[1][0], 'suite e quarto usam a cama');
+    igual($amb[0][0], $amb[2][0], 'estudio usa a cama, nao o sofa');
+    verdade($amb[3][0] !== $amb[0][0], 'sala de estar nao e quarto');
+    contem('<svg', $amb[6][0]);
+    igual([], ambientes_modelo(null));
 });
 
 teste('o rotulo do botao de orcamento sai no formato do site atual', function (): void {
     $html = parcial('modelos', ['modalidade' => 'pronta']);
-    contem('data-modelo="Compacta · 39 m² · R$ 69.900"', $html);
-    contem('data-modelo="Conforto · 42,75 m² · R$ 79.988"', $html);
-    contem('data-modelo="Família · 51 m² · R$ 87.997"', $html);
-    contem('data-modelo="Ampla · 59,75 m² · R$ 97.776"', $html);
+    contem('data-modelo="Projeto 1 · 61,25 m² · R$ 108.000"', $html);
+    contem('data-modelo="Projeto 11 · 36 m² · R$ 72.000"', $html, 'os centavos zerados somem do rotulo');
+    contem('data-modelo="Projeto 12 · 49,24 m² · R$ 135.000"', $html);
 });
 
 teste('partials/portfolio.php imprime a grade identica a base conferida no navegador', function (): void {
@@ -68,7 +90,7 @@ teste('partials/faq.php imprime as abas e paineis identicos ao site atual', func
     igual(norm(base_frag('faq')), norm(parcial('faq', ['contexto' => 'geral'])));
 });
 
-teste('partials/passos.php imprime o scrollytelling identico ao site atual', function (): void {
+teste('partials/passos.php imprime a linha do tempo identica a base conferida no navegador', function (): void {
     igual(norm(base_frag('passos')), norm(parcial('passos', ['contexto' => 'pronta'])));
 });
 

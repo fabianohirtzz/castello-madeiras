@@ -34,6 +34,8 @@ const ENVIAR_LIMITES = [
     'modelo'   => 120,
     'cidade'   => 120,
     'prazo'    => 60,
+    'metragem' => 40,
+    'garagem'  => 40,
     'mensagem' => 4000,
     'pagina'   => 200,
     'referrer' => 400,
@@ -96,6 +98,12 @@ function enviar_processar(array $post): array
     }
     if (!in_array($campos['prazo'], ENVIAR_PRAZOS, true)) {
         $campos['prazo'] = '';
+    }
+    if (!in_array($campos['metragem'], FORM_METRAGENS, true)) {
+        $campos['metragem'] = '';
+    }
+    if (!in_array($campos['garagem'], FORM_GARAGENS, true)) {
+        $campos['garagem'] = '';
     }
 
     $digitos = preg_replace('/\D+/', '', $campos['whatsapp']) ?? '';

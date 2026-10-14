@@ -60,9 +60,19 @@ if (is_file(CASTELLO_CONFIG . '/segredos.php')) {
  * tabela => coluna => tipo da coluna no ALTER TABLE.
  */
 const CASTELLO_COLUNAS_NOVAS = [
+    'modelos' => [
+        'itens'      => 'TEXT',
+        'planta'     => 'TEXT',
+        'foto_extra' => 'TEXT',
+    ],
+    'videos' => [
+        'contexto' => "TEXT NOT NULL DEFAULT 'instagram'",
+    ],
     'leads' => [
         'prazo'         => 'TEXT',
         'crm_pessoa_id' => 'INTEGER',
+        'metragem'      => 'TEXT',
+        'garagem'       => 'TEXT',
     ],
 ];
 

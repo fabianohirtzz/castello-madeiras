@@ -2,8 +2,9 @@
 /**
  * Passo a passo. Espera: string $contexto ('pronta' ou 'flex').
  *
- * Casa Pronta: scrollytelling com imagem sticky, como no site atual.
- * Castelo Flex: cartoes numerados sem imagem (.epasso), como a frente 2
+ * Casa Pronta: linha do tempo da obra, horizontal no desktop e vertical no
+ * celular (as etapas do carrossel "Como tudo acontece" do Instagram).
+ * Castello Flex: cartoes numerados sem imagem (.epasso), como a frente 2
  * desenhou para a pagina Flex.
  */
 declare(strict_types=1);
@@ -25,17 +26,17 @@ if ($contexto === 'flex'): ?>
 <?php endforeach; ?>
       </div>
 <?php return; endif; ?>
-<!-- véu (mobile): apaga o texto do passo antes dele encostar na imagem sticky -->
-        <div class="process__veil" aria-hidden="true"></div>
-        <div class="process__media" id="processMedia">
+<div class="tline-obra reveal">
+        <ol class="tline-obra__trilho" aria-label="Etapas da obra, da primeira conversa à entrega">
 <?php foreach ($lista_passos as $i => $p): ?>
-          <div class="process__media-fig<?= $i === 0 ? ' is-active' : '' ?>" data-step="<?= $i ?>"><img src="<?= e($p['imagem']) ?>" alt="<?= e($p['imagem_alt']) ?>" loading="lazy" /></div>
-<?php endforeach; ?>
-          <div class="process__counter" id="processCounter"><span>01</span> / <?= sprintf('%02d', $total_passos) ?></div>
-        </div>
-
-        <ol class="process__steps" id="processSteps">
-<?php foreach ($lista_passos as $i => $p): ?>
-          <li class="process__step<?= $i === 0 ? ' is-active' : '' ?>" data-step="<?= $i ?>"><span class="process__step-num">PASSO <?= sprintf('%02d', $i + 1) ?></span><h3><?= e($p['titulo']) ?></h3><p><?= e($p['texto']) ?></p></li>
+          <li class="tline-obra__item">
+            <span class="tline-obra__num" aria-hidden="true"><?= sprintf('%02d', $i + 1) ?></span>
+            <h3><?= e($p['titulo']) ?></h3>
+<?php if (trim((string) $p['texto']) !== ''): ?>
+            <p><?= e($p['texto']) ?></p>
+<?php endif; ?>
+          </li>
 <?php endforeach; ?>
         </ol>
+        <p class="tline-obra__dica">Arraste para o lado e veja as <?= $total_passos ?> etapas.</p>
+      </div>

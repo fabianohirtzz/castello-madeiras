@@ -21,20 +21,64 @@ if (!defined('CASTELLO_UPLOADS')) {
 }
 
 /**
- * modalidade, nome, area, parede, preco, prazo, foto de origem, alt, destaque.
- * Os cinco Flex sao os projetos que a Castello mandou no drive, com render da
- * fachada, planta baixa e a tabela de precos de setembro de 2026.
+ * Os modelos, um array por linha. Casa Pronta: os 12 projetos do catálogo de
+ * outubro de 2026 (foto recortada da página do catálogo, área total, preço "a
+ * partir de" e os ambientes com ícone). Castello Flex: os cinco projetos do
+ * drive, com render da fachada, planta baixa com cotas, áreas por cômodo e a
+ * tabela de preços de setembro de 2026. Itens vão um por linha.
  */
 const MIGRAR_MODELOS = [
-    ['pronta', 'Compacta', '39,00 m²', 'Madeira vertical', '69.900', '90 a 120 dias', 'fotos-casas/casa4.webp', 'Casa de madeira compacta de dois pavimentos da Castello', 0],
-    ['pronta', 'Conforto', '42,75 m²', 'Madeira horizontal', '79.988', '90 a 120 dias', 'fotos-casas/casa2.webp', 'Casa de madeira Castello térrea com telhado de telhas e varanda', 0],
-    ['pronta', 'Família', '51,00 m²', 'Madeira horizontal', '87.997', '90 a 120 dias', 'fotos-casas/casa5.webp', 'Casa de madeira Castello com varanda ampla em volta e jardim', 1],
-    ['pronta', 'Ampla', '59,75 m²', 'Madeira horizontal', '97.776', '90 a 120 dias', 'fotos-casas/casa3.webp', 'Sobrado de madeira Castello à beira da água com vista para a ponte', 0],
-    ['flex', 'Castelo Flex 36', '36,00 m²', '', '43.000', '45 dias', 'fotos-flex/flex-36.webp', 'Castelo Flex de 36 m²: casa de madeira térrea com varanda coberta e janela com veneziana', 0],
-    ['flex', 'Castelo Flex 39', '39,00 m²', '', '47.000', '45 dias', 'fotos-flex/flex-39.webp', 'Castelo Flex de 39 m²: casa de madeira térrea com varanda ampla na frente', 0],
-    ['flex', 'Castelo Flex 42', '42,75 m²', '', '51.000', '45 dias', 'fotos-flex/flex-42.webp', 'Castelo Flex de 42,75 m²: casa de madeira térrea com telhado de telha cerâmica e varanda', 0],
-    ['flex', 'Castelo Flex 51', '51,00 m²', 'Com garagem coberta', '59.000', '45 dias', 'fotos-flex/flex-51.webp', 'Castelo Flex de 51 m²: casa de madeira térrea com garagem coberta ao lado da varanda', 0],
-    ['flex', 'Castelo Flex 57', '57,75 m²', 'Com garagem coberta', '69.000', '45 dias', 'fotos-flex/flex-57.webp', 'Castelo Flex de 57,75 m²: casa de madeira térrea com varanda e garagem coberta', 0],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 1', 'area' => '61,25 m²', 'parede' => '', 'preco' => '108.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-01.webp', 'alt' => 'Casa de madeira térrea com tábuas na vertical, varanda coberta e escada de concreto na entrada',
+     'itens' => ['3 quartos', 'Sala e cozinha conjugada', 'Banheiro', 'Varanda'], 'planta' => '', 'descricao' => "Projeto de 61,25 m² com 3 quartos, sala e cozinha conjugada, banheiro e varanda.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 2', 'area' => '163,25 m²', 'parede' => '', 'preco' => '326.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-02.webp', 'alt' => 'Sobrado de madeira com sacada, varanda com pergolado e garagem coberta ao lado',
+     'itens' => ['4 quartos', '2 banheiros', 'Sala e cozinha conjugada', 'Área de serviço', 'Varanda', 'Garagem'], 'planta' => '', 'descricao' => "Projeto de 163,25 m² com 4 quartos, 2 banheiros, sala e cozinha conjugada, área de serviço, varanda e garagem.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 3', 'area' => '134,75 m²', 'parede' => '', 'preco' => '280.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-03.webp', 'alt' => 'Sobrado de madeira com sacada de guarda-corpo em X e varanda na frente',
+     'itens' => ['3 quartos', '1 suíte', '1 banheiro social', 'Sala e cozinha conjugadas', 'Sacada', 'Varanda', 'Garagem'], 'planta' => '', 'descricao' => "Projeto de 134,75 m² com 3 quartos, 1 suíte, 1 banheiro social, sala e cozinha conjugadas, sacada, varanda e garagem.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 4', 'area' => '82,62 m²', 'parede' => '', 'preco' => '158.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-04.webp', 'alt' => 'Casa de madeira térrea com janelas brancas, gramado na frente e garagem coberta ao lado',
+     'itens' => ['1 suíte', '1 quarto', 'Banheiro social', 'Sala e cozinha conjugada', 'Varanda', 'Garagem'], 'planta' => '', 'descricao' => "Projeto de 82,62 m² com 1 suíte, 1 quarto, banheiro social, sala e cozinha conjugada, varanda e garagem.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 5', 'area' => '94,67 m²', 'parede' => '', 'preco' => '174.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-05.webp', 'alt' => 'Casa de madeira térrea com varanda em volta, telhado claro e jardim cercado de mata',
+     'itens' => ['2 quartos', 'Banheiro social', 'Sala e cozinha conjugada', 'Varanda', 'Garagem'], 'planta' => '', 'descricao' => "Projeto de 94,67 m² com 2 quartos, banheiro social, sala e cozinha conjugada, varanda e garagem.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 6', 'area' => '95,50 m²', 'parede' => '', 'preco' => '179.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-06.webp', 'alt' => 'Casa de madeira térrea com telhado de telha cerâmica, detalhe em tijolinho e garagem coberta',
+     'itens' => ['1 suíte', '2 quartos', 'Banheiro social', 'Sala e cozinha conjugada', 'Varanda', 'Garagem'], 'planta' => '', 'descricao' => "Projeto de 95,50 m² com 1 suíte, 2 quartos, banheiro social, sala e cozinha conjugada, varanda e garagem.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 7', 'area' => '135,00 m²', 'parede' => '', 'preco' => '253.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-07.webp', 'alt' => 'Casa de madeira térrea com varanda em volta, guarda-corpo em X e morro de mata ao fundo',
+     'itens' => ['2 suítes', '1 quarto', 'Banheiro social', 'Sala e cozinha conjugada', 'Varanda'], 'planta' => '', 'descricao' => "Projeto de 135,00 m² com 2 suítes, 1 quarto, banheiro social, sala e cozinha conjugada e varanda.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 8', 'area' => '122,83 m²', 'parede' => '', 'preco' => '224.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-08.webp', 'alt' => 'Casa de madeira com telhado em duas águas, pergolado na entrada e garagem coberta',
+     'itens' => ['1 suíte', '1 quarto', 'Banheiro social', 'Sala e cozinha conjugada', 'Varandas', 'Garagem'], 'planta' => '', 'descricao' => "Projeto de 122,83 m² com 1 suíte, 1 quarto, banheiro social, sala e cozinha conjugada, varandas e garagem.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 9', 'area' => '42,75 m²', 'parede' => '', 'preco' => '113.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-09.webp', 'alt' => 'Casa de madeira moderna com fachada preta, beiral de madeira iluminado e grandes janelas de vidro',
+     'itens' => ['Estúdio aberto com cozinha', 'Quarto', '1 banheiro', 'Hidromassagem', 'Varanda', 'Área de serviço'], 'planta' => '', 'descricao' => "Projeto de 42,75 m² com estúdio aberto com cozinha, quarto, 1 banheiro, hidromassagem, varanda e área de serviço.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 10', 'area' => '62,50 m²', 'parede' => '', 'preco' => '157.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-10.webp', 'alt' => 'Chalé de madeira em formato A com fachada de vidro e deck na frente',
+     'itens' => ['Estúdio aberto com cozinha', 'Quarto', '1 banheiro', 'Hidromassagem', 'Varanda', 'Mezanino', 'Área de serviço'], 'planta' => '', 'descricao' => "Projeto de 62,50 m² com estúdio aberto com cozinha, quarto, 1 banheiro, hidromassagem, varanda, mezanino e área de serviço.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 11', 'area' => '36,00 m²', 'parede' => '', 'preco' => '72.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-11.webp', 'alt' => 'Casa de madeira térrea pequena com varanda coberta, porta de vidro e janelas com veneziana',
+     'itens' => ['2 quartos', 'Sala e cozinha conjugada', 'Banheiro', 'Varanda'], 'planta' => '', 'descricao' => "Projeto de 36,00 m² com 2 quartos, sala e cozinha conjugada, banheiro e varanda.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'pronta', 'nome' => 'Projeto 12', 'area' => '49,24 m²', 'parede' => '', 'preco' => '135.000', 'prazo' => '',
+     'foto' => 'fotos-catalogo/projeto-12.webp', 'alt' => 'Dois sobrados de madeira geminados com sacada no andar de cima e tijolinho no térreo',
+     'itens' => ['1 quarto', '1 banheiro', 'Sala e cozinha conjugadas', 'Sacada', 'Mezanino'], 'planta' => '', 'descricao' => "Projeto de 49,24 m² com 1 quarto, 1 banheiro, sala e cozinha conjugadas, sacada e mezanino.\n\nProjeto personalizável: a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao que você procura. O valor é de referência para o projeto inicial."],
+    ['modalidade' => 'flex', 'nome' => 'Castello Flex 36', 'area' => '36,00 m²', 'parede' => '', 'preco' => '43.000', 'prazo' => '45 dias',
+     'foto' => 'fotos-flex/flex-36.webp', 'alt' => 'Castello Flex de 36 m²: casa de madeira térrea com varanda coberta e janela com veneziana',
+     'itens' => ['2 dormitórios', 'Sala e cozinha integradas', 'Banheiro', 'Varanda'], 'planta' => 'fotos-flex/flex-36-planta.webp', 'descricao' => "Planta com dois dormitórios de 7,94 m², sala e cozinha integradas de 10,10 m², banheiro de 3,38 m² e varanda de 3,00 m².\n\nÁrea fechada de 33,00 m² e área aberta de 3,00 m²."],
+    ['modalidade' => 'flex', 'nome' => 'Castello Flex 39', 'area' => '39,00 m²', 'parede' => '', 'preco' => '47.000', 'prazo' => '45 dias',
+     'foto' => 'fotos-flex/flex-39.webp', 'alt' => 'Castello Flex de 39 m²: casa de madeira térrea com varanda ampla na frente',
+     'itens' => ['2 dormitórios', 'Sala e cozinha integradas', 'Banheiro', 'Varanda'], 'planta' => 'fotos-flex/flex-39-planta.webp', 'descricao' => "Planta com dois dormitórios de 7,94 m², sala e cozinha integradas de 13,00 m², banheiro de 2,64 m² e varanda de 3,50 m².\n\nÁrea fechada de 35,50 m² e área aberta de 3,50 m²."],
+    ['modalidade' => 'flex', 'nome' => 'Castello Flex 42', 'area' => '42,75 m²', 'parede' => '', 'preco' => '51.000', 'prazo' => '45 dias',
+     'foto' => 'fotos-flex/flex-42.webp', 'alt' => 'Castello Flex de 42,75 m²: casa de madeira térrea com telhado de telha cerâmica e varanda',
+     'itens' => ['2 dormitórios', 'Sala e cozinha integradas', 'Banheiro', 'Varanda'], 'planta' => 'fotos-flex/flex-42-planta.webp', 'descricao' => "Planta com dormitórios de 7,94 m² e 6,56 m², sala e cozinha integradas de 16,58 m², circulação de 1,26 m², banheiro de 2,64 m² e varanda de 3,00 m².\n\nÁrea fechada de 39,75 m² e área aberta de 3,00 m²."],
+    ['modalidade' => 'flex', 'nome' => 'Castello Flex 51', 'area' => '51,00 m²', 'parede' => 'Com garagem coberta', 'preco' => '59.000', 'prazo' => '45 dias',
+     'foto' => 'fotos-flex/flex-51.webp', 'alt' => 'Castello Flex de 51 m²: casa de madeira térrea com garagem coberta ao lado da varanda',
+     'itens' => ['2 dormitórios', 'Sala e cozinha integradas', 'Banheiro', 'Varanda', 'Garagem coberta'], 'planta' => 'fotos-flex/flex-51-planta.webp', 'descricao' => "A planta do Castello Flex 36 com garagem coberta de 15,00 m²: dois dormitórios de 7,94 m², sala e cozinha integradas de 10,10 m², banheiro de 3,38 m² e varanda de 3,00 m².\n\nÁrea fechada de 33,00 m² e área aberta de 18,00 m²."],
+    ['modalidade' => 'flex', 'nome' => 'Castello Flex 57', 'area' => '57,75 m²', 'parede' => 'Com garagem coberta', 'preco' => '69.000', 'prazo' => '45 dias',
+     'foto' => 'fotos-flex/flex-57.webp', 'alt' => 'Castello Flex de 57,75 m²: casa de madeira térrea com varanda e garagem coberta',
+     'itens' => ['2 dormitórios', 'Sala e cozinha integradas', 'Banheiro', 'Varanda', 'Garagem coberta'], 'planta' => 'fotos-flex/flex-57-planta.webp', 'descricao' => "A planta do Castello Flex 42 com garagem coberta de 15,00 m²: dormitórios de 7,94 m² e 6,56 m², sala e cozinha integradas de 16,58 m², circulação de 1,26 m², banheiro de 2,64 m² e varanda de 3,00 m².\n\nÁrea fechada de 39,75 m² e área aberta de 18,00 m²."],
 ];
 
 /** titulo, categoria, foto de origem, alt */
@@ -67,33 +111,50 @@ const MIGRAR_AVALIACOES = [
 
 /** contexto, pergunta, resposta, icone. As cinco da Flex saem do escopo que a Castello mandou. */
 const MIGRAR_FAQ = [
-    ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', 'Entre 90 e 120 dias, do projeto à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.', 'relogio'],
-    ['geral', 'O que está incluso no chave na mão?', 'Sua casa sai pronta pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas. Você cuida da mudança, a Castello cuida de projeto, materiais, prazos e acabamento.', 'chave'],
-    ['geral', 'Posso personalizar a planta e os acabamentos?', 'Sim, 100% personalizável. Planta, acabamentos, revestimentos, janelas, portas e piso são escolhidos do seu jeito. Cada projeto Castello é exclusivo e desenhado pra sua rotina e o seu gosto.', 'planta'],
+    ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', 'Entre 90 e 120 dias, da assinatura do contrato à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.', 'relogio'],
+    ['geral', 'O que está incluso no chave na mão?', 'Sua casa sai pronta pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas. Você cuida da mudança, a Castello cuida da obra, dos materiais, dos prazos e do acabamento.', 'chave'],
+    ['geral', 'Posso personalizar a planta e os acabamentos?', 'Sim. Na Casa Pronta a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao seu jeito, a partir do estudo preliminar que a Castello faz com você.', 'planta'],
     ['geral', 'Casa de madeira é confortável o ano todo?', 'É um dos maiores diferenciais. A madeira mantém o ambiente fresco no calor e aconchegante no frio, com um conforto térmico bem acima da alvenaria comum em todas as estações.', 'clima'],
     ['geral', 'A casa é resistente e dura com o tempo?', 'Construímos com madeira de qualidade e prego galvanizado em toda a estrutura, com equipe experiente na obra todo dia. Bem cuidada, a casa atravessa gerações e ainda valoriza como patrimônio.', 'escudo'],
     ['geral', 'Qual a diferença entre madeira vertical e horizontal?', 'Muda o sentido das tábuas na parede. Na vertical a parede é simples e a fiação desce por perfis aparentes por dentro da casa. Na horizontal a parede é mais resistente e pode ser duplada, com a fiação embutida em conduíte. Duplar a parede é opcional, a gente combina no projeto.', 'parede'],
     ['geral', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte do processo. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança em cada etapa, do primeiro passo até a chave na mão.', 'fundacao'],
     ['geral', 'Que garantias eu tenho com a Castello?', 'Você tem a garantia da construção, o compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo com uma empresa só.', 'garantia'],
-    ['flex', 'Em quanto tempo a Castelo Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.', 'relogio'],
+    ['flex', 'Em quanto tempo a Castello Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.', 'relogio'],
     ['flex', 'O que exatamente vem na entrega da Flex?', 'Fundação com laje aérea, estrutura de madeira montada, telhado completo, forro à nível, esquadrias instaladas, a alvenaria do banheiro no chapisco e a limpeza de obra feita. Ficam por sua conta os vidros, a elétrica, a hidráulica, o revestimento cerâmico, as louças e o balcão do banheiro, a fossa, o sumidouro e a pintura.', 'chave'],
-    ['flex', 'Posso mudar a planta da Castelo Flex?', 'Sim. A planta é ajustada ao seu terreno e à sua rotina antes da produção. Depois que a estrutura entra em fabricação, as mudanças passam a ser de acabamento, que é justamente a parte que fica com você.', 'planta'],
-    ['flex', 'A madeira é a mesma das casas chave na mão?', 'É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello há 12 anos. A Flex muda o escopo da entrega, nunca o padrão da construção.', 'escudo'],
+    ['flex', 'Posso mudar a planta da Castello Flex?', 'Não. As cinco plantas da Castello Flex são padronizadas, com medidas definidas, e é isso que garante o preço e a entrega em 45 dias. Se você quer uma planta personalizada, a modalidade certa é a Casa Pronta.', 'planta'],
+    ['flex', 'A madeira é a mesma das casas chave na mão?', 'É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello desde 2014. A Flex muda o escopo da entrega, nunca o padrão da construção.', 'escudo'],
     ['flex', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte da entrega da Flex, com laje aérea em concreto armado. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.', 'fundacao'],
 ];
 
 /**
  * contexto, titulo, texto, imagem de origem, alt da imagem.
- * Os passos da Flex nao tem imagem: na pagina Flex eles saem como cartoes
- * numerados, nao como o scrollytelling da Casa Pronta.
+ * Os passos da Casa Pronta sao as 20 etapas do carrossel "Como tudo
+ * acontece" do Instagram da Castello (sem as datas daquela obra) e saem como
+ * linha do tempo. Os da Flex saem como cartoes numerados. Nenhum dos dois
+ * mostra imagem.
  */
 const MIGRAR_PASSOS = [
-    ['pronta', 'Conversa e projeto', 'Entendemos seu sonho, seu terreno e seu orçamento, e desenhamos a planta ideal pra você.', 'passos/passo-1.jpg', 'Maquete do projeto da casa de madeira sobre a planta'],
-    ['pronta', 'Fundação', 'Preparamos a base da casa com técnica e segurança, prontos para receber a estrutura.', 'passos/passo-2.jpg', 'Início da estrutura de madeira sobre a fundação'],
-    ['pronta', 'Estrutura e montagem', 'Montamos a casa com madeira de qualidade e prego galvanizado, no padrão Castello.', 'passos/passo-3.jpg', 'Estrutura e montagem da casa de madeira'],
-    ['pronta', 'Acabamento', 'Elétrica, hidráulica, revestimentos, vidros e os detalhes finos que fazem do seu jeito.', 'passos/passo-4.jpg', 'Equipe no acabamento do telhado e fachada da casa'],
-    ['pronta', 'Chave na mão', 'Você recebe a casa pronta pra morar, completa, em 90 a 120 dias.', 'passos/passo-5.jpg', 'Chaves da casa de madeira pronta, chave na mão'],
-    ['flex', 'Projeto e modelo', 'Você escolhe o modelo Flex e a gente ajusta a planta ao seu terreno e ao seu orçamento.', '', ''],
+    ['pronta', 'Primeiro contato', '', '', ''],
+    ['pronta', 'Visita ao terreno da futura obra', '', '', ''],
+    ['pronta', 'Estudo preliminar', '', '', ''],
+    ['pronta', 'Projeto aprovado', '', '', ''],
+    ['pronta', 'Contrato assinado', '', '', ''],
+    ['pronta', 'Início da obra', '', '', ''],
+    ['pronta', 'Concretagem do primeiro nível de laje', '', '', ''],
+    ['pronta', 'Segundo nível de laje e início da alvenaria', '', '', ''],
+    ['pronta', 'Início da estrutura de madeira', '', '', ''],
+    ['pronta', 'Fechamento externo', '', '', ''],
+    ['pronta', 'Início da estrutura de cobertura', '', '', ''],
+    ['pronta', 'Telhamento completo', '', '', ''],
+    ['pronta', 'Aplicação dos azulejos', '', '', ''],
+    ['pronta', 'Aplicação dos pisos internos', '', '', ''],
+    ['pronta', 'Aplicação dos pisos externos', '', '', ''],
+    ['pronta', 'Instalação elétrica', '', '', ''],
+    ['pronta', 'Instalação das esquadrias', '', '', ''],
+    ['pronta', 'Pré-checklist e vistoria', '', '', ''],
+    ['pronta', 'Finalização dos acabamentos', '', '', ''],
+    ['pronta', 'Checklist e entrega final da obra', '', '', ''],
+    ['flex', 'Escolha do modelo', 'Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.', '', ''],
     ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
     ['flex', 'Estrutura montada', 'Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.', '', ''],
     ['flex', 'Cobertura', 'Telhado completo, com a casa protegida da chuva e do sol desde o primeiro dia.', '', ''],
@@ -107,27 +168,27 @@ const MIGRAR_PASSOS = [
  * entre asteriscos, como *chave na mao*, sai em destaque vermelho (realce()).
  */
 const MIGRAR_BLOCOS = [
-    ['hero_titulo', 'Título do topo', 'A casa dos seus sonhos', 'texto'],
-    ['hero_subtitulo', 'Subtítulo do topo', 'pronta pra morar, *chave na mão*', 'texto'],
-    ['modalidades_titulo', 'Título do bloco de modalidades', 'Escolha como a sua casa sai do papel.', 'texto'],
-    ['modalidades_texto', 'Texto do bloco de modalidades', 'A Castello entrega a casa completa, pronta pra morar, e agora entrega também a casa semipronta, para quem quer a estrutura no terreno e o acabamento no próprio ritmo.', 'texto_longo'],
-    ['pronta_titulo', 'Título da seção Casa Pronta', 'Escolha o tamanho. A gente entrega completa.', 'texto'],
-    ['pronta_texto', 'Texto da seção Casa Pronta', 'Todos os modelos saem prontos pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas.', 'texto_longo'],
+    ['hero_titulo', 'Título do topo', 'Sua casa', 'texto'],
+    ['hero_subtitulo', 'Subtítulo do topo', 'do seu jeito, *no seu ritmo.*', 'texto'],
+    ['modalidades_titulo', 'Título do bloco de modalidades', 'Seu sonho, suas escolhas. Duas formas de construir.', 'texto'],
+    ['modalidades_texto', 'Texto do bloco de modalidades', 'Com a experiência e a qualidade Castello, você escolhe a modalidade que melhor combina com seu projeto, suas necessidades e seus planos.', 'texto_longo'],
+    ['pronta_titulo', 'Título da seção Casa Pronta', 'Sua casa não precisa seguir um padrão. Ela precisa combinar com você.', 'texto'],
+    ['pronta_texto', 'Texto da seção Casa Pronta', 'Na Castello, cada casa pode ser personalizada conforme suas necessidades, seu estilo de vida e as características do terreno. Da fundação aos acabamentos, cuidamos da construção para você receber seu novo lar, pronto para morar.', 'texto_longo'],
     ['pronta_prazo', 'Prazo da Casa Pronta', '90 a 120 dias', 'texto'],
-    ['flex_titulo', 'Título da seção Castelo Flex', 'Castelo Flex: a casa semipronta no seu terreno em 45 dias.', 'texto'],
-    ['flex_texto', 'Texto da seção Castelo Flex', 'Você recebe a casa de madeira estruturada, coberta e fechada, a partir de R$ 43.000. O acabamento fica no seu ritmo e no seu bolso, com a mesma madeira e o mesmo padrão de montagem das casas chave na mão.', 'texto_longo'],
-    ['flex_prazo', 'Prazo da Castelo Flex', '45 dias', 'texto'],
+    ['flex_titulo', 'Título da seção Castello Flex', 'Castello Flex. Mais liberdade para construir, mais possibilidades para realizar.', 'texto'],
+    ['flex_texto', 'Texto da seção Castello Flex', 'Você recebe a casa de madeira estruturada, coberta e fechada, a partir de R$ 43.000. O acabamento fica no seu ritmo e no seu bolso, com a mesma madeira e o mesmo padrão de montagem das casas chave na mão.', 'texto_longo'],
+    ['flex_prazo', 'Prazo da Castello Flex', '45 dias', 'texto'],
     ['flex_video', 'Vídeo explicativo da Flex', 'uploads/videos/insta-12.mp4', 'texto'],
     ['flex_video_poster', 'Capa do vídeo da Flex', 'uploads/videos/insta-12.jpg', 'texto'],
-    ['flexpg_hero_titulo', 'Título do topo da página Flex', 'A casa de madeira *montada e fechada* no seu terreno em 45 dias.', 'texto'],
-    ['flexpg_hero_texto', 'Texto do topo da página Flex', 'A Castelo Flex é a modalidade semipronta da Castello. A gente entrega a estrutura completa, coberta, com portas e janelas instaladas. Você conduz o acabamento no seu ritmo, com a economia de quem faz por etapas.', 'texto_longo'],
-    ['flexpg_oque_titulo', 'Título de o que é a Castelo Flex', 'A estrutura pronta. O acabamento no seu tempo.', 'texto'],
-    ['flexpg_oque_texto', 'Texto de o que é a Castelo Flex', 'A Castello monta a casa de madeira no seu terreno e entrega ela fechada: estrutura, telhado, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento, sem prazo de obra correndo atrás de você.', 'texto_longo'],
+    ['flexpg_hero_titulo', 'Título do topo da página Flex', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.', 'texto'],
+    ['flexpg_hero_texto', 'Texto do topo da página Flex', 'Na Castello Flex, você escolhe entre 5 modelos, com plantas e medidas definidas, sem possibilidade de personalização. Nós entregamos a estrutura montada e fechada, e você realiza os acabamentos no seu tempo.', 'texto_longo'],
+    ['flexpg_oque_titulo', 'Título de o que é a Castello Flex', 'A qualidade da Castello, com a liberdade de construir no seu ritmo.', 'texto'],
+    ['flexpg_oque_texto', 'Texto de o que é a Castello Flex', 'A Castello monta a casa de madeira no seu terreno e entrega ela fechada: fundação com laje aérea, estrutura de madeira, cobertura, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento, sem prazo de obra correndo atrás de você.', 'texto_longo'],
     ['flexpg_depois_titulo', 'Título de o que fica por sua conta', 'O que fica por sua conta', 'texto'],
-    ['flexpg_depois_texto', 'Texto de o que fica por sua conta', 'Daqui pra frente a casa é sua e o ritmo é seu. Você contrata quem quiser, na ordem que quiser, e paga por etapa. A Castello segue disponível para orientar, mas estes itens não estão inclusos na Castelo Flex.', 'texto_longo'],
+    ['flexpg_depois_texto', 'Texto de o que fica por sua conta', 'Daqui pra frente a casa é sua e o ritmo é seu. Você contrata quem quiser, na ordem que quiser, conforme seu orçamento.', 'texto_longo'],
     ['flexpg_catalogo_nota', 'Nota abaixo do catálogo Flex', 'Valores de setembro de 2026, para a casa montada no seu terreno. O orçamento final considera as condições do seu terreno e a distância até Tubarão.', 'texto'],
-    ['flexpg_cta_titulo', 'Título da faixa de orçamento da Flex', 'Quer a Castelo Flex no seu terreno?', 'texto'],
-    ['flexpg_cta_texto', 'Texto da faixa de orçamento da Flex', 'Peça seu orçamento. A Castello volta com a tabela atualizada da Flex e o prazo para o seu terreno.', 'texto_longo'],
+    ['flexpg_cta_titulo', 'Título da faixa de orçamento da Flex', 'A casa que você tanto sonhou começa com uma escolha.', 'texto'],
+    ['flexpg_cta_texto', 'Texto da faixa de orçamento da Flex', 'O sonho de ter seu próprio lar está mais perto do que você imagina. Conheça a Castello Flex.', 'texto_longo'],
 ];
 
 /**
@@ -155,6 +216,22 @@ function migrar_copiar(string $origem, string $pasta): string
     return 'uploads/' . $pasta . '/' . $nome;
 }
 
+/**
+ * Insere um modelo de MIGRAR_MODELOS, copiando a foto e a planta para
+ * uploads/. Os ambientes vao para o banco um por linha, como o painel edita.
+ */
+function migrar_inserir_modelo(array $m, int $ordem): void
+{
+    db()->prepare(
+        'INSERT INTO modelos (modalidade, nome, area, parede, preco, prazo, descricao, foto, foto_alt, itens, planta, foto_extra, destaque, ativo, ordem)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1, ?)'
+    )->execute([
+        $m['modalidade'], $m['nome'], $m['area'], $m['parede'], $m['preco'], $m['prazo'], $m['descricao'],
+        migrar_copiar($m['foto'], 'modelos'), $m['alt'], implode("\n", $m['itens']),
+        $m['planta'] !== '' ? migrar_copiar($m['planta'], 'modelos') : '', '', $ordem,
+    ]);
+}
+
 /** True quando a tabela ainda nao tem nenhuma linha. */
 function migrar_vazia(string $tabela): bool
 {
@@ -171,12 +248,8 @@ function migrar(): array
     $conta = ['modelos' => 0, 'portfolio' => 0, 'avaliacoes' => 0, 'videos' => 0, 'faq' => 0, 'passos' => 0, 'blocos' => 0];
 
     if (migrar_vazia('modelos')) {
-        $st = db()->prepare(
-            'INSERT INTO modelos (modalidade, nome, area, parede, preco, prazo, descricao, foto, foto_alt, destaque, ativo, ordem)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)'
-        );
-        foreach (MIGRAR_MODELOS as $i => [$modalidade, $nome, $area, $parede, $preco, $prazo, $foto, $alt, $destaque]) {
-            $st->execute([$modalidade, $nome, $area, $parede, $preco, $prazo, '', migrar_copiar($foto, 'modelos'), $alt, $destaque, $i + 1]);
+        foreach (MIGRAR_MODELOS as $i => $m) {
+            migrar_inserir_modelo($m, $i + 1);
             $conta['modelos']++;
         }
     }
@@ -251,6 +324,122 @@ function migrar(): array
     }
 
     return $conta;
+}
+
+/**
+ * Blocos que a rodada de outubro de 2026 reescreveu. Os demais so ganham o
+ * rotulo novo (Castelo Flex virou Castello Flex), o texto fica como estava.
+ */
+const MIGRAR_BLOCOS_2026_10 = [
+    'hero_titulo', 'hero_subtitulo', 'modalidades_titulo', 'modalidades_texto', 'pronta_titulo', 'pronta_texto',
+    'flex_titulo', 'flexpg_hero_titulo', 'flexpg_hero_texto', 'flexpg_oque_titulo', 'flexpg_oque_texto',
+    'flexpg_depois_texto', 'flexpg_cta_titulo', 'flexpg_cta_texto',
+];
+
+/**
+ * Leva um banco que ja existe para o conteudo da rodada de outubro de 2026.
+ * Roda uma vez so (marca config.conteudo_2026_10) e nunca apaga nada: o que
+ * sai do site e desativado, e o painel consegue reativar.
+ *
+ *   - Castelo Flex vira Castello Flex em todo texto do banco;
+ *   - os textos de MIGRAR_BLOCOS_2026_10 recebem o valor novo;
+ *   - os quatro modelos antigos da Casa Pronta saem e entram os 12 do catalogo;
+ *   - os modelos Flex ganham ambientes, planta baixa e descricao;
+ *   - os cinco passos antigos da Casa Pronta saem e entram as 20 etapas;
+ *   - as respostas da FAQ voltam ao texto de MIGRAR_FAQ e o primeiro passo
+ *     da Flex deixa de prometer planta ajustada.
+ *
+ * @return array<int,string> o que foi feito, uma linha por item
+ */
+function migrar_atualizar_2026_10(): array
+{
+    if (config_ler('conteudo_2026_10') === '1') {
+        return ['ja aplicado antes, nada mudou'];
+    }
+
+    $pdo = db();
+    $log = [];
+    $pdo->beginTransaction();
+    try {
+        foreach (['faq' => ['pergunta', 'resposta'], 'passos' => ['titulo', 'texto'], 'blocos' => ['rotulo', 'valor'],
+                  'modelos' => ['nome', 'foto_alt', 'descricao'], 'videos' => ['legenda']] as $tabela => $colunas) {
+            foreach ($colunas as $coluna) {
+                $n = $pdo->exec("UPDATE {$tabela} SET {$coluna} = REPLACE({$coluna}, 'Castelo Flex', 'Castello Flex') WHERE {$coluna} LIKE '%Castelo Flex%'");
+                if ($n > 0) {
+                    $log[] = "{$tabela}.{$coluna}: Castelo Flex trocado em {$n}";
+                }
+            }
+        }
+
+        $grava = $pdo->prepare(
+            'INSERT INTO blocos (chave, rotulo, valor, tipo) VALUES (?, ?, ?, ?)
+             ON CONFLICT(chave) DO UPDATE SET valor = excluded.valor, rotulo = excluded.rotulo'
+        );
+        foreach (MIGRAR_BLOCOS as [$chave, $rotulo, $valor, $tipo]) {
+            if (in_array($chave, MIGRAR_BLOCOS_2026_10, true)) {
+                $grava->execute([$chave, $rotulo, $valor, $tipo]);
+                $log[] = 'bloco ' . $chave;
+            }
+        }
+
+        $n = $pdo->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'pronta' AND nome NOT LIKE 'Projeto %'");
+        $log[] = "modelos antigos da Casa Pronta desativados: {$n}";
+        $existe = $pdo->prepare('SELECT id FROM modelos WHERE modalidade = ? AND nome = ?');
+        $flex = $pdo->prepare('UPDATE modelos SET itens = ?, planta = ?, descricao = ?, foto_alt = ? WHERE id = ?');
+        $ordem = 0;
+        foreach (MIGRAR_MODELOS as $m) {
+            $existe->execute([$m['modalidade'], $m['nome']]);
+            $id = $existe->fetchColumn();
+            if ($m['modalidade'] === 'pronta') {
+                $ordem++;
+                if ($id === false) {
+                    migrar_inserir_modelo($m, $ordem);
+                    $log[] = 'modelo novo ' . $m['nome'];
+                }
+            } elseif ($id !== false) {
+                $planta = $m['planta'] !== '' ? migrar_copiar($m['planta'], 'modelos') : '';
+                $flex->execute([implode("\n", $m['itens']), $planta, $m['descricao'], $m['alt'], (int) $id]);
+                $log[] = 'modelo atualizado ' . $m['nome'];
+            }
+        }
+
+        $n = $pdo->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'pronta' AND imagem <> ''");
+        $log[] = "passos antigos da Casa Pronta desativados: {$n}";
+        $tem = (int) $pdo->query("SELECT COUNT(*) FROM passos WHERE contexto = 'pronta' AND ativo = 1")->fetchColumn();
+        if ($tem === 0) {
+            $novo = $pdo->prepare("INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem) VALUES ('pronta', ?, ?, '', '', 1, ?)");
+            $ordem = 0;
+            foreach (MIGRAR_PASSOS as [$contexto, $titulo, $texto]) {
+                if ($contexto === 'pronta') {
+                    $novo->execute([$titulo, $texto, ++$ordem]);
+                }
+            }
+            $log[] = "etapas da linha do tempo inseridas: {$ordem}";
+        }
+        $passo = $pdo->prepare("UPDATE passos SET titulo = ?, texto = ? WHERE contexto = 'flex' AND titulo = 'Projeto e modelo'");
+        foreach (MIGRAR_PASSOS as [$contexto, $titulo, $texto]) {
+            if ($contexto === 'flex' && $titulo === 'Escolha do modelo') {
+                $passo->execute([$titulo, $texto]);
+                $log[] = 'primeiro passo da Flex: ' . $passo->rowCount();
+            }
+        }
+
+        $faq = $pdo->prepare('UPDATE faq SET resposta = ? WHERE contexto = ? AND pergunta = ? AND resposta <> ?');
+        foreach (MIGRAR_FAQ as [$contexto, $pergunta, $resposta]) {
+            $faq->execute([$resposta, $contexto, $pergunta, $resposta]);
+            if ($faq->rowCount() > 0) {
+                $log[] = 'faq: ' . $pergunta;
+            }
+        }
+
+        config_gravar('conteudo_2026_10', '1');
+        $pdo->commit();
+    } catch (Throwable $falha) {
+        $pdo->rollBack();
+        throw $falha;
+    }
+
+    return $log;
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

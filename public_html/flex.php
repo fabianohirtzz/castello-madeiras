@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- * Pagina Castelo Flex. Marcacao da fase 2 (frente 2) com o conteudo vindo do
+ * Pagina Castello Flex. Marcacao da fase 2 (frente 2) com o conteudo vindo do
  * banco: modelos, passos e FAQ de modalidade flex pelos partials, textos
  * pelos blocos flex_* e flexpg_*. O que o cliente ainda nao cadastrou some
  * sem quebrar a pagina.
@@ -18,18 +18,24 @@ $flex_poster  = bloco('flex_video_poster');
 $flex_modelos = modelos('flex');
 $flex_passos  = passos('flex');
 $flex_faq     = faq('flex');
+// Os videos de "O que e a Castello Flex" vem do painel (videos com contexto
+// flex). Sem nenhum cadastrado, vale o video unico do bloco flex_video.
+$flex_videos  = videos(0, 'flex');
+if ($flex_videos === [] && $flex_video !== '') {
+    $flex_videos = [['arquivo' => $flex_video, 'poster' => $flex_poster, 'legenda' => '']];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Castelo Flex | Casa de madeira semipronta em 45 dias | Castello</title>
-  <meta name="description" content="Castelo Flex é a casa de madeira semipronta da Castello: estrutura montada, coberta e fechada no seu terreno em 45 dias. Você faz o acabamento no seu ritmo." />
+  <title>Castello Flex | Casa de madeira montada e fechada em 45 dias | Castello</title>
+  <meta name="description" content="Castello Flex é a casa flex da Castello: estrutura montada, coberta e fechada no seu terreno em 45 dias. Você faz o acabamento no seu ritmo." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Castelo Flex | Casa de madeira semipronta em 45 dias" />
+  <meta property="og:title" content="Castello Flex | Casa de madeira montada e fechada em 45 dias" />
   <meta property="og:description" content="Estrutura montada, coberta e fechada no seu terreno em 45 dias. O acabamento fica no seu ritmo." />
   <meta property="og:url" content="<?= CASTELLO_URL . '/flex.php' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-flex.jpg" />
@@ -47,7 +53,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=21" />
+  <link rel="stylesheet" href="css/style.css?v=22" />
 </head>
 <body>
 
@@ -55,15 +61,15 @@ $flex_faq     = faq('flex');
 
   <!-- ============ HERO DA CASTELO FLEX ============ -->
   <!-- Copy provisória: entra pelo painel quando o material da Flex chegar. -->
-  <section class="pagehero" id="topo" aria-label="Castelo Flex">
+  <section class="pagehero" id="topo" aria-label="Castello Flex">
     <div class="pagehero__media">
       <img src="fotos-casas/casa7.webp" alt="Sobrado de madeira Castello com sacada e fachada de réguas" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
     <div class="container">
-      <span class="eyebrow eyebrow--light reveal">Lançamento Castello · casas semiprontas</span>
-      <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A casa de madeira *montada e fechada* no seu terreno em 45 dias.')) ?></h1>
+      <span class="eyebrow eyebrow--light reveal">Lançamento Castello · casa flex</span>
+      <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.')) ?></h1>
 <?php if (bloco('flexpg_hero_texto') !== ''): ?>
       <p class="pagehero__lead reveal"><?= e(bloco('flexpg_hero_texto')) ?></p>
 <?php endif; ?>
@@ -72,11 +78,7 @@ $flex_faq     = faq('flex');
         Entrega em <strong><?= e($prazo_flex) ?></strong>
       </p>
       <div class="pagehero__actions reveal">
-        <button type="button" class="btn btn--primary btn--lg" data-quote-open>
-          <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
-          Pedir orçamento da Flex
-        </button>
-        <a href="#modelos-flex" class="btn btn--ghost-light btn--lg">Ver as casas Flex</a>
+        <a href="#modelos-flex" class="btn btn--primary btn--lg">Ver as casas Flex</a>
       </div>
     </div>
   </section>
@@ -90,30 +92,41 @@ $flex_faq     = faq('flex');
     <div class="container">
       <div class="split2">
         <div>
-          <span class="eyebrow reveal">O que é a Castelo Flex</span>
-          <h2 class="section__title reveal"><?= e(bloco('flexpg_oque_titulo', 'A estrutura pronta. O acabamento no seu tempo.')) ?></h2>
+          <span class="eyebrow reveal">O que é a Castello Flex</span>
+          <h2 class="section__title reveal"><?= e(bloco('flexpg_oque_titulo', 'A qualidade da Castello, com a liberdade de construir no seu ritmo.')) ?></h2>
 <?php if (bloco('flexpg_oque_texto') !== ''): ?>
           <p class="section__lead reveal"><?= e(bloco('flexpg_oque_texto')) ?></p>
 <?php endif; ?>
           <ul class="checklist reveal">
             <li>A mesma madeira e o mesmo prego galvanizado das casas chave na mão</li>
-            <li>Montagem pela equipe que constrói casas Castello há 12 anos</li>
-            <li>Planta ajustada ao seu terreno antes da produção</li>
-            <li>Fundação com laje aérea, forro à nível e limpeza de obra inclusos</li>
-            <li>Você paga o acabamento por etapa, no ritmo do seu bolso</li>
+            <li>Montagem pela equipe que constrói casas Castello desde 2014</li>
+            <li>Cinco modelos com planta e medidas definidas</li>
+            <li>Forro à nível e limpeza de obra inclusos</li>
           </ul>
         </div>
 
-<?php if ($flex_video !== ''): ?>
-        <figure class="vexp vexp--reel reveal">
-          <div class="vexp__frame">
-            <video controls playsinline preload="none" poster="<?= e($flex_poster) ?>">
-              <source src="<?= e($flex_video) ?>" type="video/mp4" />
-              Seu navegador não abre vídeo. <a href="<?= e($flex_video) ?>">Baixe o vídeo da Castelo Flex</a>.
-            </video>
+<?php if ($flex_videos !== []): ?>
+        <div class="vcarrossel reveal" data-vcarrossel aria-roledescription="carrossel" aria-label="Vídeos sobre a Castello Flex">
+<?php foreach ($flex_videos as $i => $v): ?>
+          <figure class="vcarrossel__slide vexp"<?= $i > 0 ? ' hidden' : '' ?>>
+            <div class="vexp__frame">
+              <video controls playsinline preload="none" poster="<?= e((string) $v['poster']) ?>">
+                <source src="<?= e((string) $v['arquivo']) ?>" type="video/mp4" />
+                Seu navegador não abre vídeo. <a href="<?= e((string) $v['arquivo']) ?>">Baixe o vídeo da Castello Flex</a>.
+              </video>
+            </div>
+            <figcaption class="vexp__cap"><?= e(trim((string) $v['legenda']) !== '' ? (string) $v['legenda'] : 'A Castello explica a Castello Flex, do terreno à casa fechada.') ?></figcaption>
+          </figure>
+<?php endforeach; ?>
+<?php if (count($flex_videos) > 1): ?>
+          <div class="vcarrossel__ctrl">
+            <button class="vcarrossel__seta" type="button" data-vcarrossel-prev aria-label="Vídeo anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <div class="vcarrossel__pontos"></div>
+            <span class="vcarrossel__cont" aria-live="polite"></span>
+            <button class="vcarrossel__seta" type="button" data-vcarrossel-next aria-label="Próximo vídeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
           </div>
-          <figcaption class="vexp__cap">A Castello explica a Castelo Flex, do terreno à casa fechada.</figcaption>
-        </figure>
+<?php endif; ?>
+        </div>
 <?php endif; ?>
       </div>
     </div>
@@ -128,8 +141,8 @@ $flex_faq     = faq('flex');
     <div class="container">
       <div class="section__head">
         <span class="eyebrow reveal">Passo a passo</span>
-        <h2 class="section__title reveal">O que a Castello entrega,<br>e onde a nossa entrega termina.</h2>
-        <p class="section__lead reveal">Sem letra miúda. Estas são as cinco etapas que a Castello executa na Castelo Flex, e logo abaixo está a lista do que fica por sua conta depois que a gente sai do terreno.</p>
+        <h2 class="section__title reveal">O que a Castello entrega.</h2>
+        <p class="section__lead reveal">Entenda o que a Castello executa na modalidade Flex e quais etapas você poderá realizar depois da entrega.</p>
       </div>
 
 <?php if ($flex_passos !== []): ?>
@@ -144,7 +157,7 @@ $flex_faq     = faq('flex');
       </div>
 
       <div class="depois__head reveal">
-        <h3 class="depois__title"><?= e(bloco('flexpg_depois_titulo', 'O que fica por sua conta')) ?></h3>
+        <h3 class="depois__title depois__title--grande"><?= e(bloco('flexpg_depois_titulo', 'O que fica por sua conta')) ?></h3>
 <?php if (bloco('flexpg_depois_texto') !== ''): ?>
         <p class="depois__text"><?= e(bloco('flexpg_depois_texto')) ?></p>
 <?php endif; ?>
@@ -157,8 +170,8 @@ $flex_faq     = faq('flex');
         <div class="depois__item reveal"><strong>Fossa e sumidouro</strong>Ligação de esgoto e de água no terreno.</div>
       </div>
 
-      <p class="depois__nota reveal">Quer tudo isso incluso e a chave na mão no fim? Então a sua modalidade é a
-        <a href="casa-pronta.php">Casa Pronta, completa em <?= e(bloco('pronta_prazo', '90 a 120 dias')) ?></a>.
+      <p class="depois__nota reveal">Prefere receber sua casa com os acabamentos concluídos? Conheça a modalidade
+        <a href="casa-pronta.php">Casa Pronta da Castello</a>, uma solução completa para quem deseja receber sua casa pronta para morar.
       </p>
     </div>
   </section>
@@ -171,9 +184,9 @@ $flex_faq     = faq('flex');
   <section class="section section--facetada" id="modelos-flex">
     <div class="container">
       <div class="section__head">
-        <span class="eyebrow reveal">Casas Castelo Flex</span>
-        <h2 class="section__title reveal">Cinco tamanhos<br>para começar.</h2>
-        <p class="section__lead reveal">De 36 a 57,75 m², com dois dormitórios em todas as plantas e garagem coberta nas duas maiores. Cada modelo sai da fábrica com a estrutura completa e é montado no seu terreno em <?= e($prazo_flex) ?>.</p>
+        <span class="eyebrow reveal">Casas Castello Flex</span>
+        <h2 class="section__title ntitulo reveal"><span class="ntitulo__num"><?= count($flex_modelos) ?></span><span class="ntitulo__resto">modelos,<br>diferentes possibilidades.</span></h2>
+        <p class="section__lead reveal">Conheça os <?= count($flex_modelos) ?> modelos exclusivos da Castello Flex, com tamanhos de 36 m² a 57,75 m². Todos possuem plantas padronizadas, sem alterações ou personalizações, oferecendo uma solução prática e econômica para construir sua casa de madeira.</p>
       </div>
 
 <?php if ($flex_modelos !== []): ?>
@@ -194,8 +207,8 @@ $flex_faq     = faq('flex');
     <div class="container">
       <div class="section__head">
         <span class="eyebrow eyebrow--light reveal">Por que a Flex</span>
-        <h2 class="section__title reveal">Quarenta e cinco dias<br>e a casa é sua.</h2>
-        <p class="section__lead reveal">A Castelo Flex encurta a parte difícil da obra. O que costuma levar meses de canteiro sai em 45 dias, com a estrutura fechada e a casa protegida.</p>
+        <h2 class="section__title ntitulo reveal"><span class="ntitulo__num">45</span><span class="ntitulo__resto">dias e a<br>casa é sua.</span></h2>
+        <p class="section__lead reveal">A Castello Flex encurta a parte difícil da obra. O que costuma levar meses de canteiro sai em 45 dias, com a estrutura fechada e a casa protegida.</p>
         <p class="stamp stamp--light reveal">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
           Entrega em <strong><?= e($prazo_flex) ?></strong>
@@ -205,23 +218,23 @@ $flex_faq     = faq('flex');
       <div class="bene__grid">
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
-          <h3>45 dias de obra</h3>
-          <p>Da assinatura à casa fechada no seu terreno, com data combinada em contrato.</p>
+          <h3>Entrega em 45 dias</h3>
+          <p>Da assinatura do contrato à entrega da casa montada e fechada no seu terreno, conforme os prazos e condições estabelecidos em contrato.</p>
         </article>
         <article class="bene reveal">
-          <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h15a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8Zm0 0a3 3 0 0 1 3-3h9"/><circle cx="17" cy="14" r="1.4" fill="currentColor" stroke="none"/></svg></span>
-          <h3>Você paga por etapa</h3>
-          <p>O acabamento vem depois, no seu ritmo. Sem obra inteira travando o seu orçamento.</p>
+          <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h13v5H4zM17 6.5h3v5l-8 1.5V16M10.5 16h3v5h-3z"/></svg></span>
+          <h3>Liberdade para finalizar</h3>
+          <p>Após a entrega, você tem a liberdade de contratar os profissionais de sua preferência e realizar os acabamentos conforme seu planejamento e orçamento.</p>
         </article>
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v6c0 4.4-3.4 7.4-8 8-4.6-.6-8-3.6-8-8V7l8-4Z"/><path d="m9 12 2 2 4-4"/></svg></span>
-          <h3>Mesma madeira, mesma equipe</h3>
-          <p>Prego galvanizado e madeira de qualidade, montados por quem constrói Castello há 12 anos.</p>
+          <h3>Qualidade Castello</h3>
+          <p>A mesma qualidade de madeira, pregos galvanizados e experiência de uma equipe que constrói casas de madeira desde 2014.</p>
         </article>
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/></svg></span>
-          <h3>Pode virar renda</h3>
-          <p>Muita gente fecha a Flex para aluguel, hospedagem ou revenda, e termina o acabamento depois.</p>
+          <h3>Versatilidade de uso</h3>
+          <p>Uma solução para diferentes objetivos: moradia, casa de campo, hospedagem ou investimento. Você escolhe como aproveitar seu espaço.</p>
         </article>
       </div>
     </div>
@@ -232,12 +245,12 @@ $flex_faq     = faq('flex');
 
   <!-- ============ FAQ DA CASTELO FLEX ============ -->
   <!-- Perguntas provisórias: migram para `faq` com contexto flex. Ícones do conjunto fechado. -->
-  <section class="section faq" id="faq" aria-label="Perguntas frequentes sobre a Castelo Flex">
+  <section class="section faq" id="faq" aria-label="Perguntas frequentes sobre a Castello Flex">
     <div class="container">
       <div class="section__head faq__head">
         <span class="eyebrow reveal">Perguntas frequentes</span>
-        <h2 class="section__title reveal">O que todo mundo pergunta<br>antes de fechar a Flex.</h2>
-        <p class="section__lead reveal">Reunimos as dúvidas que mais aparecem sobre a modalidade semipronta. Ficou com outra pergunta? É só chamar a gente.</p>
+        <h2 class="section__title reveal">Tudo o que você precisa saber sobre a Castello Flex.</h2>
+        <p class="section__lead reveal">Todas as respostas para você dar o próximo passo.</p>
       </div>
 
 <?php if ($flex_faq !== []): ?>
@@ -254,14 +267,14 @@ $flex_faq     = faq('flex');
   <section class="cta-band" id="orcamento">
     <div class="container cta-band__inner">
       <div class="reveal">
-        <h2><?= e(bloco('flexpg_cta_titulo', 'Quer a Castelo Flex no seu terreno?')) ?></h2>
+        <h2><?= e(bloco('flexpg_cta_titulo', 'A casa que você tanto sonhou começa com uma escolha.')) ?></h2>
 <?php if (bloco('flexpg_cta_texto') !== ''): ?>
         <p><?= e(bloco('flexpg_cta_texto')) ?></p>
 <?php endif; ?>
       </div>
       <button type="button" class="btn btn--light btn--lg reveal" data-quote-open>
         <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
-        Pedir orçamento da Flex
+        Quero escolher minha casa
       </button>
     </div>
   </section>
@@ -270,7 +283,7 @@ $flex_faq     = faq('flex');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=14"></script>
-  <script src="js/formulario.js?v=2" defer></script>
+  <script src="js/main.js?v=15"></script>
+  <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

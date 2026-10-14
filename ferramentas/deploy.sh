@@ -11,7 +11,9 @@
 #   ferramentas/deploy.sh                envia o que mudou
 #   ferramentas/deploy.sh --tudo         ignora o manifesto e reenvia tudo
 #   ferramentas/deploy.sh --listar       só mostra o que seria enviado
-#   ferramentas/deploy.sh --com-migrar   inclui o migrar.php (só na instalação)
+#   ferramentas/deploy.sh --com-migrar   inclui o migrar.php e o atualizar-conteudo.php
+#                                        (só na instalação ou numa rodada de conteúdo;
+#                                        os dois saem do servidor logo depois)
 #
 # Credenciais em .credenciais-deploy (ignorado pelo git):
 #   FTP_HOST, FTP_USER, FTP_PASS, FTP_RAIZ (pasta remota, ex: /castello), URL
@@ -36,7 +38,7 @@ touch "$MANIFESTO"
 # Cada entrada é "local|remoto". O remoto é relativo à raiz do site.
 ENTRADAS=()
 while IFS= read -r arquivo; do
-  [[ "$arquivo" == "public_html/migrar.php" && "$MODO" != "--com-migrar" ]] && continue
+  [[ ( "$arquivo" == "public_html/migrar.php" || "$arquivo" == "public_html/atualizar-conteudo.php" ) && "$MODO" != "--com-migrar" ]] && continue
   ENTRADAS+=("$arquivo|${arquivo#public_html/}")
 done < <(git ls-files public_html)
 [[ -f ferramentas/caminho-config.servidor.php ]] \

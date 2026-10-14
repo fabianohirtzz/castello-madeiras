@@ -5,7 +5,7 @@ declare(strict_types=1);
  * Site multipagina: cinco paginas com o mesmo nav, rodape e formulario.
  *
  * Home (resumo da Casa Pronta, sem portfolio nem passo a passo), Casa Pronta
- * (modelos, incluso, passos, FAQ), Castelo Flex, Portfolio (grade) e Contato
+ * (modelos, incluso, passos, FAQ), Castello Flex, Portfolio (grade) e Contato
  * (formulario embutido, sem modal). Menu so com paginas, SEO por pagina e o
  * sitemap com as cinco.
  */
@@ -100,29 +100,37 @@ teste('a home resume a Casa Pronta e nao traz mais portfolio nem passo a passo',
     nao_contem('<article class="model', $html);
     nao_contem('id="galeria"', $html);
     nao_contem('id="processSteps"', $html);
-    foreach (['id="prova"', 'id="modalidades"', 'id="castelo-flex"', 'id="vantagens"', 'id="depoimentos"', 'id="instagram"', 'id="faq"', 'class="cta-band"'] as $marca) {
+    foreach (['id="prova"', 'id="modalidades"', 'id="castello-flex"', 'id="vantagens"', 'id="depoimentos"', 'id="instagram"', 'id="faq"', 'class="cta-band"'] as $marca) {
         contem($marca, $html, "home sem $marca");
     }
-    contem('<span class="hl">chave na mão</span>', $html, 'o subtitulo do hero com o realce');
+    contem('do seu jeito, <span class="hl">no seu ritmo.</span>', $html, 'o subtitulo do hero com o realce');
+    contem('<a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>', $html, 'o hero leva as duas modalidades');
+    contem('<a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>', $html);
+    contem('data-count="71"', $html, '71 avaliacoes');
+    contem('data-count="19000"', $html, 'mais de 19.000 m2');
+    contem('Desde</span> 2014', $html);
+    nao_contem('emipront', $html, 'a palavra semipronta saiu do site');
 });
 
-teste('casa-pronta.php traz os quatro modelos com preco, o incluso, os cinco passos e o FAQ', function (): void {
+teste('casa-pronta.php traz os 12 projetos com preco, o incluso, a linha do tempo e o FAQ', function (): void {
     $html = multi_pagina('casa-pronta.php');
     contem('class="pagehero"', $html);
     contem('id="modelos"', $html);
     contem('class="grid grid--models"', $html);
-    igual(4, substr_count($html, '<article class="model'));
-    foreach (['69.900', '79.988', '87.997', '97.776'] as $preco) {
+    igual(12, substr_count($html, '<article class="model'));
+    foreach (['108.000', '326.000', '72.000', '135.000'] as $preco) {
         contem('<span class="price__cur">R$</span> ' . $preco, $html, "preco $preco");
     }
     contem('id="incluso"', $html);
-    foreach (['Laje aérea', 'Instalação elétrica', 'Instalação hidráulica', 'Cerâmica', 'Fossa', 'Sumidouro', 'Vidros e aberturas', 'Prego galvanizado', '100% personalizável'] as $item) {
+    foreach (['Laje aérea', 'Instalação elétrica', 'Instalação hidráulica', 'Cerâmica', 'Fossa', 'Sumidouro', 'Vidros e aberturas', 'Prego galvanizado', 'Personalizável', 'Estudo preliminar'] as $item) {
         contem($item, $html, "incluso sem $item");
     }
     contem('id="como-funciona"', $html);
-    contem('id="processSteps"', $html);
-    igual(5, substr_count($html, '<li class="process__step'));
-    igual(5, substr_count($html, 'class="process__media-fig'));
+    igual(20, substr_count($html, '<li class="tline-obra__item">'), 'as 20 etapas da obra');
+    contem('Pronta para morar de <strong>90 a 120 dias</strong>', $html);
+    nao_contem('Pedir orçamento</button>' . "\n" . '        <a href="#modelos"', $html, 'o hero ficou so com Ver modelos e precos');
+    contem('<a href="#modelos" class="btn btn--primary btn--lg">Ver modelos e preços</a>', $html);
+    contem('id="modelbox"', $html, 'o Ver mais dos projetos');
     contem('id="faq"', $html);
     contem('id="faqTabs"', $html);
     verdade(substr_count($html, 'class="faq__tab') >= 5, 'abas do FAQ geral');
@@ -167,17 +175,19 @@ teste('contato.php embute o formulario do contrato 6.1 e nao carrega o modal', f
     verdade(substr_count($html, 'data-quote-open') >= 3, 'os CTAs da pagina rolam ate o formulario');
 
     contem('id="canais"', $html);
-    contem('https://wa.me/5548998244494', $html);
-    contem('(48) 99824-4494', $html);
-    contem('href="tel:+554836328743"', $html);
-    contem('(48) 3632-8743', $html);
+    igual(1, substr_count($html, 'https://wa.me/'), 'nenhum botao de WhatsApp: so o plano B escondido da tela de sucesso');
+    contem('id="quoteWppLink" href="https://wa.me/', $html);
+    nao_contem('Chamar no WhatsApp', $html);
+    nao_contem('tel:', $html, 'o telefone fixo saiu por enquanto');
+    nao_contem('3632-8743', $html);
     contem('Segunda a sexta, 8h às 12h e 13h30 às 18h', $html);
     contem('Sábado, 8h30 às 12h', $html);
-    contem('Av. Patrício Lima, 843', $html);
+    contem('Av. Severiano Albino Corrêa, 729', $html);
+    nao_contem('Patrício Lima', $html, 'o endereco antigo saiu');
     contem('id="mapa"', $html);
-    verdade(preg_match('#<iframe\s+src="https://www\.google\.com/maps\?q=[^"]+&output=embed"\s+title="[^"]+"\s+loading="lazy"#s', $html) === 1, 'iframe do mapa com title e loading=lazy');
+    verdade(preg_match('#<iframe\s+src="https://www\.google\.com/maps\?q=[^"]+&amp;output=embed"\s+title="[^"]+"\s+loading="lazy"#s', $html) === 1, 'iframe do mapa com title e loading=lazy');
     nao_contem('footer__map', $html, 'o rodape da pagina de contato nao repete o mapa');
-    contem('<option value="Quero a Castelo Flex, semipronta">', $html, 'quem chega pelo contato pode pedir a Flex');
+    contem('<option value="Quero a Castello Flex">', $html, 'quem chega pelo contato pode pedir a Flex');
 });
 
 teste('nenhuma pagina tem id duplicado', function (): void {

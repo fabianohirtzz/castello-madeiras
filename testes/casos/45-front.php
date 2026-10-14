@@ -69,7 +69,10 @@ teste('o rodape lista as cinco paginas e marca a atual', function (): void {
         igual(1, substr_count($html, 'aria-current="page"'), "$chave: uma pagina atual so");
         verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '" aria-current="page"#', $html) === 1, "$chave: link do rodape marcado");
         contem('<footer class="footer" id="contato">', $html);
-        contem('wa.me/5548998244494', $html);
+        nao_contem('wa.me/', $html, 'nenhum botao de WhatsApp no rodape');
+        nao_contem('tel:', $html, 'o telefone fixo saiu por enquanto');
+        contem('class="footer__link" data-quote-open', $html, 'o contato do rodape abre o formulario');
+        contem('Av. Severiano Albino Corrêa, 729', $html);
     }
     contem('footer__map', parcial_costura('rodape', ['pagina' => 'home']), 'a home tem o mapa no rodape');
     nao_contem('footer__map', parcial_costura('rodape', ['pagina' => 'contato']), 'a pagina de contato ja tem o mapa grande, o rodape nao repete');
@@ -79,7 +82,7 @@ teste('o rodape lista as cinco paginas e marca a atual', function (): void {
 teste('o formulario e um partial so, com os campos do contrato 6.1', function (): void {
     $html = parcial_costura('formulario', ['form_modalidade' => 'pronta']);
     contem('<form class="qform" id="quoteForm" method="post" action="enviar.php" novalidate>', $html);
-    foreach (['nome', 'whatsapp', 'busca', 'modelo', 'cidade', 'mensagem'] as $campo) {
+    foreach (['nome', 'whatsapp', 'busca', 'modelo', 'metragem', 'garagem', 'cidade', 'mensagem'] as $campo) {
         contem('name="' . $campo . '"', $html, "campo $campo");
     }
     contem('name="empresa"', $html, 'honeypot com o nome do contrato');
@@ -90,34 +93,39 @@ teste('o formulario e um partial so, com os campos do contrato 6.1', function ()
     }
     contem('id="quoteDone" hidden', $html, 'a tela de sucesso acompanha o formulario');
     contem('id="quoteBack"', $html);
-    contem('<option value="Compacta · 39 m² · R$ 69.900">Compacta · 39 m² · R$ 69.900</option>', $html);
+    contem('<option value="Projeto 1 · 61,25 m² · R$ 108.000">Projeto 1 · 61,25 m² · R$ 108.000</option>', $html);
     contem('id="qGroupModelo" hidden', $html);
+    foreach (FORM_METRAGENS as $m) {
+        contem('<option value="' . $m . '">' . $m . '</option>', $html, "metragem $m");
+    }
+    contem('<input type="radio" name="garagem" value="Com garagem" />', $html);
+    contem('<input type="radio" name="garagem" value="Sem garagem" />', $html);
 
-    $extra = parcial_costura('formulario', ['form_modalidade' => 'pronta', 'form_opcoes_extra' => ['Quero a Castelo Flex, semipronta']]);
-    contem('<option value="Quero a Castelo Flex, semipronta">Quero a Castelo Flex, semipronta</option>', $extra);
+    $extra = parcial_costura('formulario', ['form_modalidade' => 'pronta', 'form_opcoes_extra' => ['Quero a Castello Flex']]);
+    contem('<option value="Quero a Castello Flex">Quero a Castello Flex</option>', $extra);
 });
 
 teste('o modal muda o titulo e a lista de modelos conforme a pagina', function (): void {
     $home = parcial_costura('modal', ['pagina' => 'home']);
     contem('Vamos falar da sua casa', $home);
-    contem('<option value="Compacta · 39 m² · R$ 69.900">Compacta · 39 m² · R$ 69.900</option>', $home);
+    contem('<option value="Projeto 1 · 61,25 m² · R$ 108.000">Projeto 1 · 61,25 m² · R$ 108.000</option>', $home);
     contem('id="qGroupModelo" hidden', $home);
     contem('id="quoteForm"', $home);
     contem('id="reelbox"', $home, 'a home tem o lightbox dos reels');
     contem('id="wppFloat"', $home, 'o botao flutuante vem junto');
 
     $flex = parcial_costura('modal', ['pagina' => 'flex']);
-    contem('Vamos falar da sua Castelo Flex', $flex);
-    contem('<option value="Castelo Flex 36 · 36 m² · R$ 43.000">Castelo Flex 36 · 36 m² · R$ 43.000</option>', $flex);
+    contem('Vamos falar da sua Castello Flex', $flex);
+    contem('<option value="Castello Flex 36 · 36 m² · R$ 43.000">Castello Flex 36 · 36 m² · R$ 43.000</option>', $flex);
     contem('<option value="Quero a Casa Pronta, chave na mão">Quero a Casa Pronta, chave na mão</option>', $flex);
-    nao_contem('Compacta · 39 m²', $flex, 'na Flex a lista e dos modelos Flex');
+    nao_contem('Projeto 1 · 61,25 m²', $flex, 'na Flex a lista e dos modelos Flex');
     contem('id="qGroupModelo">', $flex, 'na Flex o campo de modelo ja aparece aberto');
     nao_contem('id="reelbox"', $flex);
 
     foreach (['pronta', 'portfolio'] as $outra) {
         $html = parcial_costura('modal', ['pagina' => $outra]);
         contem('Vamos falar da sua casa', $html, $outra);
-        contem('Compacta · 39 m²', $html, $outra);
+        contem('Projeto 1 · 61,25 m²', $html, $outra);
         nao_contem('id="reelbox"', $html, "$outra: so a home tem trilha do Instagram");
     }
 });

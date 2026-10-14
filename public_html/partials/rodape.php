@@ -6,7 +6,7 @@
  */
 declare(strict_types=1);
 
-require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/conteudo.php';
 
 $pagina = $pagina ?? 'home';
 
@@ -14,7 +14,7 @@ $pagina = $pagina ?? 'home';
 $rodape_paginas = [
     ['home',      'index.php',       'Início'],
     ['pronta',    'casa-pronta.php', 'Casa Pronta'],
-    ['flex',      'flex.php',        'Castelo Flex'],
+    ['flex',      'flex.php',        'Castello Flex'],
     ['portfolio', 'portfolio.php',   'Portfólio'],
     ['contato',   'contato.php',     'Contato'],
 ];
@@ -24,11 +24,8 @@ $rodape_paginas = [
     <div class="container footer__grid<?= $pagina === 'contato' ? ' footer__grid--sem-mapa' : '' ?>">
       <div class="footer__brand">
         <img src="images/logo-vertical-branco.png" alt="Castello Casas de Madeira" class="footer__logo" />
-        <p>Casas de madeira chave na mão. Projeto, execução e pós-venda numa empresa só, há 12 anos em Tubarão e região.</p>
+        <p>Casas de madeira em Tubarão e região desde 2014. Casa Pronta e Castello Flex, da obra ao pós-venda numa empresa só.</p>
         <div class="footer__social">
-          <a href="https://wa.me/5548998244494" class="footer__social-btn" target="_blank" rel="noopener" aria-label="WhatsApp da Castello">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg>
-          </a>
           <a href="https://www.instagram.com/castellocasasdemadeira/" class="footer__social-btn" target="_blank" rel="noopener" aria-label="Instagram da Castello">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.21 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.21 8.8 2.2 12 2.2Zm0 4.87a4.93 4.93 0 1 0 0 9.86 4.93 4.93 0 0 0 0-9.86Zm0 1.8a3.13 3.13 0 1 1 0 6.26 3.13 3.13 0 0 1 0-6.26Zm5.13-3.24a1.15 1.15 0 1 0 0 2.3 1.15 1.15 0 0 0 0-2.3Z"/></svg>
           </a>
@@ -51,16 +48,12 @@ $rodape_paginas = [
         <h4>Contato</h4>
         <ul class="footer__list">
           <li>
-            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.3-1.4-.7-2-1.4-.4-.5-.8-1.1-.9-1.3-.1-.2 0-.4.1-.5l.4-.4c.1-.2.2-.3.2-.5 0-.2 0-.3-.1-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.8 2.3 1 2.5.1.2 1.7 2.6 4 3.5 1.4.6 1.9.6 2.6.5.4 0 1.3-.5 1.5-1.1.2-.5.2-1 .1-1.1-.1-.1-.2-.1-.4-.2Z"/></svg></span>
-            <a href="https://wa.me/5548998244494" target="_blank" rel="noopener">WhatsApp (48) 99824-4494</a>
-          </li>
-          <li>
-            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.4.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1l-2.3 2.2Z"/></svg></span>
-            <a href="tel:+554836328743">Telefone (48) 3632-8743</a>
+            <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg></span>
+            <button type="button" class="footer__link" data-quote-open>Pedir orçamento pelo formulário</button>
           </li>
           <li>
             <span class="footer__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
-            <span>Av. Patrício Lima, 843<br>Tubarão, Santa Catarina</span>
+            <a href="<?= e(CASTELLO_MAPA_LINK) ?>" target="_blank" rel="noopener"><?= e(CASTELLO_ENDERECO_RUA) ?><br><?= e(CASTELLO_ENDERECO_BAIRRO) ?><br><?= e(CASTELLO_ENDERECO_CIDADE) ?></a>
           </li>
         </ul>
       </div>
@@ -82,7 +75,7 @@ $rodape_paginas = [
 <?php if ($pagina !== 'contato'): ?>
       <div class="footer__map">
         <iframe
-          src="https://www.google.com/maps?q=Av.%20Patr%C3%ADcio%20Lima%20843%20Tubar%C3%A3o%20SC&output=embed"
+          src="<?= e(mapa_embed()) ?>"
           title="Localização da Castello Casas de Madeira em Tubarão, SC"
           loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>

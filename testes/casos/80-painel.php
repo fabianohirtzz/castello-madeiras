@@ -94,10 +94,12 @@ teste('painel_listar mostra tambem o que esta desativado', function (): void {
 });
 
 teste('painel_listar aplica o filtro quando a tabela tem um', function (): void {
-    igual(4, count(painel_listar('modelos', 'pronta')));
+    igual(12, count(painel_listar('modelos', 'pronta')));
     igual(5, count(painel_listar('modelos', 'flex')), 'os cinco Flex');
-    igual(9, count(painel_listar('modelos')), 'sem filtro, lista tudo');
-    igual(9, count(painel_listar('modelos', 'inventada')), 'filtro invalido e ignorado');
+    igual(17, count(painel_listar('modelos')), 'sem filtro, lista tudo');
+    igual(17, count(painel_listar('modelos', 'inventada')), 'filtro invalido e ignorado');
+    igual(11, count(painel_listar('videos', 'instagram')), 'os reels da home');
+    igual(0, count(painel_listar('videos', 'flex')), 'nenhum video da Flex cadastrado ainda');
 });
 
 teste('painel_listar devolve vazio para tabela fora da descricao', function (): void {
@@ -106,9 +108,9 @@ teste('painel_listar devolve vazio para tabela fora da descricao', function (): 
 });
 
 teste('painel_linha traz uma linha pelo id e null quando nao existe', function (): void {
-    $id = (int) db()->query("SELECT id FROM modelos WHERE nome = 'Família'")->fetchColumn();
+    $id = (int) db()->query("SELECT id FROM modelos WHERE nome = 'Projeto 3'")->fetchColumn();
 
-    igual('Família', painel_linha('modelos', $id)['nome']);
+    igual('Projeto 3', painel_linha('modelos', $id)['nome']);
     igual(null, painel_linha('modelos', 999999));
     igual(null, painel_linha('usuarios', 1));
 });
@@ -296,20 +298,20 @@ teste('painel_estado recusa tabela fora da descricao', function (): void {
 
 teste('painel_reordenar renumera de 1 ate N na ordem recebida', function (): void {
     $ids = array_map('intval', array_column(painel_listar('passos', 'pronta'), 'id'));
-    igual(5, count($ids));
+    igual(20, count($ids));
 
     $invertido = array_reverse($ids);
-    igual(5, painel_reordenar('passos', $invertido));
+    igual(20, painel_reordenar('passos', $invertido));
 
     $agora = array_map('intval', array_column(painel_listar('passos', 'pronta'), 'id'));
     igual($invertido, $agora, 'a lista do painel segue a nova ordem');
-    igual('Chave na mão', passos('pronta')[0]['titulo'], 'o site tambem segue');
+    igual('Checklist e entrega final da obra', passos('pronta')[0]['titulo'], 'o site tambem segue');
 
     igual(1, (int) painel_linha('passos', $invertido[0])['ordem']);
-    igual(5, (int) painel_linha('passos', $invertido[4])['ordem']);
+    igual(20, (int) painel_linha('passos', $invertido[19])['ordem']);
 
     painel_reordenar('passos', $ids);
-    igual('Conversa e projeto', passos('pronta')[0]['titulo'], 'voltou ao normal');
+    igual('Primeiro contato', passos('pronta')[0]['titulo'], 'voltou ao normal');
 });
 
 teste('reordenar troca quais videos aparecem na home', function (): void {
@@ -342,13 +344,13 @@ teste('painel_reordenar ignora id invalido e recusa tabela desconhecida', functi
 teste('painel_textos_gravar atualiza so as chaves que existem em blocos', function (): void {
     $n = painel_textos_gravar([
         'hero_titulo'  => '  A casa que você sempre quis  ',
-        'flex_titulo'  => 'Castelo Flex',
+        'flex_titulo'  => 'Castello Flex',
         'chave_falsa'  => 'nao pode entrar',
     ]);
 
     igual(2, $n);
     igual('A casa que você sempre quis', bloco('hero_titulo'), 'o texto e aparado');
-    igual('Castelo Flex', bloco('flex_titulo'));
+    igual('Castello Flex', bloco('flex_titulo'));
     igual(21, (int) db()->query('SELECT COUNT(*) FROM blocos')->fetchColumn(), 'nenhuma chave nova foi criada');
 
     painel_textos_gravar(['hero_titulo' => 'A casa dos seus sonhos']);

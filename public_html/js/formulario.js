@@ -22,7 +22,9 @@
     ['whatsapp', 'WhatsApp'],
     ['busca', 'O que busca'],
     ['modelo', 'Modelo de interesse'],
-    ['cidade', 'Cidade/regiao'],
+    ['metragem', 'Metragem aproximada'],
+    ['garagem', 'Garagem'],
+    ['cidade', 'Cidade/região'],
     ['mensagem', 'Mensagem']
   ];
 
@@ -106,7 +108,7 @@
     var lista = campos || [];
     if (lista.indexOf('nome') >= 0) return 'Preencha seu nome.';
     if (lista.indexOf('whatsapp') >= 0) return 'Informe um WhatsApp com DDD.';
-    if (lista.indexOf('busca') >= 0) return 'Escolha o que voce busca.';
+    if (lista.indexOf('busca') >= 0) return 'Escolha o que você busca.';
     return 'Confira os campos e tente de novo.';
   };
 
@@ -223,7 +225,7 @@
     return api.obterToken(buscarTokenNoServidor).then(function (token) {
       campoOculto('csrf', token);
       if (!token) {
-        dizer('Nao deu pra preparar o envio agora. Tente de novo em alguns segundos ou chame no WhatsApp.');
+        dizer('Não deu pra preparar o envio agora. Tente de novo em alguns segundos.');
       }
       return token;
     });
@@ -266,13 +268,16 @@
     if (doneTitulo) doneTitulo.textContent = entregue ? 'Pedido enviado' : 'Pedido pronto pra enviar';
     if (doneMsg) {
       doneMsg.textContent = entregue
-        ? 'Recebemos seu pedido. A Castello responde em ate 1 dia util. Se preferir adiantar, chame no WhatsApp.'
-        : 'Nao deu pra enviar pelo site agora. Toque no botao abaixo para mandar seu pedido no WhatsApp da Castello.';
+        ? 'Recebemos seu pedido. A Castello responde em até 1 dia útil.'
+        : 'Não deu pra enviar pelo site agora. Toque no botão abaixo para mandar seu pedido no WhatsApp da Castello.';
     }
     if (wppLink) {
+      /* O WhatsApp so aparece como plano B, quando o site nao conseguiu
+         entregar o pedido: e o que garante que o lead nao se perde. */
+      wppLink.hidden = entregue;
       wppLink.href = 'https://wa.me/' + WA_PHONE + '?text=' +
-        encodeURIComponent('Ola! Quero um orcamento de casa de madeira.\n\n' + api.resumoWhatsapp(dados));
-      wppLink.focus({ preventScroll: true });
+        encodeURIComponent('Olá! Quero um orçamento de casa de madeira.\n\n' + api.resumoWhatsapp(dados));
+      if (!entregue) wppLink.focus({ preventScroll: true });
     }
   }
 
@@ -326,7 +331,7 @@
           restaurar(rotulo);
           api.esquecerToken();
           garantirToken();
-          dizer('A pagina ficou aberta tempo demais. Toque em enviar de novo.');
+          dizer('A página ficou aberta tempo demais. Toque em enviar de novo.');
           return;
         }
         restaurar(rotulo);
@@ -355,7 +360,7 @@
     /* Sem token o envio voltaria 419. Mostra o erro aqui e tenta buscar de
        novo, para o visitante entender e poder repetir. */
     if (!String(fd.get('csrf') || '')) {
-      dizer('Nao deu pra preparar o envio agora. Tente de novo em alguns segundos ou chame no WhatsApp.');
+      dizer('Não deu pra preparar o envio agora. Tente de novo em alguns segundos.');
       garantirToken();
       return;
     }

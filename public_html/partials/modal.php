@@ -29,7 +29,7 @@ $modal_videos    = count(videos());
       <div class="qmodal__head">
         <span class="eyebrow">Orçamento sem compromisso</span>
 <?php if ($modal_flex): ?>
-        <h2 id="qmodalTitle">Vamos falar da sua Castelo Flex</h2>
+        <h2 id="qmodalTitle">Vamos falar da sua Castello Flex</h2>
         <p>Conta pra gente o terreno e o tamanho que você imagina. A Castello volta com a tabela da Flex e o prazo.</p>
 <?php else: ?>
         <h2 id="qmodalTitle">Vamos falar da sua casa</h2>
@@ -37,8 +37,8 @@ $modal_videos    = count(videos());
 <?php endif; ?>
         <div class="qmodal__trust">
           <span><strong>5,0 ★</strong> no Google</span>
-          <span><strong>56</strong> avaliações</span>
-          <span><strong>12 anos</strong> de mercado</span>
+          <span><strong>71</strong> avaliações</span>
+          <span><strong>Desde 2014</strong> no mercado</span>
         </div>
       </div>
 

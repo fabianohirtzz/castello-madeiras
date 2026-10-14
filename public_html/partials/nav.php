@@ -25,7 +25,7 @@ $ico = [
 $menu = [
     ['home',      'index.php',       'Início',       'inicio',  '',                ''],
     ['pronta',    'casa-pronta.php', 'Casa Pronta',  'casa',    '',                ''],
-    ['flex',      'flex.php',        'Castelo Flex', 'camadas', 'nav__link--flex', 'Novo'],
+    ['flex',      'flex.php',        'Castello Flex', 'camadas', 'nav__link--flex', 'Novo'],
     ['portfolio', 'portfolio.php',   'Portfólio',    'foto',    '',                ''],
     ['contato',   'contato.php',     'Contato',      'fone',    '',                ''],
 ];

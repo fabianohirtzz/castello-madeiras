@@ -39,6 +39,9 @@ CREATE TABLE IF NOT EXISTS modelos (
   descricao   TEXT,
   foto        TEXT,
   foto_alt    TEXT,
+  itens       TEXT,
+  planta      TEXT,
+  foto_extra  TEXT,
   destaque    INTEGER NOT NULL DEFAULT 0,
   ativo       INTEGER NOT NULL DEFAULT 1,
   ordem       INTEGER NOT NULL DEFAULT 0
@@ -68,6 +71,7 @@ CREATE TABLE IF NOT EXISTS videos (
   arquivo TEXT NOT NULL,
   poster  TEXT,
   legenda TEXT,
+  contexto TEXT NOT NULL DEFAULT 'instagram',
   ativo   INTEGER NOT NULL DEFAULT 1,
   ordem   INTEGER NOT NULL DEFAULT 0
 );
@@ -114,6 +118,8 @@ CREATE TABLE IF NOT EXISTS leads (
   cidade               TEXT,
   mensagem             TEXT,
   prazo                TEXT,
+  metragem             TEXT,
+  garagem              TEXT,
   pagina               TEXT,
   referrer             TEXT,
   utm_source           TEXT,

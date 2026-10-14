@@ -17,6 +17,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/conteudo.php';
+require_once __DIR__ . '/../lib/leads.php';
 
 $form_modalidade   = $form_modalidade ?? 'pronta';
 $form_opcoes_extra = $form_opcoes_extra ?? [];
@@ -26,7 +27,7 @@ $form_opcoes = [];
 foreach (modelos($form_flex ? 'flex' : 'pronta') as $m) {
     $area  = str_replace(',00 ', ' ', (string) $m['area']);
     $preco = trim((string) $m['preco']);
-    $valor = $m['nome'] . ' · ' . $area . ' · ' . ($preco !== '' ? 'R$ ' . $preco : 'semipronta');
+    $valor = $m['nome'] . ' · ' . $area . ' · ' . ($preco !== '' ? 'R$ ' . $preco : 'Castello Flex');
     $form_opcoes[] = [$valor, $preco !== '' ? $valor : $m['nome'] . ' · ' . $area];
 }
 if ($form_flex) {
@@ -89,6 +90,28 @@ foreach ($form_opcoes_extra as $extra) {
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
           </div>
         </div>
+
+        <div class="qform__group">
+          <label class="qform__label" for="q-metragem">Metragem aproximada da obra <span class="opt">(opcional)</span></label>
+          <div class="qform__select">
+            <select id="q-metragem" name="metragem">
+              <option value="">Ainda não sei</option>
+<?php foreach (FORM_METRAGENS as $metragem): ?>
+              <option value="<?= e($metragem) ?>"><?= e($metragem) ?></option>
+<?php endforeach; ?>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <fieldset class="qform__group qform__escolha">
+          <legend class="qform__label">Garagem <span class="opt">(opcional)</span></legend>
+          <div class="qform__opcoes">
+<?php foreach (FORM_GARAGENS as $garagem): ?>
+            <label class="qform__opcao"><input type="radio" name="garagem" value="<?= e($garagem) ?>" /><span><?= e($garagem) ?></span></label>
+<?php endforeach; ?>
+          </div>
+        </fieldset>
 
         <div class="qform__group qform__group--modelo" id="qGroupModelo"<?= $form_flex ? '' : ' hidden' ?>>
           <label class="qform__label" for="q-modelo">Modelo de interesse</label>

@@ -8,7 +8,7 @@ require_once __DIR__ . '/../lib/conteudo.php';
 
 $contexto  = $contexto ?? 'geral';
 $lista_faq = faq($contexto);
-$rotulo_faq = $contexto === 'flex' ? 'Perguntas sobre a Castelo Flex' : 'Perguntas frequentes';
+$rotulo_faq = $contexto === 'flex' ? 'Perguntas sobre a Castello Flex' : 'Perguntas frequentes';
 ?>
 <div class="faq__board reveal" id="faqTabs">
         <div class="faq__tablist" role="tablist" aria-orientation="vertical" aria-label="<?= e($rotulo_faq) ?>">

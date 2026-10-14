@@ -148,9 +148,11 @@ teste('mensagemDeErro fala do primeiro campo ruim', function () {
 });
 
 teste('resumoWhatsapp monta o texto so com o que foi preenchido', function () {
-  var texto = api.resumoWhatsapp({ nome: 'Fabiano', whatsapp: '(48) 99824-4494', busca: 'Modelo pronto', modelo: '', cidade: 'Tubarao', mensagem: '' });
+  var texto = api.resumoWhatsapp({ nome: 'Fabiano', whatsapp: '(48) 99824-4494', busca: 'Modelo pronto', modelo: '', metragem: 'De 60 a 80 m²', garagem: 'Com garagem', cidade: 'Tubarao', mensagem: '' });
   assert.match(texto, /Nome: Fabiano/);
-  assert.match(texto, /Cidade\/regiao: Tubarao/);
+  assert.match(texto, /Metragem aproximada: De 60 a 80 m²/);
+  assert.match(texto, /Garagem: Com garagem/);
+  assert.match(texto, /Cidade\/região: Tubarao/);
   assert.equal(/Modelo de interesse/.test(texto), false);
   assert.equal(/Mensagem/.test(texto), false);
 });

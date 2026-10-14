@@ -130,7 +130,7 @@ teste('db_garantir_colunas acrescenta o que falta e e idempotente', function ():
 
     $acrescentadas = db_garantir_colunas($pdo);
     sort($acrescentadas);
-    igual(['crm_pessoa_id', 'prazo'], $acrescentadas, 'acrescenta as duas colunas que faltavam');
+    igual(['crm_pessoa_id', 'garagem', 'metragem', 'prazo'], $acrescentadas, 'acrescenta as quatro colunas que faltavam');
 
     $colunas = array_column($pdo->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     verdade(in_array('prazo', $colunas, true), 'prazo existe agora');
@@ -150,6 +150,22 @@ teste('o banco real do runner ja tem as colunas novas', function (): void {
     $colunas = array_column(db()->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');
     verdade(in_array('prazo', $colunas, true), 'prazo no banco do runner');
     verdade(in_array('crm_pessoa_id', $colunas, true), 'crm_pessoa_id no banco do runner');
+    verdade(in_array('metragem', $colunas, true), 'metragem no banco do runner');
+    verdade(in_array('garagem', $colunas, true), 'garagem no banco do runner');
+    $modelos = array_column(db()->query('PRAGMA table_info(modelos)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    foreach (['itens', 'planta', 'foto_extra'] as $coluna) {
+        verdade(in_array($coluna, $modelos, true), $coluna . ' em modelos');
+    }
+    $videos = array_column(db()->query('PRAGMA table_info(videos)')->fetchAll(PDO::FETCH_ASSOC), 'name');
+    verdade(in_array('contexto', $videos, true), 'contexto em videos');
+});
+
+teste('db_garantir_colunas da contexto instagram aos videos que ja existiam', function (): void {
+    $pdo = new PDO('sqlite::memory:', null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $pdo->exec('CREATE TABLE videos (id INTEGER PRIMARY KEY, arquivo TEXT NOT NULL)');
+    $pdo->exec("INSERT INTO videos (arquivo) VALUES ('uploads/videos/a.mp4')");
+    db_garantir_colunas($pdo);
+    igual('instagram', $pdo->query('SELECT contexto FROM videos')->fetchColumn(), 'o reel antigo continua na home');
 });
 
 teste('a config nasce com os valores reais da conta do Agendor', function (): void {
@@ -185,7 +201,7 @@ teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', fun
         #[\ReturnTypeWillChange]
         public function query(string $sql, ...$args) {
             // PRAGMA table_info(leads) devolve resultado forjado, sem prazo e sem crm_pessoa_id.
-            if (strpos($sql, 'PRAGMA table_info') !== false) {
+            if (strpos($sql, 'PRAGMA table_info(leads)') !== false) {
                 return $this->pdoVerdadeiro->query(
                     "SELECT 'id' AS name UNION ALL SELECT 'nome' UNION ALL SELECT 'crm_status'"
                 );
@@ -223,10 +239,10 @@ teste('db_garantir_colunas tolera coluna acrescentada por outra requisicao', fun
     );
     verdade(is_array($acrescentadas), 'db_garantir_colunas precisa devolver um array mesmo neste caminho');
 
-    /* So crm_pessoa_id entrou na lista de acrescentadas nesta chamada.
-       Prazo foi recusado em silencio pelo catch de coluna duplicada. */
+    /* Prazo foi recusado em silencio pelo catch de coluna duplicada; as
+       outras colunas que faltavam de verdade entraram. */
     sort($acrescentadas);
-    igual(['crm_pessoa_id'], $acrescentadas, 'apenas crm_pessoa_id foi acrescentado nesta chamada');
+    igual(['crm_pessoa_id', 'garagem', 'metragem'], $acrescentadas, 'prazo nao entra na lista, ja existia');
 
     /* Ambas as colunas existem agora no banco de verdade. */
     $colunas = array_column($pdoVerdadeiro->query('PRAGMA table_info(leads)')->fetchAll(PDO::FETCH_ASSOC), 'name');

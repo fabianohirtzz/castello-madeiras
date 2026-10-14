@@ -204,6 +204,8 @@ function crm_descricao_negocio(array $lead): string
         'modelo'   => 'Modelo de interesse',
         'cidade'   => 'Cidade / regiao do terreno',
         'prazo'    => 'Prazo para iniciar',
+        'metragem' => 'Metragem aproximada',
+        'garagem'  => 'Garagem',
     ];
     foreach ($rotulos as $campo => $rotulo) {
         $valor = crm_campo($lead, $campo);

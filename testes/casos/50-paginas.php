@@ -68,20 +68,20 @@ teste('a home respeita o limite de videos da config', function (): void {
 
 teste('o select de modelo do formulario sai do banco', function (): void {
     $html = render(site() . '/index.php');
-    contem('<option value="Compacta · 39 m² · R$ 69.900">Compacta · 39 m² · R$ 69.900</option>', $html);
-    contem('<option value="Ampla · 59,75 m² · R$ 97.776">Ampla · 59,75 m² · R$ 97.776</option>', $html);
+    contem('<option value="Projeto 1 · 61,25 m² · R$ 108.000">Projeto 1 · 61,25 m² · R$ 108.000</option>', $html);
+    contem('<option value="Projeto 12 · 49,24 m² · R$ 135.000">Projeto 12 · 49,24 m² · R$ 135.000</option>', $html);
     contem('<option value="">Ainda não sei</option>', $html);
 });
 
 teste('home renderiza com as secoes esperadas e sem prazo fixo no topo', function (): void {
     $html = render(site() . '/index.php');
-    foreach (['id="topo"', 'id="prova"', 'id="modalidades"', 'id="casa-pronta"', 'id="castelo-flex"', 'id="vantagens"',
+    foreach (['id="topo"', 'id="prova"', 'id="modalidades"', 'id="casa-pronta"', 'id="castello-flex"', 'id="vantagens"',
               'id="depoimentos"', 'id="instagram"', 'id="faq"', 'id="contato"', 'class="cta-band"'] as $marca) {
         contem($marca, $html, "home nao tem $marca");
     }
     nao_contem('em até 120 dias', $html, 'prazo fixo continua no topo da home');
     nao_contem('id="modelos"', $html, 'o id antigo #modelos deu lugar a #casa-pronta');
-    contem('Casa Pronta e Castelo Flex em Tubarão SC</title>', $html);
+    contem('Casa Pronta e Castello Flex em Tubarão SC</title>', $html);
     contem('href="flex.php"', $html);
     contem('href="casa-pronta.php"', $html, 'a home leva a pagina da Casa Pronta');
     nao_contem('.html', $html, 'nenhum link para .html sobra na home');
@@ -105,27 +105,27 @@ teste('a home imprime os textos editaveis do banco', function (): void {
 
     db()->prepare("UPDATE blocos SET valor = 'uploads/videos/insta-04.mp4' WHERE chave = 'flex_video'")->execute();
     db()->prepare("UPDATE blocos SET valor = '45 dias' WHERE chave = 'flex_prazo'")->execute();
-    db()->prepare("UPDATE blocos SET valor = 'pronta pra morar, *chave na mão*' WHERE chave = 'hero_subtitulo'")->execute();
+    db()->prepare("UPDATE blocos SET valor = 'do seu jeito, *no seu ritmo.*' WHERE chave = 'hero_subtitulo'")->execute();
     db()->prepare("UPDATE blocos SET valor = ? WHERE chave = 'modalidades_texto'")->execute([
-        'A Castello entrega a casa completa, pronta pra morar, e agora entrega também a casa semipronta, para quem quer a estrutura no terreno e o acabamento no próprio ritmo.',
+        'Com a experiência e a qualidade Castello, você escolhe a modalidade que melhor combina com seu projeto, suas necessidades e seus planos.',
     ]);
 });
 
 teste('o resumo da Casa Pronta na home usa a foto do modelo em destaque', function (): void {
     $html = render(site() . '/index.php');
     contem('class="prontahome__media reveal reveal--mask"', $html);
-    contem('uploads/modelos/casa5.webp', $html, 'foto do modelo Familia, o destaque');
-    contem('Modelo Família · 51 m²', $html);
-    contem('<strong>R$ 87.997</strong>', $html);
+    contem('uploads/modelos/projeto-01.webp', $html, 'sem destaque cadastrado, vale o primeiro projeto');
+    contem('Modelo Projeto 1 · 61,25 m²', $html);
+    contem('<strong>R$ 108.000</strong>', $html);
     contem('href="casa-pronta.php" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>', $html);
 
-    // sem destaque, vale o primeiro modelo; sem modelo nenhum, a figura some
+    // com destaque marcado no painel, a foto e a do destaque
+    db()->exec("UPDATE modelos SET destaque = 1 WHERE modalidade = 'pronta' AND nome = 'Projeto 11'");
+    contem('uploads/modelos/projeto-11.webp', render(site() . '/index.php'), 'o destaque manda na foto');
     db()->exec("UPDATE modelos SET destaque = 0 WHERE modalidade = 'pronta'");
-    contem('uploads/modelos/casa4.webp', render(site() . '/index.php'), 'sem destaque, o primeiro modelo');
     db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'pronta'");
     nao_contem('prontahome__media', render(site() . '/index.php'), 'sem modelo ativo, sem figura');
     db()->exec("UPDATE modelos SET ativo = 1 WHERE modalidade = 'pronta'");
-    db()->exec("UPDATE modelos SET destaque = 1 WHERE modalidade = 'pronta' AND nome = 'Família'");
 });
 
 teste('toda pagina traz nav, rodape e os scripts pelos parciais compartilhados', function (): void {
@@ -134,8 +134,8 @@ teste('toda pagina traz nav, rodape e os scripts pelos parciais compartilhados',
         contem('<header class="nav" id="nav">', $html, $arquivo);
         contem('id="ico-google"', $html, $arquivo);
         contem('<footer class="footer" id="contato">', $html, $arquivo);
-        contem('<script src="js/main.js?v=14"></script>', $html, $arquivo);
-        contem('<script src="js/formulario.js?v=2" defer></script>', $html, $arquivo);
+        contem('<script src="js/main.js?v=15"></script>', $html, $arquivo);
+        contem('<script src="js/formulario.js?v=3" defer></script>', $html, $arquivo);
     }
     $home = render(site() . '/index.php');
     contem('id="quoteModal"', $home);
@@ -151,7 +151,7 @@ teste('pagina flex renderiza com as secoes esperadas e o prazo', function (): vo
         contem($marca, $html, "flex nao tem $marca");
     }
     contem('45 dias', $html, 'pagina flex nao mostra o prazo');
-    contem('<title>Castelo Flex | Casa de madeira semipronta em 45 dias | Castello</title>', $html);
+    contem('<title>Castello Flex | Casa de madeira montada e fechada em 45 dias | Castello</title>', $html);
     contem('href="casa-pronta.php"', $html, 'a Flex aponta para a pagina da Casa Pronta');
     nao_contem('index.php#casa-pronta', $html, 'a ancora antiga da home saiu');
     nao_contem('.html', $html);

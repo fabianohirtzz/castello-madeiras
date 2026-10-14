@@ -6,45 +6,46 @@ require_once site() . '/lib/conteudo.php';
 $contagens = banco_com_conteudo();
 
 teste('a migracao insere a quantidade exata de cada tabela', function () use ($contagens): void {
-    igual(9,  $contagens['modelos'], '4 Casa Pronta e 5 Flex');
+    igual(17, $contagens['modelos'], '12 Casa Pronta e 5 Flex');
     igual(6,  $contagens['portfolio']);
     igual(14, $contagens['avaliacoes']);
     igual(11, $contagens['videos']);
     igual(13, $contagens['faq'], '8 gerais e 5 da Flex');
-    igual(10, $contagens['passos'], '5 da Casa Pronta e 5 da Flex');
+    igual(25, $contagens['passos'], '20 etapas da Casa Pronta e 5 da Flex');
     igual(21, $contagens['blocos']);
 });
 
-teste('os quatro modelos Casa Pronta chegaram com preco, area e parede', function (): void {
+teste('os 12 projetos do catalogo da Casa Pronta chegaram com preco, area e ambientes', function (): void {
     $lista = modelos('pronta');
-    igual(4, count($lista));
+    igual(12, count($lista), 'catalogo de outubro de 2026');
 
-    igual('Compacta', $lista[0]['nome']);
-    igual('39,00 m²', $lista[0]['area']);
-    igual('Madeira vertical', $lista[0]['parede']);
-    igual('69.900', $lista[0]['preco']);
-    igual('90 a 120 dias', $lista[0]['prazo']);
+    igual('Projeto 1', $lista[0]['nome']);
+    igual('61,25 m²', $lista[0]['area']);
+    igual('108.000', $lista[0]['preco']);
+    igual("3 quartos\nSala e cozinha conjugada\nBanheiro\nVaranda", $lista[0]['itens']);
 
-    igual('Conforto', $lista[1]['nome']);
-    igual('Madeira horizontal', $lista[1]['parede'], 'so a Compacta e vertical');
-    igual('79.988', $lista[1]['preco']);
+    igual('Projeto 11', $lista[10]['nome']);
+    igual('36,00 m²', $lista[10]['area'], 'o menor projeto, o dos a partir de 36 m²');
+    igual('72.000', $lista[10]['preco']);
 
-    igual('Família', $lista[2]['nome']);
-    igual('87.997', $lista[2]['preco']);
-    igual(1, (int) $lista[2]['destaque'], 'Familia e a mais escolhida');
+    igual('Projeto 12', $lista[11]['nome']);
+    contem('Mezanino', $lista[11]['itens']);
 
-    igual('Ampla', $lista[3]['nome']);
-    igual('97.776', $lista[3]['preco']);
-
+    foreach ($lista as $m) {
+        igual('', (string) $m['parede'], 'o catalogo nao diz o sentido da madeira');
+        igual(0, (int) $m['destaque'], 'nenhum projeto marcado como mais escolhido sem o cliente dizer');
+        verdade(trim((string) $m['itens']) !== '', 'todo projeto tem ambientes: ' . $m['nome']);
+        contem('valor é de referência', $m['descricao']);
+    }
 });
 
 teste('os cinco modelos Flex chegaram com preco, area e prazo de 45 dias', function (): void {
     $lista = modelos('flex');
     igual(5, count($lista), 'os cinco projetos do drive da Castello');
-    igual('Castelo Flex 36', $lista[0]['nome']);
+    igual('Castello Flex 36', $lista[0]['nome']);
     igual('36,00 m²', $lista[0]['area']);
     igual('43.000', $lista[0]['preco'], 'tabela de setembro de 2026');
-    igual('Castelo Flex 57', $lista[4]['nome']);
+    igual('Castello Flex 57', $lista[4]['nome']);
     igual('Com garagem coberta', $lista[4]['parede'], 'o selo do card avisa da garagem');
     igual('57,75 m²', $lista[4]['area']);
     igual('69.000', $lista[4]['preco']);
@@ -52,6 +53,9 @@ teste('os cinco modelos Flex chegaram com preco, area e prazo de 45 dias', funct
         verdade((string) $m['preco'] !== '', 'todo Flex tem preco');
         igual('45 dias', $m['prazo']);
         contem('uploads/modelos/flex-', $m['foto'], 'render proprio da Flex, nao foto emprestada');
+        contem('-planta.webp', $m['planta'], 'a planta baixa vai para o Ver mais');
+        verdade(is_file(CASTELLO_UPLOADS . '/modelos/' . basename($m['planta'])), 'planta copiada: ' . $m['planta']);
+        contem('Área fechada', $m['descricao']);
         verdade($m['foto_alt'] !== '', 'todo modelo tem alt');
     }
 });
@@ -63,7 +67,7 @@ teste('as fotos dos modelos foram copiadas para uploads e o caminho e relativo',
         verdade(is_file(CASTELLO_UPLOADS . '/modelos/' . basename($m['foto'])), 'arquivo copiado: ' . $m['foto']);
         verdade($m['foto_alt'] !== '' && $m['foto_alt'] !== null, 'todo modelo tem alt escrito');
     }
-    igual('uploads/modelos/casa5.webp', modelos('pronta')[2]['foto']);
+    igual('uploads/modelos/projeto-03.webp', modelos('pronta')[2]['foto']);
 });
 
 teste('o portfolio trouxe as seis casas entregues, com categoria e alt', function (): void {
@@ -136,43 +140,29 @@ teste('as 8 perguntas do FAQ chegaram com o icone certo em cada uma', function (
 
     $flex = faq('flex');
     igual(5, count($flex), 'FAQ provisoria da Flex');
-    igual('Em quanto tempo a Castelo Flex fica pronta?', $flex[0]['pergunta']);
+    igual('Em quanto tempo a Castello Flex fica pronta?', $flex[0]['pergunta']);
     igual('relogio', $flex[0]['icone']);
     igual('fundacao', $flex[4]['icone']);
     igual(1, (int) $flex[0]['ordem'], 'a ordem da Flex recomeça do 1');
 });
 
-teste('os 5 passos do Como funciona chegaram com imagem', function (): void {
+teste('as 20 etapas da linha do tempo da Casa Pronta chegaram em ordem', function (): void {
     $lista = passos('pronta');
-    igual(5, count($lista));
-    igual('Conversa e projeto', $lista[0]['titulo']);
-    igual('Fundação', $lista[1]['titulo']);
-    igual('Estrutura e montagem', $lista[2]['titulo']);
-    igual('Acabamento', $lista[3]['titulo']);
-    igual('Chave na mão', $lista[4]['titulo']);
-    igual('uploads/passos/passo-1.jpg', $lista[0]['imagem']);
-    igual('uploads/passos/passo-5.jpg', $lista[4]['imagem']);
-    contem('90 a 120 dias', $lista[4]['texto']);
+    igual(20, count($lista), 'as etapas do carrossel Como tudo acontece');
+    igual('Primeiro contato', $lista[0]['titulo']);
+    igual('Estudo preliminar', $lista[2]['titulo'], 'a Castello faz o estudo preliminar, nao o projeto');
+    igual('Contrato assinado', $lista[4]['titulo']);
+    igual('Checklist e entrega final da obra', $lista[19]['titulo']);
+    foreach ($lista as $p) {
+        igual('', (string) $p['imagem'], 'a linha do tempo nao usa imagem');
+    }
     $flex = passos('flex');
     igual(5, count($flex), 'passo a passo provisorio da Flex');
-    igual('Projeto e modelo', $flex[0]['titulo']);
+    igual('Escolha do modelo', $flex[0]['titulo']);
+    contem('planta e medidas definidas', $flex[0]['texto'], 'a Flex nao ajusta planta');
     igual('Portas e janelas', $flex[4]['titulo']);
     igual('', (string) $flex[0]['imagem'], 'os passos da Flex saem como cartoes, sem imagem');
     igual(1, (int) $flex[0]['ordem'], 'a ordem da Flex recomeça do 1');
-});
-
-teste('os alt descritivos dos passos vieram do index.html, um a um', function (): void {
-    $lista = passos('pronta');
-
-    igual('Maquete do projeto da casa de madeira sobre a planta', $lista[0]['imagem_alt']);
-    igual('Início da estrutura de madeira sobre a fundação', $lista[1]['imagem_alt']);
-    igual('Estrutura e montagem da casa de madeira', $lista[2]['imagem_alt']);
-    igual('Equipe no acabamento do telhado e fachada da casa', $lista[3]['imagem_alt']);
-    igual('Chaves da casa de madeira pronta, chave na mão', $lista[4]['imagem_alt']);
-
-    foreach ($lista as $p) {
-        verdade($p['imagem_alt'] !== $p['titulo'], 'o alt e descritivo, nao repete o titulo: ' . $p['titulo']);
-    }
 });
 
 teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function (): void {
@@ -196,9 +186,10 @@ teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function ()
 
     igual('90 a 120 dias', bloco('pronta_prazo'));
     igual('45 dias', bloco('flex_prazo'));
-    igual('A casa dos seus sonhos', bloco('hero_titulo'));
-    igual('pronta pra morar, *chave na mão*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
-    contem('45 dias', bloco('flex_titulo'), 'copy provisoria da Flex ja vem preenchida');
+    igual('Sua casa', bloco('hero_titulo'));
+    igual('do seu jeito, *no seu ritmo.*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
+    igual('Castello Flex. Mais liberdade para construir, mais possibilidades para realizar.', bloco('flex_titulo'));
+    contem('sem possibilidade de personalização', bloco('flexpg_hero_texto'));
     igual('uploads/videos/insta-12.mp4', bloco('flex_video'));
     foreach (['modalidades_titulo', 'modalidades_texto', 'flex_texto', 'flexpg_hero_titulo', 'flexpg_hero_texto', 'flexpg_oque_titulo',
               'flexpg_oque_texto', 'flexpg_depois_titulo', 'flexpg_depois_texto', 'flexpg_catalogo_nota', 'flexpg_cta_titulo', 'flexpg_cta_texto'] as $chave) {
@@ -210,8 +201,46 @@ teste('rodar a migracao de novo nao duplica conteudo', function (): void {
     $segunda = migrar();
     igual(0, $segunda['modelos']);
     igual(0, $segunda['avaliacoes']);
-    igual(4, count(modelos('pronta')));
+    igual(12, count(modelos('pronta')));
     igual(14, count(avaliacoes()));
+});
+
+teste('a atualizacao de outubro de 2026 leva um banco antigo ao conteudo novo, uma vez so', function (): void {
+    /* Monta o banco como o servidor estava: os quatro modelos antigos, o nome
+       Castelo Flex, os cinco passos com imagem e os textos de antes. */
+    db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'pronta'");
+    db()->exec("INSERT INTO modelos (modalidade, nome, area, preco, foto, foto_alt, ativo, ordem) VALUES ('pronta', 'Compacta', '39,00 m²', '69.900', 'uploads/modelos/casa4.webp', 'Casa', 1, 1)");
+    db()->exec("DELETE FROM modelos WHERE modalidade = 'pronta' AND nome LIKE 'Projeto %'");
+    db()->exec("UPDATE modelos SET nome = REPLACE(nome, 'Castello', 'Castelo'), itens = NULL, planta = NULL WHERE modalidade = 'flex'");
+    db()->exec("DELETE FROM passos WHERE contexto = 'pronta'");
+    db()->exec("INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem) VALUES ('pronta', 'Fundação', 'x', 'uploads/passos/passo-2.jpg', 'Base', 1, 1)");
+    db()->exec("UPDATE passos SET titulo = 'Projeto e modelo' WHERE contexto = 'flex' AND ordem = 1");
+    db()->exec("UPDATE blocos SET valor = 'A casa dos seus sonhos' WHERE chave = 'hero_titulo'");
+    db()->exec("UPDATE blocos SET valor = 'texto que o cliente escreveu' WHERE chave = 'flex_texto'");
+    db()->exec("UPDATE faq SET pergunta = 'Posso mudar a planta da Castelo Flex?', resposta = 'Sim.' WHERE contexto = 'flex' AND ordem = 3");
+
+    $log = migrar_atualizar_2026_10();
+    verdade(count($log) > 10, 'a rodada fez o trabalho');
+
+    $pronta = modelos('pronta');
+    igual(12, count($pronta), 'so os projetos do catalogo ficam ativos');
+    igual('Projeto 1', $pronta[0]['nome']);
+    igual(1, (int) db()->query("SELECT COUNT(*) FROM modelos WHERE nome = 'Compacta' AND ativo = 0")->fetchColumn(), 'o antigo so foi desativado');
+
+    $flex = modelos('flex');
+    igual('Castello Flex 36', $flex[0]['nome']);
+    contem('-planta.webp', $flex[0]['planta']);
+    contem('Banheiro', $flex[0]['itens']);
+
+    igual(20, count(passos('pronta')));
+    igual('Escolha do modelo', passos('flex')[0]['titulo']);
+    igual('Sua casa', bloco('hero_titulo'));
+    igual('texto que o cliente escreveu', bloco('flex_texto'), 'bloco fora da rodada fica como o cliente deixou');
+    $planta = db()->query("SELECT resposta FROM faq WHERE pergunta = 'Posso mudar a planta da Castello Flex?'")->fetchColumn();
+    contem('padronizadas', (string) $planta);
+
+    igual(['ja aplicado antes, nada mudou'], migrar_atualizar_2026_10(), 'a segunda chamada nao mexe em nada');
+    igual(12, count(modelos('pronta')));
 });
 
 teste('migrar_segredos cria o segredos.php uma vez so, com chave longa', function (): void {
@@ -239,7 +268,7 @@ teste('migrar_usuario cria o acesso do painel uma vez so', function (): void {
 });
 
 teste('conteudo real migrou por inteiro, sem item de portfolio sem alt', function (): void {
-    $esperado = ['modelos' => 4, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11, 'faq' => 7, 'passos' => 5];
+    $esperado = ['modelos' => 17, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11, 'faq' => 7, 'passos' => 25];
     foreach ($esperado as $tabela => $quantos) {
         $tem = (int) db()->query("SELECT COUNT(*) FROM {$tabela} WHERE ativo = 1")->fetchColumn();
         verdade($tem >= $quantos, "{$tabela}: esperado ao menos {$quantos}, tem {$tem}");

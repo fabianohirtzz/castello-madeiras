@@ -50,8 +50,8 @@ function envio_pedir(string $caminho, string $jar, ?array $post = null): array
 teste('as cinco paginas carregam o formulario.js depois do main.js', function (): void {
     foreach (['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'] as $arquivo) {
         $html = render(site() . '/' . $arquivo);
-        contem('<script src="js/main.js?v=14"></script>', $html, $arquivo);
-        contem('<script src="js/formulario.js?v=2" defer></script>', $html, $arquivo);
+        contem('<script src="js/main.js?v=15"></script>', $html, $arquivo);
+        contem('<script src="js/formulario.js?v=3" defer></script>', $html, $arquivo);
         verdade(strpos($html, '<script src="js/main.js') < strpos($html, '<script src="js/formulario.js'), "$arquivo: formulario.js vem depois do main.js");
         contem('id="quoteForm" method="post" action="enviar.php"', $html, $arquivo);
     }
