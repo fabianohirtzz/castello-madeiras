@@ -1247,6 +1247,9 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .depois__nota a{color:var(--red-deep);font-weight:600}
 /* passo a passo da Flex: cabecalhos e nota no centro */
 .section__head--centro,.depois__head--centro{margin-inline:auto;text-align:center}
+.depois__head--centro{max-width:none}
+.depois__head--centro .depois__text{max-width:62ch;margin-inline:auto}
+@media(min-width:760px){.depois__head--centro .depois__title{white-space:nowrap}}
 .section__head--centro .eyebrow{justify-content:center}
 .section__head--centro .section__lead{margin-inline:auto}
 .depois__nota--centro{margin-inline:auto;text-align:center}
