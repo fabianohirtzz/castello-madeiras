@@ -192,7 +192,7 @@ teste('os 22 blocos de texto existem com rotulo e tipo', function (): void {
     igual('45 dias', bloco('flex_prazo'));
     igual('Sua casa', bloco('hero_titulo'));
     igual('do seu jeito, *no seu ritmo.*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
-    igual('Castello Flex. Mais liberdade para construir, mais possibilidades para realizar.', bloco('flex_titulo'));
+    igual('Sua casa de madeira ganha forma em 45 dias. Você dá o toque final.', bloco('flex_titulo'));
     contem('sem possibilidade de personalização', bloco('flexpg_hero_texto'));
     igual('uploads/videos/insta-12.mp4', bloco('flex_video'));
     foreach (['modalidades_titulo', 'modalidades_texto', 'flex_texto', 'flexpg_hero_titulo', 'flexpg_hero_texto', 'flexpg_oque_titulo',

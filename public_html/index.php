@@ -173,7 +173,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
         <article class="modalidade reveal">
           <span class="modalidade__tag">Construção completa</span>
           <h3 class="modalidade__name">Casa Pronta</h3>
-          <p class="modalidade__prazo">Entrega em <strong><?= e($prazo_pronta) ?></strong></p>
+          <p class="modalidade__prazo">Entrega de <strong><?= e($prazo_pronta) ?></strong></p>
           <p class="modalidade__text">Da definição dos ambientes à execução da obra, a Castello cuida da construção da sua casa de madeira, incluindo fundação, estrutura, instalações e acabamentos conforme o contrato. Tudo pensado para você receber seu novo lar pronto para morar.</p>
           <p class="modalidade__sub">Diferenciais</p>
           <ul class="checklist">
@@ -188,12 +188,11 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           <span class="modalidade__tag">Lançamento</span>
           <h3 class="modalidade__name">Castello Flex</h3>
           <p class="modalidade__prazo">No seu terreno em <strong><?= e($prazo_flex) ?></strong></p>
-          <p class="modalidade__text">A casa flex da Castello. Entregamos a estrutura de madeira montada, coberta e fechada no seu terreno, com portas e janelas instaladas, e você conduz o acabamento no seu tempo.</p>
+          <p class="modalidade__text">Da fundação à montagem da estrutura, a Castello cuida das principais etapas da construção da sua casa de madeira, incluindo cobertura e fechamento externo. Você tem a liberdade de realizar os acabamentos conforme seu estilo, planejamento e orçamento.</p>
           <ul class="checklist checklist--light">
-            <li>Estrutura montada, com cobertura e fechamento externo</li>
-            <li>Aberturas inclusas: portas e janelas instaladas</li>
-            <li>Entrega em <?= e($prazo_flex) ?></li>
-            <li>Acabamento no seu ritmo e no seu orçamento</li>
+            <li>Fundação e estrutura de madeira executadas</li>
+            <li>Cobertura e fechamento externo</li>
+            <li>Liberdade para personalizar os acabamentos</li>
           </ul>
           <a href="flex.php" class="btn btn--primary">Conhecer a Castello Flex</a>
         </article>
@@ -249,14 +248,14 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
     <div class="container">
       <div class="split2">
         <div class="flexhome__text">
-          <span class="eyebrow eyebrow--light reveal">Lançamento Castello</span>
-          <h2 class="flexhome__title reveal"><?= e(bloco('flex_titulo', 'Castello Flex. Mais liberdade para construir, mais possibilidades para realizar.')) ?></h2>
+          <span class="eyebrow eyebrow--light reveal">Lançamento Castello Flex</span>
+          <h2 class="flexhome__title reveal"><?= preg_replace('/\.\s+/u', '.<br>', e(bloco('flex_titulo', 'Sua casa de madeira ganha forma em 45 dias. Você dá o toque final.')), 1) ?></h2>
           <p class="flexhome__lead reveal"><?= e(bloco('flex_texto')) ?></p>
 
           <div class="flexhome__facts reveal">
-            <div class="flexhome__fact"><strong><?= e($prazo_flex) ?></strong><span>da assinatura à entrega</span></div>
-            <div class="flexhome__fact"><strong>Casa fechada</strong><span>coberta, com portas e janelas</span></div>
-            <div class="flexhome__fact"><strong>Você termina</strong><span>acabamento no seu tempo</span></div>
+            <div class="flexhome__fact"><strong><?= e($prazo_flex) ?></strong><span>Prazo de entrega</span></div>
+            <div class="flexhome__fact"><strong>Estrutura</strong><span>Fundação, montagem, cobertura e fechamento</span></div>
+            <div class="flexhome__fact"><strong>Liberdade</strong><span>Personalize os acabamentos no seu ritmo</span></div>
           </div>
 
           <div class="flexhome__actions reveal">

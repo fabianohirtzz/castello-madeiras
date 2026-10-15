@@ -189,8 +189,8 @@ const MIGRAR_BLOCOS = [
     ['pronta_texto', 'Texto da seção Casa Pronta', 'Na Castello, cada casa pode ser personalizada conforme suas necessidades, seu estilo de vida e as características do terreno. Da fundação aos acabamentos, cuidamos da construção para você receber seu novo lar, pronto para morar.', 'texto_longo'],
     ['pronta_prazo', 'Prazo da Casa Pronta', '90 a 120 dias', 'texto'],
     ['pronta_home_modelo', 'Projeto da foto da Casa Pronta na home', 'Projeto 7', 'texto'],
-    ['flex_titulo', 'Título da seção Castello Flex', 'Castello Flex. Mais liberdade para construir, mais possibilidades para realizar.', 'texto'],
-    ['flex_texto', 'Texto da seção Castello Flex', 'Você recebe a casa de madeira estruturada, coberta e fechada, a partir de R$ 43.000. O acabamento fica no seu ritmo e no seu bolso, com a mesma madeira e o mesmo padrão de montagem das casas chave na mão.', 'texto_longo'],
+    ['flex_titulo', 'Título da seção Castello Flex', 'Sua casa de madeira ganha forma em 45 dias. Você dá o toque final.', 'texto'],
+    ['flex_texto', 'Texto da seção Castello Flex', 'Com a Castello Flex, você realiza o sonho da casa de madeira com mais liberdade para planejar seu investimento. A Castello executa a fundação, a montagem da estrutura, a cobertura e o fechamento da casa. Os acabamentos ficam por sua conta, conforme suas preferências e seu orçamento.', 'texto_longo'],
     ['flex_prazo', 'Prazo da Castello Flex', '45 dias', 'texto'],
     ['flex_video', 'Vídeo explicativo da Flex', 'uploads/videos/insta-12.mp4', 'texto'],
     ['flex_video_poster', 'Capa do vídeo da Flex', 'uploads/videos/insta-12.jpg', 'texto'],
@@ -543,6 +543,26 @@ function migrar_atualizar_2026_10_etapas(): array
         $destino = migrar_copiar($imagem, 'passos');
         $st->execute([$destino, $alt, $titulo, $destino]);
         $log[] = 'etapa ' . $titulo . ': ' . $st->rowCount();
+    }
+    return $log;
+}
+
+/**
+ * Textos da secao Castello Flex da home que o cliente mandou em 2026-10-15
+ * (titulo e texto). Grava o valor de MIGRAR_BLOCOS por cima; rodar de novo
+ * nao muda nada.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_textos(): array
+{
+    $log = [];
+    $st = db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ? AND valor <> ?');
+    foreach (MIGRAR_BLOCOS as [$chave, , $valor]) {
+        if (in_array($chave, ['flex_titulo', 'flex_texto'], true)) {
+            $st->execute([$valor, $chave, $valor]);
+            $log[] = 'bloco ' . $chave . ': ' . $st->rowCount();
+        }
     }
     return $log;
 }
