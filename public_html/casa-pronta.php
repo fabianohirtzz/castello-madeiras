@@ -155,7 +155,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
         <div class="process__head">
           <span class="eyebrow eyebrow--light">Do terreno à chave</span>
           <h2 class="section__title">Como tudo acontece.</h2>
-          <p class="section__lead">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho de uma casa Castello, do terreno aos acabamentos.</p>
+          <p class="section__lead">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho da sua casa, da primeira conversa até a entrega da chave.</p>
         </div>
 
 <?php $contexto = 'pronta'; include __DIR__ . '/partials/passos.php'; ?>

@@ -298,20 +298,20 @@ teste('painel_estado recusa tabela fora da descricao', function (): void {
 
 teste('painel_reordenar renumera de 1 ate N na ordem recebida', function (): void {
     $ids = array_map('intval', array_column(painel_listar('passos', 'pronta'), 'id'));
-    igual(15, count($ids));
+    igual(20, count($ids));
 
     $invertido = array_reverse($ids);
-    igual(15, painel_reordenar('passos', $invertido));
+    igual(20, painel_reordenar('passos', $invertido));
 
     $agora = array_map('intval', array_column(painel_listar('passos', 'pronta'), 'id'));
     igual($invertido, $agora, 'a lista do painel segue a nova ordem');
-    igual('Início dos acabamentos em geral', passos('pronta')[0]['titulo'], 'o site tambem segue');
+    igual('Checklist e entrega final da obra', passos('pronta')[0]['titulo'], 'o site tambem segue');
 
     igual(1, (int) painel_linha('passos', $invertido[0])['ordem']);
-    igual(15, (int) painel_linha('passos', $invertido[14])['ordem']);
+    igual(20, (int) painel_linha('passos', $invertido[19])['ordem']);
 
     painel_reordenar('passos', $ids);
-    igual('Visita ao terreno da futura obra', passos('pronta')[0]['titulo'], 'voltou ao normal');
+    igual('Primeiro contato', passos('pronta')[0]['titulo'], 'voltou ao normal');
 });
 
 teste('reordenar troca quais videos aparecem na home', function (): void {

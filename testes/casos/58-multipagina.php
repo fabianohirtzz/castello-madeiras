@@ -125,7 +125,7 @@ teste('casa-pronta.php traz os 12 projetos com preco, o incluso, a linha do temp
         contem($item, $html, "incluso sem $item");
     }
     contem('id="como-funciona"', $html);
-    igual(15, substr_count($html, '<li class="hpasso'), 'as 15 etapas com foto');
+    igual(20, substr_count($html, '<li class="hpasso'), 'as 20 etapas, todas com foto');
     igual(0, substr_count($html, 'hpasso--ico'), 'nenhuma etapa sem foto');
     contem('data-hscroll', $html, 'a secao trava e rola na horizontal');
     contem('<div class="hscroll__track">', $html);

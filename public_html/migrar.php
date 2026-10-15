@@ -141,14 +141,17 @@ const MIGRAR_FAQ = [
 
 /**
  * contexto, titulo, texto, imagem de origem, alt da imagem.
- * Os passos da Casa Pronta sao as 15 etapas do carrossel "Como tudo
- * acontece" do Instagram da Castello que tem foto da obra (pedido do cliente
- * em 2026-10-14: so as etapas com foto). Os da Flex saem como cartoes
- * numerados, sem imagem.
+ * Os passos da Casa Pronta sao as 20 etapas do carrossel "Como tudo
+ * acontece" do Instagram da Castello, cada uma com foto: 15 da obra real,
+ * mandadas pela Castello, e 5 geradas (etapas 1, 3, 5, 18 e 20, que nao tem
+ * foto de obra). Os da Flex saem como cartoes numerados, sem imagem.
  */
 const MIGRAR_PASSOS = [
+    ['pronta', 'Primeiro contato', '', 'passos/obra/etapa-01.webp', 'Mãos segurando o celular numa conversa, com uma caneca sobre a mesa de madeira'],
     ['pronta', 'Visita ao terreno da futura obra', '', 'passos/obra/etapa-02.webp', 'Terreno limpo e nivelado, com mata ao fundo, antes do início da obra'],
+    ['pronta', 'Estudo preliminar', '', 'passos/obra/etapa-03.webp', 'Esboço da planta de uma casa sobre a mesa, com lápis, régua, trena e amostras de madeira'],
     ['pronta', 'Projeto aprovado', '', 'passos/obra/etapa-04.webp', 'Render do projeto aprovado: sobrado de madeira com varanda e sacada'],
+    ['pronta', 'Contrato assinado', '', 'passos/obra/etapa-05.webp', 'Mão assinando o contrato sobre a mesa de madeira, com a chave da casa ao lado'],
     ['pronta', 'Início da obra', '', 'passos/obra/etapa-06.webp', 'Equipe marcando a fundação no terreno, com gabarito de madeira e blocos'],
     ['pronta', 'Concretagem do primeiro nível de laje', '', 'passos/obra/etapa-07.webp', 'Laje de concreto pronta sobre os pilares, com tábuas empilhadas em cima'],
     ['pronta', 'Segundo nível de laje e início da alvenaria', '', 'passos/obra/etapa-08.webp', 'Parede de tijolos subindo sobre a laje, com céu de nuvens ao fundo'],
@@ -161,7 +164,9 @@ const MIGRAR_PASSOS = [
     ['pronta', 'Aplicação dos pisos externos', '', 'passos/obra/etapa-15.webp', 'Varanda coberta com piso cerâmico novo e guarda-corpo de madeira em X'],
     ['pronta', 'Instalação elétrica', '', 'passos/obra/etapa-16.webp', 'Conduítes amarelos da instalação elétrica passando pelo forro de madeira'],
     ['pronta', 'Instalação das esquadrias', '', 'passos/obra/etapa-17.webp', 'Portas e janelas de madeira com venezianas instaladas na varanda'],
+    ['pronta', 'Pré-checklist e vistoria', '', 'passos/obra/etapa-18.webp', 'Responsável da obra com prancheta vistoriando um cômodo de madeira com piso novo'],
     ['pronta', 'Início dos acabamentos em geral', '', 'passos/obra/etapa-19.webp', 'Sobrado de madeira pronto por fora, com placa da Castello na obra'],
+    ['pronta', 'Checklist e entrega final da obra', '', 'passos/obra/etapa-20.webp', 'Mão segurando as chaves na frente do sobrado de madeira pronto'],
     ['flex', 'Escolha do modelo', 'Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.', '', ''],
     ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
     ['flex', 'Estrutura montada', 'Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.', '', ''],
@@ -521,15 +526,23 @@ function migrar_atualizar_2026_10_videos(): array
 }
 
 /**
- * Na Casa Pronta ficam so as etapas com foto (pedido do cliente em
- * 2026-10-14). As sem foto sao desativadas, nao apagadas. Pode rodar sempre.
+ * As 5 etapas que nao tinham foto (1, 3, 5, 18 e 20) ganham as imagens
+ * geradas e voltam a aparecer. Pode rodar sempre: so preenche foto vazia.
  *
  * @return array<int,string>
  */
 function migrar_atualizar_2026_10_etapas(): array
 {
-    $n = db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'pronta' AND ativo = 1 AND (imagem IS NULL OR imagem = '')");
-    return ["etapas sem foto desativadas: {$n}"];
+    $log = [];
+    $st = db()->prepare("UPDATE passos SET imagem = ?, imagem_alt = ?, ativo = 1 WHERE contexto = 'pronta' AND titulo = ? AND (imagem IS NULL OR imagem = '')");
+    foreach (MIGRAR_PASSOS as [$contexto, $titulo, , $imagem, $alt]) {
+        if ($contexto !== 'pronta' || !preg_match('/etapa-(01|03|05|18|20)\./', $imagem)) {
+            continue;
+        }
+        $st->execute([migrar_copiar($imagem, 'passos'), $alt, $titulo]);
+        $log[] = 'etapa ' . $titulo . ': ' . $st->rowCount();
+    }
+    return $log;
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

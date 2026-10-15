@@ -44,7 +44,7 @@ $icones_etapa = [
 $icone_casa = '<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/>';
 ?>
 <div class="hscroll__janela">
-        <ol class="hscroll__trilho" data-hscroll-trilho aria-label="Etapas da obra, do terreno aos acabamentos">
+        <ol class="hscroll__trilho" data-hscroll-trilho aria-label="Etapas da obra, da primeira conversa à entrega">
 <?php foreach ($lista_passos as $i => $p):
     $foto = trim((string) $p['imagem']);
     $svg  = $icone_casa;
@@ -73,4 +73,4 @@ $icone_casa = '<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/>';
         </ol>
       </div>
       <div class="hscroll__barra" aria-hidden="true"><span class="hscroll__fill" data-hscroll-fill></span></div>
-      <p class="hscroll__dica">Role para ver as <?= $total_passos ?> etapas da obra.</p>
+      <p class="hscroll__dica">Role para ver as <?= $total_passos ?> etapas, da primeira conversa à entrega.</p>
