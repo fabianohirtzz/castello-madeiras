@@ -40,7 +40,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=28" />
+  <link rel="stylesheet" href="css/style.css?v=29" />
 </head>
 <body>
 
@@ -133,7 +133,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 <?php include __DIR__ . '/partials/rodape.php'; ?>
 
-  <script src="js/main.js?v=18"></script>
+  <script src="js/main.js?v=19"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

@@ -906,36 +906,80 @@
     window.addEventListener('resize', medir);
   });
 
-  /* ---------- Vídeos da Castello Flex (um por vez) ---------- */
+  /* ---------- Vídeos da Castello Flex (um por vez, com transição) ----------
+     O vídeo que sai desliza e gira de leve para o lado da navegação enquanto
+     o próximo entra pelo lado oposto; atrás, dois cards empilhados (CSS)
+     dão a ideia de que há mais vídeos. No celular dá para arrastar. Com
+     movimento reduzido a troca é direta. */
   document.querySelectorAll('[data-vcarrossel]').forEach(function (vc) {
     var slides = Array.prototype.slice.call(vc.querySelectorAll('.vcarrossel__slide'));
+    var palco = vc.querySelector('.vcarrossel__palco');
     var pontos = vc.querySelector('.vcarrossel__pontos');
     var cont = vc.querySelector('.vcarrossel__cont');
     if (slides.length < 2) return;
-    var atual = 0;
+    var atual = 0, animando = false;
+    var CLASSES = ['vc-entra-prox', 'vc-entra-ant', 'vc-sai-prox', 'vc-sai-ant'];
     var botoes = slides.map(function (s, i) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'vcarrossel__ponto';
       b.setAttribute('aria-label', 'Vídeo ' + (i + 1) + ' de ' + slides.length);
-      b.addEventListener('click', function () { mostrar(i); });
+      b.addEventListener('click', function () { mostrar(i, i > atual ? 1 : -1); });
       pontos.appendChild(b);
       return b;
     });
-    function mostrar(i) {
-      var antes = slides[atual].querySelector('video');
-      if (antes && !antes.paused) antes.pause();
-      atual = (i + slides.length) % slides.length;
-      slides.forEach(function (s, k) { s.hidden = k !== atual; });
+    function marcar() {
       botoes.forEach(function (b, k) {
         b.classList.toggle('is-active', k === atual);
         b.setAttribute('aria-current', k === atual ? 'true' : 'false');
       });
       if (cont) cont.textContent = (atual + 1) + ' / ' + slides.length;
     }
-    vc.querySelector('[data-vcarrossel-prev]').addEventListener('click', function () { mostrar(atual - 1); });
-    vc.querySelector('[data-vcarrossel-next]').addEventListener('click', function () { mostrar(atual + 1); });
-    mostrar(0);
+    function mostrar(i, dir) {
+      var novo = (i + slides.length) % slides.length;
+      if (novo === atual || animando) return;
+      var sai = slides[atual], entra = slides[novo];
+      var video = sai.querySelector('video');
+      if (video && !video.paused) video.pause();
+      atual = novo;
+      marcar();
+      if (reduce) {
+        sai.hidden = true;
+        entra.hidden = false;
+        return;
+      }
+      animando = true;
+      var lado = dir > 0 ? 'prox' : 'ant';
+      sai.classList.add('vc-sai-' + lado);
+      entra.hidden = false;
+      entra.classList.add('vc-entra-' + lado);
+      palco.classList.add('is-trocando');
+      setTimeout(function () {
+        sai.hidden = true;
+        sai.classList.remove.apply(sai.classList, CLASSES);
+        entra.classList.remove.apply(entra.classList, CLASSES);
+        palco.classList.remove('is-trocando');
+        animando = false;
+      }, 560);
+    }
+    vc.querySelector('[data-vcarrossel-prev]').addEventListener('click', function () { mostrar(atual - 1, -1); });
+    vc.querySelector('[data-vcarrossel-next]').addEventListener('click', function () { mostrar(atual + 1, 1); });
+
+    // arrastar no celular (fora dos controles do vídeo, que ficam embaixo)
+    var x0 = null, y0 = 0;
+    palco.addEventListener('touchstart', function (e) {
+      var t = e.changedTouches[0];
+      x0 = t.clientX; y0 = t.clientY;
+    }, { passive: true });
+    palco.addEventListener('touchend', function (e) {
+      if (x0 === null) return;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - x0, dy = t.clientY - y0;
+      x0 = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.4) mostrar(atual + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    marcar();
   });
 
   /* ---------- Formulário de orçamento (só interface) ----------

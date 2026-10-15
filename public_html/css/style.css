@@ -1558,11 +1558,31 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
 
 /* ---------- Vídeos da Flex: galeria, um por vez, setas nas laterais ---------- */
 .vcarrossel{max-width:340px;width:100%;margin-inline:auto}
-.vcarrossel__palco{position:relative}
+.vcarrossel__palco{position:relative;isolation:isolate}
+/* dois cards empilhados atrás do vídeo: sugerem que há mais para ver */
+.vcarrossel__palco::before,.vcarrossel__palco::after{
+  content:"";position:absolute;left:0;right:0;top:0;aspect-ratio:9/16;z-index:-1;border-radius:var(--r-lg);
+  transition:transform .55s var(--ease);pointer-events:none;
+}
+.vcarrossel__palco::before{background:linear-gradient(160deg,var(--red-bright),var(--red-deep));transform:translate(14px,10px) rotate(4deg);opacity:.9}
+.vcarrossel__palco::after{background:var(--wood);transform:translate(-12px,8px) rotate(-3.5deg);opacity:.55}
+.vcarrossel__palco.is-trocando::before{transform:translate(22px,6px) rotate(7deg)}
+.vcarrossel__palco.is-trocando::after{transform:translate(-20px,4px) rotate(-6deg)}
 .vcarrossel__slide{margin:0}
 .vcarrossel__slide[hidden]{display:none}
+/* a troca: o que sai fica por cima e desliza para fora; o que entra vem do lado oposto */
+.vc-sai-prox,.vc-sai-ant{position:absolute;left:0;right:0;top:0;z-index:2;pointer-events:none}
+.vc-sai-prox{animation:vcSaiProx .56s var(--ease) both}
+.vc-sai-ant{animation:vcSaiAnt .56s var(--ease) both}
+.vc-entra-prox{animation:vcEntraProx .56s var(--ease) both}
+.vc-entra-ant{animation:vcEntraAnt .56s var(--ease) both}
+@keyframes vcSaiProx{to{opacity:0;transform:translateX(-62%) rotate(-9deg) scale(.86)}}
+@keyframes vcSaiAnt{to{opacity:0;transform:translateX(62%) rotate(9deg) scale(.86)}}
+@keyframes vcEntraProx{from{opacity:0;transform:translateX(26%) rotate(5deg) scale(.9)}to{opacity:1;transform:none}}
+@keyframes vcEntraAnt{from{opacity:0;transform:translateX(-26%) rotate(-5deg) scale(.9)}to{opacity:1;transform:none}}
+.vcarrossel .vexp__frame{box-shadow:0 30px 60px -28px rgba(0,0,0,.75)}
 .vcarrossel__seta{
-  position:absolute;top:calc(50% - 26px);z-index:2;width:46px;height:46px;border-radius:50%;cursor:pointer;
+  position:absolute;top:calc(50% - 26px);z-index:3;width:46px;height:46px;border-radius:50%;cursor:pointer;
   display:grid;place-items:center;background:#fff;border:1px solid var(--line);color:var(--ink);
   box-shadow:var(--shadow-soft);transition:background .25s var(--ease),color .25s var(--ease),transform .25s var(--ease);
 }
@@ -1580,6 +1600,7 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
 .vcarrossel--escuro .vcarrossel__ponto.is-active{background:var(--red-bright)}
 .vcarrossel--escuro .vcarrossel__cont{color:rgba(255,255,255,.6)}
 .vcarrossel--escuro .vcarrossel__seta{border-color:transparent}
+.vcarrossel--escuro .vcarrossel__palco::after{background:#fff;opacity:.16}
 @media(max-width:480px){
   .vcarrossel{max-width:300px}
   .vcarrossel__seta{width:42px;height:42px}
@@ -1645,7 +1666,18 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
   padding-block:clamp(70px,9vh,96px) clamp(18px,3vh,32px);
 }
 .hscroll.is-pinned .hscroll__janela{overflow:visible;scroll-snap-type:none}
-.hscroll.is-pinned{--card:clamp(170px,min(19vw,calc((100svh - 430px) * .8)),270px)}
+.hscroll.is-pinned{--card:clamp(130px,min(19vw,calc((100svh - 400px) * .8)),270px)}
+/* telas baixas (notebook com barra do navegador, zoom alto): cabeçalho compacto */
+@media(max-height:760px) and (min-width:701px){
+  .hscroll.is-pinned .section__title{font-size:clamp(1.9rem,4.4vh,2.6rem)}
+  .hscroll.is-pinned .section__lead{font-size:.98rem;margin-top:8px}
+  .hscroll.is-pinned .process__head{margin-bottom:14px}
+  .hscroll.is-pinned .eyebrow{margin-bottom:6px}
+  .hscroll.is-pinned .hscroll__pin{padding-block:clamp(58px,8vh,80px) 14px}
+  .hscroll.is-pinned .hscroll__dica{display:none}
+  .hscroll.is-pinned .hscroll__barra{margin-top:12px}
+  .hscroll.is-pinned{--card:clamp(130px,min(19vw,calc((100svh - 330px) * .8)),270px)}
+}
 
 @media(max-width:700px){
   .hscroll{--card:calc((100vw - 32px - 12px) / 2);--gap-p:12px}

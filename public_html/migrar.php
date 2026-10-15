@@ -164,7 +164,7 @@ const MIGRAR_PASSOS = [
     ['pronta', 'Aplicação dos pisos externos', '', 'passos/obra/etapa-15.webp', 'Varanda coberta com piso cerâmico novo e guarda-corpo de madeira em X'],
     ['pronta', 'Instalação elétrica', '', 'passos/obra/etapa-16.webp', 'Conduítes amarelos da instalação elétrica passando pelo forro de madeira'],
     ['pronta', 'Instalação das esquadrias', '', 'passos/obra/etapa-17.webp', 'Portas e janelas de madeira com venezianas instaladas na varanda'],
-    ['pronta', 'Pré-checklist e vistoria', '', 'passos/obra/etapa-18.webp', 'Responsável da obra com prancheta vistoriando um cômodo de madeira com piso novo'],
+    ['pronta', 'Pré-checklist e vistoria', '', 'passos/obra/etapa-18-v2.webp', 'Responsável da obra anotando na prancheta enquanto vistoria um cômodo de madeira com piso novo'],
     ['pronta', 'Início dos acabamentos em geral', '', 'passos/obra/etapa-19.webp', 'Sobrado de madeira pronto por fora, com placa da Castello na obra'],
     ['pronta', 'Checklist e entrega final da obra', '', 'passos/obra/etapa-20.webp', 'Mão segurando as chaves na frente do sobrado de madeira pronto'],
     ['flex', 'Escolha do modelo', 'Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.', '', ''],
@@ -534,12 +534,14 @@ function migrar_atualizar_2026_10_videos(): array
 function migrar_atualizar_2026_10_etapas(): array
 {
     $log = [];
-    $st = db()->prepare("UPDATE passos SET imagem = ?, imagem_alt = ?, ativo = 1 WHERE contexto = 'pronta' AND titulo = ? AND (imagem IS NULL OR imagem = '')");
+    // preenche a foto vazia ou troca uma versao gerada antiga (etapa-NN.webp)
+    $st = db()->prepare("UPDATE passos SET imagem = ?, imagem_alt = ?, ativo = 1 WHERE contexto = 'pronta' AND titulo = ? AND (imagem IS NULL OR imagem = '' OR (imagem LIKE 'uploads/passos/etapa-__.webp' AND imagem <> ?))");
     foreach (MIGRAR_PASSOS as [$contexto, $titulo, , $imagem, $alt]) {
-        if ($contexto !== 'pronta' || !preg_match('/etapa-(01|03|05|18|20)\./', $imagem)) {
+        if ($contexto !== 'pronta' || !preg_match('/etapa-(01|03|05|18|20)[.-]/', $imagem)) {
             continue;
         }
-        $st->execute([migrar_copiar($imagem, 'passos'), $alt, $titulo]);
+        $destino = migrar_copiar($imagem, 'passos');
+        $st->execute([$destino, $alt, $titulo, $destino]);
         $log[] = 'etapa ' . $titulo . ': ' . $st->rowCount();
     }
     return $log;
