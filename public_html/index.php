@@ -78,7 +78,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=32" />
+  <link rel="stylesheet" href="css/style.css?v=35" />
 </head>
 <body>
 
@@ -445,7 +445,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=19"></script>
+  <script src="js/main.js?v=21"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

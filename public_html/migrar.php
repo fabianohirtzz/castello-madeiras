@@ -169,11 +169,13 @@ const MIGRAR_PASSOS = [
     ['pronta', 'Pré-checklist e vistoria', '', 'passos/obra/etapa-18-v2.webp', 'Responsável da obra anotando na prancheta enquanto vistoria um cômodo de madeira com piso novo'],
     ['pronta', 'Início dos acabamentos em geral', '', 'passos/obra/etapa-19.webp', 'Sobrado de madeira pronto por fora, com placa da Castello na obra'],
     ['pronta', 'Checklist e entrega final da obra', '', 'passos/obra/etapa-20.webp', 'Mão segurando as chaves na frente do sobrado de madeira pronto'],
-    ['flex', 'Escolha do modelo', 'Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.', '', ''],
-    ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
-    ['flex', 'Estrutura montada', 'Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.', '', ''],
-    ['flex', 'Cobertura', 'Telhado completo, com a casa protegida da chuva e do sol desde o primeiro dia.', '', ''],
-    ['flex', 'Portas e janelas', 'Esquadrias instaladas e a casa entregue fechada no seu terreno, em 45 dias. Os vidros entram no seu acabamento.', '', ''],
+    ['flex', '1º contato com a Castello', '', 'passos/obra/etapa-01.webp', 'Mãos segurando o celular numa conversa, com uma caneca sobre a mesa de madeira'],
+    ['flex', 'Escolha do projeto ideal e assinatura do contrato', '', 'passos/flex/flex-etapa-02.webp', 'Mão apontando a foto de uma casa Castello Flex ao lado da planta, enquanto outra mão assina o contrato'],
+    ['flex', 'Fundação com laje aérea', '', 'passos/flex/flex-etapa-03.webp', 'Laje de concreto pronta sobre os pilares, com escoras de madeira nas bordas'],
+    ['flex', 'Montagem da estrutura de madeira', '', 'passos/flex/flex-etapa-04.webp', 'Estrutura de madeira da casa montada sobre a laje, com o banheiro em blocos ao centro'],
+    ['flex', 'Fechamento externo e estrutura do telhado', '', 'passos/flex/flex-etapa-05.webp', 'Paredes externas de madeira fechadas e os caibros do telhado montados'],
+    ['flex', 'Cobertura concluída e casa fechada', '', 'passos/flex/flex-etapa-06.webp', 'Casa de madeira coberta com telhas cerâmicas, janela com venezianas e varanda'],
+    ['flex', 'Checklist e entrega da casa', '', 'passos/obra/etapa-18-v2.webp', 'Responsável da obra anotando na prancheta enquanto vistoria um cômodo de madeira com piso novo'],
 ];
 
 /**
@@ -446,13 +448,6 @@ function migrar_atualizar_2026_10(): array
             }
             $log[] = "etapas da linha do tempo inseridas: {$ordem}";
         }
-        $passo = $pdo->prepare("UPDATE passos SET titulo = ?, texto = ? WHERE contexto = 'flex' AND titulo = 'Projeto e modelo'");
-        foreach (MIGRAR_PASSOS as [$contexto, $titulo, $texto]) {
-            if ($contexto === 'flex' && $titulo === 'Escolha do modelo') {
-                $passo->execute([$titulo, $texto]);
-                $log[] = 'primeiro passo da Flex: ' . $passo->rowCount();
-            }
-        }
 
         $faq = $pdo->prepare('UPDATE faq SET resposta = ? WHERE contexto = ? AND pergunta = ? AND resposta <> ?');
         foreach (MIGRAR_FAQ as [$contexto, $pergunta, $resposta]) {
@@ -575,6 +570,37 @@ function migrar_atualizar_2026_10_textos(): array
         }
     }
     return $log;
+}
+
+/**
+ * Passo a passo da Castello Flex com foto (2026-10-15): os cinco cartoes sem
+ * imagem saem (ficam desativados) e entram as sete etapas de MIGRAR_PASSOS.
+ * Roda uma vez so: se a primeira etapa nova ja existe, nada muda.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_passos_flex(): array
+{
+    $pdo = db();
+    $novos = array_values(array_filter(MIGRAR_PASSOS, fn ($p) => $p[0] === 'flex'));
+    $existe = $pdo->prepare("SELECT COUNT(*) FROM passos WHERE contexto = 'flex' AND titulo = ?");
+    $existe->execute([$novos[0][1]]);
+    if ((int) $existe->fetchColumn() > 0) {
+        return ['passos da Flex: ja aplicado antes'];
+    }
+    $pdo->beginTransaction();
+    try {
+        $n = $pdo->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'flex'");
+        $st = $pdo->prepare("INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem) VALUES ('flex', ?, ?, ?, ?, 1, ?)");
+        foreach ($novos as $i => [, $titulo, $texto, $imagem, $alt]) {
+            $st->execute([$titulo, $texto, migrar_copiar($imagem, 'passos'), $alt, $i + 1]);
+        }
+        $pdo->commit();
+    } catch (Throwable $falha) {
+        $pdo->rollBack();
+        throw $falha;
+    }
+    return ["passos antigos da Flex desativados: {$n}", 'etapas da Flex inseridas: ' . count($novos)];
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

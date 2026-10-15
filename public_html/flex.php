@@ -45,7 +45,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=32" />
+  <link rel="stylesheet" href="css/style.css?v=35" />
 </head>
 <body>
 
@@ -98,22 +98,35 @@ $flex_faq     = faq('flex');
     </div>
   </section>
 
-  <!-- faceta: transição para o passo a passo -->
+<?php if ($flex_passos !== []): ?>
+  <!-- faceta: transição escura para o passo a passo -->
+  <div class="facet facet--ink" aria-hidden="true"></div>
+
+  <!-- ============ PASSO A PASSO DA FLEX (linha do tempo com foto, como a da Casa Pronta) ============ -->
+  <!-- Etapas da tabela `passos` com contexto flex: a secao trava e a rolagem empurra os cards para o lado. -->
+  <section class="section section--facetada process hscroll" id="passos-flex" data-hscroll>
+    <div class="hscroll__track">
+    <div class="hscroll__pin">
+      <div class="container">
+        <div class="process__head">
+          <span class="eyebrow eyebrow--light">Passo a passo</span>
+          <h2 class="section__title">O que a Castello entrega.</h2>
+          <p class="section__lead">Entenda o que a Castello executa na modalidade Flex e quais etapas você poderá realizar depois da entrega.</p>
+        </div>
+
+<?php $contexto = 'flex'; include __DIR__ . '/partials/passos.php'; ?>
+      </div>
+    </div>
+    </div>
+  </section>
+<?php endif; ?>
+
+  <!-- faceta: transição para o que fica por conta do cliente -->
   <div class="facet facet--sand" aria-hidden="true"></div>
 
-  <!-- ============ PASSO A PASSO DA FLEX (com a fronteira de entrega) ============ -->
-  <!-- Passos provisórios: migram para a tabela `passos` com contexto flex. -->
-  <section class="section section--sand section--facetada passos-flex" id="passos-flex">
+  <!-- ============ A FRONTEIRA DA ENTREGA (o que fica por sua conta) ============ -->
+  <section class="section section--sand section--facetada passos-flex" id="depois-flex">
     <div class="container">
-      <div class="section__head section__head--centro">
-        <span class="eyebrow reveal">Passo a passo</span>
-        <h2 class="section__title reveal">O que a Castello entrega.</h2>
-        <p class="section__lead reveal">Entenda o que a Castello executa na modalidade Flex e quais etapas você poderá realizar depois da entrega.</p>
-      </div>
-
-<?php if ($flex_passos !== []): ?>
-<?php $contexto = 'flex'; include __DIR__ . '/partials/passos.php'; ?>
-<?php endif; ?>
 
       <div class="limite reveal">
         <span class="limite__txt">
@@ -245,7 +258,7 @@ $flex_faq     = faq('flex');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=19"></script>
+  <script src="js/main.js?v=21"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

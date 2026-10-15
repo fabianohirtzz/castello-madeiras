@@ -149,7 +149,7 @@ teste('toda pagina traz nav, rodape e os scripts pelos parciais compartilhados',
 teste('pagina flex renderiza com as secoes esperadas e o prazo', function (): void {
     $html = render(site() . '/flex.php');
     foreach (['id="topo"', 'id="o-que-e"', 'id="passos-flex"', 'id="modelos-flex"', 'id="diferenciais"', 'id="faq"',
-              'id="orcamento"', 'id="contato"', 'class="pagehero"', 'class="epasso__grid"', 'id="faqTabs"',
+              'id="orcamento"', 'id="contato"', 'class="pagehero"', 'data-hscroll-trilho', 'id="depois-flex"', 'id="faqTabs"',
               'R$</span> 43.000'] as $marca) {
         contem($marca, $html, "flex nao tem $marca");
     }
@@ -171,7 +171,8 @@ teste('a pagina flex esconde o que o cliente ainda nao cadastrou, sem quebrar', 
     $html = render(site() . '/flex.php');
     nao_contem('class="grid grid--models"', $html, 'sem modelo Flex ativo, a grade nao aparece');
     nao_contem('id="faqTabs"', $html, 'sem FAQ Flex ativa, o bloco nao aparece');
-    nao_contem('class="epasso__grid"', $html, 'sem passo Flex ativo, a grade nao aparece');
+    nao_contem('data-hscroll-trilho', $html, 'sem passo Flex ativo, a trilha nao aparece');
+    contem('id="depois-flex"', $html, 'o que fica por conta do cliente continua');
     nao_contem('class="vexp', $html, 'sem video, a figura nao aparece');
     nao_contem('class="modelos__note', $html, 'sem nota, o paragrafo nao aparece');
     contem('<header class="nav" id="nav">', $html);

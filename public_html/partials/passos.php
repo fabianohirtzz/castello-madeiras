@@ -2,13 +2,12 @@
 /**
  * Passo a passo. Espera: string $contexto ('pronta' ou 'flex').
  *
- * Casa Pronta: as etapas da obra (carrossel "Como tudo acontece" do
- * Instagram) em cards com foto, numa trilha horizontal. O js/main.js trava
- * a secao na tela e a rolagem da pagina empurra a trilha para o lado
- * ([data-hscroll]); sem JS ou com movimento reduzido, a trilha rola com o
- * dedo. Etapa sem foto mostra um icone no lugar.
- * Castello Flex: cartoes numerados sem imagem (.epasso), como a frente 2
- * desenhou para a pagina Flex.
+ * As etapas da obra (Casa Pronta: carrossel "Como tudo acontece" do
+ * Instagram; Castello Flex: do contato a entrega da casa fechada) em cards
+ * com foto, numa trilha horizontal. O js/main.js trava a secao na tela e a
+ * rolagem da pagina empurra a trilha para o lado ([data-hscroll]); sem JS ou
+ * com movimento reduzido, a trilha rola com o dedo. Etapa sem foto mostra um
+ * icone no lugar.
  */
 declare(strict_types=1);
 
@@ -18,18 +17,6 @@ $contexto     = $contexto ?? 'pronta';
 $lista_passos = passos($contexto);
 $total_passos = count($lista_passos);
 
-if ($contexto === 'flex'): ?>
-<div class="epasso__grid">
-<?php foreach ($lista_passos as $i => $p): ?>
-        <article class="epasso reveal">
-          <span class="epasso__num"><?= sprintf('%02d', $i + 1) ?></span>
-          <h3><?= e($p['titulo']) ?></h3>
-          <p><?= e($p['texto']) ?></p>
-        </article>
-<?php endforeach; ?>
-      </div>
-<?php return; endif; ?>
-<?php
 /* Icone das etapas sem foto, pela primeira palavra que bater no titulo
    (entrega vem antes de checklist: a ultima etapa tem as duas). */
 $icones_etapa = [

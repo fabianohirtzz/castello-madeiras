@@ -11,7 +11,7 @@ teste('a migracao insere a quantidade exata de cada tabela', function () use ($c
     igual(14, $contagens['avaliacoes']);
     igual(15, $contagens['videos'], '11 reels da home e 4 videos da Flex');
     igual(13, $contagens['faq'], '8 gerais e 5 da Flex');
-    igual(25, $contagens['passos'], '20 etapas da Casa Pronta e 5 da Flex');
+    igual(27, $contagens['passos'], '20 etapas da Casa Pronta e 7 da Flex');
     igual(22, $contagens['blocos']);
 });
 
@@ -161,11 +161,13 @@ teste('as 20 etapas da linha do tempo da Casa Pronta chegaram em ordem', functio
         verdade((string) $p['imagem_alt'] !== '', 'toda foto de etapa tem alt: ' . $p['titulo']);
     }
     $flex = passos('flex');
-    igual(5, count($flex), 'passo a passo provisorio da Flex');
-    igual('Escolha do modelo', $flex[0]['titulo']);
-    contem('planta e medidas definidas', $flex[0]['texto'], 'a Flex nao ajusta planta');
-    igual('Portas e janelas', $flex[4]['titulo']);
-    igual('', (string) $flex[0]['imagem'], 'os passos da Flex saem como cartoes, sem imagem');
+    igual(7, count($flex), 'passo a passo da Flex, do contato a entrega');
+    igual('1º contato com a Castello', $flex[0]['titulo']);
+    igual('Checklist e entrega da casa', $flex[6]['titulo']);
+    foreach ($flex as $p) {
+        verdade(is_file(CASTELLO_UPLOADS . '/passos/' . basename((string) $p['imagem'])), 'foto da etapa Flex copiada: ' . $p['titulo']);
+        verdade((string) $p['imagem_alt'] !== '', 'toda etapa Flex tem alt: ' . $p['titulo']);
+    }
     igual(1, (int) $flex[0]['ordem'], 'a ordem da Flex recomeça do 1');
 });
 
@@ -218,7 +220,6 @@ teste('a atualizacao de outubro de 2026 leva um banco antigo ao conteudo novo, u
     db()->exec("UPDATE modelos SET nome = REPLACE(nome, 'Castello', 'Castelo'), itens = NULL, planta = NULL WHERE modalidade = 'flex'");
     db()->exec("DELETE FROM passos WHERE contexto = 'pronta'");
     db()->exec("INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem) VALUES ('pronta', 'Fundação', 'x', 'uploads/passos/passo-2.jpg', 'Base', 1, 1)");
-    db()->exec("UPDATE passos SET titulo = 'Projeto e modelo' WHERE contexto = 'flex' AND ordem = 1");
     db()->exec("UPDATE blocos SET valor = 'A casa dos seus sonhos' WHERE chave = 'hero_titulo'");
     db()->exec("UPDATE blocos SET valor = 'texto que o cliente escreveu' WHERE chave = 'flex_texto'");
     db()->exec("UPDATE faq SET pergunta = 'Posso mudar a planta da Castelo Flex?', resposta = 'Sim.' WHERE contexto = 'flex' AND ordem = 3");
@@ -237,7 +238,14 @@ teste('a atualizacao de outubro de 2026 leva um banco antigo ao conteudo novo, u
     contem('Banheiro', $flex[0]['itens']);
 
     igual(20, count(passos('pronta')));
-    igual('Escolha do modelo', passos('flex')[0]['titulo']);
+
+    db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'flex'");
+    db()->exec("INSERT INTO passos (contexto, titulo, texto, imagem, imagem_alt, ativo, ordem) VALUES ('flex', 'Escolha do modelo', 'x', '', '', 1, 1)");
+    db()->exec("DELETE FROM passos WHERE contexto = 'flex' AND titulo <> 'Escolha do modelo'");
+    migrar_atualizar_2026_10_passos_flex();
+    igual(7, count(passos('flex')), 'as sete etapas com foto substituem os cartoes da Flex');
+    igual(1, (int) db()->query("SELECT COUNT(*) FROM passos WHERE titulo = 'Escolha do modelo' AND ativo = 0")->fetchColumn(), 'o cartao antigo so foi desativado');
+    igual(['passos da Flex: ja aplicado antes'], migrar_atualizar_2026_10_passos_flex(), 'rodar de novo nao duplica');
     igual('Sua casa.', bloco('hero_titulo'));
     igual('texto que o cliente escreveu', bloco('flex_texto'), 'bloco fora da rodada fica como o cliente deixou');
     $planta = db()->query("SELECT resposta FROM faq WHERE pergunta = 'Posso mudar a planta da Castello Flex?'")->fetchColumn();

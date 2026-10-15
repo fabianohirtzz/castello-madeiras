@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=32" />
+  <link rel="stylesheet" href="css/style.css?v=35" />
 </head>
 <body>
 
@@ -168,46 +168,87 @@
     </div>
   </section>
 
-  <!-- faceta: transição para o passo a passo -->
+  <!-- faceta: transição escura para o passo a passo -->
+  <div class="facet facet--ink" aria-hidden="true"></div>
+
+  <!-- ============ PASSO A PASSO DA FLEX (linha do tempo com foto, como a da Casa Pronta) ============ -->
+  <!-- Etapas da tabela `passos` com contexto flex: a secao trava e a rolagem empurra os cards para o lado. -->
+  <section class="section section--facetada process hscroll" id="passos-flex" data-hscroll>
+    <div class="hscroll__track">
+    <div class="hscroll__pin">
+      <div class="container">
+        <div class="process__head">
+          <span class="eyebrow eyebrow--light">Passo a passo</span>
+          <h2 class="section__title">O que a Castello entrega.</h2>
+          <p class="section__lead">Entenda o que a Castello executa na modalidade Flex e quais etapas você poderá realizar depois da entrega.</p>
+        </div>
+
+<div class="hscroll__janela">
+        <ol class="hscroll__trilho" data-hscroll-trilho aria-label="Etapas da obra, da primeira conversa à entrega">
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/etapa-01.webp" alt="Mãos segurando o celular numa conversa, com uma caneca sobre a mesa de madeira" loading="lazy" />
+              <span class="hpasso__num">01</span>
+            </div>
+            <h3>1º contato com a Castello</h3>
+          </li>
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/flex-etapa-02.webp" alt="Mão apontando a foto de uma casa Castello Flex ao lado da planta, enquanto outra mão assina o contrato" loading="lazy" />
+              <span class="hpasso__num">02</span>
+            </div>
+            <h3>Escolha do projeto ideal e assinatura do contrato</h3>
+          </li>
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/flex-etapa-03.webp" alt="Laje de concreto pronta sobre os pilares, com escoras de madeira nas bordas" loading="lazy" />
+              <span class="hpasso__num">03</span>
+            </div>
+            <h3>Fundação com laje aérea</h3>
+          </li>
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/flex-etapa-04.webp" alt="Estrutura de madeira da casa montada sobre a laje, com o banheiro em blocos ao centro" loading="lazy" />
+              <span class="hpasso__num">04</span>
+            </div>
+            <h3>Montagem da estrutura de madeira</h3>
+          </li>
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/flex-etapa-05.webp" alt="Paredes externas de madeira fechadas e os caibros do telhado montados" loading="lazy" />
+              <span class="hpasso__num">05</span>
+            </div>
+            <h3>Fechamento externo e estrutura do telhado</h3>
+          </li>
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/flex-etapa-06.webp" alt="Casa de madeira coberta com telhas cerâmicas, janela com venezianas e varanda" loading="lazy" />
+              <span class="hpasso__num">06</span>
+            </div>
+            <h3>Cobertura concluída e casa fechada</h3>
+          </li>
+          <li class="hpasso">
+            <div class="hpasso__foto">
+              <img src="uploads/passos/etapa-18-v2.webp" alt="Responsável da obra anotando na prancheta enquanto vistoria um cômodo de madeira com piso novo" loading="lazy" />
+              <span class="hpasso__num">07</span>
+            </div>
+            <h3>Checklist e entrega da casa</h3>
+          </li>
+        </ol>
+      </div>
+      <div class="hscroll__barra" aria-hidden="true"><span class="hscroll__fill" data-hscroll-fill></span></div>
+      <p class="hscroll__dica">Role para ver as 7 etapas, da primeira conversa à entrega.</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- faceta: transição para o que fica por conta do cliente -->
   <div class="facet facet--sand" aria-hidden="true"></div>
 
-  <!-- ============ PASSO A PASSO DA FLEX (com a fronteira de entrega) ============ -->
-  <!-- Passos provisórios: migram para a tabela `passos` com contexto flex. -->
-  <section class="section section--sand section--facetada passos-flex" id="passos-flex">
+  <!-- ============ A FRONTEIRA DA ENTREGA (o que fica por sua conta) ============ -->
+  <section class="section section--sand section--facetada passos-flex" id="depois-flex">
     <div class="container">
-      <div class="section__head section__head--centro">
-        <span class="eyebrow reveal">Passo a passo</span>
-        <h2 class="section__title reveal">O que a Castello entrega.</h2>
-        <p class="section__lead reveal">Entenda o que a Castello executa na modalidade Flex e quais etapas você poderá realizar depois da entrega.</p>
-      </div>
-
-<div class="epasso__grid">
-        <article class="epasso reveal">
-          <span class="epasso__num">01</span>
-          <h3>Escolha do modelo</h3>
-          <p>Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.</p>
-        </article>
-        <article class="epasso reveal">
-          <span class="epasso__num">02</span>
-          <h3>Fundação</h3>
-          <p>A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.</p>
-        </article>
-        <article class="epasso reveal">
-          <span class="epasso__num">03</span>
-          <h3>Estrutura montada</h3>
-          <p>Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.</p>
-        </article>
-        <article class="epasso reveal">
-          <span class="epasso__num">04</span>
-          <h3>Cobertura</h3>
-          <p>Telhado completo, com a casa protegida da chuva e do sol desde o primeiro dia.</p>
-        </article>
-        <article class="epasso reveal">
-          <span class="epasso__num">05</span>
-          <h3>Portas e janelas</h3>
-          <p>Esquadrias instaladas e a casa entregue fechada no seu terreno, em 45 dias. Os vidros entram no seu acabamento.</p>
-        </article>
-      </div>
 
       <div class="limite reveal">
         <span class="limite__txt">
@@ -851,7 +892,7 @@
     <span class="wpp-float__label">Pedir orçamento</span>
   </button>
 
-  <script src="js/main.js?v=19"></script>
+  <script src="js/main.js?v=21"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

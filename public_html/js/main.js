@@ -848,14 +848,27 @@
     var idx = total;
     var andando = false;
 
-    function porVez() { var w = viewport.clientWidth; return w >= 940 ? 3 : w >= 600 ? 2 : 1; }
+    function porVez() {
+      var cs = getComputedStyle(viewport);
+      var w = viewport.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      return w >= 940 ? 3 : w >= 600 ? 2 : 1;
+    }
     function passo() {
       var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
       return track.children[0].getBoundingClientRect().width + gap;
     }
+    // parado, os cards fora da vista somem: o vizinho encosta na borda do
+    // viewport (que tem folga para a sombra) e apareceria como um risco
+    function marcarFora(parado) {
+      var n = porVez();
+      Array.prototype.forEach.call(track.children, function (c, k) {
+        c.classList.toggle('is-fora', parado && (k < idx || k >= idx + n));
+      });
+    }
     function posicionar(animar) {
       track.style.transition = animar && !reduce ? '' : 'none';
       track.style.transform = 'translateX(' + (-idx * passo()) + 'px)';
+      marcarFora(!animar);
       if (!animar) { void track.offsetWidth; track.style.transition = ''; }
     }
     function medir() {
