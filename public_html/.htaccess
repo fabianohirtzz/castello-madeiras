@@ -12,8 +12,10 @@ Options -Indexes
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-  # /link: a pagina do link da bio do Instagram (link.php)
-  RewriteRule ^link/?$ link.php [L]
+  # /link: a pagina do link da bio do Instagram (link.php). Com barra no fim,
+  # redireciona antes: os caminhos da pagina sao relativos a raiz do site.
+  RewriteRule ^link/$ /link [R=301,L]
+  RewriteRule ^link$ link.php [L]
 </IfModule>
 
 # Nada de servir banco, schema, segredo ou arquivo de ambiente.

@@ -285,7 +285,8 @@ teste('a pagina /link abre o formulario em popup e fica fora do Google', functio
     contem('href="https://www.freelainhome.com.br/"', $html);
     nao_contem('wa.me/5548998244494" class', $html);
     $ht = (string) file_get_contents(site() . '/.htaccess');
-    contem('RewriteRule ^link/?$ link.php [L]', $ht);
+    contem('RewriteRule ^link/$ /link [R=301,L]', $ht, 'com barra, redireciona: os caminhos sao da raiz');
+    contem('RewriteRule ^link$ link.php [L]', $ht);
     falso(is_dir(site() . '/link'), 'a pasta antiga /link saiu, senao ela ganha da regra');
     $sitemap = (string) file_get_contents(site() . '/sitemap.xml');
     nao_contem('/link', $sitemap);
