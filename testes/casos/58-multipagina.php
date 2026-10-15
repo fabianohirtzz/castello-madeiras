@@ -102,7 +102,7 @@ teste('a home resume a Casa Pronta e nao traz mais portfolio nem passo a passo',
     foreach (['id="prova"', 'id="modalidades"', 'id="castello-flex"', 'id="vantagens"', 'id="depoimentos"', 'id="instagram"', 'id="faq"', 'class="cta-band"'] as $marca) {
         contem($marca, $html, "home sem $marca");
     }
-    contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">no seu ritmo.</span></span>', $html, 'o subtitulo do hero com o realce');
+    contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">No seu ritmo.</span></span>', $html, 'o subtitulo do hero com o realce');
     contem('<a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>', $html, 'o hero leva as duas modalidades');
     contem('<a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>', $html);
     contem('data-count="71"', $html, '71 avaliacoes');
@@ -243,8 +243,8 @@ teste('o sitemap lista as cinco paginas e o robots continua apontando para ele',
 teste('o hero mantem o titulo e entra o subtitulo em duas etapas, dividido na virgula', function (): void {
     $html = render(site() . '/index.php');
     contem('<h1 class="hero__headline">Sua casa', $html);
-    contem('<span class="hero__linha" data-hero-etapa="2">do seu jeito,</span>', $html);
-    contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">no seu ritmo.</span></span>', $html);
+    contem('<span class="hero__linha" data-hero-etapa="2">Do seu jeito.</span>', $html);
+    contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">No seu ritmo.</span></span>', $html);
     contem('<div class="hero__actions" data-hero-etapa="3">', $html, 'os botoes entram com a terceira linha');
     nao_contem('heroBeatTwo', $html, 'nao existe mais troca de bloco');
 
@@ -252,7 +252,7 @@ teste('o hero mantem o titulo e entra o subtitulo em duas etapas, dividido na vi
     $sem = render(site() . '/index.php');
     nao_contem('data-hero-etapa="2"', $sem, 'sem virgula nao ha segunda etapa');
     contem('<span class="hero__linha" data-hero-etapa="3">sem virgula nenhuma</span>', $sem);
-    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['do seu jeito, *no seu ritmo.*', 'hero_subtitulo']);
+    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['Do seu jeito. *No seu ritmo.*', 'hero_subtitulo']);
 
     $main = (string) file_get_contents(site() . '/js/main.js');
     contem("var ENTRA = { 2: [0.36, 0.48], 3: [0.78, 0.9] };", $main);

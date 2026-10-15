@@ -181,8 +181,8 @@ const MIGRAR_PASSOS = [
  * entre asteriscos, como *chave na mao*, sai em destaque vermelho (realce()).
  */
 const MIGRAR_BLOCOS = [
-    ['hero_titulo', 'Título do topo', 'Sua casa', 'texto'],
-    ['hero_subtitulo', 'Subtítulo do topo', 'do seu jeito, *no seu ritmo.*', 'texto'],
+    ['hero_titulo', 'Título do topo', 'Sua casa.', 'texto'],
+    ['hero_subtitulo', 'Subtítulo do topo', 'Do seu jeito. *No seu ritmo.*', 'texto'],
     ['modalidades_titulo', 'Título do bloco de modalidades', 'Seu sonho, suas escolhas. Duas formas de construir.', 'texto'],
     ['modalidades_texto', 'Texto do bloco de modalidades', 'Com a experiência e a qualidade Castello, você escolhe a modalidade que melhor combina com seu projeto, suas necessidades e seus planos.', 'texto_longo'],
     ['pronta_titulo', 'Título da seção Casa Pronta', 'Sua casa não precisa seguir um padrão. Ela precisa combinar com você.', 'texto'],
@@ -559,7 +559,7 @@ function migrar_atualizar_2026_10_textos(): array
     $log = [];
     $st = db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ? AND valor <> ?');
     foreach (MIGRAR_BLOCOS as [$chave, , $valor]) {
-        if (in_array($chave, ['flex_titulo', 'flex_texto'], true)) {
+        if (in_array($chave, ['flex_titulo', 'flex_texto', 'hero_titulo', 'hero_subtitulo'], true)) {
             $st->execute([$valor, $chave, $valor]);
             $log[] = 'bloco ' . $chave . ': ' . $st->rowCount();
         }

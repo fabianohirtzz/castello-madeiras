@@ -105,7 +105,7 @@ teste('a home imprime os textos editaveis do banco', function (): void {
 
     db()->prepare("UPDATE blocos SET valor = 'uploads/videos/insta-04.mp4' WHERE chave = 'flex_video'")->execute();
     db()->prepare("UPDATE blocos SET valor = '45 dias' WHERE chave = 'flex_prazo'")->execute();
-    db()->prepare("UPDATE blocos SET valor = 'do seu jeito, *no seu ritmo.*' WHERE chave = 'hero_subtitulo'")->execute();
+    db()->prepare("UPDATE blocos SET valor = 'Do seu jeito. *No seu ritmo.*' WHERE chave = 'hero_subtitulo'")->execute();
     db()->prepare("UPDATE blocos SET valor = ? WHERE chave = 'modalidades_texto'")->execute([
         'Com a experiência e a qualidade Castello, você escolhe a modalidade que melhor combina com seu projeto, suas necessidades e seus planos.',
     ]);

@@ -190,8 +190,8 @@ teste('os 22 blocos de texto existem com rotulo e tipo', function (): void {
 
     igual('90 a 120 dias', bloco('pronta_prazo'));
     igual('45 dias', bloco('flex_prazo'));
-    igual('Sua casa', bloco('hero_titulo'));
-    igual('do seu jeito, *no seu ritmo.*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
+    igual('Sua casa.', bloco('hero_titulo'));
+    igual('Do seu jeito. *No seu ritmo.*', bloco('hero_subtitulo'), 'nenhum prazo fixo no topo da home');
     igual('Sua casa de madeira ganha forma em 45 dias. Você dá o toque final.', bloco('flex_titulo'));
     contem('sem possibilidade de personalização', bloco('flexpg_hero_texto'));
     igual('uploads/videos/insta-12.mp4', bloco('flex_video'));
@@ -238,7 +238,7 @@ teste('a atualizacao de outubro de 2026 leva um banco antigo ao conteudo novo, u
 
     igual(20, count(passos('pronta')));
     igual('Escolha do modelo', passos('flex')[0]['titulo']);
-    igual('Sua casa', bloco('hero_titulo'));
+    igual('Sua casa.', bloco('hero_titulo'));
     igual('texto que o cliente escreveu', bloco('flex_texto'), 'bloco fora da rodada fica como o cliente deixou');
     $planta = db()->query("SELECT resposta FROM faq WHERE pergunta = 'Posso mudar a planta da Castello Flex?'")->fetchColumn();
     contem('padronizadas', (string) $planta);

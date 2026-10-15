@@ -1485,7 +1485,9 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
 .model__amb svg{flex:none;width:22px;height:22px;fill:none;stroke:var(--red);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .model .price{margin:auto 0 6px;padding-top:18px}
 .model .price__val{white-space:nowrap;font-size:clamp(1.7rem,2.6vw,2.3rem)}
-.model__ref{margin:0 0 18px;font-size:.8rem;line-height:1.45;color:var(--muted)}
+.model__ref{margin:0 0 18px;min-height:2.9em;font-size:.8rem;line-height:1.45;color:var(--muted)}
+/* o espaco livre fica todo acima do preco: preco, nota e botao alinhados entre os cards */
+.model .model__ref + .btn{margin-top:0}
 .model .price + .btn{margin-top:16px}
 
 /* ---------- Popup do Ver mais ---------- */

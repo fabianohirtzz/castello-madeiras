@@ -15,13 +15,13 @@ require_once __DIR__ . '/lib/conteudo.php';
 $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
 $prazo_flex   = bloco('flex_prazo', '45 dias');
 
-// O subtitulo do topo entra em duas partes durante a rolagem: o que vem antes
-// da primeira virgula no meio do video, o resto no fim. Sem virgula, entra
+// O subtitulo do topo entra em duas partes durante a rolagem: ate a primeira
+// virgula ou ponto no meio do video, o resto no fim. Sem pontuacao, entra
 // tudo no fim.
-$hero_sub = bloco('hero_subtitulo', 'do seu jeito, *no seu ritmo.*');
-$hero_partes = preg_split('/,\s*/u', $hero_sub, 2);
+$hero_sub = bloco('hero_subtitulo', 'Do seu jeito. *No seu ritmo.*');
+$hero_partes = preg_split('/(?<=[,.])\s+/u', $hero_sub, 2);
 if (count($hero_partes) === 2) {
-    $hero_linha2 = $hero_partes[0] . ',';
+    $hero_linha2 = $hero_partes[0];
     $hero_linha3 = $hero_partes[1];
 } else {
     $hero_linha2 = '';
@@ -78,7 +78,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=29" />
+  <link rel="stylesheet" href="css/style.css?v=30" />
 </head>
 <body>
 
@@ -99,7 +99,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
              linha entra no meio do video e a terceira, com os botoes, no fim. -->
         <div class="hero__beat hero__texto is-active" id="heroTexto">
           <span class="eyebrow eyebrow--light">Casas de madeira · Tubarão SC</span>
-          <h1 class="hero__headline"><?= e(bloco('hero_titulo', 'Sua casa')) ?><?php if ($hero_linha2 !== ''): ?>
+          <h1 class="hero__headline"><?= e(bloco('hero_titulo', 'Sua casa.')) ?><?php if ($hero_linha2 !== ''): ?>
             <span class="hero__linha" data-hero-etapa="2"><?= realce($hero_linha2) ?></span><?php endif; ?>
             <span class="hero__linha" data-hero-etapa="3"><?= realce($hero_linha3) ?></span></h1>
           <div class="hero__actions" data-hero-etapa="3">
@@ -132,7 +132,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <section class="proof" id="prova" aria-label="Prova social">
     <div class="container proof__wrap">
       <div class="proof__head">
-        <h2 class="proof__title reveal">Cada projeto tem um propósito. Cada casa, uma história para começar.</h2>
+        <h2 class="proof__title reveal">Cada projeto tem um propósito. Cada casa, uma história para contar.</h2>
         <p class="proof__lead reveal">Seja para morar, descansar ou investir, a Castello transforma projetos em realidade com experiência, qualidade e diferentes formas de construir.</p>
       </div>
       <div class="proof__inner">
@@ -216,7 +216,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
             Pronta para morar de <strong><?= e($prazo_pronta) ?></strong>
           </p>
           <ul class="checklist reveal">
-            <li>Laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas inclusos</li>
+            <li>Fundação com laje aérea, estrutura de madeira, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas inclusos</li>
             <li>Projetos a partir de 36 m²</li>
           </ul>
           <div class="prontahome__actions reveal">

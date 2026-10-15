@@ -23,7 +23,7 @@ $flex_faq     = faq('flex');
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Castello Flex | Casa de madeira montada e fechada em 45 dias | Castello</title>
-  <meta name="description" content="Castello Flex é a casa flex da Castello: estrutura montada, coberta e fechada no seu terreno em 45 dias. Você faz o acabamento no seu ritmo." />
+  <meta name="description" content="Castello Flex é a Casa Flex da Castello: estrutura montada, coberta e fechada no seu terreno em 45 dias. Você faz o acabamento no seu ritmo." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -45,7 +45,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=29" />
+  <link rel="stylesheet" href="css/style.css?v=30" />
 </head>
 <body>
 
@@ -60,7 +60,7 @@ $flex_faq     = faq('flex');
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
     <div class="container">
-      <span class="eyebrow eyebrow--light reveal">Lançamento Castello · casa flex</span>
+      <span class="eyebrow eyebrow--light reveal">Lançamento Castello · Casa Flex</span>
       <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.')) ?></h1>
 <?php if (bloco('flexpg_hero_texto') !== ''): ?>
       <p class="pagehero__lead pagehero__lead--flex reveal"><?= e(bloco('flexpg_hero_texto')) ?></p>
