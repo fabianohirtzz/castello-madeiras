@@ -165,6 +165,7 @@ teste('a pagina flex esconde o que o cliente ainda nao cadastrou, sem quebrar', 
     db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'flex'");
     db()->exec("UPDATE faq SET ativo = 0 WHERE contexto = 'flex'");
     db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'flex'");
+    db()->exec("UPDATE videos SET ativo = 0 WHERE contexto = 'flex'");
     db()->exec("UPDATE blocos SET valor = '' WHERE chave IN ('flex_video', 'flexpg_hero_texto', 'flexpg_oque_texto', 'flexpg_catalogo_nota')");
 
     $html = render(site() . '/flex.php');
@@ -184,6 +185,7 @@ teste('a pagina flex esconde o que o cliente ainda nao cadastrou, sem quebrar', 
     db()->exec("UPDATE modelos SET ativo = 1 WHERE modalidade = 'flex'");
     db()->exec("UPDATE faq SET ativo = 1 WHERE contexto = 'flex'");
     db()->exec("UPDATE passos SET ativo = 1 WHERE contexto = 'flex'");
+    db()->exec("UPDATE videos SET ativo = 1 WHERE contexto = 'flex'");
 });
 
 teste('cada pagina tem um formulario so: o modal, ou o embutido na pagina de contato', function (): void {

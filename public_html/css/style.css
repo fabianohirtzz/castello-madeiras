@@ -1556,21 +1556,36 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
 @media(max-width:1280px){.mcarrossel__nav--prev{left:-8px}.mcarrossel__nav--next{right:-8px}}
 @media(max-width:600px){.mcarrossel__nav{top:130px;width:44px;height:44px}.mcarrossel__nav--prev{left:4px}.mcarrossel__nav--next{right:4px}}
 
-/* ---------- Vídeos da Flex, um por vez ---------- */
-.vcarrossel{max-width:340px;margin-inline:auto}
+/* ---------- Vídeos da Flex: galeria, um por vez, setas nas laterais ---------- */
+.vcarrossel{max-width:340px;width:100%;margin-inline:auto}
+.vcarrossel__palco{position:relative}
 .vcarrossel__slide{margin:0}
 .vcarrossel__slide[hidden]{display:none}
-.vcarrossel__ctrl{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px}
 .vcarrossel__seta{
-  width:42px;height:42px;border-radius:50%;cursor:pointer;display:grid;place-items:center;
-  background:#fff;border:1px solid var(--line);color:var(--ink);transition:.25s var(--ease);
+  position:absolute;top:calc(50% - 26px);z-index:2;width:46px;height:46px;border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;background:#fff;border:1px solid var(--line);color:var(--ink);
+  box-shadow:var(--shadow-soft);transition:background .25s var(--ease),color .25s var(--ease),transform .25s var(--ease);
 }
-.vcarrossel__seta svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.vcarrossel__seta:hover{background:var(--red);border-color:var(--red);color:#fff}
+.vcarrossel__seta--prev{left:-23px}
+.vcarrossel__seta--next{right:-23px}
+.vcarrossel__seta svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.vcarrossel__seta:hover{background:var(--red);border-color:var(--red);color:#fff;transform:scale(1.06)}
+.vcarrossel__seta:focus-visible{outline:3px solid var(--red-bright);outline-offset:3px}
+.vcarrossel__ctrl{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px}
 .vcarrossel__pontos{display:flex;gap:7px}
 .vcarrossel__ponto{width:9px;height:9px;padding:0;border:0;border-radius:999px;background:rgba(20,20,20,.22);cursor:pointer;transition:.3s var(--ease)}
 .vcarrossel__ponto.is-active{width:26px;background:var(--red)}
 .vcarrossel__cont{font-family:var(--font-display);font-weight:600;font-size:.82rem;color:var(--muted);min-width:3.2em;text-align:center}
+.vcarrossel--escuro .vcarrossel__ponto{background:rgba(255,255,255,.28)}
+.vcarrossel--escuro .vcarrossel__ponto.is-active{background:var(--red-bright)}
+.vcarrossel--escuro .vcarrossel__cont{color:rgba(255,255,255,.6)}
+.vcarrossel--escuro .vcarrossel__seta{border-color:transparent}
+@media(max-width:480px){
+  .vcarrossel{max-width:300px}
+  .vcarrossel__seta{width:42px;height:42px}
+  .vcarrossel__seta--prev{left:-14px}
+  .vcarrossel__seta--next{right:-14px}
+}
 
 /* ---------- Títulos com número grande (45 dias, 5 modelos) ---------- */
 .ntitulo{display:flex;align-items:center;gap:clamp(12px,1.6vw,22px)}

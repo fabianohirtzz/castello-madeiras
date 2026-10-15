@@ -39,7 +39,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=27" />
+  <link rel="stylesheet" href="css/style.css?v=28" />
 </head>
 <body>
 
@@ -155,7 +155,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
         <div class="process__head">
           <span class="eyebrow eyebrow--light">Do terreno à chave</span>
           <h2 class="section__title">Como tudo acontece.</h2>
-          <p class="section__lead">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho da sua casa, da primeira conversa até a entrega da chave.</p>
+          <p class="section__lead">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho de uma casa Castello, do terreno aos acabamentos.</p>
         </div>
 
 <?php $contexto = 'pronta'; include __DIR__ . '/partials/passos.php'; ?>

@@ -9,9 +9,9 @@ teste('a migracao insere a quantidade exata de cada tabela', function () use ($c
     igual(17, $contagens['modelos'], '12 Casa Pronta e 5 Flex');
     igual(6,  $contagens['portfolio']);
     igual(14, $contagens['avaliacoes']);
-    igual(11, $contagens['videos']);
+    igual(15, $contagens['videos'], '11 reels da home e 4 videos da Flex');
     igual(13, $contagens['faq'], '8 gerais e 5 da Flex');
-    igual(25, $contagens['passos'], '20 etapas da Casa Pronta e 5 da Flex');
+    igual(20, $contagens['passos'], '15 etapas da Casa Pronta e 5 da Flex');
     igual(22, $contagens['blocos']);
 });
 
@@ -148,12 +148,10 @@ teste('as 8 perguntas do FAQ chegaram com o icone certo em cada uma', function (
 
 teste('as 20 etapas da linha do tempo da Casa Pronta chegaram em ordem', function (): void {
     $lista = passos('pronta');
-    igual(20, count($lista), 'as etapas do carrossel Como tudo acontece');
-    igual('Primeiro contato', $lista[0]['titulo']);
-    igual('Estudo preliminar', $lista[2]['titulo'], 'a Castello faz o estudo preliminar, nao o projeto');
-    igual('Contrato assinado', $lista[4]['titulo']);
-    igual('Checklist e entrega final da obra', $lista[19]['titulo']);
-    igual('Início dos acabamentos em geral', $lista[18]['titulo']);
+    igual(15, count($lista), 'so as etapas com foto, pedido do cliente');
+    igual('Visita ao terreno da futura obra', $lista[0]['titulo']);
+    igual('Projeto aprovado', $lista[1]['titulo']);
+    igual('Início dos acabamentos em geral', $lista[14]['titulo']);
     $com_foto = array_filter($lista, static fn (array $p): bool => (string) $p['imagem'] !== '');
     igual(15, count($com_foto), 'as 15 fotos que a Castello mandou');
     foreach ($com_foto as $p) {
@@ -161,7 +159,7 @@ teste('as 20 etapas da linha do tempo da Casa Pronta chegaram em ordem', functio
         verdade(is_file(CASTELLO_UPLOADS . '/passos/' . basename($p['imagem'])), 'foto copiada: ' . $p['imagem']);
         verdade((string) $p['imagem_alt'] !== '', 'toda foto de etapa tem alt: ' . $p['titulo']);
     }
-    igual('', (string) $lista[0]['imagem'], 'primeiro contato fica com icone');
+    igual(15, count($com_foto), 'nenhuma etapa sem foto');
     $flex = passos('flex');
     igual(5, count($flex), 'passo a passo provisorio da Flex');
     igual('Escolha do modelo', $flex[0]['titulo']);
@@ -238,7 +236,7 @@ teste('a atualizacao de outubro de 2026 leva um banco antigo ao conteudo novo, u
     contem('-planta.webp', $flex[0]['planta']);
     contem('Banheiro', $flex[0]['itens']);
 
-    igual(20, count(passos('pronta')));
+    igual(15, count(passos('pronta')));
     igual('Escolha do modelo', passos('flex')[0]['titulo']);
     igual('Sua casa', bloco('hero_titulo'));
     igual('texto que o cliente escreveu', bloco('flex_texto'), 'bloco fora da rodada fica como o cliente deixou');
@@ -274,7 +272,7 @@ teste('migrar_usuario cria o acesso do painel uma vez so', function (): void {
 });
 
 teste('conteudo real migrou por inteiro, sem item de portfolio sem alt', function (): void {
-    $esperado = ['modelos' => 17, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11, 'faq' => 7, 'passos' => 25];
+    $esperado = ['modelos' => 17, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11, 'faq' => 7, 'passos' => 20];
     foreach ($esperado as $tabela => $quantos) {
         $tem = (int) db()->query("SELECT COUNT(*) FROM {$tabela} WHERE ativo = 1")->fetchColumn();
         verdade($tem >= $quantos, "{$tabela}: esperado ao menos {$quantos}, tem {$tem}");

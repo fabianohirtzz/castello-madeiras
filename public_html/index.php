@@ -14,8 +14,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
 $prazo_flex   = bloco('flex_prazo', '45 dias');
-$flex_video   = bloco('flex_video');
-$flex_poster  = bloco('flex_video_poster');
 
 // O subtitulo do topo entra em duas partes durante a rolagem: o que vem antes
 // da primeira virgula no meio do video, o resto no fim. Sem virgula, entra
@@ -80,7 +78,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=27" />
+  <link rel="stylesheet" href="css/style.css?v=28" />
 </head>
 <body>
 
@@ -267,17 +265,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           </div>
         </div>
 
-<?php if ($flex_video !== ''): ?>
-        <figure class="vexp vexp--reel reveal">
-          <div class="vexp__frame">
-            <video controls playsinline preload="none" poster="<?= e($flex_poster) ?>">
-              <source src="<?= e($flex_video) ?>" type="video/mp4" />
-              Seu navegador não abre vídeo. <a href="<?= e($flex_video) ?>">Baixe o vídeo da Castello Flex</a>.
-            </video>
-          </div>
-          <figcaption class="vexp__cap vexp__cap--light">A Castello mostra como funciona a Castello Flex, do terreno à casa fechada.</figcaption>
-        </figure>
-<?php endif; ?>
+<?php $vflex_escuro = true; include __DIR__ . '/partials/videos-flex.php'; ?>
       </div>
     </div>
   </section>

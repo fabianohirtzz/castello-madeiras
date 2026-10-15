@@ -109,6 +109,19 @@ const MIGRAR_AVALIACOES = [
     ['Lares do Sul', 'Tivemos uma ótima experiência com a Castello, entregaram dentro do prazo, serviço de qualidade. O proprietário também é uma pessoa de fácil negociação e respondia rapidamente sempre que solicitado. Recomendo.'],
 ];
 
+/**
+ * Videos da galeria da Castello Flex (home e pagina Flex): arquivo, capa e
+ * legenda. O primeiro e o explicativo dos 5 modelos, que ja era o video
+ * unico do bloco flex_video; os outros tres sao reels de outubro de 2026,
+ * comprimidos para 540x960.
+ */
+const MIGRAR_VIDEOS_FLEX = [
+    ['videos-instagram/web/insta-12.mp4', 'videos-instagram/web/insta-12.jpg', 'A Castello apresenta os 5 modelos da Castello Flex.'],
+    ['videos-flex/flex-01.mp4', 'videos-flex/flex-01.jpg', 'Entrega em até 45 dias: como funciona o prazo da Flex.'],
+    ['videos-flex/flex-02.mp4', 'videos-flex/flex-02.jpg', 'O mesmo padrão de qualidade, com liberdade para você escolher.'],
+    ['videos-flex/flex-03.mp4', 'videos-flex/flex-03.jpg', 'Casas de madeira montadas e fechadas em até 45 dias.'],
+];
+
 /** contexto, pergunta, resposta, icone. As cinco da Flex saem do escopo que a Castello mandou. */
 const MIGRAR_FAQ = [
     ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', 'Entre 90 e 120 dias, da assinatura do contrato à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.', 'relogio'],
@@ -128,17 +141,14 @@ const MIGRAR_FAQ = [
 
 /**
  * contexto, titulo, texto, imagem de origem, alt da imagem.
- * Os passos da Casa Pronta sao as 20 etapas do carrossel "Como tudo
- * acontece" do Instagram da Castello (sem as datas daquela obra), em cards
- * com a foto da etapa; as que nao tem foto mostram um icone. Os da Flex saem
- * como cartoes numerados, sem imagem.
+ * Os passos da Casa Pronta sao as 15 etapas do carrossel "Como tudo
+ * acontece" do Instagram da Castello que tem foto da obra (pedido do cliente
+ * em 2026-10-14: so as etapas com foto). Os da Flex saem como cartoes
+ * numerados, sem imagem.
  */
 const MIGRAR_PASSOS = [
-    ['pronta', 'Primeiro contato', '', '', ''],
     ['pronta', 'Visita ao terreno da futura obra', '', 'passos/obra/etapa-02.webp', 'Terreno limpo e nivelado, com mata ao fundo, antes do início da obra'],
-    ['pronta', 'Estudo preliminar', '', '', ''],
     ['pronta', 'Projeto aprovado', '', 'passos/obra/etapa-04.webp', 'Render do projeto aprovado: sobrado de madeira com varanda e sacada'],
-    ['pronta', 'Contrato assinado', '', '', ''],
     ['pronta', 'Início da obra', '', 'passos/obra/etapa-06.webp', 'Equipe marcando a fundação no terreno, com gabarito de madeira e blocos'],
     ['pronta', 'Concretagem do primeiro nível de laje', '', 'passos/obra/etapa-07.webp', 'Laje de concreto pronta sobre os pilares, com tábuas empilhadas em cima'],
     ['pronta', 'Segundo nível de laje e início da alvenaria', '', 'passos/obra/etapa-08.webp', 'Parede de tijolos subindo sobre a laje, com céu de nuvens ao fundo'],
@@ -151,9 +161,7 @@ const MIGRAR_PASSOS = [
     ['pronta', 'Aplicação dos pisos externos', '', 'passos/obra/etapa-15.webp', 'Varanda coberta com piso cerâmico novo e guarda-corpo de madeira em X'],
     ['pronta', 'Instalação elétrica', '', 'passos/obra/etapa-16.webp', 'Conduítes amarelos da instalação elétrica passando pelo forro de madeira'],
     ['pronta', 'Instalação das esquadrias', '', 'passos/obra/etapa-17.webp', 'Portas e janelas de madeira com venezianas instaladas na varanda'],
-    ['pronta', 'Pré-checklist e vistoria', '', '', ''],
     ['pronta', 'Início dos acabamentos em geral', '', 'passos/obra/etapa-19.webp', 'Sobrado de madeira pronto por fora, com placa da Castello na obra'],
-    ['pronta', 'Checklist e entrega final da obra', '', '', ''],
     ['flex', 'Escolha do modelo', 'Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.', '', ''],
     ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
     ['flex', 'Estrutura montada', 'Paredes e estrutura montadas com madeira de qualidade e prego galvanizado em toda a obra.', '', ''],
@@ -233,6 +241,15 @@ function migrar_inserir_modelo(array $m, int $ordem): void
     ]);
 }
 
+/** Insere os videos da galeria da Flex, copiando arquivo e capa para uploads/. */
+function migrar_inserir_videos_flex(): void
+{
+    $st = db()->prepare("INSERT INTO videos (arquivo, poster, legenda, contexto, ativo, ordem) VALUES (?, ?, ?, 'flex', 1, ?)");
+    foreach (MIGRAR_VIDEOS_FLEX as $i => [$arquivo, $poster, $legenda]) {
+        $st->execute([migrar_copiar($arquivo, 'videos'), migrar_copiar($poster, 'videos'), $legenda, $i + 1]);
+    }
+}
+
 /** True quando a tabela ainda nao tem nenhuma linha. */
 function migrar_vazia(string $tabela): bool
 {
@@ -289,6 +306,11 @@ function migrar(): array
             ]);
             $conta['videos']++;
         }
+    }
+
+    if ((int) db()->query("SELECT COUNT(*) FROM videos WHERE contexto = 'flex'")->fetchColumn() === 0) {
+        migrar_inserir_videos_flex();
+        $conta['videos'] += count(MIGRAR_VIDEOS_FLEX);
     }
 
     if (migrar_vazia('faq')) {
@@ -469,6 +491,9 @@ function migrar_atualizar_2026_10_fotos(): array
             $foto->execute([migrar_copiar($imagem, 'passos'), $alt, $titulo]);
             $log[] = 'foto ' . $titulo . ': ' . $foto->rowCount();
         }
+        // so ficam as etapas com foto; as outras sao desativadas, nao apagadas
+        $n = $pdo->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'pronta' AND (imagem IS NULL OR imagem = '')");
+        $log[] = "etapas sem foto desativadas: {$n}";
         config_gravar('conteudo_2026_10_fotos', '1');
         $pdo->commit();
     } catch (Throwable $falha) {
@@ -476,6 +501,35 @@ function migrar_atualizar_2026_10_fotos(): array
         throw $falha;
     }
     return $log;
+}
+
+/**
+ * Terceira parte da rodada de outubro de 2026: os videos da galeria da Flex.
+ * So entra quando ainda nao ha video com contexto flex (o cliente pode ter
+ * cadastrado pelo painel).
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_videos(): array
+{
+    $tem = (int) db()->query("SELECT COUNT(*) FROM videos WHERE contexto = 'flex'")->fetchColumn();
+    if ($tem > 0) {
+        return ["videos da Flex: ja existem {$tem}, nada mudou"];
+    }
+    migrar_inserir_videos_flex();
+    return ['videos da Flex inseridos: ' . count(MIGRAR_VIDEOS_FLEX)];
+}
+
+/**
+ * Na Casa Pronta ficam so as etapas com foto (pedido do cliente em
+ * 2026-10-14). As sem foto sao desativadas, nao apagadas. Pode rodar sempre.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_etapas(): array
+{
+    $n = db()->exec("UPDATE passos SET ativo = 0 WHERE contexto = 'pronta' AND ativo = 1 AND (imagem IS NULL OR imagem = '')");
+    return ["etapas sem foto desativadas: {$n}"];
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

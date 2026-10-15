@@ -13,17 +13,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib/conteudo.php';
 
 $prazo_flex   = bloco('flex_prazo', '45 dias');
-$flex_video   = bloco('flex_video');
-$flex_poster  = bloco('flex_video_poster');
 $flex_modelos = modelos('flex');
 $flex_passos  = passos('flex');
 $flex_faq     = faq('flex');
-// Os videos de "O que e a Castello Flex" vem do painel (videos com contexto
-// flex). Sem nenhum cadastrado, vale o video unico do bloco flex_video.
-$flex_videos  = videos(0, 'flex');
-if ($flex_videos === [] && $flex_video !== '') {
-    $flex_videos = [['arquivo' => $flex_video, 'poster' => $flex_poster, 'legenda' => '']];
-}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -53,7 +45,7 @@ if ($flex_videos === [] && $flex_video !== '') {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=27" />
+  <link rel="stylesheet" href="css/style.css?v=28" />
 </head>
 <body>
 
@@ -101,29 +93,7 @@ if ($flex_videos === [] && $flex_video !== '') {
           </ul>
         </div>
 
-<?php if ($flex_videos !== []): ?>
-        <div class="vcarrossel reveal" data-vcarrossel aria-roledescription="carrossel" aria-label="Vídeos sobre a Castello Flex">
-<?php foreach ($flex_videos as $i => $v): ?>
-          <figure class="vcarrossel__slide vexp"<?= $i > 0 ? ' hidden' : '' ?>>
-            <div class="vexp__frame">
-              <video controls playsinline preload="none" poster="<?= e((string) $v['poster']) ?>">
-                <source src="<?= e((string) $v['arquivo']) ?>" type="video/mp4" />
-                Seu navegador não abre vídeo. <a href="<?= e((string) $v['arquivo']) ?>">Baixe o vídeo da Castello Flex</a>.
-              </video>
-            </div>
-            <figcaption class="vexp__cap"><?= e(trim((string) $v['legenda']) !== '' ? (string) $v['legenda'] : 'A Castello explica a Castello Flex, do terreno à casa fechada.') ?></figcaption>
-          </figure>
-<?php endforeach; ?>
-<?php if (count($flex_videos) > 1): ?>
-          <div class="vcarrossel__ctrl">
-            <button class="vcarrossel__seta" type="button" data-vcarrossel-prev aria-label="Vídeo anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-            <div class="vcarrossel__pontos"></div>
-            <span class="vcarrossel__cont" aria-live="polite"></span>
-            <button class="vcarrossel__seta" type="button" data-vcarrossel-next aria-label="Próximo vídeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-          </div>
-<?php endif; ?>
-        </div>
-<?php endif; ?>
+<?php $vflex_escuro = false; include __DIR__ . '/partials/videos-flex.php'; ?>
       </div>
     </div>
   </section>

@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=27" />
+  <link rel="stylesheet" href="css/style.css?v=28" />
 </head>
 <body>
 
@@ -119,15 +119,50 @@
         </div>
 
         <div class="vcarrossel reveal" data-vcarrossel aria-roledescription="carrossel" aria-label="Vídeos sobre a Castello Flex">
-          <figure class="vcarrossel__slide vexp">
-            <div class="vexp__frame">
-              <video controls playsinline preload="none" poster="uploads/videos/insta-12.jpg">
-                <source src="uploads/videos/insta-12.mp4" type="video/mp4" />
-                Seu navegador não abre vídeo. <a href="uploads/videos/insta-12.mp4">Baixe o vídeo da Castello Flex</a>.
-              </video>
-            </div>
-            <figcaption class="vexp__cap">A Castello explica a Castello Flex, do terreno à casa fechada.</figcaption>
-          </figure>
+          <div class="vcarrossel__palco">
+            <figure class="vcarrossel__slide vexp">
+              <div class="vexp__frame">
+                <video controls playsinline preload="none" poster="uploads/videos/insta-12.jpg">
+                  <source src="uploads/videos/insta-12.mp4" type="video/mp4" />
+                  Seu navegador não abre vídeo. <a href="uploads/videos/insta-12.mp4">Baixe o vídeo da Castello Flex</a>.
+                </video>
+              </div>
+              <figcaption class="vexp__cap">A Castello apresenta os 5 modelos da Castello Flex.</figcaption>
+            </figure>
+            <figure class="vcarrossel__slide vexp" hidden>
+              <div class="vexp__frame">
+                <video controls playsinline preload="none" poster="uploads/videos/flex-01.jpg">
+                  <source src="uploads/videos/flex-01.mp4" type="video/mp4" />
+                  Seu navegador não abre vídeo. <a href="uploads/videos/flex-01.mp4">Baixe o vídeo da Castello Flex</a>.
+                </video>
+              </div>
+              <figcaption class="vexp__cap">Entrega em até 45 dias: como funciona o prazo da Flex.</figcaption>
+            </figure>
+            <figure class="vcarrossel__slide vexp" hidden>
+              <div class="vexp__frame">
+                <video controls playsinline preload="none" poster="uploads/videos/flex-02.jpg">
+                  <source src="uploads/videos/flex-02.mp4" type="video/mp4" />
+                  Seu navegador não abre vídeo. <a href="uploads/videos/flex-02.mp4">Baixe o vídeo da Castello Flex</a>.
+                </video>
+              </div>
+              <figcaption class="vexp__cap">O mesmo padrão de qualidade, com liberdade para você escolher.</figcaption>
+            </figure>
+            <figure class="vcarrossel__slide vexp" hidden>
+              <div class="vexp__frame">
+                <video controls playsinline preload="none" poster="uploads/videos/flex-03.jpg">
+                  <source src="uploads/videos/flex-03.mp4" type="video/mp4" />
+                  Seu navegador não abre vídeo. <a href="uploads/videos/flex-03.mp4">Baixe o vídeo da Castello Flex</a>.
+                </video>
+              </div>
+              <figcaption class="vexp__cap">Casas de madeira montadas e fechadas em até 45 dias.</figcaption>
+            </figure>
+            <button class="vcarrossel__seta vcarrossel__seta--prev" type="button" data-vcarrossel-prev aria-label="Vídeo anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="vcarrossel__seta vcarrossel__seta--next" type="button" data-vcarrossel-next aria-label="Próximo vídeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+          </div>
+          <div class="vcarrossel__ctrl">
+            <div class="vcarrossel__pontos"></div>
+            <span class="vcarrossel__cont" aria-live="polite"></span>
+          </div>
         </div>
       </div>
     </div>
