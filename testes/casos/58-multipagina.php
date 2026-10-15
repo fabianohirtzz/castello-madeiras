@@ -121,7 +121,7 @@ teste('casa-pronta.php traz os 12 projetos com preco, o incluso, a linha do temp
         contem('<span class="price__cur">R$</span> ' . $preco, $html, "preco $preco");
     }
     contem('id="incluso"', $html);
-    foreach (['Laje aérea', 'Instalação elétrica', 'Instalação hidráulica', 'Cerâmica', 'Fossa', 'Sumidouro', 'Vidros e aberturas', 'Prego galvanizado', 'Personalizável', 'Estudo preliminar'] as $item) {
+    foreach (['Fundação e laje de piso', 'Estrutura de madeira e cobertura', 'Instalações elétricas e hidráulicas', 'Revestimentos cerâmicos', 'Portas, janelas e vidros', 'Fossa e sumidouro', 'Execução e acompanhamento da obra', 'pregos galvanizados', 'Uma casa pensada para você.'] as $item) {
         contem($item, $html, "incluso sem $item");
     }
     contem('id="como-funciona"', $html);
