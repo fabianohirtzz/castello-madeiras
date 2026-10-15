@@ -69,7 +69,7 @@ $pagina = $pagina ?? 'home';
       <span class="footer__copy">© 2026 Castello Casas de Madeira. <span class="nowrap">Todos os direitos reservados.</span></span>
       <span class="footer__assina">
         <span class="nowrap"><span aria-hidden="true">🏡</span> Não construímos casas, mas construímos sites!</span>
-        <span class="nowrap"><span aria-hidden="true">🏗️</span> Construído por: Freela In Home.</span>
+        <span class="nowrap"><span aria-hidden="true">🏗️</span> Construído por: <a href="https://www.freelainhome.com.br/" target="_blank" rel="noopener">Freela In Home</a>.</span>
       </span>
     </div>
   </footer>

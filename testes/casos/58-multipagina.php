@@ -268,3 +268,25 @@ teste('o menu nao depende mais do scroll-spy e o formulario embutido busca o tok
     contem("closest('#quoteModal')", $form);
     nao_contem('csrf-token', $form);
 });
+
+teste('a pagina /link abre o formulario em popup e fica fora do Google', function (): void {
+    $html = render(site() . '/link.php');
+    contem('<meta name="robots" content="noindex, follow" />', $html);
+    contem('class="lk-cta lk-entra" style="--i:1" data-quote-open', $html, 'o orcamento e o primeiro botao e abre o popup');
+    contem('id="quoteModal"', $html, 'o formulario vem junto, na propria pagina');
+    nao_contem('id="wppFloat"', $html, 'sem botao flutuante: o orcamento ja esta no topo');
+    contem('href="casa-pronta.php"', $html);
+    contem('href="flex.php"', $html);
+    contem('A partir de R$ 72 mil', $html, 'o menor preco da Casa Pronta, do banco');
+    contem('A partir de R$ 43 mil', $html, 'o menor preco da Flex, do banco');
+    contem('instagram.com/castellocasasdemadeira', $html);
+    contem('facebook.com/castellomadeiras', $html);
+    contem('mailto:', $html);
+    contem('href="https://www.freelainhome.com.br/"', $html);
+    nao_contem('wa.me/5548998244494" class', $html);
+    $ht = (string) file_get_contents(site() . '/.htaccess');
+    contem('RewriteRule ^link/?$ link.php [L]', $ht);
+    falso(is_dir(site() . '/link'), 'a pasta antiga /link saiu, senao ela ganha da regra');
+    $sitemap = (string) file_get_contents(site() . '/sitemap.xml');
+    nao_contem('/link', $sitemap);
+});

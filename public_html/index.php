@@ -80,7 +80,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=23" />
+  <link rel="stylesheet" href="css/style.css?v=24" />
 </head>
 <body>
 
@@ -212,7 +212,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
       <div class="split2">
         <div>
           <span class="eyebrow reveal">Casa Pronta · chave na mão</span>
-          <h2 class="section__title reveal"><?= e(bloco('pronta_titulo', 'Sua casa não precisa seguir um padrão. Ela precisa combinar com você.')) ?></h2>
+          <h2 class="section__title prontahome__titulo reveal"><?= e(bloco('pronta_titulo', 'Sua casa não precisa seguir um padrão. Ela precisa combinar com você.')) ?></h2>
           <p class="section__lead reveal"><?= e(bloco('pronta_texto')) ?></p>
           <p class="stamp reveal">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
@@ -458,7 +458,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=16"></script>
+  <script src="js/main.js?v=17"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

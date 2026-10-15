@@ -69,4 +69,6 @@ $modal_videos    = count(videos());
   </div>
 <?php endif; ?>
 
+<?php if ($pagina !== 'link'): ?>
 <?php include __DIR__ . '/flutuante.php'; ?>
+<?php endif; ?>

@@ -22,6 +22,7 @@
   }
 
   function onScroll() {
+    if (!nav) return; // paginas sem menu, como a /link
     var y = window.scrollY;
     var th = navThreshold();
     if (y > th) nav.classList.add('is-scrolled');
@@ -52,14 +53,16 @@
     if (willOpen) { nav.classList.remove('is-hidden'); backdrop.hidden = false; requestAnimationFrame(function () { backdrop.classList.add('is-open'); }); }
     else { backdrop.classList.remove('is-open'); setTimeout(function () { backdrop.hidden = true; }, 300); }
   }
-  burger.addEventListener('click', function () { toggleDrawer(); });
-  backdrop.addEventListener('click', function () { toggleDrawer(false); });
-  drawer.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('click', function () { toggleDrawer(false); });
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && drawer.classList.contains('is-open')) toggleDrawer(false);
-  });
+  if (burger && drawer && backdrop) {
+    burger.addEventListener('click', function () { toggleDrawer(); });
+    backdrop.addEventListener('click', function () { toggleDrawer(false); });
+    drawer.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { toggleDrawer(false); });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawer.classList.contains('is-open')) toggleDrawer(false);
+    });
+  }
 
   /* ---------- Reveal on scroll ---------- */
   var reveals = document.querySelectorAll('.reveal');

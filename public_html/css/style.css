@@ -626,6 +626,8 @@ body.drawer-open{overflow:hidden}
 /* folga no fim da página para o botão flutuante não cobrir a assinatura */
 .footer__bottom{padding-bottom:92px}
 .footer__assina{display:flex;flex-direction:column;gap:4px;text-align:right}
+.footer__assina a{color:rgba(255,255,255,.8);text-decoration:underline;text-underline-offset:2px}
+.footer__assina a:hover{color:#fff}
 @media(max-width:640px){.footer__assina{text-align:left}}
 
 /* ---------- Botão flutuante (abre o formulário de orçamento) ---------- */
@@ -1294,6 +1296,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 
 /* ---------- Home: resumo da Casa Pronta (texto + foto do modelo em destaque) ---------- */
 .prontahome .checklist{margin-top:26px}
+.prontahome__titulo{font-size:clamp(2rem,3.3vw,2.95rem);line-height:1.04}
 .prontahome__actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
 .prontahome__media{
   position:relative;margin:0;border-radius:var(--r-lg);overflow:hidden;
@@ -1608,23 +1611,125 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
   .tline-obra__dica{display:none}
 }
 
-/* ---------- Página /link (bio do Instagram) ---------- */
-.linkpg{min-height:100svh;background:var(--ink);color:#fff;display:flex;justify-content:center;padding:clamp(36px,7vh,64px) 16px 48px}
-.linkpg__wrap{width:min(460px,100%);display:flex;flex-direction:column;align-items:center;text-align:center}
-.linkpg__logo{width:150px;height:auto}
-.linkpg__lead{margin-top:18px;color:rgba(255,255,255,.72);font-size:.98rem;line-height:1.55;max-width:34ch}
-.linkpg__lista{width:100%;display:flex;flex-direction:column;gap:12px;margin-top:28px}
-.linkpg__item{
-  display:flex;align-items:center;gap:14px;width:100%;padding:16px 18px;border-radius:var(--r-md);
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;text-align:left;
-  font-family:var(--font-display);font-weight:600;font-size:1rem;transition:.25s var(--ease);
+/* ---------- Página /link (bio do Instagram), pensada para o celular ---------- */
+.lk-corpo{background:var(--ink);min-height:100svh}
+.lk{
+  position:relative;isolation:isolate;overflow:hidden;color:#fff;
+  width:min(480px,100%);margin:0 auto;min-height:100svh;
+  display:flex;flex-direction:column;gap:14px;
+  padding:max(28px,env(safe-area-inset-top)) 16px max(32px,env(safe-area-inset-bottom));
 }
-.linkpg__item svg{flex:none;width:22px;height:22px;fill:none;stroke:var(--red-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.linkpg__item small{display:block;margin-top:2px;font-family:var(--font-body);font-weight:400;font-size:.8rem;color:rgba(255,255,255,.6)}
-.linkpg__item:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);transform:translateY(-2px)}
-.linkpg__item--forte{background:var(--red-deep);border-color:var(--red-deep)}
-.linkpg__item--forte svg{stroke:#fff}
-.linkpg__item--forte small{color:rgba(255,255,255,.82)}
-.linkpg__item--forte:hover{background:#9c1117;border-color:#9c1117}
-.linkpg__item:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.linkpg__rodape{margin-top:32px;font-size:.8rem;color:rgba(255,255,255,.45)}
+/* a mesma grade técnica das seções escuras do site, apagando para baixo */
+.lk::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 55%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 55%,transparent 100%);
+}
+.lk__brilho{
+  position:fixed;left:50%;top:-180px;z-index:-1;width:560px;height:420px;transform:translateX(-50%);
+  background:radial-gradient(closest-side,rgba(237,33,40,.38),rgba(237,33,40,0));pointer-events:none;
+}
+
+.lk__topo{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding-bottom:6px}
+.lk__logo{width:132px;height:auto;filter:drop-shadow(0 10px 30px rgba(237,33,40,.25))}
+.lk__nota{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  font-size:.84rem;color:rgba(255,255,255,.86);transition:background .25s var(--ease)
+}
+.lk__nota svg{width:16px;height:16px;fill:#FFC23D}
+.lk__nota strong{color:#fff;font-family:var(--font-display)}
+.lk__nota-sep{opacity:.45}
+.lk__nota:hover{background:rgba(255,255,255,.14)}
+.lk__lead{max-width:34ch;color:rgba(255,255,255,.72);font-size:.96rem;line-height:1.55}
+
+/* orçamento: o botão vermelho do site, maior e com brilho passando */
+.lk-cta{
+  position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;width:100%;
+  padding:18px 18px 18px 16px;border:0;border-radius:var(--r-lg);cursor:pointer;text-align:left;color:#fff;
+  background:linear-gradient(135deg,var(--red-bright),var(--red-deep));
+  box-shadow:0 18px 40px -16px rgba(237,33,40,.75),inset 0 1px 0 rgba(255,255,255,.18);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+}
+.lk-cta::after{
+  content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:skewX(-18deg);animation:lkBrilho 3.6s 1.4s var(--ease) infinite;
+}
+@keyframes lkBrilho{0%{left:-60%}38%,100%{left:130%}}
+.lk-cta:hover{transform:translateY(-2px);box-shadow:0 24px 50px -16px rgba(237,33,40,.9)}
+.lk-cta:active{transform:translateY(0) scale(.99)}
+.lk-cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lk-cta__ico{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.18)}
+.lk-cta__ico svg{width:23px;height:23px;fill:#fff}
+.lk-cta__txt{flex:1;display:flex;flex-direction:column;gap:3px}
+.lk-cta__txt strong{font-family:var(--font-display);font-weight:800;font-size:1.22rem;letter-spacing:-.01em}
+.lk-cta__txt small{font-size:.82rem;color:rgba(255,255,255,.86);line-height:1.35}
+.lk-seta{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;opacity:.8;transition:transform .25s var(--ease)}
+.lk-cta:hover .lk-seta,.lk-item:hover .lk-seta{transform:translateX(3px)}
+
+/* as duas modalidades, com foto */
+.lk-modos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lk-modo{
+  position:relative;overflow:hidden;display:block;aspect-ratio:4/5;border-radius:var(--r-lg);
+  background:var(--ink-soft);box-shadow:0 18px 40px -22px rgba(0,0,0,.9);
+  border:1px solid rgba(255,255,255,.1);
+}
+.lk-modo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.lk-modo:hover img{transform:scale(1.06)}
+.lk-modo__veu{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.05) 25%,rgba(10,10,10,.55) 58%,rgba(10,10,10,.92) 100%)}
+.lk-modo__txt{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:3px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.lk-modo__tag{
+  align-self:flex-start;margin-bottom:4px;padding:4px 9px;border-radius:999px;
+  background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  font:600 .66rem/1.2 var(--font-body);letter-spacing:.06em;text-transform:uppercase;text-shadow:none;
+}
+.lk-modo__tag--novo{background:var(--red-deep)}
+.lk-modo__txt strong{font-family:var(--font-display);font-weight:800;font-size:1.12rem;line-height:1.1;letter-spacing:-.01em}
+.lk-modo__txt small{font-size:.8rem;color:rgba(255,255,255,.82)}
+.lk-modo:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+/* atalhos: cartões escuros com o ícone num quadradinho vermelho */
+.lk-lista{display:flex;flex-direction:column;gap:10px}
+.lk-item{
+  display:flex;align-items:center;gap:13px;padding:13px 16px 13px 13px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;
+  transition:background .25s var(--ease),border-color .25s var(--ease),transform .25s var(--ease);
+}
+.lk-item:hover{background:rgba(255,255,255,.11);border-color:rgba(255,255,255,.24);transform:translateY(-2px)}
+.lk-item:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lk-item__ico{
+  flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(241,47,55,.22),rgba(179,20,27,.22));border:1px solid rgba(241,47,55,.35);
+}
+.lk-item__ico svg{width:21px;height:21px;fill:none;stroke:var(--red-bright);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lk-item__txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.lk-item__txt strong{font-family:var(--font-display);font-weight:700;font-size:1rem}
+.lk-item__txt small{font-size:.8rem;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* redes */
+.lk-redes{display:flex;justify-content:center;gap:12px;margin-top:8px}
+.lk-redes a{
+  display:grid;place-items:center;width:50px;height:50px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:#fff;
+  transition:background .25s var(--ease),transform .25s var(--ease),border-color .25s var(--ease);
+}
+.lk-redes a:hover{background:linear-gradient(135deg,var(--red-bright),var(--red-deep));border-color:transparent;transform:translateY(-3px)}
+.lk-redes a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.lk-redes svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lk-redes a[aria-label^="Facebook"] svg{fill:currentColor;stroke:none}
+
+.lk-assina{margin-top:auto;padding-top:18px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.76rem;color:rgba(255,255,255,.45);text-align:center}
+.lk-assina a{color:rgba(255,255,255,.7);text-decoration:underline;text-underline-offset:2px}
+.lk-assina a:hover{color:#fff}
+
+/* entrada em cascata ao abrir a página */
+.lk-entra{animation:lkEntra .7s var(--ease) both;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes lkEntra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .lk-entra{animation:none}
+  .lk-cta::after{display:none}
+}
+@media(min-width:520px){.lk{padding-top:48px}.lk__logo{width:150px}}

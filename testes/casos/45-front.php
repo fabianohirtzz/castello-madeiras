@@ -66,7 +66,7 @@ teste('o rodape traz marca, contato, atendimento e mapa, sem a lista de paginas'
         nao_contem('footer__pages', $html, "$chave: as paginas ficam so no menu do topo");
         igual(0, substr_count($html, 'aria-current="page"'), "$chave: o rodape nao marca pagina");
         contem('Não construímos casas, mas construímos sites!', $html);
-        contem('Construído por: Freela In Home.', $html);
+        contem('Construído por: <a href="https://www.freelainhome.com.br/" target="_blank" rel="noopener">Freela In Home</a>.', $html, 'o nome da Freela leva ao site');
         contem('<footer class="footer" id="contato">', $html);
         nao_contem('wa.me/', $html, 'nenhum botao de WhatsApp no rodape');
         nao_contem('tel:', $html, 'o telefone fixo saiu por enquanto');

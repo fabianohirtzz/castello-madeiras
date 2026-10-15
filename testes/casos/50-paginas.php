@@ -137,7 +137,7 @@ teste('toda pagina traz nav, rodape e os scripts pelos parciais compartilhados',
         contem('<header class="nav" id="nav">', $html, $arquivo);
         contem('id="ico-google"', $html, $arquivo);
         contem('<footer class="footer" id="contato">', $html, $arquivo);
-        contem('<script src="js/main.js?v=16"></script>', $html, $arquivo);
+        contem('<script src="js/main.js?v=17"></script>', $html, $arquivo);
         contem('<script src="js/formulario.js?v=3" defer></script>', $html, $arquivo);
     }
     $home = render(site() . '/index.php');
