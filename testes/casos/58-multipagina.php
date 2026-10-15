@@ -272,6 +272,8 @@ teste('o menu nao depende mais do scroll-spy e o formulario embutido busca o tok
 teste('a pagina /link abre o formulario em popup e fica fora do Google', function (): void {
     $html = render(site() . '/link.php');
     contem('<meta name="robots" content="noindex, follow" />', $html);
+    contem('<meta property="og:image" content="' . CASTELLO_URL . '/images/og-link.jpg" />', $html, 'miniatura propria no WhatsApp');
+    verdade(is_file(site() . '/images/og-link.jpg'), 'a imagem da miniatura existe');
     contem('class="lk-cta lk-entra" style="--i:1" data-quote-open', $html, 'o orcamento e o primeiro botao e abre o popup');
     contem('id="quoteModal"', $html, 'o formulario vem junto, na propria pagina');
     nao_contem('id="wppFloat"', $html, 'sem botao flutuante: o orcamento ja esta no topo');

@@ -51,6 +51,20 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
   <meta name="robots" content="noindex, follow" />
   <meta name="theme-color" content="#141414" />
   <link rel="canonical" href="<?= CASTELLO_URL . '/link' ?>" />
+
+  <!-- Open Graph: a miniatura do link no WhatsApp e no Instagram (logo no
+       centro, para sobreviver ao corte quadrado que o WhatsApp faz) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Castello Casas de Madeira | Links" />
+  <meta property="og:description" content="Peça seu orçamento e conheça a Casa Pronta, a Castello Flex, o portfólio e as avaliações da Castello Casas de Madeira, em Tubarão SC." />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/link' ?>" />
+  <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-link.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Logo da Castello Casas de Madeira em vermelho e branco sobre fundo escuro" />
+  <meta property="og:site_name" content="Castello Casas de Madeira" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
