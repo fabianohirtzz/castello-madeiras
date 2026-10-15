@@ -701,6 +701,48 @@
     }
   }
 
+  /* ---------- Etapas da obra: rolagem horizontal travada (Casa Pronta) ----------
+     A trilha (.hscroll__track) ganha a altura do pin mais a distância que os
+     cards precisam andar; o pin fica sticky e a fração rolada vira o
+     translateX da trilha. Terminada a trilha, a página segue descendo. Com
+     movimento reduzido nada trava: a trilha rola com o dedo. */
+  document.querySelectorAll('[data-hscroll]').forEach(function (sec) {
+    if (reduce) return;
+    var track = sec.querySelector('.hscroll__track');
+    var pin = sec.querySelector('.hscroll__pin');
+    var janela = sec.querySelector('.hscroll__janela');
+    var trilho = sec.querySelector('[data-hscroll-trilho]');
+    var fill = sec.querySelector('[data-hscroll-fill]');
+    if (!track || !pin || !janela || !trilho) return;
+
+    var FATOR = 0.85;   // px de rolagem vertical por px de trilha
+    var dist = 0, agendado = false;
+    sec.classList.add('is-pinned');
+
+    function medir() {
+      trilho.style.transform = 'translateX(0)';
+      dist = Math.max(0, trilho.scrollWidth - janela.clientWidth);
+      track.style.height = (pin.offsetHeight + dist * FATOR) + 'px';
+      mover();
+    }
+    function mover() {
+      agendado = false;
+      var rolavel = track.offsetHeight - pin.offsetHeight;
+      var p = rolavel > 0 ? clamp(-track.getBoundingClientRect().top / rolavel, 0, 1) : 0;
+      trilho.style.transform = 'translateX(' + (-p * dist).toFixed(1) + 'px)';
+      if (fill) fill.style.width = (p * 100).toFixed(1) + '%';
+    }
+    window.addEventListener('scroll', function () {
+      if (!agendado) { agendado = true; requestAnimationFrame(mover); }
+    }, { passive: true });
+    window.addEventListener('resize', medir);
+    // as fotos carregam depois e mudam a altura dos cards
+    trilho.querySelectorAll('img').forEach(function (img) {
+      if (!img.complete) img.addEventListener('load', medir, { once: true });
+    });
+    medir();
+  });
+
   /* ---------- Ver mais do modelo (galeria + descrição) ----------
      Cada card traz um <template> com o conteúdo do popup; abrir clona o
      template para dentro de #modelbox, então as fotos grandes só baixam quando

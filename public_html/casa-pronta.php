@@ -39,7 +39,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=26" />
+  <link rel="stylesheet" href="css/style.css?v=27" />
 </head>
 <body>
 
@@ -147,16 +147,20 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <div class="facet facet--ink" aria-hidden="true"></div>
 
   <!-- ============ DO TERRENO À CHAVE (linha do tempo da obra) ============ -->
-  <!-- Etapas do carrossel "Como tudo acontece" do Instagram da Castello. Layout provisório: horizontal no desktop, vertical no celular. -->
-  <section class="section section--facetada process" id="como-funciona">
-    <div class="container">
-      <div class="process__head">
-        <span class="eyebrow eyebrow--light reveal">Do terreno à chave</span>
-        <h2 class="section__title reveal">Como tudo acontece.</h2>
-        <p class="section__lead reveal">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho da sua casa, da primeira conversa até a entrega da chave.</p>
-      </div>
+  <!-- Etapas do carrossel "Como tudo acontece" do Instagram da Castello: a secao trava e a rolagem empurra os cards para o lado. -->
+  <section class="section section--facetada process hscroll" id="como-funciona" data-hscroll>
+    <div class="hscroll__track">
+    <div class="hscroll__pin">
+      <div class="container">
+        <div class="process__head">
+          <span class="eyebrow eyebrow--light">Do terreno à chave</span>
+          <h2 class="section__title">Como tudo acontece.</h2>
+          <p class="section__lead">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho da sua casa, da primeira conversa até a entrega da chave.</p>
+        </div>
 
 <?php $contexto = 'pronta'; include __DIR__ . '/partials/passos.php'; ?>
+      </div>
+    </div>
     </div>
   </section>
 
@@ -198,7 +202,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=17"></script>
+  <script src="js/main.js?v=18"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

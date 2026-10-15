@@ -125,7 +125,10 @@ teste('casa-pronta.php traz os 12 projetos com preco, o incluso, a linha do temp
         contem($item, $html, "incluso sem $item");
     }
     contem('id="como-funciona"', $html);
-    igual(20, substr_count($html, '<li class="tline-obra__item">'), 'as 20 etapas da obra');
+    igual(20, substr_count($html, '<li class="hpasso'), 'as 20 etapas da obra');
+    igual(5, substr_count($html, '<li class="hpasso hpasso--ico">'), 'as 5 etapas sem foto mostram icone');
+    contem('data-hscroll', $html, 'a secao trava e rola na horizontal');
+    contem('<div class="hscroll__track">', $html);
     contem('Pronta para morar de <strong>90 a 120 dias</strong>', $html);
     nao_contem('Pedir orçamento</button>' . "\n" . '        <a href="#modelos"', $html, 'o hero ficou so com Ver modelos e precos');
     contem('<a href="#modelos" class="btn btn--primary btn--lg">Ver modelos e preços</a>', $html);

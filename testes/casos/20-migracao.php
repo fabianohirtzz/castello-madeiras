@@ -153,9 +153,15 @@ teste('as 20 etapas da linha do tempo da Casa Pronta chegaram em ordem', functio
     igual('Estudo preliminar', $lista[2]['titulo'], 'a Castello faz o estudo preliminar, nao o projeto');
     igual('Contrato assinado', $lista[4]['titulo']);
     igual('Checklist e entrega final da obra', $lista[19]['titulo']);
-    foreach ($lista as $p) {
-        igual('', (string) $p['imagem'], 'a linha do tempo nao usa imagem');
+    igual('Início dos acabamentos em geral', $lista[18]['titulo']);
+    $com_foto = array_filter($lista, static fn (array $p): bool => (string) $p['imagem'] !== '');
+    igual(15, count($com_foto), 'as 15 fotos que a Castello mandou');
+    foreach ($com_foto as $p) {
+        contem('uploads/passos/etapa-', $p['imagem']);
+        verdade(is_file(CASTELLO_UPLOADS . '/passos/' . basename($p['imagem'])), 'foto copiada: ' . $p['imagem']);
+        verdade((string) $p['imagem_alt'] !== '', 'toda foto de etapa tem alt: ' . $p['titulo']);
     }
+    igual('', (string) $lista[0]['imagem'], 'primeiro contato fica com icone');
     $flex = passos('flex');
     igual(5, count($flex), 'passo a passo provisorio da Flex');
     igual('Escolha do modelo', $flex[0]['titulo']);

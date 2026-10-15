@@ -129,30 +129,30 @@ const MIGRAR_FAQ = [
 /**
  * contexto, titulo, texto, imagem de origem, alt da imagem.
  * Os passos da Casa Pronta sao as 20 etapas do carrossel "Como tudo
- * acontece" do Instagram da Castello (sem as datas daquela obra) e saem como
- * linha do tempo. Os da Flex saem como cartoes numerados. Nenhum dos dois
- * mostra imagem.
+ * acontece" do Instagram da Castello (sem as datas daquela obra), em cards
+ * com a foto da etapa; as que nao tem foto mostram um icone. Os da Flex saem
+ * como cartoes numerados, sem imagem.
  */
 const MIGRAR_PASSOS = [
     ['pronta', 'Primeiro contato', '', '', ''],
-    ['pronta', 'Visita ao terreno da futura obra', '', '', ''],
+    ['pronta', 'Visita ao terreno da futura obra', '', 'passos/obra/etapa-02.webp', 'Terreno limpo e nivelado, com mata ao fundo, antes do início da obra'],
     ['pronta', 'Estudo preliminar', '', '', ''],
-    ['pronta', 'Projeto aprovado', '', '', ''],
+    ['pronta', 'Projeto aprovado', '', 'passos/obra/etapa-04.webp', 'Render do projeto aprovado: sobrado de madeira com varanda e sacada'],
     ['pronta', 'Contrato assinado', '', '', ''],
-    ['pronta', 'Início da obra', '', '', ''],
-    ['pronta', 'Concretagem do primeiro nível de laje', '', '', ''],
-    ['pronta', 'Segundo nível de laje e início da alvenaria', '', '', ''],
-    ['pronta', 'Início da estrutura de madeira', '', '', ''],
-    ['pronta', 'Fechamento externo', '', '', ''],
-    ['pronta', 'Início da estrutura de cobertura', '', '', ''],
-    ['pronta', 'Telhamento completo', '', '', ''],
-    ['pronta', 'Aplicação dos azulejos', '', '', ''],
-    ['pronta', 'Aplicação dos pisos internos', '', '', ''],
-    ['pronta', 'Aplicação dos pisos externos', '', '', ''],
-    ['pronta', 'Instalação elétrica', '', '', ''],
-    ['pronta', 'Instalação das esquadrias', '', '', ''],
+    ['pronta', 'Início da obra', '', 'passos/obra/etapa-06.webp', 'Equipe marcando a fundação no terreno, com gabarito de madeira e blocos'],
+    ['pronta', 'Concretagem do primeiro nível de laje', '', 'passos/obra/etapa-07.webp', 'Laje de concreto pronta sobre os pilares, com tábuas empilhadas em cima'],
+    ['pronta', 'Segundo nível de laje e início da alvenaria', '', 'passos/obra/etapa-08.webp', 'Parede de tijolos subindo sobre a laje, com céu de nuvens ao fundo'],
+    ['pronta', 'Início da estrutura de madeira', '', 'passos/obra/etapa-09.webp', 'Primeiras paredes de madeira levantadas ao lado da torre de alvenaria'],
+    ['pronta', 'Fechamento externo', '', 'passos/obra/etapa-10.webp', 'Casa de dois pavimentos com as paredes externas de madeira fechadas'],
+    ['pronta', 'Início da estrutura de cobertura', '', 'passos/obra/etapa-11.webp', 'Caibros do telhado sendo montados no alto da casa de madeira'],
+    ['pronta', 'Telhamento completo', '', 'passos/obra/etapa-12.webp', 'Casa de madeira com o telhado de telhas completo e a varanda coberta'],
+    ['pronta', 'Aplicação dos azulejos', '', 'passos/obra/etapa-13.webp', 'Banheiro com os porcelanatos recém-aplicados nas paredes e niveladores'],
+    ['pronta', 'Aplicação dos pisos internos', '', 'passos/obra/etapa-14.webp', 'Quarto com piso cerâmico amadeirado recém-assentado e janela ampla'],
+    ['pronta', 'Aplicação dos pisos externos', '', 'passos/obra/etapa-15.webp', 'Varanda coberta com piso cerâmico novo e guarda-corpo de madeira em X'],
+    ['pronta', 'Instalação elétrica', '', 'passos/obra/etapa-16.webp', 'Conduítes amarelos da instalação elétrica passando pelo forro de madeira'],
+    ['pronta', 'Instalação das esquadrias', '', 'passos/obra/etapa-17.webp', 'Portas e janelas de madeira com venezianas instaladas na varanda'],
     ['pronta', 'Pré-checklist e vistoria', '', '', ''],
-    ['pronta', 'Finalização dos acabamentos', '', '', ''],
+    ['pronta', 'Início dos acabamentos em geral', '', 'passos/obra/etapa-19.webp', 'Sobrado de madeira pronto por fora, com placa da Castello na obra'],
     ['pronta', 'Checklist e entrega final da obra', '', '', ''],
     ['flex', 'Escolha do modelo', 'Você escolhe um dos cinco modelos Flex, com planta e medidas definidas, e a Castello avalia o seu terreno.', '', ''],
     ['flex', 'Fundação', 'A Castello prepara a base da casa, no padrão que a estrutura de madeira exige.', '', ''],
@@ -440,6 +440,41 @@ function migrar_atualizar_2026_10(): array
         throw $falha;
     }
 
+    return $log;
+}
+
+/**
+ * Segunda parte da rodada de outubro de 2026: as fotos das etapas da obra,
+ * mandadas pela Castello, e o titulo novo da etapa 19. Uma vez so (marca
+ * config.conteudo_2026_10_fotos); so preenche foto onde a etapa nao tem.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_fotos(): array
+{
+    if (config_ler('conteudo_2026_10_fotos') === '1') {
+        return ['fotos das etapas: ja aplicado antes'];
+    }
+    $pdo = db();
+    $log = [];
+    $pdo->beginTransaction();
+    try {
+        $n = $pdo->exec("UPDATE passos SET titulo = 'Início dos acabamentos em geral' WHERE contexto = 'pronta' AND titulo = 'Finalização dos acabamentos'");
+        $log[] = "etapa 19 renomeada: {$n}";
+        $foto = $pdo->prepare("UPDATE passos SET imagem = ?, imagem_alt = ? WHERE contexto = 'pronta' AND titulo = ? AND ativo = 1 AND (imagem IS NULL OR imagem = '')");
+        foreach (MIGRAR_PASSOS as [$contexto, $titulo, , $imagem, $alt]) {
+            if ($contexto !== 'pronta' || $imagem === '') {
+                continue;
+            }
+            $foto->execute([migrar_copiar($imagem, 'passos'), $alt, $titulo]);
+            $log[] = 'foto ' . $titulo . ': ' . $foto->rowCount();
+        }
+        config_gravar('conteudo_2026_10_fotos', '1');
+        $pdo->commit();
+    } catch (Throwable $falha) {
+        $pdo->rollBack();
+        throw $falha;
+    }
     return $log;
 }
 

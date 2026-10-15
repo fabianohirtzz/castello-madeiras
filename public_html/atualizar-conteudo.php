@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 /**
  * Aplica no banco a rodada de conteudo de outubro de 2026
- * (migrar_atualizar_2026_10, em migrar.php).
+ * (migrar_atualizar_2026_10 e migrar_atualizar_2026_10_fotos, em migrar.php).
  *
  * Linha de comando:  php public_html/atualizar-conteudo.php
  * Pela web:          so com o login do painel, por POST com o token de csrf.
@@ -16,7 +16,7 @@ require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/migrar.php';
 
 if (PHP_SAPI === 'cli') {
-    foreach (migrar_atualizar_2026_10() as $linha) {
+    foreach (array_merge(migrar_atualizar_2026_10(), migrar_atualizar_2026_10_fotos()) as $linha) {
         echo $linha, "\n";
     }
     return;
@@ -40,7 +40,7 @@ if (!csrf_validar($token)) {
     return;
 }
 
-foreach (migrar_atualizar_2026_10() as $linha) {
+foreach (array_merge(migrar_atualizar_2026_10(), migrar_atualizar_2026_10_fotos()) as $linha) {
     echo $linha, "\n";
 }
 echo "\napague atualizar-conteudo.php e migrar.php do servidor.\n";
