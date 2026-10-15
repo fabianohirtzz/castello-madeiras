@@ -70,7 +70,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
       <div class="hero__pin">
         <div class="hero__media" id="heroMedia">
           <video id="heroVideo" class="hero__video" muted playsinline preload="none" disableremoteplayback poster="video-hero/poster.jpg" aria-hidden="true">
-            <source src="video-hero/video-hero.mp4?v=3" data-src-mobile="video-hero/video-mobile.mp4?v=2" type="video/mp4" />
+            <source src="video-hero/video-hero.mp4?v=4" data-src-mobile="video-hero/video-mobile.mp4?v=3" type="video/mp4" />
           </video>
         </div>
         <div class="hero__overlay" aria-hidden="true"></div>
