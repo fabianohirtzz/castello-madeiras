@@ -18,12 +18,12 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contato e orçamento | Castello Casas de Madeira em Tubarão SC</title>
-  <meta name="description" content="Peça seu orçamento de casa de madeira à Castello pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Resposta em até 1 dia útil." />
+  <meta name="description" content="Peça seu orçamento de casa de madeira à Castello pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Nossa equipe entra em contato com você com todo o carinho." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Contato e orçamento | Castello Casas de Madeira" />
-  <meta property="og:description" content="Peça seu orçamento de casa de madeira pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Resposta em até 1 dia útil." />
+  <meta property="og:description" content="Peça seu orçamento de casa de madeira pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Nossa equipe entra em contato com você com todo o carinho." />
   <meta property="og:url" content="<?= CASTELLO_URL . '/contato.php' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-home.jpg" />
   <meta property="og:image:width" content="1200" />
@@ -134,6 +134,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/rodape.php'; ?>
 
   <script src="js/main.js?v=17"></script>
-  <script src="js/formulario.js?v=3" defer></script>
+  <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

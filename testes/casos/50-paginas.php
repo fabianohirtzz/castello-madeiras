@@ -138,7 +138,7 @@ teste('toda pagina traz nav, rodape e os scripts pelos parciais compartilhados',
         contem('id="ico-google"', $html, $arquivo);
         contem('<footer class="footer" id="contato">', $html, $arquivo);
         contem('<script src="js/main.js?v=17"></script>', $html, $arquivo);
-        contem('<script src="js/formulario.js?v=3" defer></script>', $html, $arquivo);
+        contem('<script src="js/formulario.js?v=4" defer></script>', $html, $arquivo);
     }
     $home = render(site() . '/index.php');
     contem('id="quoteModal"', $home);

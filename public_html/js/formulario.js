@@ -268,7 +268,7 @@
     if (doneTitulo) doneTitulo.textContent = entregue ? 'Pedido enviado' : 'Pedido pronto pra enviar';
     if (doneMsg) {
       doneMsg.textContent = entregue
-        ? 'Recebemos seu pedido. A Castello responde em até 1 dia útil.'
+        ? 'Recebemos seu pedido! Nossa equipe vai entrar em contato com voc\u00ea, com todo o carinho que o seu sonho merece.'
         : 'Não deu pra enviar pelo site agora. Toque no botão abaixo para mandar seu pedido no WhatsApp da Castello.';
     }
     if (wppLink) {

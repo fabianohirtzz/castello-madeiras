@@ -120,6 +120,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=17"></script>
-  <script src="js/formulario.js?v=3" defer></script>
+  <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

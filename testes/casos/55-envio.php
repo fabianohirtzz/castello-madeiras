@@ -51,7 +51,7 @@ teste('as cinco paginas carregam o formulario.js depois do main.js', function ()
     foreach (['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'] as $arquivo) {
         $html = render(site() . '/' . $arquivo);
         contem('<script src="js/main.js?v=17"></script>', $html, $arquivo);
-        contem('<script src="js/formulario.js?v=3" defer></script>', $html, $arquivo);
+        contem('<script src="js/formulario.js?v=4" defer></script>', $html, $arquivo);
         verdade(strpos($html, '<script src="js/main.js') < strpos($html, '<script src="js/formulario.js'), "$arquivo: formulario.js vem depois do main.js");
         contem('id="quoteForm" method="post" action="enviar.php"', $html, $arquivo);
     }

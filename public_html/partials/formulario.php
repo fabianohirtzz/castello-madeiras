@@ -138,7 +138,7 @@ foreach ($form_opcoes_extra as $extra) {
 
         <button class="btn btn--primary btn--block btn--lg qform__submit" type="submit" id="quoteSubmit">Enviar</button>
         <p class="qform__status" id="quoteStatus" role="status" aria-live="polite"></p>
-        <p class="qform__note">Resposta em até 1 dia útil. Seus dados são usados só para responder ao seu pedido.</p>
+        <p class="qform__note">Nossa equipe vai entrar em contato com você, com todo o carinho que o seu sonho merece. Seus dados são usados só para responder ao seu pedido.</p>
       </form>
 
       <div class="qmodal__done" id="quoteDone" hidden>
