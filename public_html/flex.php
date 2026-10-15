@@ -53,7 +53,7 @@ if ($flex_videos === [] && $flex_video !== '') {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
 
@@ -63,7 +63,7 @@ if ($flex_videos === [] && $flex_video !== '') {
   <!-- Copy provisória: entra pelo painel quando o material da Flex chegar. -->
   <section class="pagehero" id="topo" aria-label="Castello Flex">
     <div class="pagehero__media">
-      <img src="fotos-casas/casa7.webp" alt="Sobrado de madeira Castello com sacada e fachada de réguas" fetchpriority="high" />
+      <img src="fotos-casas/hero-flex.webp" alt="Casa Castello Flex térrea com tábuas de madeira na vertical, janela com venezianas e garagem coberta ao lado" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
@@ -71,12 +71,8 @@ if ($flex_videos === [] && $flex_video !== '') {
       <span class="eyebrow eyebrow--light reveal">Lançamento Castello · casa flex</span>
       <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.')) ?></h1>
 <?php if (bloco('flexpg_hero_texto') !== ''): ?>
-      <p class="pagehero__lead reveal"><?= e(bloco('flexpg_hero_texto')) ?></p>
+      <p class="pagehero__lead pagehero__lead--flex reveal"><?= e(bloco('flexpg_hero_texto')) ?></p>
 <?php endif; ?>
-      <p class="stamp stamp--light reveal">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-        Entrega em <strong><?= e($prazo_flex) ?></strong>
-      </p>
       <div class="pagehero__actions reveal">
         <a href="#modelos-flex" class="btn btn--primary btn--lg">Ver as casas Flex</a>
       </div>
@@ -137,9 +133,9 @@ if ($flex_videos === [] && $flex_video !== '') {
 
   <!-- ============ PASSO A PASSO DA FLEX (com a fronteira de entrega) ============ -->
   <!-- Passos provisórios: migram para a tabela `passos` com contexto flex. -->
-  <section class="section section--sand section--facetada" id="passos-flex">
+  <section class="section section--sand section--facetada passos-flex" id="passos-flex">
     <div class="container">
-      <div class="section__head">
+      <div class="section__head section__head--centro">
         <span class="eyebrow reveal">Passo a passo</span>
         <h2 class="section__title reveal">O que a Castello entrega.</h2>
         <p class="section__lead reveal">Entenda o que a Castello executa na modalidade Flex e quais etapas você poderá realizar depois da entrega.</p>
@@ -156,7 +152,7 @@ if ($flex_videos === [] && $flex_video !== '') {
         </span>
       </div>
 
-      <div class="depois__head reveal">
+      <div class="depois__head depois__head--centro reveal">
         <h3 class="depois__title depois__title--grande"><?= e(bloco('flexpg_depois_titulo', 'O que fica por sua conta')) ?></h3>
 <?php if (bloco('flexpg_depois_texto') !== ''): ?>
         <p class="depois__text"><?= e(bloco('flexpg_depois_texto')) ?></p>
@@ -170,7 +166,7 @@ if ($flex_videos === [] && $flex_video !== '') {
         <div class="depois__item reveal"><strong>Fossa e sumidouro</strong>Ligação de esgoto e de água no terreno.</div>
       </div>
 
-      <p class="depois__nota reveal">Prefere receber sua casa com os acabamentos concluídos? Conheça a modalidade
+      <p class="depois__nota depois__nota--centro reveal">Prefere receber sua casa com os acabamentos concluídos? Conheça a modalidade
         <a href="casa-pronta.php">Casa Pronta da Castello</a>, uma solução completa para quem deseja receber sua casa pronta para morar.
       </p>
     </div>
@@ -208,18 +204,14 @@ if ($flex_videos === [] && $flex_video !== '') {
       <div class="section__head">
         <span class="eyebrow eyebrow--light reveal">Por que a Flex</span>
         <h2 class="section__title ntitulo reveal"><span class="ntitulo__num">45</span><span class="ntitulo__resto">dias e a<br>casa é sua.</span></h2>
-        <p class="section__lead reveal">A Castello Flex encurta a parte difícil da obra. O que costuma levar meses de canteiro sai em 45 dias, com a estrutura fechada e a casa protegida.</p>
-        <p class="stamp stamp--light reveal">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-          Entrega em <strong><?= e($prazo_flex) ?></strong>
-        </p>
+        <p class="section__lead reveal">A Castello Flex encurta a parte difícil da obra. O que costuma levar meses de canteiro fica pronto num prazo curto, com a estrutura fechada e a casa protegida.</p>
       </div>
 
       <div class="bene__grid">
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
-          <h3>Entrega em 45 dias</h3>
-          <p>Da assinatura do contrato à entrega da casa montada e fechada no seu terreno, conforme os prazos e condições estabelecidos em contrato.</p>
+          <h3>Prazo garantido em contrato</h3>
+          <p>Da assinatura à entrega da casa montada e fechada no seu terreno, com os prazos e as condições definidos em contrato.</p>
         </article>
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h13v5H4zM17 6.5h3v5l-8 1.5V16M10.5 16h3v5h-3z"/></svg></span>
@@ -249,7 +241,7 @@ if ($flex_videos === [] && $flex_video !== '') {
     <div class="container">
       <div class="section__head faq__head">
         <span class="eyebrow reveal">Perguntas frequentes</span>
-        <h2 class="section__title reveal">Tudo o que você precisa saber sobre a Castello Flex.</h2>
+        <h2 class="section__title reveal">Tudo o que você precisa saber sobre a Castello&nbsp;Flex.</h2>
         <p class="section__lead reveal">Todas as respostas para você dar o próximo passo.</p>
       </div>
 
@@ -283,7 +275,7 @@ if ($flex_videos === [] && $flex_video !== '') {
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=15"></script>
+  <script src="js/main.js?v=16"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

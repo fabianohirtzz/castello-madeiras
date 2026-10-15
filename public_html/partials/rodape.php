@@ -1,23 +1,15 @@
 <?php
 /**
- * Rodape com contato, atendimento, mapa e a lista de paginas do site.
- * Espera: string $pagina (mesma chave da nav) para marcar a pagina atual.
- * Na pagina de contato o mapa do rodape some: ela ja traz o mapa grande.
+ * Rodape com a marca, contato, atendimento e o mapa. As paginas ficam so no
+ * menu do topo (a lista saiu do rodape em 2026-10 para o mapa ganhar espaco).
+ * Espera: string $pagina (mesma chave da nav). Na pagina de contato o mapa do
+ * rodape some: ela ja traz o mapa grande.
  */
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/conteudo.php';
 
 $pagina = $pagina ?? 'home';
-
-/* chave da pagina, href, rotulo */
-$rodape_paginas = [
-    ['home',      'index.php',       'Início'],
-    ['pronta',    'casa-pronta.php', 'Casa Pronta'],
-    ['flex',      'flex.php',        'Castello Flex'],
-    ['portfolio', 'portfolio.php',   'Portfólio'],
-    ['contato',   'contato.php',     'Contato'],
-];
 ?>
   <!-- ============ FOOTER / CONTATO ============ -->
   <footer class="footer" id="contato">
@@ -33,15 +25,6 @@ $rodape_paginas = [
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>
           </a>
         </div>
-      </div>
-
-      <div class="footer__col">
-        <h4>Páginas</h4>
-        <ul class="footer__pages">
-<?php foreach ($rodape_paginas as [$chave, $href, $rotulo]): ?>
-          <li><a href="<?= e($href) ?>"<?= $pagina === $chave ? ' aria-current="page"' : '' ?>><?= e($rotulo) ?></a></li>
-<?php endforeach; ?>
-        </ul>
       </div>
 
       <div class="footer__col">
@@ -84,6 +67,9 @@ $rodape_paginas = [
 
     <div class="footer__bottom container">
       <span class="footer__copy">© 2026 Castello Casas de Madeira. <span class="nowrap">Todos os direitos reservados.</span></span>
-      <span class="nowrap">Desenvolvido por Freela In Home.</span>
+      <span class="footer__assina">
+        <span class="nowrap"><span aria-hidden="true">🏡</span> Não construímos casas, mas construímos sites!</span>
+        <span class="nowrap"><span aria-hidden="true">🏗️</span> Construído por: Freela In Home.</span>
+      </span>
     </div>
   </footer>

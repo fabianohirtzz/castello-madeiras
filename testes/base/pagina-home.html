@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
 
@@ -91,16 +91,12 @@
         </div>
         <div class="hero__overlay" aria-hidden="true"></div>
 
-        <!-- Beat 1 — 0 a ~3s -->
-        <div class="hero__beat hero__beat--one" id="heroBeatOne">
+        <!-- Texto do topo: o titulo fica parado a rolagem inteira; a segunda
+             linha entra no meio do video e a terceira, com os botoes, no fim. -->
+        <div class="hero__beat hero__texto is-active" id="heroTexto">
           <span class="eyebrow eyebrow--light">Casas de madeira · Tubarão SC</span>
-          <h1 class="hero__headline">Sua casa</h1>
-        </div>
-
-        <!-- Beat 2 — ~3s ao fim -->
-        <div class="hero__beat hero__beat--two" id="heroBeatTwo">
-          <p class="hero__headline-sub">do seu jeito, <span class="hl">no seu ritmo.</span></p>
-          <div class="hero__actions">
+          <h1 class="hero__headline">Sua casa            <span class="hero__linha" data-hero-etapa="2">do seu jeito,</span>            <span class="hero__linha" data-hero-etapa="3"><span class="hl">no seu ritmo.</span></span></h1>
+          <div class="hero__actions" data-hero-etapa="3">
             <a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>
             <a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>
           </div>
@@ -111,7 +107,7 @@
           <span class="hero__status-label">Etapa</span>
           <span class="hero__status-current" id="heroStatusCurrent">01</span>
           <span class="hero__status-track"><span class="hero__status-fill" id="heroStatusFill"></span></span>
-          <span class="hero__status-total">02</span>
+          <span class="hero__status-total">03</span>
         </div>
 
         <!-- Hint de scroll (primeiro frame) -->
@@ -163,7 +159,7 @@
     <div class="container">
       <div class="modalidades__head">
         <span class="eyebrow reveal">Conheça nossas modalidades</span>
-        <h2 class="section__title reveal">Seu sonho, suas escolhas. Duas formas de construir.</h2>
+        <h2 class="section__title modalidades__titulo reveal">Seu sonho, suas escolhas.<br>Duas formas de construir.</h2>
         <p class="section__lead reveal">Com a experiência e a qualidade Castello, você escolhe a modalidade que melhor combina com seu projeto, suas necessidades e seus planos.</p>
       </div>
 
@@ -224,10 +220,10 @@
         </div>
 
         <figure class="prontahome__media reveal reveal--mask">
-          <img src="uploads/modelos/projeto-01.webp" alt="Casa de madeira térrea com tábuas na vertical, varanda coberta e escada de concreto na entrada" loading="lazy" />
+          <img src="uploads/modelos/projeto-07.webp" alt="Casa de madeira térrea com varanda em volta, guarda-corpo em X e morro de mata ao fundo" loading="lazy" />
           <figcaption class="prontahome__cap">
-            <span class="prontahome__cap-eyebrow">Modelo Projeto 1 · 61,25 m²</span>
-            <span class="prontahome__cap-price">A partir de <strong>R$ 108.000</strong></span>
+            <span class="prontahome__cap-eyebrow">Modelo Projeto 7 · 135 m²</span>
+            <span class="prontahome__cap-price">A partir de <strong>R$ 253.000</strong></span>
           </figcaption>
         </figure>
       </div>
@@ -281,7 +277,7 @@
       <div class="why__layout">
         <div class="why__intro">
           <span class="eyebrow reveal">Por que escolher uma casa de madeira?</span>
-          <h2 class="section__title reveal">O charme da madeira.<br>O conforto de um verdadeiro lar.</h2>
+          <h2 class="section__title why__titulo reveal">O charme da madeira.<br>O conforto de um verdadeiro lar.</h2>
           <p class="why__lead reveal">Beleza natural, aconchego e personalidade são apenas alguns dos motivos para escolher uma casa de madeira. Conheça os diferenciais desse estilo de construção.</p>
           <button type="button" class="btn btn--primary reveal" data-quote-open>Pedir orçamento</button>
         </div>
@@ -603,17 +599,6 @@
       </div>
 
       <div class="footer__col">
-        <h4>Páginas</h4>
-        <ul class="footer__pages">
-          <li><a href="index.php" aria-current="page">Início</a></li>
-          <li><a href="casa-pronta.php">Casa Pronta</a></li>
-          <li><a href="flex.php">Castello Flex</a></li>
-          <li><a href="portfolio.php">Portfólio</a></li>
-          <li><a href="contato.php">Contato</a></li>
-        </ul>
-      </div>
-
-      <div class="footer__col">
         <h4>Contato</h4>
         <ul class="footer__list">
           <li>
@@ -651,7 +636,10 @@
 
     <div class="footer__bottom container">
       <span class="footer__copy">© 2026 Castello Casas de Madeira. <span class="nowrap">Todos os direitos reservados.</span></span>
-      <span class="nowrap">Desenvolvido por Freela In Home.</span>
+      <span class="footer__assina">
+        <span class="nowrap"><span aria-hidden="true">🏡</span> Não construímos casas, mas construímos sites!</span>
+        <span class="nowrap"><span aria-hidden="true">🏗️</span> Construído por: Freela In Home.</span>
+      </span>
     </div>
   </footer>
 
@@ -829,7 +817,7 @@
     <span class="wpp-float__label">Pedir orçamento</span>
   </button>
 
-  <script src="js/main.js?v=15"></script>
+  <script src="js/main.js?v=16"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

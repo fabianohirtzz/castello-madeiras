@@ -114,15 +114,18 @@ teste('a home imprime os textos editaveis do banco', function (): void {
 teste('o resumo da Casa Pronta na home usa a foto do modelo em destaque', function (): void {
     $html = render(site() . '/index.php');
     contem('class="prontahome__media reveal reveal--mask"', $html);
-    contem('uploads/modelos/projeto-01.webp', $html, 'sem destaque cadastrado, vale o primeiro projeto');
-    contem('Modelo Projeto 1 · 61,25 m²', $html);
-    contem('<strong>R$ 108.000</strong>', $html);
+    contem('uploads/modelos/projeto-07.webp', $html, 'o projeto escolhido no bloco pronta_home_modelo');
+    contem('Modelo Projeto 7 · 135 m²', $html);
+    contem('<strong>R$ 253.000</strong>', $html);
     contem('href="casa-pronta.php" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>', $html);
 
-    // com destaque marcado no painel, a foto e a do destaque
+    // projeto que nao existe no bloco: vale o destaque; sem destaque, o primeiro
+    db()->exec("UPDATE blocos SET valor = 'Projeto 99' WHERE chave = 'pronta_home_modelo'");
+    contem('uploads/modelos/projeto-01.webp', render(site() . '/index.php'), 'sem o projeto do bloco, vale o primeiro');
     db()->exec("UPDATE modelos SET destaque = 1 WHERE modalidade = 'pronta' AND nome = 'Projeto 11'");
-    contem('uploads/modelos/projeto-11.webp', render(site() . '/index.php'), 'o destaque manda na foto');
+    contem('uploads/modelos/projeto-11.webp', render(site() . '/index.php'), 'o destaque vem antes do primeiro');
     db()->exec("UPDATE modelos SET destaque = 0 WHERE modalidade = 'pronta'");
+    db()->exec("UPDATE blocos SET valor = 'Projeto 7' WHERE chave = 'pronta_home_modelo'");
     db()->exec("UPDATE modelos SET ativo = 0 WHERE modalidade = 'pronta'");
     nao_contem('prontahome__media', render(site() . '/index.php'), 'sem modelo ativo, sem figura');
     db()->exec("UPDATE modelos SET ativo = 1 WHERE modalidade = 'pronta'");
@@ -134,7 +137,7 @@ teste('toda pagina traz nav, rodape e os scripts pelos parciais compartilhados',
         contem('<header class="nav" id="nav">', $html, $arquivo);
         contem('id="ico-google"', $html, $arquivo);
         contem('<footer class="footer" id="contato">', $html, $arquivo);
-        contem('<script src="js/main.js?v=15"></script>', $html, $arquivo);
+        contem('<script src="js/main.js?v=16"></script>', $html, $arquivo);
         contem('<script src="js/formulario.js?v=3" defer></script>', $html, $arquivo);
     }
     $home = render(site() . '/index.php');

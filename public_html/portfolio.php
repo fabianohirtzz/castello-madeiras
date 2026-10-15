@@ -37,7 +37,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
 
@@ -53,7 +53,7 @@ require_once __DIR__ . '/lib/conteudo.php';
     <div class="container">
       <span class="eyebrow eyebrow--light reveal">Casas reais entregues</span>
       <h1 class="pagehero__title reveal">Projetos que já viraram <span class="hl">lar</span>.</h1>
-      <p class="pagehero__lead reveal">Cada casa desta página foi construída e entregue pela Castello para famílias de Santa Catarina e região. Desde 2014, já são mais de 19.000 m² construídos.</p>
+      <p class="pagehero__lead pagehero__lead--largo reveal">Cada casa desta página foi construída e entregue pela Castello para famílias de Santa Catarina e região. Desde 2014, já são mais de 19.000&nbsp;m² construídos.</p>
     </div>
   </section>
 
@@ -65,7 +65,7 @@ require_once __DIR__ . '/lib/conteudo.php';
     <div class="container">
       <div class="section__head">
         <span class="eyebrow reveal">Portfólio</span>
-        <h2 class="section__title reveal">Casas que a Castello<br>já entregou.</h2>
+        <h2 class="section__title reveal">Casas que a Castello<br><span class="hl">já entregou.</span></h2>
         <p class="section__lead reveal">Sobrados, casas térreas, chalés e casas de campo. Toque numa foto para ver em tela cheia.</p>
       </div>
 
@@ -78,7 +78,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   </section>
 
   <!-- ============ CTA BAND ============ -->
-  <section class="cta-band cta-band--bone" id="orcamento">
+  <section class="cta-band cta-band--bone cta-band--largo" id="orcamento">
     <div class="container cta-band__inner">
       <div class="reveal">
         <h2>Você viu o que construímos. Agora imagine a sua casa aqui.</h2>
@@ -119,7 +119,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=15"></script>
+  <script src="js/main.js?v=16"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

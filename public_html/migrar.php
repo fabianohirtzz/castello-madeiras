@@ -175,6 +175,7 @@ const MIGRAR_BLOCOS = [
     ['pronta_titulo', 'Título da seção Casa Pronta', 'Sua casa não precisa seguir um padrão. Ela precisa combinar com você.', 'texto'],
     ['pronta_texto', 'Texto da seção Casa Pronta', 'Na Castello, cada casa pode ser personalizada conforme suas necessidades, seu estilo de vida e as características do terreno. Da fundação aos acabamentos, cuidamos da construção para você receber seu novo lar, pronto para morar.', 'texto_longo'],
     ['pronta_prazo', 'Prazo da Casa Pronta', '90 a 120 dias', 'texto'],
+    ['pronta_home_modelo', 'Projeto da foto da Casa Pronta na home', 'Projeto 7', 'texto'],
     ['flex_titulo', 'Título da seção Castello Flex', 'Castello Flex. Mais liberdade para construir, mais possibilidades para realizar.', 'texto'],
     ['flex_texto', 'Texto da seção Castello Flex', 'Você recebe a casa de madeira estruturada, coberta e fechada, a partir de R$ 43.000. O acabamento fica no seu ritmo e no seu bolso, com a mesma madeira e o mesmo padrão de montagem das casas chave na mão.', 'texto_longo'],
     ['flex_prazo', 'Prazo da Castello Flex', '45 dias', 'texto'],

@@ -60,14 +60,13 @@ teste('a pagina atual recebe aria-current="page" na nav e na gaveta', function (
     }
 });
 
-teste('o rodape lista as cinco paginas e marca a atual', function (): void {
+teste('o rodape traz marca, contato, atendimento e mapa, sem a lista de paginas', function (): void {
     foreach (PAGINAS_NAV as $chave => $arquivo) {
         $html = parcial_costura('rodape', ['pagina' => $chave]);
-        preg_match_all('#<ul class="footer__pages">(.*?)</ul>#s', $html, $m);
-        preg_match_all('#href="([^"]+)"#', $m[1][0], $hrefs);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $hrefs[1], "$chave: paginas do rodape");
-        igual(1, substr_count($html, 'aria-current="page"'), "$chave: uma pagina atual so");
-        verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '" aria-current="page"#', $html) === 1, "$chave: link do rodape marcado");
+        nao_contem('footer__pages', $html, "$chave: as paginas ficam so no menu do topo");
+        igual(0, substr_count($html, 'aria-current="page"'), "$chave: o rodape nao marca pagina");
+        contem('Não construímos casas, mas construímos sites!', $html);
+        contem('Construído por: Freela In Home.', $html);
         contem('<footer class="footer" id="contato">', $html);
         nao_contem('wa.me/', $html, 'nenhum botao de WhatsApp no rodape');
         nao_contem('tel:', $html, 'o telefone fixo saiu por enquanto');

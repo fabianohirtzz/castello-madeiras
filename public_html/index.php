@@ -17,10 +17,32 @@ $prazo_flex   = bloco('flex_prazo', '45 dias');
 $flex_video   = bloco('flex_video');
 $flex_poster  = bloco('flex_video_poster');
 
-// A foto do resumo da Casa Pronta e a do modelo em destaque (ou a do primeiro).
+// O subtitulo do topo entra em duas partes durante a rolagem: o que vem antes
+// da primeira virgula no meio do video, o resto no fim. Sem virgula, entra
+// tudo no fim.
+$hero_sub = bloco('hero_subtitulo', 'do seu jeito, *no seu ritmo.*');
+$hero_partes = preg_split('/,\s*/u', $hero_sub, 2);
+if (count($hero_partes) === 2) {
+    $hero_linha2 = $hero_partes[0] . ',';
+    $hero_linha3 = $hero_partes[1];
+} else {
+    $hero_linha2 = '';
+    $hero_linha3 = $hero_sub;
+}
+
+// A foto do resumo da Casa Pronta, num card vertical: o projeto escolhido no
+// bloco pronta_home_modelo (o 7, terreo com o morro ao fundo, rende bem no
+// corte vertical); sem ele, o modelo em destaque; sem destaque, o primeiro.
 $pronta_modelos  = modelos('pronta');
 $pronta_destaque = null;
+$pronta_home     = bloco('pronta_home_modelo', 'Projeto 7');
 foreach ($pronta_modelos as $m) {
+    if ($m['nome'] === $pronta_home) {
+        $pronta_destaque = $m;
+        break;
+    }
+}
+foreach ($pronta_destaque === null ? $pronta_modelos : [] as $m) {
     if ((int) $m['destaque'] === 1) {
         $pronta_destaque = $m;
         break;
@@ -58,7 +80,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
 
@@ -75,16 +97,14 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
         </div>
         <div class="hero__overlay" aria-hidden="true"></div>
 
-        <!-- Beat 1 — 0 a ~3s -->
-        <div class="hero__beat hero__beat--one" id="heroBeatOne">
+        <!-- Texto do topo: o titulo fica parado a rolagem inteira; a segunda
+             linha entra no meio do video e a terceira, com os botoes, no fim. -->
+        <div class="hero__beat hero__texto is-active" id="heroTexto">
           <span class="eyebrow eyebrow--light">Casas de madeira · Tubarão SC</span>
-          <h1 class="hero__headline"><?= e(bloco('hero_titulo', 'Sua casa')) ?></h1>
-        </div>
-
-        <!-- Beat 2 — ~3s ao fim -->
-        <div class="hero__beat hero__beat--two" id="heroBeatTwo">
-          <p class="hero__headline-sub"><?= realce(bloco('hero_subtitulo', 'do seu jeito, *no seu ritmo.*')) ?></p>
-          <div class="hero__actions">
+          <h1 class="hero__headline"><?= e(bloco('hero_titulo', 'Sua casa')) ?><?php if ($hero_linha2 !== ''): ?>
+            <span class="hero__linha" data-hero-etapa="2"><?= realce($hero_linha2) ?></span><?php endif; ?>
+            <span class="hero__linha" data-hero-etapa="3"><?= realce($hero_linha3) ?></span></h1>
+          <div class="hero__actions" data-hero-etapa="3">
             <a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>
             <a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>
           </div>
@@ -95,7 +115,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           <span class="hero__status-label">Etapa</span>
           <span class="hero__status-current" id="heroStatusCurrent">01</span>
           <span class="hero__status-track"><span class="hero__status-fill" id="heroStatusFill"></span></span>
-          <span class="hero__status-total">02</span>
+          <span class="hero__status-total">03</span>
         </div>
 
         <!-- Hint de scroll (primeiro frame) -->
@@ -147,7 +167,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
     <div class="container">
       <div class="modalidades__head">
         <span class="eyebrow reveal">Conheça nossas modalidades</span>
-        <h2 class="section__title reveal"><?= e(bloco('modalidades_titulo', 'Seu sonho, suas escolhas. Duas formas de construir.')) ?></h2>
+        <h2 class="section__title modalidades__titulo reveal"><?= preg_replace('/\.\s+/u', '.<br>', e(bloco('modalidades_titulo', 'Seu sonho, suas escolhas. Duas formas de construir.')), 1) ?></h2>
         <p class="section__lead reveal"><?= e(bloco('modalidades_texto')) ?></p>
       </div>
 
@@ -271,7 +291,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
       <div class="why__layout">
         <div class="why__intro">
           <span class="eyebrow reveal">Por que escolher uma casa de madeira?</span>
-          <h2 class="section__title reveal">O charme da madeira.<br>O conforto de um verdadeiro lar.</h2>
+          <h2 class="section__title why__titulo reveal">O charme da madeira.<br>O conforto de um verdadeiro lar.</h2>
           <p class="why__lead reveal">Beleza natural, aconchego e personalidade são apenas alguns dos motivos para escolher uma casa de madeira. Conheça os diferenciais desse estilo de construção.</p>
           <button type="button" class="btn btn--primary reveal" data-quote-open>Pedir orçamento</button>
         </div>
@@ -438,7 +458,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=15"></script>
+  <script src="js/main.js?v=16"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

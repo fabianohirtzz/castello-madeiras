@@ -351,7 +351,7 @@ teste('painel_textos_gravar atualiza so as chaves que existem em blocos', functi
     igual(2, $n);
     igual('A casa que você sempre quis', bloco('hero_titulo'), 'o texto e aparado');
     igual('Castello Flex', bloco('flex_titulo'));
-    igual(21, (int) db()->query('SELECT COUNT(*) FROM blocos')->fetchColumn(), 'nenhuma chave nova foi criada');
+    igual(22, (int) db()->query('SELECT COUNT(*) FROM blocos')->fetchColumn(), 'nenhuma chave nova foi criada');
 
     painel_textos_gravar(['hero_titulo' => 'A casa dos seus sonhos']);
 });

@@ -39,7 +39,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
 
@@ -48,7 +48,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <!-- ============ HERO DA CASA PRONTA ============ -->
   <section class="pagehero" id="topo" aria-label="Casa Pronta">
     <div class="pagehero__media">
-      <img src="fotos-casas/casa2.webp" alt="Casa de madeira Castello térrea com telhado de telhas e varanda" fetchpriority="high" />
+      <img src="fotos-casas/hero-casa-pronta.webp" alt="Casa de madeira Castello térrea com varanda em volta, telhado de telha cerâmica e morro de mata ao fundo" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
@@ -198,7 +198,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=15"></script>
+  <script src="js/main.js?v=16"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

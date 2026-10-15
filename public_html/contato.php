@@ -40,7 +40,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=22" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body>
 
@@ -56,7 +56,7 @@ require_once __DIR__ . '/lib/conteudo.php';
     <div class="container">
       <span class="eyebrow eyebrow--light reveal">Fale com a Castello</span>
       <h1 class="pagehero__title reveal">Vamos falar da sua <span class="hl">casa</span>.</h1>
-      <p class="pagehero__lead reveal">Seu sonho merece ser ouvido com carinho. Após preencher o formulário, nossa equipe estará pronta para orientar você com atenção e dedicação.</p>
+      <p class="pagehero__lead pagehero__lead--largo reveal">Seu sonho merece ser ouvido com carinho. Após preencher o formulário, nossa equipe estará pronta para orientar você com atenção e dedicação.</p>
       <div class="pagehero__actions reveal">
         <button type="button" class="btn btn--primary btn--lg" data-quote-open>Preencher o formulário</button>
       </div>
@@ -117,7 +117,7 @@ require_once __DIR__ . '/lib/conteudo.php';
       <div class="contato__mapa-head">
         <div class="section__head">
           <span class="eyebrow reveal">Onde estamos</span>
-          <h2 class="section__title reveal">Venha conhecer a Castello<br>em Tubarão.</h2>
+          <h2 class="section__title reveal">Venha conhecer<br>a Castello em<br>Tubarão/SC.</h2>
           <p class="section__lead reveal"><?= e(CASTELLO_ENDERECO_RUA) ?>, <?= e(CASTELLO_ENDERECO_BAIRRO) ?>, <?= e(CASTELLO_ENDERECO_CIDADE) ?>. A Castello atende toda a região, com casas já entregues em diversas cidades do estado.</p>
         </div>
       </div>
@@ -133,7 +133,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
 <?php include __DIR__ . '/partials/rodape.php'; ?>
 
-  <script src="js/main.js?v=15"></script>
+  <script src="js/main.js?v=16"></script>
   <script src="js/formulario.js?v=3" defer></script>
 </body>
 </html>

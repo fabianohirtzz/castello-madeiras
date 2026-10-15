@@ -12,7 +12,7 @@ teste('a migracao insere a quantidade exata de cada tabela', function () use ($c
     igual(11, $contagens['videos']);
     igual(13, $contagens['faq'], '8 gerais e 5 da Flex');
     igual(25, $contagens['passos'], '20 etapas da Casa Pronta e 5 da Flex');
-    igual(21, $contagens['blocos']);
+    igual(22, $contagens['blocos']);
 });
 
 teste('os 12 projetos do catalogo da Casa Pronta chegaram com preco, area e ambientes', function (): void {
@@ -165,9 +165,9 @@ teste('as 20 etapas da linha do tempo da Casa Pronta chegaram em ordem', functio
     igual(1, (int) $flex[0]['ordem'], 'a ordem da Flex recomeça do 1');
 });
 
-teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function (): void {
+teste('os 22 blocos de texto existem com rotulo e tipo', function (): void {
     $linhas = db()->query('SELECT chave, rotulo, tipo FROM blocos ORDER BY chave')->fetchAll();
-    igual(21, count($linhas));
+    igual(22, count($linhas));
 
     $chaves = array_column($linhas, 'chave');
     foreach (['hero_titulo', 'hero_subtitulo', 'modalidades_titulo', 'modalidades_texto',
@@ -175,7 +175,7 @@ teste('os 21 blocos de texto do contrato existem com rotulo e tipo', function ()
               'flex_prazo', 'flex_video', 'flex_video_poster',
               'flexpg_hero_titulo', 'flexpg_hero_texto', 'flexpg_oque_titulo', 'flexpg_oque_texto',
               'flexpg_depois_titulo', 'flexpg_depois_texto', 'flexpg_catalogo_nota',
-              'flexpg_cta_titulo', 'flexpg_cta_texto'] as $chave) {
+              'flexpg_cta_titulo', 'flexpg_cta_texto', 'pronta_home_modelo'] as $chave) {
         verdade(in_array($chave, $chaves, true), "faltou o bloco $chave");
     }
 

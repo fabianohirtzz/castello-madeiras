@@ -89,6 +89,8 @@ ul,ol{list-style:none}
   font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.02;letter-spacing:-.03em;
   color:var(--ink);
 }
+.section__title .hl{color:var(--red)}
+.section--dark .section__title .hl{color:var(--red-bright)}
 .section__lead{
   margin-top:20px;max-width:58ch;color:var(--muted);
   font-size:clamp(1.05rem,1.35vw,1.24rem);
@@ -213,22 +215,18 @@ body.drawer-open{overflow:hidden}
   will-change:opacity,transform;pointer-events:none;
 }
 .hero__beat.is-active{transform:translate(-50%,-50%) translateY(0);pointer-events:auto}
+.hero__texto{opacity:1;top:46%}
+/* as linhas que entram na rolagem ja ocupam o lugar delas: o titulo nao pula */
+.hero__linha{display:block;font-size:.8em;line-height:1.02;letter-spacing:-.035em;opacity:0;will-change:opacity,transform}
+.hero__linha .hl{color:var(--red-bright)}
+.hero__texto .hero__actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:32px;opacity:0;pointer-events:none}
+.hero__texto .hero__actions.is-in{pointer-events:auto}
 .hero__beat .eyebrow{justify-content:center}
 .hero__headline{
   font-family:var(--font-display);font-weight:800;
   font-size:clamp(2.7rem,8vw,6.4rem);line-height:.98;letter-spacing:-.04em;
   text-shadow:0 2px 50px rgba(0,0,0,.45);
 }
-.hero__headline-sub{
-  font-family:var(--font-display);font-weight:800;
-  font-size:clamp(2.4rem,7vw,5.6rem);line-height:1;letter-spacing:-.035em;
-  text-shadow:0 2px 50px rgba(0,0,0,.45);
-}
-.hero__headline-sub .hl{color:var(--red-bright)}
-/* no desktop o "chave na mão" desce para a segunda linha; no celular fica corrido */
-@media(min-width:761px){.hero__headline-sub .hl{display:block}}
-.hero__beat--two .hero__actions{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:36px}
-
 /* Indicador de etapa (01/02) */
 .hero__status{
   position:absolute;left:50%;bottom:calc(clamp(56px,8vw,104px) + clamp(22px,4vh,38px));transform:translateX(-50%);z-index:4;
@@ -314,6 +312,7 @@ body.drawer-open{overflow:hidden}
 .why__layout{display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(28px,5vw,72px);align-items:start}
 .why__intro{position:sticky;top:104px}
 .why__intro .why__lead{margin-top:18px}
+.why__titulo{font-size:clamp(2rem,3.5vw,3.05rem)}
 .why__intro .btn{margin-top:28px}
 .why__lead{color:var(--muted);font-size:clamp(1.05rem,1.4vw,1.28rem);max-width:42ch}
 /* Carrossel de vantagens — um card por vez */
@@ -587,12 +586,15 @@ body.drawer-open{overflow:hidden}
 .cta-band__inner{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px}
 .cta-band h2{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.025em;line-height:1.03;max-width:18ch}
 .cta-band p{margin-top:14px;max-width:46ch;opacity:.94;font-size:1.08rem}
+.cta-band--largo .cta-band__inner > div{flex:1 1 560px}
+.cta-band--largo h2{max-width:24ch}
+.cta-band--largo p{max-width:66ch}
 
 /* ============================================================
    FOOTER
    ============================================================ */
 .footer{background:var(--ink);color:#fff;padding-top:var(--sec-pad)}
-.footer__grid{display:grid;grid-template-columns:1.5fr .7fr 1fr 1fr 1.3fr;gap:clamp(24px,3vw,40px)}
+.footer__grid{display:grid;grid-template-columns:1.25fr 1fr 1fr 2.1fr;gap:clamp(24px,3vw,40px)}
 .footer__logo{height:152px;width:auto;margin-bottom:24px}
 .footer__brand p{color:rgba(255,255,255,.64);font-size:.95rem;max-width:34ch}
 .footer__ig{display:inline-block;margin-top:16px;color:var(--red-bright);font-weight:600}
@@ -617,12 +619,14 @@ body.drawer-open{overflow:hidden}
 .footer__ico svg{width:15px;height:15px;fill:currentColor}
 .footer__list li:hover .footer__ico{background:var(--red);color:#fff;transition:.25s var(--ease)}
 .nowrap{white-space:nowrap}
-.footer__map iframe{width:100%;height:100%;min-height:180px;border:0;border-radius:var(--r-md);filter:grayscale(.2) contrast(1.05)}
+.footer__map iframe{width:100%;height:100%;min-height:220px;border:0;border-radius:var(--r-md);filter:grayscale(.2) contrast(1.05)}
 .footer__bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 10px;margin-top:48px;padding-block:24px;border-top:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);font-size:.84rem}
 /* quebra sempre antes de "Todos os direitos", nunca no meio do nome da marca */
 .footer__copy{max-width:100%}
 /* folga no fim da página para o botão flutuante não cobrir a assinatura */
 .footer__bottom{padding-bottom:92px}
+.footer__assina{display:flex;flex-direction:column;gap:4px;text-align:right}
+@media(max-width:640px){.footer__assina{text-align:left}}
 
 /* ---------- Botão flutuante (abre o formulário de orçamento) ---------- */
 .wpp-float{
@@ -933,8 +937,8 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   .why__nav--next{order:4}
   .footer__grid{grid-template-columns:1fr}
   .footer__bottom{justify-content:center;text-align:center}
-  .hero__beat--two .hero__actions{flex-direction:column}
-  .hero__beat--two .hero__actions .btn{width:100%}
+  .hero__texto .hero__actions{flex-direction:column}
+  .hero__texto .hero__actions .btn{width:100%}
   .proof__inner{grid-template-columns:1fr 1fr;gap:18px}
   /* FAQ: rail de ícones vira faixa horizontal (uma linha só, responsiva) */
   .faq__board{grid-template-columns:1fr;gap:16px}
@@ -1023,7 +1027,9 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .checklist--light li::before{border-bottom-color:var(--red-bright)}
 
 /* ---------- Modalidades: o garfo Casa Pronta x Castello Flex ---------- */
-.modalidades__head{max-width:760px;margin-bottom:clamp(36px,5vh,56px)}
+.modalidades__head{max-width:none;margin-bottom:clamp(36px,5vh,56px)}
+.modalidades__head .section__lead{max-width:58ch}
+.modalidades__titulo{max-width:none}
 .modalidades__grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
   gap:clamp(18px,2.6vw,32px);
@@ -1157,6 +1163,8 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   margin-top:20px;max-width:54ch;margin-inline:auto;line-height:1.6;
   font-size:clamp(1.04rem,1.4vw,1.24rem);color:rgba(255,255,255,.86);
 }
+.pagehero__lead--flex{max-width:64ch}
+.pagehero__lead--largo{max-width:76ch}
 .pagehero__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:32px}
 @media(max-width:560px){
   .pagehero__actions{flex-direction:column;align-items:stretch}
@@ -1235,6 +1243,11 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
   color:var(--muted);font-size:1rem;line-height:1.6;
 }
 .depois__nota a{color:var(--red-deep);font-weight:600}
+/* passo a passo da Flex: cabecalhos e nota no centro */
+.section__head--centro,.depois__head--centro{margin-inline:auto;text-align:center}
+.section__head--centro .eyebrow{justify-content:center}
+.section__head--centro .section__lead{margin-inline:auto}
+.depois__nota--centro{margin-inline:auto;text-align:center}
 .depois__nota a:hover{text-decoration:underline}
 
 /* ---------- Preço ainda sem tabela fechada ---------- */
@@ -1284,16 +1297,18 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .prontahome__actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
 .prontahome__media{
   position:relative;margin:0;border-radius:var(--r-lg);overflow:hidden;
-  box-shadow:var(--shadow-card);aspect-ratio:4/3;background:var(--ink);
+  box-shadow:var(--shadow-card);aspect-ratio:4/5;max-height:640px;width:100%;
+  justify-self:center;background:var(--ink);
 }
 .prontahome__media img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
 .prontahome__media:hover img{transform:scale(1.04)}
 .prontahome__cap{
-  position:absolute;left:0;right:0;bottom:0;padding:clamp(18px,3vw,28px);
-  display:flex;flex-direction:column;gap:4px;color:#fff;
-  background:linear-gradient(180deg,transparent,rgba(20,20,20,.82));
+  position:absolute;left:0;right:0;bottom:0;padding:clamp(60px,9vw,96px) clamp(18px,3vw,28px) clamp(18px,3vw,28px);
+  display:flex;flex-direction:column;gap:6px;color:#fff;
+  background:linear-gradient(180deg,rgba(10,10,10,0) 0%,rgba(10,10,10,.62) 45%,rgba(10,10,10,.9) 100%);
+  text-shadow:0 1px 10px rgba(0,0,0,.55);
 }
-.prontahome__cap-eyebrow{font:600 .72rem/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--red-bright)}
+.prontahome__cap-eyebrow{font:600 .74rem/1.2 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:#fff;opacity:.9}
 .prontahome__cap-price{font-family:var(--font-display);font-weight:600;font-size:1rem}
 .prontahome__cap-price strong{font-weight:800;font-size:1.35rem;letter-spacing:-.02em}
 @media(max-width:560px){
@@ -1427,7 +1442,7 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
 .contato__mapa iframe{display:block;width:100%;height:100%;border:0;filter:grayscale(.15) contrast(1.04)}
 .contato__mapa-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px;margin-bottom:clamp(28px,4vh,44px)}
 .contato__mapa-head .section__head{margin-bottom:0}
-.footer__grid--sem-mapa{grid-template-columns:1.5fr .7fr 1fr 1fr}
+.footer__grid--sem-mapa{grid-template-columns:1.5fr 1fr 1fr}
 @media(max-width:980px){
   .contato__grid{grid-template-columns:1fr}
   .contato__canais{position:static;grid-template-columns:1fr 1fr}

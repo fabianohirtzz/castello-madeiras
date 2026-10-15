@@ -85,33 +85,28 @@
 
   /* ---------- Hero: scrub de vídeo dirigido pelo scroll ----------
      A trilha (.hero__track) tem ~280vh; o pin fica fixo. O progresso
-     do scroll através da trilha dirige video.currentTime, e dois beats
-     de texto cruzam no playhead (split em ~50% = ~3s de 6s).
+     do scroll através da trilha dirige video.currentTime. O título fica
+     parado a rolagem inteira; a segunda linha entra no meio do vídeo e a
+     terceira, com os botões, no fim, e as três terminam juntas.
      Implementação vanilla (sem libs): progresso pelo bounding rect +
      lerp em rAF para suavizar o seek do vídeo. */
   var heroVideo = document.getElementById('heroVideo');
-  var beatOne = document.getElementById('heroBeatOne');
-  var beatTwo = document.getElementById('heroBeatTwo');
+  var heroEtapas = Array.prototype.slice.call(document.querySelectorAll('[data-hero-etapa]'));
   var statusFill = document.getElementById('heroStatusFill');
   var statusCurrent = document.getElementById('heroStatusCurrent');
-  var SPLIT = 0.5;   // fração do scrub onde o texto troca
-  var HALF = 0.07;   // meia janela do crossfade
+  // onde cada etapa termina de entrar, em fração da rolagem
+  var ENTRA = { 2: [0.36, 0.48], 3: [0.78, 0.9] };
 
   function applyBeats(p) {
-    // beat 1 já visível no carregamento (p=0) e cruza para o beat 2 no split
-    var cross = clamp((p - (SPLIT - HALF)) / (2 * HALF), 0, 1); // 0 antes do split, 1 depois
-    var oneOp = 1 - cross;
-    var twoOp = cross;
-    if (beatOne) {
-      beatOne.style.opacity = oneOp.toFixed(3);
-      beatOne.classList.toggle('is-active', oneOp > 0.5);
-    }
-    if (beatTwo) {
-      beatTwo.style.opacity = twoOp.toFixed(3);
-      beatTwo.classList.toggle('is-active', twoOp > 0.5);
-    }
+    heroEtapas.forEach(function (el) {
+      var faixa = ENTRA[el.getAttribute('data-hero-etapa')];
+      var op = clamp((p - faixa[0]) / (faixa[1] - faixa[0]), 0, 1);
+      el.style.opacity = op.toFixed(3);
+      el.style.transform = 'translateY(' + ((1 - op) * 18).toFixed(1) + 'px)';
+      el.classList.toggle('is-in', op > 0.5);
+    });
     if (statusFill) statusFill.style.width = (p * 100).toFixed(1) + '%';
-    if (statusCurrent) statusCurrent.textContent = p < SPLIT ? '01' : '02';
+    if (statusCurrent) statusCurrent.textContent = p < ENTRA[2][1] ? '01' : (p < ENTRA[3][1] ? '02' : '03');
     if (p > 0.02) hero.classList.add('is-scrolled');
     else hero.classList.remove('is-scrolled');
   }
@@ -171,9 +166,8 @@
     requestAnimationFrame(tick);
     applyBeats(scrubProgress());
   } else if (heroTrack) {
-    // Reduced motion: ambos os beats visíveis, sem scrub.
-    if (beatOne) { beatOne.style.opacity = 1; beatOne.classList.add('is-active'); }
-    if (beatTwo) { beatTwo.style.opacity = 1; beatTwo.classList.add('is-active'); }
+    // Reduced motion: o texto inteiro visível, sem scrub.
+    heroEtapas.forEach(function (el) { el.style.opacity = 1; el.classList.add('is-in'); });
   }
 
   /* ---------- Contadores ---------- */

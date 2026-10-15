@@ -75,12 +75,11 @@ teste('a pagina atual recebe aria-current="page" e as outras nao', function (): 
         $html = multi_pagina($arquivo);
         if ($chave === 'home') {
             contem('class="nav__logo" aria-label="Castello Casas de Madeira" aria-current="page"', $html, 'home: o logo e a pagina atual');
-            contem('<a href="index.php" aria-current="page">Início</a>', $html, 'home: marcada no rodape');
-            igual(4, substr_count($html, 'aria-current="page"'), 'home: logo, nav, gaveta e rodape');
+            igual(3, substr_count($html, 'aria-current="page"'), 'home: logo, nav e gaveta');
             continue;
         }
         verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '"[^>]*aria-current="page"[^>]*>#', $html) === 1, "$arquivo: link marcado");
-        igual(3, substr_count($html, 'aria-current="page"'), "$arquivo: nav, gaveta e rodape");
+        igual(2, substr_count($html, 'aria-current="page"'), "$arquivo: nav e gaveta");
         foreach (MULTI_PAGINAS as $outra) {
             if ($outra !== $arquivo) {
                 verdade(preg_match('#<a href="' . preg_quote($outra, '#') . '"[^>]*aria-current#', $html) === 0, "$arquivo: $outra nao pode estar marcada");
@@ -103,7 +102,7 @@ teste('a home resume a Casa Pronta e nao traz mais portfolio nem passo a passo',
     foreach (['id="prova"', 'id="modalidades"', 'id="castello-flex"', 'id="vantagens"', 'id="depoimentos"', 'id="instagram"', 'id="faq"', 'class="cta-band"'] as $marca) {
         contem($marca, $html, "home sem $marca");
     }
-    contem('do seu jeito, <span class="hl">no seu ritmo.</span>', $html, 'o subtitulo do hero com o realce');
+    contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">no seu ritmo.</span></span>', $html, 'o subtitulo do hero com o realce');
     contem('<a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>', $html, 'o hero leva as duas modalidades');
     contem('<a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>', $html);
     contem('data-count="71"', $html, '71 avaliacoes');
@@ -148,7 +147,7 @@ teste('portfolio.php traz a grade com as seis casas cadastradas', function (): v
     contem('data-titulo="Sobrado à beira da água"', $html);
     contem('id="fotobox"', $html, 'a foto abre em tela cheia');
     nao_contem('accordion', $html, 'o acordeao antigo saiu');
-    contem('class="cta-band cta-band--bone"', $html);
+    contem('class="cta-band cta-band--bone cta-band--largo"', $html);
 
     // a grade cresce com o cadastro
     db()->exec("INSERT INTO portfolio (titulo, categoria, foto, foto_alt, ativo, ordem) VALUES ('Casa nova', 'Teste', 'uploads/portfolio/x.webp', 'Alt', 1, 99)");
@@ -238,11 +237,22 @@ teste('o sitemap lista as cinco paginas e o robots continua apontando para ele',
     contem('Disallow: /painel/', $robots);
 });
 
-teste('o subtitulo do hero quebra o "chave na mao" em linha propria so no desktop', function (): void {
-    $css = (string) file_get_contents(site() . '/css/style.css');
-    verdade(preg_match('#@media\(min-width:761px\)\{\.hero__headline-sub \.hl\{display:block\}\}#', $css) === 1,
-        'a regra .hero__headline-sub .hl{display:block} precisa viver dentro da media query do desktop');
-    verdade(preg_match('#^\.hero__headline-sub \.hl\{[^}]*display:block#m', $css) === 0, 'fora da media query o realce fica inline');
+teste('o hero mantem o titulo e entra o subtitulo em duas etapas, dividido na virgula', function (): void {
+    $html = render(site() . '/index.php');
+    contem('<h1 class="hero__headline">Sua casa', $html);
+    contem('<span class="hero__linha" data-hero-etapa="2">do seu jeito,</span>', $html);
+    contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">no seu ritmo.</span></span>', $html);
+    contem('<div class="hero__actions" data-hero-etapa="3">', $html, 'os botoes entram com a terceira linha');
+    nao_contem('heroBeatTwo', $html, 'nao existe mais troca de bloco');
+
+    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['sem virgula nenhuma', 'hero_subtitulo']);
+    $sem = render(site() . '/index.php');
+    nao_contem('data-hero-etapa="2"', $sem, 'sem virgula nao ha segunda etapa');
+    contem('<span class="hero__linha" data-hero-etapa="3">sem virgula nenhuma</span>', $sem);
+    db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ?')->execute(['do seu jeito, *no seu ritmo.*', 'hero_subtitulo']);
+
+    $main = (string) file_get_contents(site() . '/js/main.js');
+    contem("var ENTRA = { 2: [0.36, 0.48], 3: [0.78, 0.9] };", $main);
 });
 
 teste('o menu nao depende mais do scroll-spy e o formulario embutido busca o token no carregamento', function (): void {
