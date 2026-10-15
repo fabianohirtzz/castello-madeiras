@@ -1117,7 +1117,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .flexhome .container{position:relative;z-index:1}
 .flexhome__title{
   font-family:var(--font-display);font-weight:800;
-  font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.03;letter-spacing:-.03em;color:#fff;
+  font-size:clamp(2rem,3.5vw,3rem);line-height:1.03;letter-spacing:-.03em;color:#fff;text-wrap:balance;
 }
 .flexhome__lead{
   margin-top:20px;color:rgba(255,255,255,.78);

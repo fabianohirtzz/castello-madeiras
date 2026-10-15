@@ -78,7 +78,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=30" />
+  <link rel="stylesheet" href="css/style.css?v=31" />
 </head>
 <body>
 
@@ -365,9 +365,9 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           <span class="reviews__meta">71 avaliações no Google</span>
         </div>
         <div class="reveal">
-          <span class="eyebrow">Quem já construiu</span>
+          <span class="eyebrow">Quem já construiu com a Castello</span>
           <h2 class="section__title">Sonhos realizados.<br>Histórias que inspiram confiança.</h2>
-          <p class="section__lead">Conheça a experiência de quem escolheu a Castello para transformar seu projeto em realidade.</p>
+          <p class="section__lead">A melhor forma de conhecer nosso trabalho é ouvir quem já confiou na Castello. Confira as avaliações reais dos nossos clientes no Google.</p>
         </div>
       </div>
     </div>
