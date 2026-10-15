@@ -71,7 +71,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=25" />
+  <link rel="stylesheet" href="css/style.css?v=26" />
 </head>
 <body class="lk-corpo">
   <main class="lk">
@@ -90,7 +90,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
       <span class="lk-cta__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg></span>
       <span class="lk-cta__txt">
         <strong>Pedir orçamento</strong>
-        <small>Leva 1 minuto. Nossa equipe vai adorar conversar com você.</small>
+        <small>Nossa equipe estará pronta para orientar você com atenção e dedicação.</small>
       </span>
       <?= $seta ?>
     </button>

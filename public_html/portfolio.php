@@ -37,7 +37,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=25" />
+  <link rel="stylesheet" href="css/style.css?v=26" />
 </head>
 <body>
 
@@ -46,7 +46,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <!-- ============ HERO DO PORTFÓLIO ============ -->
   <section class="pagehero" id="topo" aria-label="Portfólio">
     <div class="pagehero__media">
-      <img src="fotos-casas/casa3.webp" alt="Sobrado de madeira Castello à beira da água com vista para a ponte" fetchpriority="high" />
+      <img src="fotos-casas/hero-portfolio.webp" alt="Casa de madeira Castello térrea com janelas brancas, gramado na frente e garagem coberta ao lado" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
