@@ -71,7 +71,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=31" />
+  <link rel="stylesheet" href="css/style.css?v=32" />
 </head>
 <body class="lk-corpo">
   <main class="lk">

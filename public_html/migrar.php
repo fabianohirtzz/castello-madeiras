@@ -126,7 +126,9 @@ const MIGRAR_VIDEOS_FLEX = [
 const MIGRAR_FAQ = [
     ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', 'Entre 90 e 120 dias, da assinatura do contrato à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.', 'relogio'],
     ['geral', 'O que está incluso no chave na mão?', 'Sua casa sai pronta pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas. Você cuida da mudança, a Castello cuida da obra, dos materiais, dos prazos e do acabamento.', 'chave'],
-    ['geral', 'Posso personalizar a planta e os acabamentos?', 'Sim. Na Casa Pronta a distribuição dos ambientes, as dimensões e os acabamentos se ajustam ao seu terreno e ao seu jeito, a partir do estudo preliminar que a Castello faz com você.', 'planta'],
+    ['geral', 'Posso personalizar a planta e os acabamentos da minha casa?', "**Sim! Na modalidade Casa Pronta**, você pode personalizar a distribuição dos ambientes, as dimensões e os acabamentos conforme suas necessidades, preferências e características do terreno.
+
+Já a **Castello Flex** oferece modelos predefinidos, pensados para proporcionar praticidade, agilidade e economia na construção.", 'planta'],
     ['geral', 'Casa de madeira é confortável o ano todo?', 'É um dos maiores diferenciais. A madeira mantém o ambiente fresco no calor e aconchegante no frio, com um conforto térmico bem acima da alvenaria comum em todas as estações.', 'clima'],
     ['geral', 'A casa é resistente e dura com o tempo?', 'Construímos com madeira de qualidade e prego galvanizado em toda a estrutura, com equipe experiente na obra todo dia. Bem cuidada, a casa atravessa gerações e ainda valoriza como patrimônio.', 'escudo'],
     ['geral', 'Qual a diferença entre madeira vertical e horizontal?', 'Muda o sentido das tábuas na parede. Na vertical a parede é simples e a fiação desce por perfis aparentes por dentro da casa. Na horizontal a parede é mais resistente e pode ser duplada, com a fiação embutida em conduíte. Duplar a parede é opcional, a gente combina no projeto.', 'parede'],
@@ -562,6 +564,14 @@ function migrar_atualizar_2026_10_textos(): array
         if (in_array($chave, ['flex_titulo', 'flex_texto', 'hero_titulo', 'hero_subtitulo'], true)) {
             $st->execute([$valor, $chave, $valor]);
             $log[] = 'bloco ' . $chave . ': ' . $st->rowCount();
+        }
+    }
+    // resposta nova da FAQ de personalizacao (2026-10-15)
+    foreach (MIGRAR_FAQ as [$contexto, $pergunta, $resposta]) {
+        if ($pergunta === 'Posso personalizar a planta e os acabamentos da minha casa?') {
+            $faq = db()->prepare("UPDATE faq SET pergunta = ?, resposta = ? WHERE contexto = ? AND pergunta IN ('Posso personalizar a planta e os acabamentos?', ?) AND resposta <> ?");
+            $faq->execute([$pergunta, $resposta, $contexto, $pergunta, $resposta]);
+            $log[] = 'faq personalizacao: ' . $faq->rowCount();
         }
     }
     return $log;

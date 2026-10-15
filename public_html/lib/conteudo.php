@@ -141,6 +141,23 @@ function realce(string $texto): string
 }
 
 /**
+ * Resposta da FAQ em paragrafos, ja escapados: linha em branco separa os
+ * paragrafos e **texto** vira negrito (como o cliente escreve no painel).
+ *
+ * @return array<int,string>
+ */
+function paragrafos_faq(string $texto): array
+{
+    $saida = [];
+    foreach (preg_split('/\R\s*\R/u', trim($texto)) ?: [] as $par) {
+        if (trim($par) !== '') {
+            $saida[] = (string) preg_replace('/\*\*(.+?)\*\*/u', '<strong>$1</strong>', e(trim($par)));
+        }
+    }
+    return $saida;
+}
+
+/**
  * Icones dos ambientes do card de modelo, no traco dos icones do catalogo da
  * Castello. A ordem importa: a primeira palavra que bater escolhe o desenho,
  * entao "Estudio aberto com cozinha" vira cama, nao sofa.

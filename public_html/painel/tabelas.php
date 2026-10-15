@@ -113,7 +113,7 @@ function painel_tabelas(): array
                 'contexto' => ['rotulo' => 'Onde aparece', 'tipo' => 'selecao', 'obrigatorio' => true,
                                'opcoes' => ['geral' => 'Home', 'flex' => 'Página Castello Flex']],
                 'pergunta' => ['rotulo' => 'Pergunta', 'tipo' => 'texto', 'obrigatorio' => true],
-                'resposta' => ['rotulo' => 'Resposta', 'tipo' => 'texto_longo', 'obrigatorio' => true],
+                'resposta' => ['rotulo' => 'Resposta', 'tipo' => 'texto_longo', 'obrigatorio' => true, 'ajuda' => 'Linha em branco separa parágrafos. **Texto entre dois asteriscos** fica em negrito.'],
                 'icone'    => ['rotulo' => 'Ícone', 'tipo' => 'icone_faq', 'obrigatorio' => true,
                                'ajuda' => 'Toque no desenho que combina com a pergunta'],
             ],

@@ -23,7 +23,9 @@ $rotulo_faq = $contexto === 'flex' ? 'Perguntas sobre a Castello Flex' : 'Pergun
 <?php foreach ($lista_faq as $i => $f): $n = $i + 1; $primeiro = $i === 0; ?>
           <div class="faq__content<?= $primeiro ? ' is-active' : '' ?>" role="tabpanel" id="faq-panel<?= $n ?>" aria-labelledby="faq-tab<?= $n ?>" tabindex="0"<?= $primeiro ? '' : ' hidden' ?>>
             <h3 class="faq__content-title"><?= e($f['pergunta']) ?></h3>
-            <p class="faq__content-body"><?= e($f['resposta']) ?></p>
+<?php foreach (paragrafos_faq((string) $f['resposta']) as $par): ?>
+            <p class="faq__content-body"><?= $par ?></p>
+<?php endforeach; ?>
           </div>
 <?php endforeach; ?>
         </div>

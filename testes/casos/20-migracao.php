@@ -123,7 +123,7 @@ teste('as 8 perguntas do FAQ chegaram com o icone certo em cada uma', function (
     $esperado = [
         ['Quanto tempo leva pra minha casa ficar pronta?', 'relogio'],
         ['O que está incluso no chave na mão?',            'chave'],
-        ['Posso personalizar a planta e os acabamentos?',  'planta'],
+        ['Posso personalizar a planta e os acabamentos da minha casa?',  'planta'],
         ['Casa de madeira é confortável o ano todo?',      'clima'],
         ['A casa é resistente e dura com o tempo?',        'escudo'],
         ['Qual a diferença entre madeira vertical e horizontal?', 'parede'],
