@@ -124,16 +124,17 @@ const MIGRAR_VIDEOS_FLEX = [
 
 /** contexto, pergunta, resposta, icone. As cinco da Flex saem do escopo que a Castello mandou. */
 const MIGRAR_FAQ = [
-    ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', 'Entre 90 e 120 dias, da assinatura do contrato à chave na mão. Enquanto a obra convencional se arrasta por anos, sua casa de madeira é montada de forma rápida e organizada, com o prazo combinado em contrato.', 'relogio'],
+    ['geral', 'Quanto tempo leva pra minha casa ficar pronta?', "**Casa Pronta:** de 90 a 120 dias.
+
+**Castello Flex:** até 45 dias.", 'relogio'],
     ['geral', 'O que está incluso no chave na mão?', 'Sua casa sai pronta pra morar: laje aérea, elétrica, hidráulica, cerâmica, fossa, sumidouro, vidros e aberturas. Você cuida da mudança, a Castello cuida da obra, dos materiais, dos prazos e do acabamento.', 'chave'],
     ['geral', 'Posso personalizar a planta e os acabamentos da minha casa?', "**Sim! Na modalidade Casa Pronta**, você pode personalizar a distribuição dos ambientes, as dimensões e os acabamentos conforme suas necessidades, preferências e características do terreno.
 
 Já a **Castello Flex** oferece modelos predefinidos, pensados para proporcionar praticidade, agilidade e economia na construção.", 'planta'],
-    ['geral', 'Casa de madeira é confortável o ano todo?', 'É um dos maiores diferenciais. A madeira mantém o ambiente fresco no calor e aconchegante no frio, com um conforto térmico bem acima da alvenaria comum em todas as estações.', 'clima'],
-    ['geral', 'A casa é resistente e dura com o tempo?', 'Construímos com madeira de qualidade e prego galvanizado em toda a estrutura, com equipe experiente na obra todo dia. Bem cuidada, a casa atravessa gerações e ainda valoriza como patrimônio.', 'escudo'],
+    ['geral', 'A casa é resistente e dura com o tempo?', 'Construímos com materiais de qualidade e mão de obra qualificada. Somando a nossa garantia ao seu cuidado, você terá a sua casa por muitos anos.', 'escudo'],
     ['geral', 'Qual a diferença entre madeira vertical e horizontal?', 'Muda o sentido das tábuas na parede. Na vertical a parede é simples e a fiação desce por perfis aparentes por dentro da casa. Na horizontal a parede é mais resistente e pode ser duplada, com a fiação embutida em conduíte. Duplar a parede é opcional, a gente combina no projeto.', 'parede'],
-    ['geral', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte do processo. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança em cada etapa, do primeiro passo até a chave na mão.', 'fundacao'],
-    ['geral', 'Que garantias eu tenho com a Castello?', 'Você tem a garantia da construção, o compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo com uma empresa só.', 'garantia'],
+    ['geral', 'A Castello vai até o meu terreno antes de construir?', 'Sim. Nossa equipe faz visita técnica em todos os terrenos, porque é nessa visita que definimos os detalhes da fundação.', 'fundacao'],
+    ['geral', 'Que garantias eu tenho com a Castello?', 'Você tem a garantia prevista na Lei nº 8.078/1990, o Código de Defesa do Consumidor, além do nosso compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo diretamente com a equipe Castello.', 'garantia'],
     ['flex', 'Em quanto tempo a Castello Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.', 'relogio'],
     ['flex', 'O que exatamente vem na entrega da Flex?', 'Fundação com laje aérea, estrutura de madeira montada, telhado completo, forro à nível, esquadrias instaladas, a alvenaria do banheiro no chapisco e a limpeza de obra feita. Ficam por sua conta os vidros, a elétrica, a hidráulica, o revestimento cerâmico, as louças e o balcão do banheiro, a fossa, o sumidouro e a pintura.', 'chave'],
     ['flex', 'Posso mudar a planta da Castello Flex?', 'Não. As cinco plantas da Castello Flex são padronizadas, com medidas definidas, e é isso que garante o preço e a entrega em 45 dias. Se você quer uma planta personalizada, a modalidade certa é a Casa Pronta.', 'planta'],
@@ -601,6 +602,32 @@ function migrar_atualizar_2026_10_passos_flex(): array
         throw $falha;
     }
     return ["passos antigos da Flex desativados: {$n}", 'etapas da Flex inseridas: ' . count($novos)];
+}
+
+/**
+ * FAQ geral revisada pelo cliente em 2026-10-16: prazos das duas modalidades,
+ * resistencia, visita ao terreno e garantia pelo CDC; a pergunta do conforto
+ * termico sai (fica desativada). Rodar de novo nao muda nada.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_faq(): array
+{
+    $pdo = db();
+    $log = [];
+    $n = $pdo->exec("UPDATE faq SET ativo = 0 WHERE contexto = 'geral' AND pergunta = 'Casa de madeira é confortável o ano todo?' AND ativo = 1");
+    $log[] = 'faq conforto desativada: ' . $n;
+    $troca = $pdo->prepare("UPDATE faq SET pergunta = ? WHERE contexto = 'geral' AND pergunta = ?");
+    $troca->execute(['A Castello vai até o meu terreno antes de construir?', 'Vocês cuidam da fundação e do terreno?']);
+    $resp = $pdo->prepare("UPDATE faq SET resposta = ? WHERE contexto = 'geral' AND pergunta = ? AND resposta <> ?");
+    foreach (MIGRAR_FAQ as [$contexto, $pergunta, $resposta]) {
+        if ($contexto === 'geral' && in_array($pergunta, ['Quanto tempo leva pra minha casa ficar pronta?', 'A casa é resistente e dura com o tempo?',
+                'A Castello vai até o meu terreno antes de construir?', 'Que garantias eu tenho com a Castello?'], true)) {
+            $resp->execute([$resposta, $pergunta, $resposta]);
+            $log[] = 'faq ' . $pergunta . ': ' . $resp->rowCount();
+        }
+    }
+    return $log;
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

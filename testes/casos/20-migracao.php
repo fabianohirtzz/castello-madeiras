@@ -10,7 +10,7 @@ teste('a migracao insere a quantidade exata de cada tabela', function () use ($c
     igual(6,  $contagens['portfolio']);
     igual(14, $contagens['avaliacoes']);
     igual(15, $contagens['videos'], '11 reels da home e 4 videos da Flex');
-    igual(13, $contagens['faq'], '8 gerais e 5 da Flex');
+    igual(12, $contagens['faq'], '7 gerais e 5 da Flex');
     igual(27, $contagens['passos'], '20 etapas da Casa Pronta e 7 da Flex');
     igual(22, $contagens['blocos']);
 });
@@ -116,18 +116,17 @@ teste('a home mostra 8 videos por causa do limite acordado na reuniao', function
     igual(11, count(videos(0)), 'os 11 continuam cadastrados e ativos');
 });
 
-teste('as 8 perguntas do FAQ chegaram com o icone certo em cada uma', function (): void {
+teste('as 7 perguntas do FAQ chegaram com o icone certo em cada uma', function (): void {
     $lista = faq('geral');
-    igual(8, count($lista));
+    igual(7, count($lista));
 
     $esperado = [
         ['Quanto tempo leva pra minha casa ficar pronta?', 'relogio'],
         ['O que está incluso no chave na mão?',            'chave'],
         ['Posso personalizar a planta e os acabamentos da minha casa?',  'planta'],
-        ['Casa de madeira é confortável o ano todo?',      'clima'],
         ['A casa é resistente e dura com o tempo?',        'escudo'],
         ['Qual a diferença entre madeira vertical e horizontal?', 'parede'],
-        ['Vocês cuidam da fundação e do terreno?',         'fundacao'],
+        ['A Castello vai até o meu terreno antes de construir?', 'fundacao'],
         ['Que garantias eu tenho com a Castello?',         'garantia'],
     ];
 
@@ -289,4 +288,22 @@ teste('conteudo real migrou por inteiro, sem item de portfolio sem alt', functio
     igual(0, $sem_alt, 'ha item de portfolio sem texto alternativo');
     $sem_alt = (int) db()->query("SELECT COUNT(*) FROM modelos WHERE foto_alt IS NULL OR foto_alt = ''")->fetchColumn();
     igual(0, $sem_alt, 'ha modelo sem texto alternativo');
+});
+
+teste('a FAQ revisada em 2026-10-16 chega a um banco antigo, uma vez so', function (): void {
+    db()->exec("INSERT INTO faq (pergunta, resposta, icone, contexto, ativo, ordem) VALUES ('Casa de madeira é confortável o ano todo?', 'x', 'clima', 'geral', 1, 4)");
+    db()->exec("UPDATE faq SET pergunta = 'Vocês cuidam da fundação e do terreno?', resposta = 'antiga' WHERE contexto = 'geral' AND icone = 'fundacao'");
+    db()->exec("UPDATE faq SET resposta = 'antiga' WHERE contexto = 'geral' AND icone IN ('relogio', 'garantia')");
+
+    migrar_atualizar_2026_10_faq();
+    $geral = faq('geral');
+    igual(7, count($geral), 'a pergunta do conforto saiu do site');
+    igual(1, (int) db()->query("SELECT COUNT(*) FROM faq WHERE icone = 'clima' AND ativo = 0")->fetchColumn(), 'so foi desativada');
+    $por = array_column($geral, 'resposta', 'pergunta');
+    contem('visita técnica', $por['A Castello vai até o meu terreno antes de construir?']);
+    contem('**Castello Flex:** até 45 dias.', $por['Quanto tempo leva pra minha casa ficar pronta?']);
+    contem('8.078/1990', $por['Que garantias eu tenho com a Castello?']);
+    nao_contem('Vocês cuidam da fundação', implode(' ', array_keys($por)));
+    migrar_atualizar_2026_10_faq();
+    igual(7, count(faq('geral')), 'rodar de novo nao muda nada');
 });
