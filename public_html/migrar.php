@@ -116,8 +116,8 @@ const MIGRAR_AVALIACOES = [
  * comprimidos para 540x960.
  */
 const MIGRAR_VIDEOS_FLEX = [
-    ['videos-instagram/web/insta-12.mp4', 'videos-instagram/web/insta-12.jpg', 'A Castello apresenta os 5 modelos da Castello Flex.'],
     ['videos-flex/flex-01.mp4', 'videos-flex/flex-01.jpg', 'Entrega em até 45 dias: como funciona o prazo da Flex.'],
+    ['videos-instagram/web/insta-12.mp4', 'videos-instagram/web/insta-12.jpg', 'A Castello apresenta os 5 modelos da Castello Flex.'],
     ['videos-flex/flex-02.mp4', 'videos-flex/flex-02.jpg', 'O mesmo padrão de qualidade, com liberdade para você escolher.'],
     ['videos-flex/flex-03.mp4', 'videos-flex/flex-03.jpg', 'Casas de madeira montadas e fechadas em até 45 dias.'],
 ];
@@ -135,10 +135,10 @@ Já a **Castello Flex** oferece modelos predefinidos, pensados para proporcionar
     ['geral', 'Qual a diferença entre madeira vertical e horizontal?', 'Muda o sentido das tábuas na parede. Na vertical a parede é simples e a fiação desce por perfis aparentes por dentro da casa. Na horizontal a parede é mais resistente e pode ser duplada, com a fiação embutida em conduíte. Duplar a parede é opcional, a gente combina no projeto.', 'parede'],
     ['geral', 'A Castello vai até o meu terreno antes de construir?', 'Sim. Nossa equipe faz visita técnica em todos os terrenos, porque é nessa visita que definimos os detalhes da fundação.', 'fundacao'],
     ['geral', 'Que garantias eu tenho com a Castello?', 'Você tem a garantia prevista na Lei nº 8.078/1990, o Código de Defesa do Consumidor, além do nosso compromisso com a excelência da obra e o cumprimento do prazo combinado. Do primeiro contato ao pós-venda, é tudo diretamente com a equipe Castello.', 'garantia'],
-    ['flex', 'Em quanto tempo a Castello Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo, sem prazo de obra em cima de você.', 'relogio'],
-    ['flex', 'O que exatamente vem na entrega da Flex?', 'Fundação com laje aérea, estrutura de madeira montada, telhado completo, forro à nível, esquadrias instaladas, a alvenaria do banheiro no chapisco e a limpeza de obra feita. Ficam por sua conta os vidros, a elétrica, a hidráulica, o revestimento cerâmico, as louças e o balcão do banheiro, a fossa, o sumidouro e a pintura.', 'chave'],
+    ['flex', 'Em quanto tempo a Castello Flex fica pronta?', 'A entrega da estrutura montada, coberta e fechada é em 45 dias, contados da assinatura e da liberação do terreno. O acabamento depois disso corre no seu ritmo.', 'relogio'],
+    ['flex', 'O que exatamente vem na entrega da Castello Flex?', 'Fundação com laje aérea, estrutura de madeira montada, telhado completo, forro à nível, esquadrias instaladas, a alvenaria do banheiro no chapisco e a limpeza de obra feita. Ficam por sua conta os vidros, a elétrica, a hidráulica, o revestimento cerâmico, as louças e o balcão do banheiro, a fossa, o sumidouro e a pintura.', 'chave'],
     ['flex', 'Posso mudar a planta da Castello Flex?', 'Não. As cinco plantas da Castello Flex são padronizadas, com medidas definidas, e é isso que garante o preço e a entrega em 45 dias. Se você quer uma planta personalizada, a modalidade certa é a Casa Pronta.', 'planta'],
-    ['flex', 'A madeira é a mesma das casas chave na mão?', 'É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello desde 2014. A Flex muda o escopo da entrega, nunca o padrão da construção.', 'escudo'],
+    ['flex', 'A madeira é a mesma das casas chave na mão?', 'É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello desde 2014. A modalidade Flex muda o escopo da entrega, nunca o padrão da construção.', 'escudo'],
     ['flex', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte da entrega da Flex, com laje aérea em concreto armado. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.', 'fundacao'],
 ];
 
@@ -202,7 +202,7 @@ const MIGRAR_BLOCOS = [
     ['flexpg_hero_titulo', 'Título do topo da página Flex', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.', 'texto'],
     ['flexpg_hero_texto', 'Texto do topo da página Flex', 'Na Castello Flex, você escolhe entre 5 modelos, com plantas e medidas definidas, sem possibilidade de personalização. Nós entregamos a estrutura montada e fechada, e você realiza os acabamentos no seu tempo.', 'texto_longo'],
     ['flexpg_oque_titulo', 'Título de o que é a Castello Flex', 'A qualidade da Castello, com a liberdade de construir no seu ritmo.', 'texto'],
-    ['flexpg_oque_texto', 'Texto de o que é a Castello Flex', 'A Castello monta a casa de madeira no seu terreno e entrega ela fechada: fundação com laje aérea, estrutura de madeira, cobertura, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento, sem prazo de obra correndo atrás de você.', 'texto_longo'],
+    ['flexpg_oque_texto', 'Texto de o que é a Castello Flex', 'A Castello entrega sua casa de madeira fechada: fundação com laje aérea, estrutura de madeira, cobertura, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento.', 'texto_longo'],
     ['flexpg_depois_titulo', 'Título de o que fica por sua conta', 'O que fica por sua conta', 'texto'],
     ['flexpg_depois_texto', 'Texto de o que fica por sua conta', 'Daqui pra frente a casa é sua e o ritmo é seu. Você contrata quem quiser, na ordem que quiser, conforme seu orçamento.', 'texto_longo'],
     ['flexpg_catalogo_nota', 'Nota abaixo do catálogo Flex', 'Valores de setembro de 2026, para a casa montada no seu terreno. O orçamento final considera as condições do seu terreno e a distância até Tubarão.', 'texto'],
@@ -627,6 +627,43 @@ function migrar_atualizar_2026_10_faq(): array
             $log[] = 'faq ' . $pergunta . ': ' . $resp->rowCount();
         }
     }
+    return $log;
+}
+
+/**
+ * Pagina Castello Flex revisada em 2026-10-16: texto de o que e a Flex, duas
+ * perguntas da FAQ Flex e o video do prazo (flex-01) como o primeiro da
+ * galeria. Rodar de novo nao muda nada.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_flex(): array
+{
+    $pdo = db();
+    $log = [];
+    $bloco = $pdo->prepare('UPDATE blocos SET valor = ? WHERE chave = ? AND valor <> ?');
+    foreach (MIGRAR_BLOCOS as [$chave, , $valor]) {
+        if ($chave === 'flexpg_oque_texto') {
+            $bloco->execute([$valor, $chave, $valor]);
+            $log[] = 'bloco ' . $chave . ': ' . $bloco->rowCount();
+        }
+    }
+    $pdo->prepare("UPDATE faq SET pergunta = ? WHERE contexto = 'flex' AND pergunta = ?")
+        ->execute(['O que exatamente vem na entrega da Castello Flex?', 'O que exatamente vem na entrega da Flex?']);
+    $faq = $pdo->prepare("UPDATE faq SET resposta = ? WHERE contexto = 'flex' AND pergunta = ? AND resposta <> ?");
+    foreach (MIGRAR_FAQ as [$contexto, $pergunta, $resposta]) {
+        if ($contexto === 'flex') {
+            $faq->execute([$resposta, $pergunta, $resposta]);
+            if ($faq->rowCount() > 0) {
+                $log[] = 'faq flex: ' . $pergunta;
+            }
+        }
+    }
+    $ordem = $pdo->prepare("UPDATE videos SET ordem = ? WHERE contexto = 'flex' AND arquivo = ?");
+    foreach (MIGRAR_VIDEOS_FLEX as $i => [$arquivo]) {
+        $ordem->execute([$i + 1, 'uploads/videos/' . basename($arquivo)]);
+    }
+    $log[] = 'videos da Flex reordenados, flex-01 primeiro';
     return $log;
 }
 

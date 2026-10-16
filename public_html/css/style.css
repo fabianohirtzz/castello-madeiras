@@ -598,7 +598,8 @@ body.drawer-open{overflow:hidden}
    ============================================================ */
 .footer{background:var(--ink);color:#fff;padding-top:var(--sec-pad)}
 .footer__grid{display:grid;grid-template-columns:1.25fr 1fr 1fr 2.1fr;gap:clamp(24px,3vw,40px)}
-.footer__logo{height:152px;width:auto;margin-bottom:24px}
+/* logo recortado (sem a margem transparente do PNG): o topo alinha com os titulos das colunas */
+.footer__logo{display:block;height:96px;width:auto;margin:2px 0 22px}
 .footer__brand p{color:rgba(255,255,255,.64);font-size:.95rem;max-width:34ch}
 .footer__ig{display:inline-block;margin-top:16px;color:var(--red-bright);font-weight:600}
 .footer__social{display:flex;gap:12px;margin-top:20px}
@@ -606,6 +607,7 @@ body.drawer-open{overflow:hidden}
   display:grid;place-items:center;width:44px;height:44px;border-radius:12px;
   background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
   color:#fff;transition:.3s var(--ease)}
+.footer__social-btn{cursor:pointer;font:inherit;padding:0}
 .footer__social-btn svg{width:21px;height:21px;fill:currentColor}
 .footer__social-btn:hover{background:var(--red);border-color:var(--red);color:#fff;transform:translateY(-2px)}
 .footer__col h4{font-family:var(--font-display);font-weight:700;font-size:1.05rem;margin-bottom:18px}

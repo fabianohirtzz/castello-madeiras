@@ -701,7 +701,7 @@
     }
   }
 
-  /* ---------- Etapas da obra: rolagem horizontal travada (Casa Pronta) ----------
+  /* ---------- Etapas da obra: rolagem horizontal travada (Casa Pronta e Flex) ----------
      A trilha (.hscroll__track) ganha a altura do pin mais a distância que os
      cards precisam andar; o pin fica sticky e a fração rolada vira o
      translateX da trilha. Terminada a trilha, a página segue descendo. Com
@@ -716,13 +716,19 @@
     if (!track || !pin || !janela || !trilho) return;
 
     var FATOR = 0.85;   // px de rolagem vertical por px de trilha
-    var dist = 0, agendado = false;
+    var FOLGA = 24;     // a ultima foto para a 24px da borda direita da tela
+    var dist = 0, agendado = false, ultimaAltura = -1;
     sec.classList.add('is-pinned');
 
+    // A distancia sai da ultima foto, nao da largura da trilha: assim que ela
+    // encosta no fim da tela a secao destrava e a pagina volta a descer.
     function medir() {
       trilho.style.transform = 'translateX(0)';
-      dist = Math.max(0, trilho.scrollWidth - janela.clientWidth);
-      track.style.height = (pin.offsetHeight + dist * FATOR) + 'px';
+      var ultimo = trilho.lastElementChild;
+      var fimTela = document.documentElement.clientWidth;
+      dist = ultimo ? Math.max(0, ultimo.getBoundingClientRect().right - fimTela + FOLGA) : 0;
+      var altura = Math.round(pin.offsetHeight + dist * FATOR);
+      if (altura !== ultimaAltura) { ultimaAltura = altura; track.style.height = altura + 'px'; }
       mover();
     }
     function mover() {
@@ -736,10 +742,19 @@
       if (!agendado) { agendado = true; requestAnimationFrame(mover); }
     }, { passive: true });
     window.addEventListener('resize', medir);
-    // as fotos carregam depois e mudam a altura dos cards
+    // mede de novo sempre que o layout muda depois da carga (fotos, fontes,
+    // barra de rolagem, zoom): uma medida velha deixava rolagem sobrando
     trilho.querySelectorAll('img').forEach(function (img) {
       if (!img.complete) img.addEventListener('load', medir, { once: true });
     });
+    window.addEventListener('load', medir);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(medir);
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function () { requestAnimationFrame(medir); });
+      ro.observe(pin);
+      ro.observe(trilho);
+      ro.observe(document.documentElement);
+    }
     medir();
   });
 

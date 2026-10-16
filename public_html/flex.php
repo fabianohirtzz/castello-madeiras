@@ -45,7 +45,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=35" />
+  <link rel="stylesheet" href="css/style.css?v=37" />
 </head>
 <body>
 
@@ -60,7 +60,7 @@ $flex_faq     = faq('flex');
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
     <div class="container">
-      <span class="eyebrow eyebrow--light reveal">Lançamento Castello · Casa Flex</span>
+      <span class="eyebrow eyebrow--light reveal">Lançamento Castello Flex</span>
       <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.')) ?></h1>
 <?php if (bloco('flexpg_hero_texto') !== ''): ?>
       <p class="pagehero__lead pagehero__lead--flex reveal"><?= e(bloco('flexpg_hero_texto')) ?></p>
@@ -86,7 +86,7 @@ $flex_faq     = faq('flex');
           <p class="section__lead reveal"><?= e(bloco('flexpg_oque_texto')) ?></p>
 <?php endif; ?>
           <ul class="checklist reveal">
-            <li>A mesma madeira e o mesmo prego galvanizado das casas chave na mão</li>
+            <li>Excelência nos materiais, independente do projeto que você escolher</li>
             <li>Montagem pela equipe que constrói casas Castello desde 2014</li>
             <li>Cinco modelos com planta e medidas definidas</li>
             <li>Forro à nível e limpeza de obra inclusos</li>
@@ -144,7 +144,7 @@ $flex_faq     = faq('flex');
 
       <div class="depois__grid">
         <div class="depois__item reveal"><strong>Elétrica e hidráulica</strong>Fiação, pontos, tubulação, louças e o balcão do banheiro.</div>
-        <div class="depois__item reveal"><strong>Vidros das esquadrias</strong>As janelas vão instaladas. O vidro entra com você.</div>
+        <div class="depois__item reveal"><strong>Vidros das esquadrias</strong>As janelas vão instaladas. O vidro é por sua conta.</div>
         <div class="depois__item reveal"><strong>Revestimento e pintura</strong>Cerâmica, azulejo e a pintura interna e externa.</div>
         <div class="depois__item reveal"><strong>Fossa e sumidouro</strong>Ligação de esgoto e de água no terreno.</div>
       </div>
@@ -187,14 +187,14 @@ $flex_faq     = faq('flex');
       <div class="section__head">
         <span class="eyebrow eyebrow--light reveal">Por que a Flex</span>
         <h2 class="section__title ntitulo reveal"><span class="ntitulo__num">45</span><span class="ntitulo__resto">dias e a<br>casa é sua.</span></h2>
-        <p class="section__lead reveal">A Castello Flex encurta a parte difícil da obra. O que costuma levar meses de canteiro fica pronto num prazo curto, com a estrutura fechada e a casa protegida.</p>
+        <p class="section__lead reveal">Mais agilidade na construção, com a qualidade que o seu projeto merece!</p>
       </div>
 
       <div class="bene__grid">
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span>
           <h3>Prazo garantido em contrato</h3>
-          <p>Da assinatura à entrega da casa montada e fechada no seu terreno, com os prazos e as condições definidos em contrato.</p>
+          <p>Da assinatura do contrato até a entrega da casa, honramos os prazos estabelecidos.</p>
         </article>
         <article class="bene reveal">
           <span class="bene__ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h13v5H4zM17 6.5h3v5l-8 1.5V16M10.5 16h3v5h-3z"/></svg></span>
@@ -258,7 +258,7 @@ $flex_faq     = faq('flex');
 
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
-  <script src="js/main.js?v=21"></script>
+  <script src="js/main.js?v=23"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>
