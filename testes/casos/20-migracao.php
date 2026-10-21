@@ -73,14 +73,16 @@ teste('as fotos dos modelos foram copiadas para uploads e o caminho e relativo',
 teste('o portfolio trouxe as seis casas entregues e os doze projetos da Casa Pronta, com categoria e alt', function (): void {
     $lista = portfolio();
     igual(18, count($lista));
-    igual('Sobrado à beira da água', $lista[0]['titulo']);
-    igual('Beira da água', $lista[0]['categoria']);
-    igual('Sobrado de madeira à beira da água com vista para a ponte', $lista[0]['foto_alt']);
-    igual('Chalé com varanda', $lista[5]['titulo']);
-    igual('uploads/portfolio/casa-8-ia.webp', $lista[3]['foto']);
-    igual('Projeto 1', $lista[6]['titulo']);
-    igual('Ajustar/SC', $lista[6]['categoria'], 'a cidade fica para o cliente ajustar');
-    igual('uploads/portfolio/projeto-12-ia.webp', $lista[17]['foto']);
+    $titulos = array_column($lista, 'titulo');
+    igual(['Casa de campo com varanda', 'Chalé com varanda', 'Projeto 1', 'Projeto 2'], array_slice($titulos, 0, 4), 'ordem alfabetica, com numero em ordem natural');
+    igual('Projeto 12', $titulos[13], 'Projeto 10, 11 e 12 depois do 9');
+    igual('Varanda com pergolado', $titulos[17]);
+    $por = array_column($lista, null, 'titulo');
+    igual('Beira da água', $por['Sobrado à beira da água']['categoria']);
+    igual('Sobrado de madeira à beira da água com vista para a ponte', $por['Sobrado à beira da água']['foto_alt']);
+    igual('uploads/portfolio/casa-8-ia.webp', $por['Casa de campo com varanda']['foto']);
+    igual('Ajustar/SC', $por['Projeto 1']['categoria'], 'a cidade fica para o cliente ajustar');
+    igual('uploads/portfolio/projeto-12-ia.webp', $por['Projeto 12']['foto']);
 });
 
 teste('as 14 avaliacoes reais do Google chegaram inteiras', function (): void {

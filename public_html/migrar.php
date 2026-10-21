@@ -312,6 +312,7 @@ function migrar(): array
             $st->execute([$titulo, $categoria, migrar_copiar($foto, 'portfolio'), $alt, $i + 1]);
             $conta['portfolio']++;
         }
+        migrar_ordenar_portfolio_alfabetico();
     }
 
     if (migrar_vazia('avaliacoes')) {
@@ -775,6 +776,34 @@ function migrar_atualizar_2026_10_depoimentos(): array
     }
     migrar_inserir_videos_depoimentos();
     return ['depoimentos inseridos: ' . count(MIGRAR_VIDEOS_DEPOIMENTOS)];
+}
+
+/**
+ * Portfolio em ordem alfabetica pelo titulo (pedido de 2026-10-21), com numero
+ * em ordem natural ("Projeto 2" antes de "Projeto 10") e sem pesar acento.
+ * Grava em portfolio.ordem: o painel mostra a mesma sequencia e o cliente
+ * continua podendo arrastar depois. Rodar de novo nao muda nada.
+ *
+ * @return array<int,string>
+ */
+function migrar_ordenar_portfolio_alfabetico(): array
+{
+    $pdo = db();
+    $linhas = $pdo->query('SELECT id, titulo FROM portfolio')->fetchAll();
+    $chave = static function (string $t): string {
+        $sem = strtr($t, ['á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'é' => 'e', 'ê' => 'e', 'í' => 'i',
+                          'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ú' => 'u', 'ç' => 'c',
+                          'Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U', 'Ç' => 'C']);
+        return mb_strtolower($sem);
+    };
+    usort($linhas, static fn ($a, $b) => strnatcmp($chave((string) $a['titulo']), $chave((string) $b['titulo'])));
+    $st = $pdo->prepare('UPDATE portfolio SET ordem = ? WHERE id = ? AND ordem <> ?');
+    $n = 0;
+    foreach ($linhas as $i => $l) {
+        $st->execute([$i + 1, $l['id'], $i + 1]);
+        $n += $st->rowCount();
+    }
+    return ['portfolio em ordem alfabetica: ' . $n . ' mudaram de lugar'];
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

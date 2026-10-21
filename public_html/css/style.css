@@ -672,6 +672,9 @@ body.drawer-open .wpp-float,body.modal-open .wpp-float{opacity:0;visibility:hidd
 .insta__head{max-width:760px;margin-inline:auto;text-align:center;margin-bottom:0}
 .insta__head .eyebrow{justify-content:center}
 .insta__head .section__lead{margin-inline:auto}
+.insta__head--largo{max-width:1000px}
+/* depoimentos: a faixa vermelha encosta direto, sem a folga do recorte */
+.insta--antes-cta{padding-bottom:clamp(8px,2vw,24px)}
 
 /* botão Instagram (gradiente da marca IG) */
 .btn--ig{margin-top:28px;color:#fff;border:0;background:linear-gradient(105deg,#feda75,#fa7e1e 28%,#d62976 58%,#962fbf 80%,#4f5bd5);box-shadow:0 14px 34px -14px rgba(214,41,118,.7)}
@@ -1301,6 +1304,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .facet--white::before{background:#fff}
 /* faixa de CTA logo depois de uma seção clara: o recorte do telhado sai em bone, não em sand */
 .cta-band--bone::before{background:var(--bone)}
+.cta-band--ink::before{background:var(--ink)}
 
 /* ---------- Home: resumo da Casa Pronta (texto + foto do modelo em destaque) ---------- */
 .prontahome .checklist{margin-top:26px}

@@ -39,7 +39,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=37" />
+  <link rel="stylesheet" href="css/style.css?v=39" />
 </head>
 <body>
 
@@ -63,12 +63,12 @@ require_once __DIR__ . '/lib/conteudo.php';
   <div class="facet facet--ink" aria-hidden="true"></div>
 
   <!-- ============ DEPOIMENTOS EM VÍDEO (mesma trilha do Instagram da home) ============ -->
-  <section class="section insta" id="videos" aria-label="Depoimentos em vídeo">
+  <section class="section insta insta--antes-cta" id="videos" aria-label="Depoimentos em vídeo">
     <div class="insta__grid-bg" aria-hidden="true"></div>
     <div class="container">
-      <div class="section__head insta__head">
+      <div class="section__head insta__head insta__head--largo">
         <span class="eyebrow eyebrow--light reveal">Depoimentos em vídeo</span>
-        <h2 class="section__title reveal">Sonhos realizados, contados por quem viveu.</h2>
+        <h2 class="section__title reveal">Sonhos realizados,<br>contados por quem viveu.</h2>
         <p class="section__lead reveal">Toque em um vídeo para assistir em tela cheia, com som.</p>
         <a href="<?= e(CASTELLO_MAPA_LINK) ?>" class="btn btn--ghost-light reveal" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>
@@ -80,11 +80,8 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php $videos_contexto = 'depoimentos'; $videos_limite = 0; include __DIR__ . '/partials/videos.php'; ?>
   </section>
 
-  <!-- faceta: volta ao claro para a chamada final -->
-  <div class="facet facet--bone" aria-hidden="true"></div>
-
-  <!-- ============ CTA BAND ============ -->
-  <section class="cta-band cta-band--bone cta-band--largo" id="orcamento">
+  <!-- ============ CTA BAND (o recorte do topo sai direto do escuro dos videos) ============ -->
+  <section class="cta-band cta-band--ink cta-band--largo" id="orcamento">
     <div class="container cta-band__inner">
       <div class="reveal">
         <h2>A próxima história pode ser a sua.</h2>
