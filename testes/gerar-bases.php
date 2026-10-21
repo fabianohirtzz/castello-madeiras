@@ -58,14 +58,16 @@ foreach ($paginas as $chave => $arquivo) {
 
 /*
  * Os fragmentos do 40-partials.php que mudaram desde o site estatico, com as
- * mesmas variaveis que o caso usa. Avaliacoes, videos e portfolio ficam de
- * fora de proposito: a referencia deles ainda e a do site atual, com os
- * caminhos antigos que o norm() do teste iguala.
+ * mesmas variaveis que o caso usa. Avaliacoes e videos ficam de fora de
+ * proposito: a referencia deles ainda e a do site atual, com os caminhos
+ * antigos que o norm() do teste iguala. O portfolio entrou em 2026-10-21,
+ * quando ganhou as fotos melhoradas e os 12 projetos da Casa Pronta.
  */
 $fragmentos = [
     'modelos' => ['modalidade' => 'pronta'],
     'faq'     => ['contexto' => 'geral'],
     'passos'  => ['contexto' => 'pronta'],
+    'portfolio' => [],
 ];
 
 foreach ($fragmentos as $nome => $vars) {

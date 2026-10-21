@@ -7,9 +7,9 @@ $contagens = banco_com_conteudo();
 
 teste('a migracao insere a quantidade exata de cada tabela', function () use ($contagens): void {
     igual(17, $contagens['modelos'], '12 Casa Pronta e 5 Flex');
-    igual(6,  $contagens['portfolio']);
+    igual(18, $contagens['portfolio'], '6 casas entregues e os 12 projetos da Casa Pronta');
     igual(14, $contagens['avaliacoes']);
-    igual(15, $contagens['videos'], '11 reels da home e 4 videos da Flex');
+    igual(24, $contagens['videos'], '11 reels da home, 4 videos da Flex e 9 depoimentos');
     igual(12, $contagens['faq'], '7 gerais e 5 da Flex');
     igual(27, $contagens['passos'], '20 etapas da Casa Pronta e 7 da Flex');
     igual(22, $contagens['blocos']);
@@ -70,14 +70,17 @@ teste('as fotos dos modelos foram copiadas para uploads e o caminho e relativo',
     igual('uploads/modelos/projeto-03.webp', modelos('pronta')[2]['foto']);
 });
 
-teste('o portfolio trouxe as seis casas entregues, com categoria e alt', function (): void {
+teste('o portfolio trouxe as seis casas entregues e os doze projetos da Casa Pronta, com categoria e alt', function (): void {
     $lista = portfolio();
-    igual(6, count($lista));
+    igual(18, count($lista));
     igual('Sobrado à beira da água', $lista[0]['titulo']);
     igual('Beira da água', $lista[0]['categoria']);
     igual('Sobrado de madeira à beira da água com vista para a ponte', $lista[0]['foto_alt']);
     igual('Chalé com varanda', $lista[5]['titulo']);
     igual('uploads/portfolio/casa-8-ia.webp', $lista[3]['foto']);
+    igual('Projeto 1', $lista[6]['titulo']);
+    igual('Ajustar/SC', $lista[6]['categoria'], 'a cidade fica para o cliente ajustar');
+    igual('uploads/portfolio/projeto-12-ia.webp', $lista[17]['foto']);
 });
 
 teste('as 14 avaliacoes reais do Google chegaram inteiras', function (): void {

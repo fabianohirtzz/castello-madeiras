@@ -1,7 +1,7 @@
 <?php
 /**
  * Cabecalho, menu e gaveta mobile. Espera: string $pagina
- * ('home', 'pronta', 'flex', 'portfolio' ou 'contato').
+ * ('home', 'pronta', 'flex', 'portfolio', 'depoimentos' ou 'contato').
  *
  * O menu lista so paginas, nunca ancora de secao: o site e multipagina e
  * cada link leva a um arquivo. A pagina atual recebe aria-current="page".
@@ -18,6 +18,7 @@ $ico = [
     'casa'    => '<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6"/>',
     'camadas' => '<path d="m12 3 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 16l9 5 9-5"/>',
     'foto'    => '<path d="M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.4"/>',
+    'video'   => '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.2v5.6l4.5-2.8z"/>',
     'fone'    => '<path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/>',
 ];
 
@@ -27,6 +28,7 @@ $menu = [
     ['pronta',    'casa-pronta.php', 'Casa Pronta',  'casa',    '',                ''],
     ['flex',      'flex.php',        'Castello Flex', 'camadas', 'nav__link--flex', 'Novo'],
     ['portfolio', 'portfolio.php',   'Portfólio',    'foto',    '',                ''],
+    ['depoimentos', 'depoimentos.php', 'Depoimentos', 'video',  '',                ''],
     ['contato',   'contato.php',     'Contato',      'fone',    '',                ''],
 ];
 ?>

@@ -15,7 +15,8 @@ require_once __DIR__ . '/../lib/conteudo.php';
 $pagina          = $pagina ?? 'home';
 $modal_flex      = $pagina === 'flex';
 $form_modalidade = $modal_flex ? 'flex' : 'pronta';
-$modal_videos    = count(videos());
+$modal_reels     = in_array($pagina, ['home', 'depoimentos'], true);
+$modal_videos    = $pagina === 'depoimentos' ? count(videos(0, 'depoimentos')) : count(videos());
 ?>
   <!-- ============ MODAL DE ORÇAMENTO ============ -->
   <div class="qmodal" id="quoteModal" hidden role="dialog" aria-modal="true" aria-labelledby="qmodalTitle">
@@ -46,7 +47,7 @@ $modal_videos    = count(videos());
     </div>
   </div>
 
-<?php if ($pagina === 'home'): ?>
+<?php if ($modal_reels): ?>
   <!-- ============ LIGHTBOX DOS REELS (tela cheia) ============ -->
   <div class="reelbox" id="reelbox" hidden role="dialog" aria-modal="true" aria-label="Vídeos do Instagram em tela cheia">
     <button class="reelbox__close" id="reelboxClose" type="button" aria-label="Fechar tela cheia">

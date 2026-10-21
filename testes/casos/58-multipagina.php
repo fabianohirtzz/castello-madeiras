@@ -20,6 +20,7 @@ const MULTI_PAGINAS = [
     'pronta'    => 'casa-pronta.php',
     'flex'      => 'flex.php',
     'portfolio' => 'portfolio.php',
+    'depoimentos' => 'depoimentos.php',
     'contato'   => 'contato.php',
 ];
 
@@ -52,12 +53,12 @@ teste('a nav de cada pagina tem os quatro links de pagina, o CTA e nenhuma ancor
         preg_match('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
         verdade(isset($m[1]), "$arquivo: bloco nav__links");
         preg_match_all('#<a href="([^"]+)"#', $m[1], $links);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $links[1], "$arquivo: links da nav");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $links[1], "$arquivo: links da nav");
         contem('class="btn btn--primary nav__cta" data-quote-open', $html, "$arquivo: CTA da nav");
 
         preg_match('#<div class="drawer" id="drawer"[^>]*>(.*?)</div>#s', $html, $g);
         preg_match_all('#<a href="([^"]+)"#', $g[1], $glinks);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $glinks[1], "$arquivo: links da gaveta");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $glinks[1], "$arquivo: links da gaveta");
         contem('data-quote-open>Pedir orçamento</button>', $g[1], "$arquivo: CTA da gaveta");
 
         // nenhum href com # dentro da nav, da gaveta ou do rodape
@@ -140,13 +141,13 @@ teste('casa-pronta.php traz os 12 projetos com preco, o incluso, a linha do temp
     contem('90 a 120 dias', $html);
 });
 
-teste('portfolio.php traz a grade com as seis casas cadastradas', function (): void {
+teste('portfolio.php traz a grade com as dezoito casas cadastradas', function (): void {
     $html = multi_pagina('portfolio.php');
     contem('class="pagehero"', $html);
     contem('id="galeria"', $html);
-    igual(6, substr_count($html, '<button class="galeria__item"'));
-    igual(6, preg_match_all('#<span class="galeria__eyebrow">[^<]+</span>#', $html));
-    igual(6, preg_match_all('#<span class="galeria__title">[^<]+</span>#', $html));
+    igual(18, substr_count($html, '<button class="galeria__item"'));
+    igual(18, preg_match_all('#<span class="galeria__eyebrow">[^<]+</span>#', $html));
+    igual(18, preg_match_all('#<span class="galeria__title">[^<]+</span>#', $html));
     contem('data-titulo="Sobrado à beira da água"', $html);
     contem('id="fotobox"', $html, 'a foto abre em tela cheia');
     nao_contem('accordion', $html, 'o acordeao antigo saiu');
@@ -154,7 +155,7 @@ teste('portfolio.php traz a grade com as seis casas cadastradas', function (): v
 
     // a grade cresce com o cadastro
     db()->exec("INSERT INTO portfolio (titulo, categoria, foto, foto_alt, ativo, ordem) VALUES ('Casa nova', 'Teste', 'uploads/portfolio/x.webp', 'Alt', 1, 99)");
-    igual(7, substr_count(render(site() . '/portfolio.php'), '<button class="galeria__item"'));
+    igual(19, substr_count(render(site() . '/portfolio.php'), '<button class="galeria__item"'));
     db()->exec("DELETE FROM portfolio WHERE titulo = 'Casa nova'");
 });
 
@@ -222,17 +223,17 @@ teste('cada pagina tem title, description, canonical e og proprios', function ()
         $canonicals[] = CASTELLO_URL . $caminho;
         verdade(str_contains($t[1], 'Castello'), "$arquivo: o title cita a marca");
     }
-    igual(5, count(array_unique($titles)), 'titles diferentes entre si');
-    igual(5, count(array_unique($descs)), 'descriptions diferentes entre si');
-    igual(5, count(array_unique($canonicals)), 'canonicals diferentes entre si');
+    igual(6, count(array_unique($titles)), 'titles diferentes entre si');
+    igual(6, count(array_unique($descs)), 'descriptions diferentes entre si');
+    igual(6, count(array_unique($canonicals)), 'canonicals diferentes entre si');
 });
 
-teste('o sitemap lista as cinco paginas e o robots continua apontando para ele', function (): void {
+teste('o sitemap lista as seis paginas e o robots continua apontando para ele', function (): void {
     $xml = (string) file_get_contents(site() . '/sitemap.xml');
-    foreach (['/', '/casa-pronta.php', '/flex.php', '/portfolio.php', '/contato.php'] as $caminho) {
+    foreach (['/', '/casa-pronta.php', '/flex.php', '/portfolio.php', '/depoimentos.php', '/contato.php'] as $caminho) {
         contem('<loc>' . CASTELLO_URL . $caminho . '</loc>', $xml, "sitemap sem $caminho");
     }
-    igual(5, substr_count($xml, '<url>'));
+    igual(6, substr_count($xml, '<url>'));
     verdade(simplexml_load_string($xml) !== false, 'sitemap e XML valido');
 
     $robots = (string) file_get_contents(site() . '/robots.txt');
@@ -295,4 +296,14 @@ teste('a pagina /link abre o formulario em popup e fica fora do Google', functio
     falso(is_dir(site() . '/link'), 'a pasta antiga /link saiu, senao ela ganha da regra');
     $sitemap = (string) file_get_contents(site() . '/sitemap.xml');
     nao_contem('/link', $sitemap);
+});
+
+teste('a pagina depoimentos mostra todos os videos de depoimento com a tela cheia', function (): void {
+    $html = multi_pagina('depoimentos.php');
+    igual(count(videos(0, 'depoimentos')), substr_count($html, 'class="ivid"'), 'um card por video de depoimento');
+    verdade(count(videos(0, 'depoimentos')) > 0, 'a migracao trouxe os depoimentos');
+    contem('id="instaRail"', $html);
+    contem('id="reelbox"', $html, 'a tela cheia dos videos vem junto');
+    contem('aria-current="page"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><rect', $html, 'o menu marca Depoimentos');
+    nao_contem('uploads/videos/insta-', $html, 'os reels do Instagram ficam so na home');
 });

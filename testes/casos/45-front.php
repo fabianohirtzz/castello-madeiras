@@ -34,11 +34,11 @@ teste('a nav lista so paginas, sem ancora, e o logo leva a home', function (): v
         preg_match_all('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
         verdade(isset($m[1][0]), "$chave: bloco de links");
         preg_match_all('#href="([^"]+)"#', $m[1][0], $hrefs);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $hrefs[1], "$chave: os cinco links de pagina, nesta ordem");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $hrefs[1], "$chave: os seis links de pagina, nesta ordem");
 
         preg_match_all('#<div class="drawer"[^>]*>(.*?)</div>#s', $html, $g);
         preg_match_all('#href="([^"]+)"#', $g[1][0], $ghrefs);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'contato.php'], $ghrefs[1], "$chave: a gaveta tem os mesmos cinco links");
+        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $ghrefs[1], "$chave: a gaveta tem os mesmos seis links");
 
         nao_contem('href="#', $html, "$chave: nenhuma ancora no menu");
         contem('href="index.php" class="nav__logo"', $html, "$chave: o logo leva a home");

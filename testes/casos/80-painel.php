@@ -87,8 +87,8 @@ teste('painel_abas monta o menu com as telas de conteudo', function (): void {
 teste('painel_listar mostra tambem o que esta desativado', function (): void {
     db()->exec("UPDATE portfolio SET ativo = 0 WHERE titulo = 'Chalé com varanda'");
 
-    igual(5, count(portfolio()), 'o site so mostra os ativos');
-    igual(6, count(painel_listar('portfolio')), 'o painel mostra todos');
+    igual(17, count(portfolio()), 'o site so mostra os ativos');
+    igual(18, count(painel_listar('portfolio')), 'o painel mostra todos');
 
     db()->exec("UPDATE portfolio SET ativo = 1 WHERE titulo = 'Chalé com varanda'");
 });

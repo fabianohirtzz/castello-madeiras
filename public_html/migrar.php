@@ -252,6 +252,28 @@ function migrar_inserir_modelo(array $m, int $ordem): void
 }
 
 /** Insere os videos da galeria da Flex, copiando arquivo e capa para uploads/. */
+/** Depoimentos em video de clientes (Instagram da Castello, 2026-10-21). */
+const MIGRAR_VIDEOS_DEPOIMENTOS = [
+    ['videos-depoimentos/depo-01.mp4', 'videos-depoimentos/depo-01.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-02.mp4', 'videos-depoimentos/depo-02.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-03.mp4', 'videos-depoimentos/depo-03.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-04.mp4', 'videos-depoimentos/depo-04.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-05.mp4', 'videos-depoimentos/depo-05.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-06.mp4', 'videos-depoimentos/depo-06.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-07.mp4', 'videos-depoimentos/depo-07.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-08.mp4', 'videos-depoimentos/depo-08.jpg', 'Depoimento de cliente Castello'],
+    ['videos-depoimentos/depo-09.mp4', 'videos-depoimentos/depo-09.jpg', 'Depoimento de cliente Castello'],
+];
+
+/** Insere os videos de depoimento na pagina Depoimentos, copiando para uploads/. */
+function migrar_inserir_videos_depoimentos(): void
+{
+    $st = db()->prepare("INSERT INTO videos (arquivo, poster, legenda, contexto, ativo, ordem) VALUES (?, ?, ?, 'depoimentos', 1, ?)");
+    foreach (MIGRAR_VIDEOS_DEPOIMENTOS as $i => [$arquivo, $poster, $legenda]) {
+        $st->execute([migrar_copiar($arquivo, 'videos'), migrar_copiar($poster, 'videos'), $legenda, $i + 1]);
+    }
+}
+
 function migrar_inserir_videos_flex(): void
 {
     $st = db()->prepare("INSERT INTO videos (arquivo, poster, legenda, contexto, ativo, ordem) VALUES (?, ?, ?, 'flex', 1, ?)");
@@ -286,7 +308,7 @@ function migrar(): array
         $st = db()->prepare(
             'INSERT INTO portfolio (titulo, categoria, foto, foto_alt, ativo, ordem) VALUES (?, ?, ?, ?, 1, ?)'
         );
-        foreach (MIGRAR_PORTFOLIO as $i => [$titulo, $categoria, $foto, $alt]) {
+        foreach (array_merge(MIGRAR_PORTFOLIO, migrar_portfolio_catalogo()) as $i => [$titulo, $categoria, $foto, $alt]) {
             $st->execute([$titulo, $categoria, migrar_copiar($foto, 'portfolio'), $alt, $i + 1]);
             $conta['portfolio']++;
         }
@@ -321,6 +343,11 @@ function migrar(): array
     if ((int) db()->query("SELECT COUNT(*) FROM videos WHERE contexto = 'flex'")->fetchColumn() === 0) {
         migrar_inserir_videos_flex();
         $conta['videos'] += count(MIGRAR_VIDEOS_FLEX);
+    }
+
+    if ((int) db()->query("SELECT COUNT(*) FROM videos WHERE contexto = 'depoimentos'")->fetchColumn() === 0) {
+        migrar_inserir_videos_depoimentos();
+        $conta['videos'] += count(MIGRAR_VIDEOS_DEPOIMENTOS);
     }
 
     if (migrar_vazia('faq')) {
@@ -691,6 +718,63 @@ function migrar_atualizar_2026_10_portfolio(): array
         $log[] = 'portfolio ' . basename($foto) . ': ' . $st->rowCount();
     }
     return $log;
+}
+
+/**
+ * As fotos dos 12 projetos da Casa Pronta tambem entram no portfolio
+ * (pedido de 2026-10-21), na versao melhorada com IA. A cidade ainda nao veio:
+ * a categoria fica "Ajustar/SC" para o cliente trocar pelo painel.
+ *
+ * @return array<int,array{0:string,1:string,2:string,3:string}>
+ */
+function migrar_portfolio_catalogo(): array
+{
+    $lista = [];
+    foreach (MIGRAR_MODELOS as $m) {
+        if ($m['modalidade'] === 'pronta') {
+            $lista[] = [$m['nome'], 'Ajustar/SC', str_replace('.webp', '-ia.webp', $m['foto']), $m['alt']];
+        }
+    }
+    return $lista;
+}
+
+/**
+ * Leva as fotos do catalogo da Casa Pronta a um portfolio que ja existe, no
+ * fim da lista. Uma vez so: foto que ja esta no portfolio nao entra de novo.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_portfolio_catalogo(): array
+{
+    $pdo = db();
+    $existe = $pdo->prepare('SELECT COUNT(*) FROM portfolio WHERE foto = ?');
+    $st = $pdo->prepare('INSERT INTO portfolio (titulo, categoria, foto, foto_alt, ativo, ordem) VALUES (?, ?, ?, ?, 1, ?)');
+    $ordem = (int) $pdo->query('SELECT COALESCE(MAX(ordem), 0) FROM portfolio')->fetchColumn();
+    $n = 0;
+    foreach (migrar_portfolio_catalogo() as [$titulo, $categoria, $foto, $alt]) {
+        $existe->execute(['uploads/portfolio/' . basename($foto)]);
+        if ((int) $existe->fetchColumn() > 0) {
+            continue;
+        }
+        $st->execute([$titulo, $categoria, migrar_copiar($foto, 'portfolio'), $alt, ++$ordem]);
+        $n++;
+    }
+    return ['casas prontas no portfolio: ' . $n];
+}
+
+/**
+ * Pagina Depoimentos (2026-10-21): os videos de depoimento entram uma vez so;
+ * se ja existe algum video com contexto depoimentos, nada muda.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_depoimentos(): array
+{
+    if ((int) db()->query("SELECT COUNT(*) FROM videos WHERE contexto = 'depoimentos'")->fetchColumn() > 0) {
+        return ['depoimentos: ja existem, nada mudou'];
+    }
+    migrar_inserir_videos_depoimentos();
+    return ['depoimentos inseridos: ' . count(MIGRAR_VIDEOS_DEPOIMENTOS)];
 }
 
 /** Cria o unico usuario do painel. Devolve false se o login ja existia. */

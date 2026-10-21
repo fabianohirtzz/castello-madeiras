@@ -86,12 +86,12 @@ function painel_tabelas(): array
             'filtro'    => [
                 'coluna' => 'contexto',
                 'rotulo' => 'Onde aparece',
-                'opcoes' => ['instagram' => 'Home, Nosso Instagram', 'flex' => 'Página Castello Flex'],
+                'opcoes' => ['instagram' => 'Home, Nosso Instagram', 'flex' => 'Página Castello Flex', 'depoimentos' => 'Página Depoimentos'],
                 'padrao' => 'instagram',
             ],
             'campos'    => [
                 'contexto' => ['rotulo' => 'Onde aparece', 'tipo' => 'selecao', 'obrigatorio' => true,
-                               'opcoes' => ['instagram' => 'Home, Nosso Instagram', 'flex' => 'Página Castello Flex']],
+                               'opcoes' => ['instagram' => 'Home, Nosso Instagram', 'flex' => 'Página Castello Flex', 'depoimentos' => 'Página Depoimentos']],
                 'arquivo' => ['rotulo' => 'Vídeo em MP4', 'tipo' => 'video', 'pasta' => 'videos', 'obrigatorio' => true],
                 'poster'  => ['rotulo' => 'Capa do vídeo', 'tipo' => 'imagem', 'pasta' => 'videos',
                               'ajuda' => 'A imagem que aparece antes de tocar'],
