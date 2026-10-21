@@ -41,11 +41,11 @@ Painel: **https://castello.tohospedando.com.br/painel/**. O login é `castello`;
 ## Vídeo 3. Colocar uma casa entregue no Portfólio (2 min)
 
 1. Menu **Portfólio** → **Adicionar casa entregue**.
-2. **Título**: como "Sobrado com sacada".
-3. **Categoria**: a linha pequena acima do título. Nas casas novas use **cidade/estado**, como "Tubarão/SC". Os 12 projetos da Casa Pronta entraram com "Ajustar/SC": edite cada um e troque pela cidade certa.
-4. **Foto**: de preferência **na vertical** (a grade do portfólio usa fotos em pé), boa luz, casa inteira no quadro, até 5 MB.
+2. **Título**: a cidade e o estado, como "Tubarão - SC". As 12 casas da Casa Pronta entraram como "Ajustar - SC": edite cada uma e troque pela cidade certa.
+3. **Categoria**: pode deixar vazia (é a linha pequena acima do título).
+4. **Foto**: de preferência **na horizontal** (a grade do portfólio usa fotos deitadas), boa luz, casa inteira no quadro, até 5 MB.
 5. **Descrição da foto**: contar o que aparece ("Sobrado de madeira com varanda e gramado na frente"). Ajuda o Google e quem usa leitor de tela.
-6. **Salvar**, mostrar no site, arrastar na lista para mudar a posição.
+6. **Salvar** e mostrar no site. Não precisa ordenar: o portfólio fica sempre em **ordem alfabética pelo título**, então a casa nova (ou a cidade trocada) já entra no lugar certo. Por isso essa lista não tem a alça de arrastar.
 
 > Dica de foto: celular na horizontal da casa, sem zoom digital, de manhã ou fim de tarde. Foto baixada do Instagram sai mole e pixelada; peça o arquivo original de quem fotografou.
 
@@ -102,7 +102,7 @@ Mostrar os campos que a equipe mais vai mexer:
 
 | Pode mexer à vontade | Mexer com cuidado | Não mexer (pedir para a Freela) |
 |---|---|---|
-| Vídeos, Portfólio, Avaliações e a ordem de tudo | **Preços e prazos** dos modelos e da tela Textos: o site inteiro acompanha | **Configurações → CRM** (Funil, Etapa, Origem, Categoria): um número errado faz os pedidos sumirem da visão do comercial no Agendor, sem aviso |
+| Vídeos, Portfólio, Avaliações e a ordem de tudo (menos o Portfólio, que é alfabético) | **Preços e prazos** dos modelos e da tela Textos: o site inteiro acompanha | **Configurações → CRM** (Funil, Etapa, Origem, Categoria): um número errado faz os pedidos sumirem da visão do comercial no Agendor, sem aviso |
 | Fotos, plantas e descrições dos modelos | **Quantos vídeos aparecem na home**: mais vídeos deixam a página mais lenta | **E-mail que recebe os pedidos**: só trocar com a Freela por perto, para testar depois |
 | Perguntas e respostas do FAQ | **Desativar** modelos e etapas: some do site na hora | Textos que **não estão** na tela Textos (títulos e frases fixos das páginas, rodapé, endereço, menu): ficam no código |
 | Etapas do passo a passo e suas fotos | | Layout, cores, ordem das seções, formulário de orçamento |
