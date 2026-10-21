@@ -58,9 +58,36 @@ function modelos(string $modalidade): array
     return $st->fetchAll();
 }
 
+/**
+ * Portfolio em ordem alfabetica automatica pelo titulo (pedido de
+ * 2026-10-21): a cidade que o cliente digita no painel ja entra no lugar
+ * certo. Titulos iguais seguem a ordem de cadastro.
+ */
 function portfolio(): array
 {
-    return db()->query('SELECT * FROM portfolio WHERE ativo = 1 ORDER BY ordem ASC, id ASC')->fetchAll();
+    return ordem_alfabetica(db()->query('SELECT * FROM portfolio WHERE ativo = 1 ORDER BY ordem ASC, id ASC')->fetchAll(), 'titulo');
+}
+
+/**
+ * Ordena linhas pelo campo, sem pesar acento nem maiuscula e com numero em
+ * ordem natural ("Projeto 2" antes de "Projeto 10"). Empate fica na ordem
+ * em que veio (o sort do PHP 8 e estavel).
+ *
+ * @param array<int,array<string,mixed>> $linhas
+ * @return array<int,array<string,mixed>>
+ */
+function ordem_alfabetica(array $linhas, string $campo): array
+{
+    $chave = static function (string $t): string {
+        return mb_strtolower(strtr($t, [
+            'á' => 'a', 'à' => 'a', 'â' => 'a', 'ã' => 'a', 'é' => 'e', 'ê' => 'e', 'í' => 'i',
+            'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ú' => 'u', 'ü' => 'u', 'ç' => 'c',
+            'Á' => 'A', 'À' => 'A', 'Â' => 'A', 'Ã' => 'A', 'É' => 'E', 'Ê' => 'E', 'Í' => 'I',
+            'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ú' => 'U', 'Ç' => 'C',
+        ]));
+    };
+    usort($linhas, static fn ($a, $b) => strnatcmp($chave((string) $a[$campo]), $chave((string) $b[$campo])));
+    return $linhas;
 }
 
 function avaliacoes(): array

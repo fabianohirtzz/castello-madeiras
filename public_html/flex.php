@@ -61,7 +61,7 @@ $flex_faq     = faq('flex');
 
     <div class="container">
       <span class="eyebrow eyebrow--light reveal">Lançamento Castello Flex</span>
-      <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.')) ?></h1>
+      <h1 class="pagehero__title reveal"><?= realce(bloco('flexpg_hero_titulo', 'A sua casa de madeira *montada e fechada* no seu terreno em *45 dias*.')) ?></h1>
 <?php if (bloco('flexpg_hero_texto') !== ''): ?>
       <p class="pagehero__lead pagehero__lead--flex reveal"><?= e(bloco('flexpg_hero_texto')) ?></p>
 <?php endif; ?>

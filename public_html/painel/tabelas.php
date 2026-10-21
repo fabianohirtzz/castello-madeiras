@@ -58,6 +58,7 @@ function painel_tabelas(): array
             'rotulo'    => 'Portfólio',
             'singular'  => 'casa entregue',
             'miniatura' => 'foto',
+            'alfabetica' => 'titulo',
             'resumo'    => ['titulo' => 'Título', 'categoria' => 'Categoria'],
             'campos'    => [
                 'titulo'    => ['rotulo' => 'Título', 'tipo' => 'texto', 'obrigatorio' => true],
@@ -177,7 +178,8 @@ function painel_listar(string $chave, ?string $filtro = null): array
         return $st->fetchAll();
     }
 
-    return db()->query('SELECT * FROM ' . $chave . ' ORDER BY ordem ASC, id ASC')->fetchAll();
+    $linhas = db()->query('SELECT * FROM ' . $chave . ' ORDER BY ordem ASC, id ASC')->fetchAll();
+    return isset($def['alfabetica']) ? ordem_alfabetica($linhas, $def['alfabetica']) : $linhas;
 }
 
 /** Uma linha pelo id, ou null. */

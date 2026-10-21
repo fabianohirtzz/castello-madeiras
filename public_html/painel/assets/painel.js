@@ -44,7 +44,7 @@
   'use strict';
 
   var lista = document.getElementById('pLista');
-  if (!lista) { return; }
+  if (!lista || lista.hasAttribute('data-fixa')) { return; }   // lista em ordem alfabetica: nao arrasta
 
   var tabela = lista.getAttribute('data-tabela') || '';
   var csrf   = lista.getAttribute('data-csrf') || '';

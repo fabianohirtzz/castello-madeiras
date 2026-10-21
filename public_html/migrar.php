@@ -199,7 +199,7 @@ const MIGRAR_BLOCOS = [
     ['flex_prazo', 'Prazo da Castello Flex', '45 dias', 'texto'],
     ['flex_video', 'Vídeo explicativo da Flex', 'uploads/videos/insta-12.mp4', 'texto'],
     ['flex_video_poster', 'Capa do vídeo da Flex', 'uploads/videos/insta-12.jpg', 'texto'],
-    ['flexpg_hero_titulo', 'Título do topo da página Flex', 'A sua casa de madeira *montada e fechada* no seu terreno em 45 dias.', 'texto'],
+    ['flexpg_hero_titulo', 'Título do topo da página Flex', 'A sua casa de madeira *montada e fechada* no seu terreno em *45 dias*.', 'texto'],
     ['flexpg_hero_texto', 'Texto do topo da página Flex', 'Na Castello Flex, você escolhe entre 5 modelos, com plantas e medidas definidas, sem possibilidade de personalização. Nós entregamos a estrutura montada e fechada, e você realiza os acabamentos no seu tempo.', 'texto_longo'],
     ['flexpg_oque_titulo', 'Título de o que é a Castello Flex', 'A qualidade da Castello, com a liberdade de construir no seu ritmo.', 'texto'],
     ['flexpg_oque_texto', 'Texto de o que é a Castello Flex', 'A Castello entrega sua casa de madeira fechada: fundação com laje aérea, estrutura de madeira, cobertura, portas e janelas. Daí em diante você escolhe quando e como fazer o acabamento.', 'texto_longo'],
@@ -585,7 +585,7 @@ function migrar_atualizar_2026_10_textos(): array
     $log = [];
     $st = db()->prepare('UPDATE blocos SET valor = ? WHERE chave = ? AND valor <> ?');
     foreach (MIGRAR_BLOCOS as [$chave, , $valor]) {
-        if (in_array($chave, ['flex_titulo', 'flex_texto', 'hero_titulo', 'hero_subtitulo'], true)) {
+        if (in_array($chave, ['flex_titulo', 'flex_texto', 'hero_titulo', 'hero_subtitulo', 'flexpg_hero_titulo'], true)) {
             $st->execute([$valor, $chave, $valor]);
             $log[] = 'bloco ' . $chave . ': ' . $st->rowCount();
         }
@@ -733,7 +733,7 @@ function migrar_portfolio_catalogo(): array
     $lista = [];
     foreach (MIGRAR_MODELOS as $m) {
         if ($m['modalidade'] === 'pronta') {
-            $lista[] = [$m['nome'], 'Ajustar/SC', str_replace('.webp', '-ia.webp', $m['foto']), $m['alt']];
+            $lista[] = ['Ajustar - SC', '', str_replace('.webp', '-ia.webp', $m['foto']), $m['alt']];
         }
     }
     return $lista;
@@ -761,6 +761,19 @@ function migrar_atualizar_2026_10_portfolio_catalogo(): array
         $n++;
     }
     return ['casas prontas no portfolio: ' . $n];
+}
+
+/**
+ * As 12 casas prontas do portfolio no padrao que o cliente usa no painel:
+ * cidade no titulo ("Ajustar - SC" ate ele trocar) e categoria vazia. So
+ * mexe nas que ainda estao como entraram ("Projeto N" + "Ajustar/SC").
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_portfolio_cidade(): array
+{
+    $n = db()->exec("UPDATE portfolio SET titulo = 'Ajustar - SC', categoria = '' WHERE categoria = 'Ajustar/SC' AND titulo LIKE 'Projeto %'");
+    return ['casas prontas no padrao cidade - SC: ' . $n];
 }
 
 /**

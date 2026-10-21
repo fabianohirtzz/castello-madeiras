@@ -52,7 +52,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
     <div class="container">
       <span class="eyebrow eyebrow--light reveal">Casas reais entregues</span>
-      <h1 class="pagehero__title reveal">Projetos que já viraram <span class="hl">lar</span>.</h1>
+      <h1 class="pagehero__title reveal">Projetos que já <span class="hl">viraram</span> <span class="hl">lar</span>.</h1>
       <p class="pagehero__lead pagehero__lead--largo reveal">Cada casa desta página foi construída e entregue pela Castello para famílias de Santa Catarina e região. Desde 2014, já são mais de 19.000&nbsp;m² construídos.</p>
     </div>
   </section>

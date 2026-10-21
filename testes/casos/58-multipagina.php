@@ -146,7 +146,7 @@ teste('portfolio.php traz a grade com as dezoito casas cadastradas', function ()
     contem('class="pagehero"', $html);
     contem('id="galeria"', $html);
     igual(18, substr_count($html, '<button class="galeria__item"'));
-    igual(18, preg_match_all('#<span class="galeria__eyebrow">[^<]+</span>#', $html));
+    igual(6, preg_match_all('#<span class="galeria__eyebrow">[^<]+</span>#', $html), 'as casas prontas entram sem categoria, so com a cidade no titulo');
     igual(18, preg_match_all('#<span class="galeria__title">[^<]+</span>#', $html));
     contem('data-titulo="Sobrado à beira da água"', $html);
     contem('id="fotobox"', $html, 'a foto abre em tela cheia');

@@ -62,11 +62,16 @@ teste('modelos filtra por modalidade, esconde inativo e respeita a ordem', funct
     igual('Flexinha', modelos('flex')[0]['nome']);
 });
 
-teste('portfolio esconde inativo e respeita a ordem', function (): void {
+teste('portfolio esconde inativo e sai em ordem alfabetica pelo titulo', function (): void {
     $lista = portfolio();
     igual(2, count($lista));
-    igual('Casa um', $lista[0]['titulo']);
-    igual('Casa dois', $lista[1]['titulo']);
+    igual('Casa dois', $lista[0]['titulo']);
+    igual('Casa um', $lista[1]['titulo']);
+});
+
+teste('ordem_alfabetica ignora acento e maiuscula e poe numero em ordem natural', function (): void {
+    $linhas = array_map(fn ($t) => ['titulo' => $t], ['Projeto 10', 'tubarão - SC', 'Projeto 2', 'Ágata', 'Braço do Norte - SC']);
+    igual(['Ágata', 'Braço do Norte - SC', 'Projeto 2', 'Projeto 10', 'tubarão - SC'], array_column(ordem_alfabetica($linhas, 'titulo'), 'titulo'));
 });
 
 teste('avaliacoes esconde inativo e respeita a ordem', function (): void {

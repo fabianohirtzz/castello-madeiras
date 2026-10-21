@@ -24,6 +24,9 @@ foreach ($linhas as $linha) {
   A home mostra os <?= e((string) config_ler('videos_na_home', '8')) ?> primeiros da ordem abaixo.
   Para trocar quais aparecem, arraste os que você quer para o topo.
 <?php endif; ?>
+<?php if (isset($def['alfabetica'])): ?>
+  A ordem é alfabética pelo título, sozinha: uma casa nova ou uma cidade trocada já entra no lugar certo.
+<?php endif; ?>
 </p>
 
 <div class="p-barra">
@@ -43,13 +46,15 @@ foreach ($linhas as $linha) {
 <p class="p-sub">Nada cadastrado aqui ainda. Toque em Adicionar <?= e($def['singular']) ?> para começar.</p>
 <?php else: ?>
 <p class="p-aviso" id="pOrdemAviso" role="status" hidden></p>
-<ul class="p-lista" id="pLista" data-tabela="<?= e($tela) ?>" data-csrf="<?= e(csrf_token()) ?>">
+<ul class="p-lista<?= isset($def['alfabetica']) ? ' p-lista--fixa' : '' ?>" id="pLista"<?= isset($def['alfabetica']) ? ' data-fixa' : '' ?> data-tabela="<?= e($tela) ?>" data-csrf="<?= e(csrf_token()) ?>">
 <?php foreach ($linhas as $linha):
     $inativo = (int) $linha['ativo'] !== 1;
     $mini    = isset($def['miniatura']) ? (string) ($linha[$def['miniatura']] ?? '') : '';
 ?>
   <li class="p-item<?= $inativo ? ' is-inativo' : '' ?>" data-id="<?= (int) $linha['id'] ?>">
+<?php if (!isset($def['alfabetica'])): ?>
     <span class="p-pega" title="Arraste para mudar a ordem" aria-hidden="true">≡</span>
+<?php endif; ?>
 
 <?php if ($mini !== ''): ?>
     <img class="p-mini" src="../<?= e($mini) ?>" alt="" loading="lazy" />
