@@ -28,9 +28,9 @@ O menu da esquerda tem uma tela para cada parte do site, em dois grupos. **Conte
 | **Modelos** *(Conteúdo)* | Os cards de casa com área, parede e preço. Tem um filtro para Casa Pronta e outro para Castello Flex. |
 | **Portfólio** *(Conteúdo)* | A galeria de casas entregues. |
 | **Avaliações** *(Conteúdo)* | Os depoimentos do Google que rolam na home. |
-| **Vídeos** *(Conteúdo)* | Os vídeos do Instagram na home. |
-| **FAQ** *(Conteúdo)* | As perguntas frequentes, da home (geral) e da página Flex. |
-| **Passo a passo** *(Conteúdo)* | O passo a passo, da Casa Pronta (com foto) e da Flex (sem foto). |
+| **Vídeos** *(Conteúdo)* | Os vídeos da home (faixa Nosso Instagram) e a galeria de vídeos da página Castello Flex. Escolha no filtro **Onde aparece**. |
+| **FAQ** *(Conteúdo)* | As perguntas frequentes da home e da Casa Pronta (filtro **Home**) e da página Flex. |
+| **Passo a passo** *(Conteúdo)* | As etapas com foto da Casa Pronta e da Castello Flex. |
 | **Textos** *(Sistema)* | Títulos e textos avulsos: topo da home, bloco de modalidades, prazos, página Flex. |
 | **Configurações** *(Sistema)* | E-mail que recebe os pedidos, quantos vídeos aparecem na home e o CRM. |
 | **Backup** *(Sistema)* | Baixa uma cópia de tudo. |
@@ -50,11 +50,13 @@ No celular o menu fica escondido: toque no botão de três risquinhos, no canto 
    - **Modalidade**: Casa Pronta ou Castello Flex.
    - **Nome do modelo**: como Compacta, Família.
    - **Área**: escreva com a unidade, como `39,00 m²`.
-   - **Parede**: `Madeira vertical` ou `Madeira horizontal`, que é o sentido das tábuas na parede. Na Flex pode deixar vazio: o site mostra o prazo no lugar.
+   - **Selo do card**: a linha vermelha acima do nome, como `Madeira horizontal` ou `Com garagem coberta`. Vazio, o site mostra o prazo (Flex) ou "Projeto personalizável" (Casa Pronta).
    - **Preço**: só o número, como `69.900`. O site coloca o R$ sozinho. Deixe vazio para o site mostrar **Sob consulta** (é assim que a Flex está hoje).
    - **Prazo**: como `90 a 120 dias` ou `45 dias`.
    - **Foto**: JPG, PNG ou WEBP, até 5 MB. Foto na horizontal fica melhor no card.
    - **Descrição da foto**: conte o que aparece na foto. Isso serve para quem usa leitor de tela e para o Google.
+   - **Ambientes**: um por linha, como `3 quartos`, `Banheiro`, `Varanda`. O site escolhe o ícone de cada um.
+   - **Descrição**, **Planta baixa** e **Foto extra**: aparecem no **Ver mais** do card.
    - **Marcar como Mais escolhida**: destaca o card com o selo vermelho. Marque só um.
 4. Toque em **Salvar**.
 
@@ -65,8 +67,9 @@ O modelo aparece no site na hora.
 ## 4. Subir um vídeo e mudar a ordem
 
 1. Tela **Vídeos**, toque em **Adicionar vídeo**.
-2. Escolha o arquivo **MP4** (até 30 MB) e uma **capa** (a imagem que aparece antes de o vídeo tocar).
-3. Salve.
+2. Em **Onde aparece**, escolha **Home, Nosso Instagram** ou **Página Castello Flex**.
+3. Escolha o arquivo **MP4** (até 30 MB) e uma **capa** (a imagem que aparece antes de o vídeo tocar).
+4. Salve.
 
 Para mudar a ordem, segure o item pela alça **≡** à esquerda e arraste para cima ou para baixo (funciona com o mouse e com o dedo no celular). Solte e a ordem é salva sozinha. A ordem da lista é a ordem do site.
 
@@ -91,6 +94,7 @@ Tela **Textos**. Cada campo tem um rótulo dizendo onde ele aparece no site, por
 
 Dois detalhes:
 
+- Nas respostas do **FAQ**, linha em branco separa parágrafos e `**texto**` fica em negrito.
 - Para deixar um trecho em **vermelho de destaque**, coloque entre asteriscos: `pronta pra morar, *chave na mão*` faz "chave na mão" sair em vermelho. Funciona nos títulos do topo da home e da página Flex.
 - Os prazos (**90 a 120 dias** e **45 dias**) estão aqui. Mudou o prazo? Mude no Textos e o site inteiro acompanha.
 

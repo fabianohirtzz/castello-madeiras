@@ -49,7 +49,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <!-- ============ HERO DO CONTATO ============ -->
   <section class="pagehero" id="topo" aria-label="Contato">
     <div class="pagehero__media">
-      <img src="fotos-casas/casa6.webp" alt="Casa de madeira Castello térrea com varanda ampla e garagem coberta" fetchpriority="high" />
+      <img src="fotos-casas/casa6-ia.webp" alt="Casa de madeira Castello térrea com varanda ampla e garagem coberta" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 

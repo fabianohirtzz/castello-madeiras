@@ -77,7 +77,7 @@ teste('o portfolio trouxe as seis casas entregues, com categoria e alt', functio
     igual('Beira da água', $lista[0]['categoria']);
     igual('Sobrado de madeira à beira da água com vista para a ponte', $lista[0]['foto_alt']);
     igual('Chalé com varanda', $lista[5]['titulo']);
-    igual('uploads/portfolio/casa-8.webp', $lista[3]['foto']);
+    igual('uploads/portfolio/casa-8-ia.webp', $lista[3]['foto']);
 });
 
 teste('as 14 avaliacoes reais do Google chegaram inteiras', function (): void {

@@ -83,12 +83,12 @@ const MIGRAR_MODELOS = [
 
 /** titulo, categoria, foto de origem, alt */
 const MIGRAR_PORTFOLIO = [
-    ['Sobrado à beira da água', 'Beira da água', 'fotos-casas/casa3.webp', 'Sobrado de madeira à beira da água com vista para a ponte'],
-    ['Sobrado com sacada', 'Dois pavimentos', 'fotos-casas/casa7.webp', 'Sobrado de madeira com sacada e fachada de réguas'],
-    ['Varanda ampla e garagem', 'Térrea', 'fotos-casas/casa6.webp', 'Casa de madeira térrea com varanda ampla e garagem coberta'],
-    ['Casa de campo com varanda', 'No campo', 'fotos-casas/casa-8.webp', 'Casa de madeira de campo com varanda e cerca branca'],
-    ['Varanda com pergolado', 'Área externa', 'fotos-casas/casa1.webp', 'Casa de madeira com pergolado e varanda ao sol'],
-    ['Chalé com varanda', 'Na natureza', 'fotos-casas/casa5.webp', 'Casa de madeira com varanda em volta e mata ao fundo'],
+    ['Sobrado à beira da água', 'Beira da água', 'fotos-casas/casa3-ia.webp', 'Sobrado de madeira à beira da água com vista para a ponte'],
+    ['Sobrado com sacada', 'Dois pavimentos', 'fotos-casas/casa7-ia.webp', 'Sobrado de madeira com sacada e fachada de réguas'],
+    ['Varanda ampla e garagem', 'Térrea', 'fotos-casas/casa6-ia.webp', 'Casa de madeira térrea com varanda ampla e garagem coberta'],
+    ['Casa de campo com varanda', 'No campo', 'fotos-casas/casa-8-ia.webp', 'Casa de madeira de campo com varanda e cerca branca'],
+    ['Varanda com pergolado', 'Área externa', 'fotos-casas/casa1-ia.webp', 'Casa de madeira com pergolado e varanda ao sol'],
+    ['Chalé com varanda', 'Na natureza', 'fotos-casas/casa5-ia.webp', 'Casa de madeira com varanda em volta e mata ao fundo'],
 ];
 
 /** nome, texto. Avaliacoes reais do Google Meu Negocio, 5,0 estrelas. */
@@ -667,6 +667,29 @@ function migrar_atualizar_2026_10_flex(): array
         $ordem->execute([$i + 1, 'uploads/videos/' . basename($arquivo)]);
     }
     $log[] = 'videos da Flex reordenados, flex-01 primeiro';
+    return $log;
+}
+
+/**
+ * Fotos do portfolio melhoradas com IA em 2026-10-21 (Real-ESRGAN 4x, depois
+ * fechadas em 1200x1600): cada foto antiga do banco troca pela versao -ia.
+ * Foto que o cliente ja trocou pelo painel fica como esta. Rodar de novo nao
+ * muda nada.
+ *
+ * @return array<int,string>
+ */
+function migrar_atualizar_2026_10_portfolio(): array
+{
+    $log = [];
+    $st = db()->prepare('UPDATE portfolio SET foto = ? WHERE foto = ?');
+    foreach (MIGRAR_PORTFOLIO as [, , $foto]) {
+        if (!str_ends_with($foto, '-ia.webp')) {
+            continue;
+        }
+        $antiga = 'uploads/portfolio/' . str_replace('-ia.webp', '.webp', basename($foto));
+        $st->execute([migrar_copiar($foto, 'portfolio'), $antiga]);
+        $log[] = 'portfolio ' . basename($foto) . ': ' . $st->rowCount();
+    }
     return $log;
 }
 
