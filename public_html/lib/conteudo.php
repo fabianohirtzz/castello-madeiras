@@ -141,6 +141,25 @@ function realce(string $texto): string
 }
 
 /**
+ * Texto escapado com quebras de linha que so valem no desktop
+ * (<br class="br-desk">), depois de cada trecho dado. Trecho que nao existe
+ * mais no texto (o cliente reescreveu no painel) e ignorado.
+ */
+function quebras_desktop(string $texto, string ...$depois_de): string
+{
+    $html = e($texto);
+    foreach ($depois_de as $trecho) {
+        $t = e($trecho);
+        $pos = mb_strpos($html, $t);
+        if ($pos !== false) {
+            $fim = $pos + mb_strlen($t);
+            $html = mb_substr($html, 0, $fim) . '<br class="br-desk">' . mb_substr($html, $fim);
+        }
+    }
+    return $html;
+}
+
+/**
  * Resposta da FAQ em paragrafos, ja escapados: linha em branco separa os
  * paragrafos e **texto** vira negrito (como o cliente escreve no painel).
  *

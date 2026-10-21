@@ -1312,7 +1312,7 @@ a:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid var(--
 .cta-band--ink::before{background:var(--ink)}
 /* quebra de linha que so vale no desktop */
 @media(max-width:900px){br.br-desk{display:none}}
-.cta-band--largo p:has(br.br-desk){max-width:none}
+.cta-band p:has(br.br-desk),.cta-band h2:has(br.br-desk){max-width:none}
 
 /* ---------- Home: resumo da Casa Pronta (texto + foto do modelo em destaque) ---------- */
 .prontahome .checklist{margin-top:26px}

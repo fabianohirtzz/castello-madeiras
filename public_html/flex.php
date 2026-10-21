@@ -45,7 +45,7 @@ $flex_faq     = faq('flex');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=41" />
+  <link rel="stylesheet" href="css/style.css?v=42" />
 </head>
 <body>
 
@@ -241,9 +241,9 @@ $flex_faq     = faq('flex');
   <section class="cta-band" id="orcamento">
     <div class="container cta-band__inner">
       <div class="reveal">
-        <h2><?= e(bloco('flexpg_cta_titulo', 'A casa que você tanto sonhou começa com uma escolha.')) ?></h2>
+        <h2><?= quebras_desktop(bloco('flexpg_cta_titulo', 'A casa que você tanto sonhou começa com uma escolha.'), 'A casa que você', 'tanto sonhou começa') ?></h2>
 <?php if (bloco('flexpg_cta_texto') !== ''): ?>
-        <p><?= e(bloco('flexpg_cta_texto')) ?></p>
+        <p><?= quebras_desktop(bloco('flexpg_cta_texto'), 'mais perto do que você imagina.') ?></p>
 <?php endif; ?>
       </div>
       <button type="button" class="btn btn--light btn--lg reveal" data-quote-open>
