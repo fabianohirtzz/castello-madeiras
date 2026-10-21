@@ -687,6 +687,27 @@
       refreshMute();
     });
 
+    // setas: passam um video por vez; somem no comeco e no fim da trilha
+    var trilho = instaRail.parentElement;
+    var setaAnt = trilho.querySelector('[data-rail-prev]');
+    var setaProx = trilho.querySelector('[data-rail-next]');
+    if (setaAnt && setaProx) {
+      var passoRail = function () {
+        var gap = parseFloat(getComputedStyle(instaRail).columnGap) || 0;
+        return cards.length ? cards[0].getBoundingClientRect().width + gap : instaRail.clientWidth * 0.8;
+      };
+      var marcarSetas = function () {
+        var max = instaRail.scrollWidth - instaRail.clientWidth - 4;
+        setaAnt.disabled = instaRail.scrollLeft <= 40;
+        setaProx.disabled = instaRail.scrollLeft >= max;
+      };
+      setaAnt.addEventListener('click', function () { instaRail.scrollBy({ left: -passoRail(), behavior: reduce ? 'auto' : 'smooth' }); });
+      setaProx.addEventListener('click', function () { instaRail.scrollBy({ left: passoRail(), behavior: reduce ? 'auto' : 'smooth' }); });
+      instaRail.addEventListener('scroll', function () { requestAnimationFrame(marcarSetas); }, { passive: true });
+      window.addEventListener('resize', marcarSetas);
+      marcarSetas();
+    }
+
     // pausa vídeos que saem da viewport (e nunca toca por trás do lightbox)
     if ('IntersectionObserver' in window) {
       var ivo = new IntersectionObserver(function (entries) {

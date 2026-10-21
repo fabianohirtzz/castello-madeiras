@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=42" />
+  <link rel="stylesheet" href="css/style.css?v=43" />
 </head>
 <body>
 
@@ -512,7 +512,11 @@
       </div>
     </div>
 
-<div class="insta__rail reveal" id="instaRail" aria-label="Vídeos do Instagram da Castello">
+<div class="insta__trilho">
+      <button class="insta__seta insta__seta--prev" type="button" data-rail-prev aria-label="Vídeos anteriores" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="insta__rail reveal" id="instaRail" aria-label="Vídeos do Instagram da Castello">
       <article class="ivid"><div class="ivid__frame"><video class="ivid__video" playsinline loop preload="none" poster="uploads/videos/insta-01.jpg"><source src="uploads/videos/insta-01.mp4" type="video/mp4" /></video></div></article>
       <article class="ivid"><div class="ivid__frame"><video class="ivid__video" playsinline loop preload="none" poster="uploads/videos/insta-02.jpg"><source src="uploads/videos/insta-02.mp4" type="video/mp4" /></video></div></article>
       <article class="ivid"><div class="ivid__frame"><video class="ivid__video" playsinline loop preload="none" poster="uploads/videos/insta-03.jpg"><source src="uploads/videos/insta-03.mp4" type="video/mp4" /></video></div></article>
@@ -521,6 +525,10 @@
       <article class="ivid"><div class="ivid__frame"><video class="ivid__video" playsinline loop preload="none" poster="uploads/videos/insta-06.jpg"><source src="uploads/videos/insta-06.mp4" type="video/mp4" /></video></div></article>
       <article class="ivid"><div class="ivid__frame"><video class="ivid__video" playsinline loop preload="none" poster="uploads/videos/insta-07.jpg"><source src="uploads/videos/insta-07.mp4" type="video/mp4" /></video></div></article>
       <article class="ivid"><div class="ivid__frame"><video class="ivid__video" playsinline loop preload="none" poster="uploads/videos/insta-08.jpg"><source src="uploads/videos/insta-08.mp4" type="video/mp4" /></video></div></article>
+    </div>
+      <button class="insta__seta insta__seta--next" type="button" data-rail-next aria-label="Próximos vídeos">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      </button>
     </div>
   </section>
 
@@ -853,7 +861,7 @@
     <span class="wpp-float__label">Pedir orçamento</span>
   </button>
 
-  <script src="js/main.js?v=23"></script>
+  <script src="js/main.js?v=24"></script>
   <script src="js/formulario.js?v=4" defer></script>
 </body>
 </html>

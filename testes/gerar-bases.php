@@ -58,9 +58,9 @@ foreach ($paginas as $chave => $arquivo) {
 
 /*
  * Os fragmentos do 40-partials.php que mudaram desde o site estatico, com as
- * mesmas variaveis que o caso usa. Avaliacoes e videos ficam de fora de
- * proposito: a referencia deles ainda e a do site atual, com os caminhos
- * antigos que o norm() do teste iguala. O portfolio entrou em 2026-10-21,
+ * mesmas variaveis que o caso usa. Avaliacoes fica de fora de proposito: a
+ * referencia dela ainda e a do site atual, com os caminhos antigos que o
+ * norm() do teste iguala. Videos entrou em 2026-10-21, com as setas da trilha. O portfolio entrou em 2026-10-21,
  * quando ganhou as fotos melhoradas e os 12 projetos da Casa Pronta.
  */
 $fragmentos = [
@@ -68,11 +68,18 @@ $fragmentos = [
     'faq'     => ['contexto' => 'geral'],
     'passos'  => ['contexto' => 'pronta'],
     'portfolio' => [],
+    'videos'    => [],
 ];
 
 foreach ($fragmentos as $nome => $vars) {
     $destino = raiz() . '/testes/base/frag-' . $nome . '.html';
+    if ($nome === 'videos') {
+        config_gravar('videos_na_home', '11');   // o caso 40 compara a trilha com os 11 reels
+    }
     file_put_contents($destino, render(site() . '/partials/' . $nome . '.php', $vars));
+    if ($nome === 'videos') {
+        config_gravar('videos_na_home', '8');
+    }
     echo 'regenerada: frag-', $nome, '.html (', number_format(filesize($destino)), " bytes)\n";
 }
 

@@ -696,6 +696,23 @@ body.drawer-open .wpp-float,body.modal-open .wpp-float{opacity:0;visibility:hidd
 }
 .insta__rail::-webkit-scrollbar{display:none}
 
+/* setas da trilha de videos (home e Depoimentos): passam um video por vez */
+.insta__trilho{position:relative;z-index:1}
+.insta__seta{
+  position:absolute;top:calc(50% - 15px);transform:translateY(-50%);z-index:5;
+  width:52px;height:52px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  background:rgba(255,255,255,.95);box-shadow:0 14px 34px -12px rgba(0,0,0,.7);
+  display:grid;place-items:center;transition:transform .2s var(--ease),background .2s,opacity .25s;
+}
+.insta__seta svg{width:24px;height:24px;fill:none;stroke:var(--red);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.insta__seta:hover{background:var(--red);transform:translateY(-50%) scale(1.06)}
+.insta__seta:hover svg{stroke:#fff}
+.insta__seta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.insta__seta--prev{left:clamp(10px,2.4vw,36px)}
+.insta__seta--next{right:clamp(10px,2.4vw,36px)}
+.insta__seta[disabled]{opacity:0;pointer-events:none}
+@media(max-width:700px){.insta__seta{width:42px;height:42px}.insta__seta svg{width:20px;height:20px}}
+
 /* card de vídeo — tilt "polaroid espalhada" */
 .ivid{flex:0 0 auto;scroll-snap-align:center;--tilt:0deg;--ty:0px;--sc:1}
 .ivid:nth-child(odd){--tilt:-2.4deg;--ty:14px}
