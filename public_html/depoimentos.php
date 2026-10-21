@@ -39,7 +39,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=40" />
+  <link rel="stylesheet" href="css/style.css?v=41" />
 </head>
 <body>
 
@@ -83,8 +83,8 @@ require_once __DIR__ . '/lib/conteudo.php';
   <section class="cta-band cta-band--ink cta-band--largo" id="orcamento">
     <div class="container cta-band__inner">
       <div class="reveal">
-        <h2>A próxima história pode ser a sua.</h2>
-        <p>Conte pra gente o tamanho que você imagina e onde fica o terreno. Nossa equipe vai orientar você com atenção e dedicação.</p>
+        <h2>A próxima história<br class="br-desk"> pode ser a sua.</h2>
+        <p>Conte pra gente o tamanho que você imagina e onde fica o terreno.<br class="br-desk"> Nossa equipe vai orientar você com atenção e dedicação.</p>
       </div>
       <button type="button" class="btn btn--light btn--lg reveal" data-quote-open>
         <svg viewBox="0 0 24 24" class="ico-quote" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Zm3 5h10v1.7H7V9Zm0 3.6h6.6v1.7H7v-1.7Z"/></svg>
