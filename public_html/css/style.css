@@ -673,6 +673,11 @@ body.drawer-open .wpp-float,body.modal-open .wpp-float{opacity:0;visibility:hidd
 .insta__head .eyebrow{justify-content:center}
 .insta__head .section__lead{margin-inline:auto}
 .insta__head--largo{max-width:1000px}
+/* nota do Google na pagina Depoimentos: so estrela e texto, em amarelo */
+.depo-google{display:inline-flex;align-items:center;gap:8px;margin-top:22px;color:#F5B700;font:700 1.05rem/1 var(--font-display);text-decoration:none;transition:opacity .2s}
+.depo-google svg{width:22px;height:22px;fill:currentColor}
+.depo-google:hover{opacity:.82}
+.depo-google:focus-visible{outline:2px solid #F5B700;outline-offset:6px;border-radius:4px}
 /* depoimentos: a faixa vermelha encosta direto, sem a folga do recorte */
 .insta--antes-cta{padding-bottom:clamp(8px,2vw,24px)}
 

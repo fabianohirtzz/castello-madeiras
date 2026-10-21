@@ -39,7 +39,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=39" />
+  <link rel="stylesheet" href="css/style.css?v=40" />
 </head>
 <body>
 
@@ -69,10 +69,9 @@ require_once __DIR__ . '/lib/conteudo.php';
       <div class="section__head insta__head insta__head--largo">
         <span class="eyebrow eyebrow--light reveal">Depoimentos em vídeo</span>
         <h2 class="section__title reveal">Sonhos realizados,<br>contados por quem viveu.</h2>
-        <p class="section__lead reveal">Toque em um vídeo para assistir em tela cheia, com som.</p>
-        <a href="<?= e(CASTELLO_MAPA_LINK) ?>" class="btn btn--ghost-light reveal" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>
-          5,0 no Google, 71 avaliações
+        <a href="<?= e(CASTELLO_MAPA_LINK) ?>" class="depo-google reveal" target="_blank" rel="noopener" aria-label="5,0 no Google: ver as avaliações da Castello">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9L12 2.6Z"/></svg>
+          5,0 no Google
         </a>
       </div>
     </div>
