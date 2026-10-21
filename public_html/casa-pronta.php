@@ -75,7 +75,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
       <div class="section__head">
         <span class="eyebrow reveal">Catálogo Casa Pronta</span>
         <h2 class="section__title reveal">Inspire-se nos nossos modelos.<br>Personalize o seu.</h2>
-        <p class="section__lead reveal">Explore algumas das possibilidades de construção e descubra como podemos adaptar sua casa ao espaço disponível e ao que você procura.</p>
+        <p class="section__lead reveal">Nossos modelos são apenas o ponto de partida. Explore as possibilidades de personalização e crie uma casa que reflita seu estilo e suas necessidades.</p>
         <p class="stamp reveal">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
           Pronta para morar de <strong><?= e($prazo_pronta) ?></strong>
@@ -107,8 +107,8 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
           <ul class="incluso__lista">
             <li>Fundação e laje de piso</li>
             <li>Estrutura de madeira e cobertura</li>
-            <li>Instalações elétricas e hidráulicas</li>
             <li>Revestimentos cerâmicos</li>
+            <li>Instalações elétricas e hidráulicas</li>
             <li>Portas, janelas e vidros</li>
             <li>Fossa e sumidouro</li>
             <li>Execução e acompanhamento da obra</li>
@@ -152,7 +152,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
     <div class="hscroll__pin">
       <div class="container">
         <div class="process__head">
-          <span class="eyebrow eyebrow--light">Do terreno à chave</span>
+          <span class="eyebrow eyebrow--light">Da visita no terreno à chave na mão</span>
           <h2 class="section__title">Como tudo acontece.</h2>
           <p class="section__lead">Existe uma ordem certa para cada etapa da obra. Acompanhe o caminho da sua casa, da primeira conversa até a entrega da chave.</p>
         </div>
@@ -172,7 +172,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
       <div class="section__head faq__head">
         <span class="eyebrow reveal">Perguntas frequentes</span>
         <h2 class="section__title reveal">Tudo que você precisa<br>saber antes de construir.</h2>
-        <p class="section__lead reveal">Reunimos as dúvidas que mais ouvimos de quem está prestes a realizar o sonho da casa de madeira. Ficou com outra pergunta? É só falar com a gente pelo formulário.</p>
+        <p class="section__lead reveal">Reunimos as dúvidas que mais ouvimos de quem está prestes a realizar o sonho da casa de madeira. Ficou com alguma dúvida? É só falar com a gente pelo formulário.</p>
       </div>
 
 <?php $contexto = 'geral'; include __DIR__ . '/partials/faq.php'; ?>

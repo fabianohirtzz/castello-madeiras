@@ -139,7 +139,7 @@ Já a **Castello Flex** oferece modelos predefinidos, pensados para proporcionar
     ['flex', 'O que exatamente vem na entrega da Castello Flex?', 'Fundação com laje aérea, estrutura de madeira montada, telhado completo, forro à nível, esquadrias instaladas, a alvenaria do banheiro no chapisco e a limpeza de obra feita. Ficam por sua conta os vidros, a elétrica, a hidráulica, o revestimento cerâmico, as louças e o balcão do banheiro, a fossa, o sumidouro e a pintura.', 'chave'],
     ['flex', 'Posso mudar a planta da Castello Flex?', 'Não. As cinco plantas da Castello Flex são padronizadas, com medidas definidas, e é isso que garante o preço e a entrega em 45 dias. Se você quer uma planta personalizada, a modalidade certa é a Casa Pronta.', 'planta'],
     ['flex', 'A madeira é a mesma das casas chave na mão?', 'É a mesma. Madeira de qualidade e prego galvanizado em toda a estrutura, montados pela mesma equipe que constrói as casas Castello desde 2014. A modalidade Flex muda o escopo da entrega, nunca o padrão da construção.', 'escudo'],
-    ['flex', 'Vocês cuidam da fundação e do terreno?', 'A fundação faz parte da entrega da Flex, com laje aérea em concreto armado. A gente avalia o seu terreno e prepara a base certa pra receber a estrutura, com técnica e segurança, antes de a casa subir.', 'fundacao'],
+    ['flex', 'A Castello vai até o meu terreno antes de construir?', 'Sim. Nossa equipe faz visita técnica em todos os terrenos, porque é nessa visita que definimos os detalhes da fundação.', 'fundacao'],
 ];
 
 /**
@@ -650,6 +650,9 @@ function migrar_atualizar_2026_10_flex(): array
     }
     $pdo->prepare("UPDATE faq SET pergunta = ? WHERE contexto = 'flex' AND pergunta = ?")
         ->execute(['O que exatamente vem na entrega da Castello Flex?', 'O que exatamente vem na entrega da Flex?']);
+    // 2026-10-21: a pergunta do terreno da Flex fica igual a da Casa Pronta
+    $pdo->prepare("UPDATE faq SET pergunta = ? WHERE contexto = 'flex' AND pergunta = ?")
+        ->execute(['A Castello vai até o meu terreno antes de construir?', 'Vocês cuidam da fundação e do terreno?']);
     $faq = $pdo->prepare("UPDATE faq SET resposta = ? WHERE contexto = 'flex' AND pergunta = ? AND resposta <> ?");
     foreach (MIGRAR_FAQ as [$contexto, $pergunta, $resposta]) {
         if ($contexto === 'flex') {

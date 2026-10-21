@@ -89,7 +89,6 @@ $flex_faq     = faq('flex');
             <li>Excelência nos materiais, independente do projeto que você escolher</li>
             <li>Montagem pela equipe que constrói casas Castello desde 2014</li>
             <li>Cinco modelos com planta e medidas definidas</li>
-            <li>Forro à nível e limpeza de obra inclusos</li>
           </ul>
         </div>
 

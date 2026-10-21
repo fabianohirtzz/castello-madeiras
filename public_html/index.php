@@ -190,7 +190,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           <p class="modalidade__prazo">No seu terreno em <strong><?= e($prazo_flex) ?></strong></p>
           <p class="modalidade__text">Da fundação à montagem da estrutura, a Castello cuida das principais etapas da construção da sua casa de madeira, incluindo cobertura e fechamento externo. Você tem a liberdade de realizar os acabamentos conforme seu estilo, planejamento e orçamento.</p>
           <ul class="checklist checklist--light">
-            <li>Fundação e estrutura de madeira executadas</li>
+            <li>Fundação com laje aérea e estrutura de madeira executadas</li>
             <li>Cobertura e fechamento externo</li>
             <li>Liberdade para personalizar os acabamentos</li>
           </ul>
@@ -416,7 +416,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
       <div class="section__head faq__head">
         <span class="eyebrow reveal">Perguntas frequentes</span>
         <h2 class="section__title reveal">Tudo que você precisa<br>saber antes de construir.</h2>
-        <p class="section__lead reveal">Reunimos as dúvidas que mais ouvimos de quem está prestes a realizar o sonho da casa de madeira. Ficou com outra pergunta? É só falar com a gente pelo formulário.</p>
+        <p class="section__lead reveal">Reunimos as dúvidas que mais ouvimos de quem está prestes a realizar o sonho da casa de madeira. Ficou com alguma dúvida? É só falar com a gente pelo formulário.</p>
       </div>
 
 <?php $contexto = 'geral'; include __DIR__ . '/partials/faq.php'; ?>
