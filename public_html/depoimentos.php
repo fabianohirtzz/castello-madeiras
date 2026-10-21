@@ -54,7 +54,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 
     <div class="container">
       <span class="eyebrow eyebrow--light reveal">Quem já construiu com a Castello</span>
-      <h1 class="pagehero__title reveal">Histórias de quem já<br class="br-desk"> <span class="hl">mora numa Castello.</span></h1>
+      <h1 class="pagehero__title reveal">Histórias de quem já<br class="br-desk"> <span class="hl">mora numa casa Castello.</span></h1>
       <p class="pagehero__lead pagehero__lead--largo reveal">Ninguém conta melhor como é construir com a Castello do que quem já viveu cada etapa. Assista aos depoimentos dos nossos clientes.</p>
     </div>
   </section>
