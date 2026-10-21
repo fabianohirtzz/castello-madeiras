@@ -48,7 +48,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <!-- ============ HERO DOS DEPOIMENTOS ============ -->
   <section class="pagehero" id="topo" aria-label="Depoimentos">
     <div class="pagehero__media">
-      <img src="fotos-casas/casa5-ia.webp" alt="Casa de madeira Castello com varanda em volta, gramado e mata ao fundo" fetchpriority="high" />
+      <img src="fotos-casas/hero-depoimentos.webp" alt="Casa de madeira Castello com varanda em volta, guarda-corpo em X, gramado e morro ao fundo" fetchpriority="high" />
     </div>
     <div class="pagehero__overlay" aria-hidden="true"></div>
 
