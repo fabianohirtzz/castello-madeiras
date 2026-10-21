@@ -24,7 +24,10 @@ Painel: **https://castello.tohospedando.com.br/painel/**. O login é `castello`;
 
 ## Vídeo 2. Colocar um vídeo de depoimento ou do Instagram (2 min)
 
-1. Menu **Vídeos** → no filtro **Onde aparece**, escolher **Home, Nosso Instagram** (é a faixa de vídeos da home). A outra opção, **Página Castello Flex**, é a galeria de vídeos da Flex.
+1. Menu **Vídeos** → no filtro **Onde aparece**, escolher onde o vídeo vai:
+   - **Página Depoimentos**: os vídeos de clientes contando a experiência (aparecem todos, sem limite);
+   - **Home, Nosso Instagram**: a faixa de vídeos da home;
+   - **Página Castello Flex**: a galeria de vídeos da Flex.
 2. **Adicionar vídeo**.
 3. **Onde aparece**: o mesmo lugar do filtro.
 4. **Vídeo em MP4**: escolher o arquivo (até 30 MB; se passar, comprimir antes).
@@ -33,13 +36,13 @@ Painel: **https://castello.tohospedando.com.br/painel/**. O login é `castello`;
 7. **Salvar** e abrir a home para mostrar.
 8. **Mudar a ordem**: segurar a alça **≡** à esquerda do item e arrastar. A ordem da lista é a ordem do site; o primeiro da lista é o primeiro a aparecer.
 
-> Cuidado: a home mostra só os primeiros vídeos da lista (hoje 8), para a página não ficar lenta no celular. Quer que um vídeo novo apareça? Arraste para cima.
+> Cuidado: a home mostra só os primeiros vídeos da lista (hoje 8), para a página não ficar lenta no celular. Quer que um vídeo novo apareça? Arraste para cima. Na página Depoimentos aparecem todos.
 
 ## Vídeo 3. Colocar uma casa entregue no Portfólio (2 min)
 
 1. Menu **Portfólio** → **Adicionar casa entregue**.
 2. **Título**: como "Sobrado com sacada".
-3. **Categoria**: a linha pequena acima do título, como "Beira da água" ou "Casa de campo".
+3. **Categoria**: a linha pequena acima do título. Nas casas novas use **cidade/estado**, como "Tubarão/SC". Os 12 projetos da Casa Pronta entraram com "Ajustar/SC": edite cada um e troque pela cidade certa.
 4. **Foto**: de preferência **na vertical** (a grade do portfólio usa fotos em pé), boa luz, casa inteira no quadro, até 5 MB.
 5. **Descrição da foto**: contar o que aparece ("Sobrado de madeira com varanda e gramado na frente"). Ajuda o Google e quem usa leitor de tela.
 6. **Salvar**, mostrar no site, arrastar na lista para mudar a posição.
