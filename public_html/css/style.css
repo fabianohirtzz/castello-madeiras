@@ -448,8 +448,54 @@ body.drawer-open{overflow:hidden}
 .review__stars{color:#E7A400;letter-spacing:2px;font-size:1.05rem}
 .review p{
   font-size:1rem;color:var(--ink-soft);flex:1;
-  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:8;overflow:hidden;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:6;overflow:hidden;
+  line-height:1.6;max-height:calc(6 * 1.6em);
 }
+/* Leia mais (criado no main.js): ocupa o mesmo lugar em todos os cards; só aparece no texto cortado */
+.review__mais{
+  align-self:flex-start;margin-top:12px;padding:0;border:0;background:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;
+  font-family:var(--font-display);font-weight:700;font-size:.9rem;color:var(--red-deep);visibility:hidden;
+}
+.review.is-cortado .review__mais{visibility:visible}
+.review__mais svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--ease)}
+.review__mais:hover{text-decoration:underline;text-underline-offset:3px}
+.review__mais:hover svg{transform:translateX(3px)}
+.review__mais:focus-visible{outline:2px solid var(--red-bright);outline-offset:3px;border-radius:4px}
+
+/* popup da avaliação completa, uma por vez, setas em looping */
+.revbox{position:fixed;inset:0;z-index:130;display:grid;place-items:center;padding:clamp(14px,3vw,32px);opacity:0;transition:opacity .3s var(--ease)}
+.revbox[hidden]{display:none}
+.revbox.is-open{opacity:1}
+.revbox__fundo{position:absolute;inset:0;background:rgba(10,10,10,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.revbox__painel{
+  position:relative;width:min(640px,100%);max-height:min(88svh,88vh);display:flex;flex-direction:column;
+  background:#fff;border-radius:var(--r-lg);box-shadow:0 40px 100px -30px rgba(0,0,0,.7);
+  transform:translateY(16px) scale(.98);transition:transform .35s var(--ease);
+}
+.revbox.is-open .revbox__painel{transform:none}
+.revbox__fechar{
+  position:absolute;top:14px;right:14px;z-index:3;width:42px;height:42px;border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;background:#fff;border:1px solid var(--line);color:var(--ink);transition:.25s var(--ease);
+}
+.revbox__fechar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.revbox__fechar:hover{background:var(--red);border-color:var(--red);color:#fff;transform:rotate(90deg)}
+.revbox__conteudo{padding:clamp(26px,4vw,40px) clamp(22px,4vw,40px) 8px;overflow:auto;overscroll-behavior:contain}
+.revbox__conteudo.is-troca{animation:rv-troca .35s var(--ease)}
+@keyframes rv-troca{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.revbox__conteudo .review__top{padding-right:56px;margin-bottom:18px}
+.revbox__texto{font-size:1.04rem;line-height:1.7;color:var(--ink-soft);white-space:pre-line}
+.revbox__conteudo footer{margin-top:24px;display:flex;align-items:center;gap:13px}
+.revbox__nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px clamp(22px,4vw,40px) 22px;border-top:1px solid var(--line);margin-top:16px}
+.revbox__conta{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.revbox__seta{
+  width:48px;height:48px;border-radius:50%;cursor:pointer;display:grid;place-items:center;
+  background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-soft);transition:.2s var(--ease);
+}
+.revbox__seta svg{width:22px;height:22px;fill:none;stroke:var(--red);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.revbox__seta:hover{background:var(--red);border-color:var(--red)}
+.revbox__seta:hover svg{stroke:#fff}
+@media (prefers-reduced-motion:reduce){.revbox__conteudo.is-troca{animation:none}}
 .review footer{margin-top:22px;display:flex;align-items:center;gap:13px}
 .review__avatar{
   flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;

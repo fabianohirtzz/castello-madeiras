@@ -313,6 +313,121 @@
       }, { threshold: 0.35 });
       rvo.observe(revTrack);
     } else { inView = true; maybeStart(); }
+
+    /* Leia mais: só nos cards com o texto cortado; abre o popup com a
+       avaliação inteira, uma por vez, com setas em looping infinito. */
+    var revCards = Array.prototype.slice.call(revTrack.querySelectorAll('.review'));
+    var revMoveu = false;
+    revTrack.addEventListener('pointerdown', function () { revMoveu = false; });
+    revTrack.addEventListener('pointermove', function (e) { if (down && Math.abs(e.clientX - startX) > 6) revMoveu = true; });
+
+    revCards.forEach(function (card, i) {
+      var p = card.querySelector('p');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'review__mais';
+      b.setAttribute('data-review-abrir', String(i));
+      b.innerHTML = 'Leia mais<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+      b.setAttribute('aria-label', 'Ler a avaliação completa de ' + ((card.querySelector('.review__who strong') || {}).textContent || 'cliente'));
+      p.insertAdjacentElement('afterend', b);
+    });
+    function marcarCortados() {
+      revCards.forEach(function (card) {
+        var p = card.querySelector('p');
+        card.classList.toggle('is-cortado', p.scrollHeight > p.clientHeight + 2);
+      });
+    }
+    marcarCortados();
+    window.addEventListener('resize', marcarCortados);
+    window.addEventListener('load', marcarCortados);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(marcarCortados);
+
+    var revbox = document.createElement('div');
+    revbox.className = 'revbox';
+    revbox.hidden = true;
+    revbox.setAttribute('role', 'dialog');
+    revbox.setAttribute('aria-modal', 'true');
+    revbox.setAttribute('aria-label', 'Avaliação completa');
+    revbox.innerHTML =
+      '<div class="revbox__fundo" data-revbox-fechar></div>' +
+      '<div class="revbox__painel">' +
+        '<button class="revbox__fechar" type="button" data-revbox-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
+        '<div class="revbox__conteudo" aria-live="polite"></div>' +
+        '<div class="revbox__nav">' +
+          '<button class="revbox__seta" type="button" data-revbox-prev aria-label="Avaliação anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>' +
+          '<span class="revbox__conta"></span>' +
+          '<button class="revbox__seta" type="button" data-revbox-next aria-label="Próxima avaliação"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(revbox);
+    var rbConteudo = revbox.querySelector('.revbox__conteudo');
+    var rbConta = revbox.querySelector('.revbox__conta');
+    var rbIdx = 0, rbVoltar = null;
+
+    function rbMostrar(i) {
+      var n = revCards.length;
+      rbIdx = ((i % n) + n) % n;
+      var card = revCards[rbIdx];
+      var top = card.querySelector('.review__top').cloneNode(true);
+      var texto = document.createElement('p');
+      texto.className = 'revbox__texto';
+      texto.textContent = card.querySelector('p').textContent;
+      var pe = card.querySelector('footer').cloneNode(true);
+      rbConteudo.innerHTML = '';
+      rbConteudo.appendChild(top);
+      rbConteudo.appendChild(texto);
+      rbConteudo.appendChild(pe);
+      rbConteudo.scrollTop = 0;
+      rbConteudo.classList.remove('is-troca');
+      void rbConteudo.offsetWidth;
+      rbConteudo.classList.add('is-troca');
+      rbConta.textContent = (rbIdx + 1) + ' de ' + n;
+    }
+    function rbAbrir(i, botao) {
+      killAuto();
+      rbVoltar = botao || null;
+      rbMostrar(i);
+      revbox.hidden = false;
+      document.body.classList.add('modal-open');
+      requestAnimationFrame(function () { revbox.classList.add('is-open'); });
+      setTimeout(function () { revbox.querySelector('.revbox__fechar').focus({ preventScroll: true }); }, 60);
+    }
+    function rbFechar() {
+      if (revbox.hidden) return;
+      revbox.classList.remove('is-open');
+      document.body.classList.remove('modal-open');
+      setTimeout(function () { revbox.hidden = true; }, 300);
+      if (rbVoltar) { try { rbVoltar.focus({ preventScroll: true }); } catch (e) {} }
+    }
+
+    revTrack.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-review-abrir]');
+      if (!b || revMoveu) return;
+      rbAbrir(parseInt(b.getAttribute('data-review-abrir'), 10) || 0, b);
+    });
+    revbox.addEventListener('click', function (e) {
+      if (e.target.closest('[data-revbox-fechar]')) rbFechar();
+      else if (e.target.closest('[data-revbox-prev]')) rbMostrar(rbIdx - 1);
+      else if (e.target.closest('[data-revbox-next]')) rbMostrar(rbIdx + 1);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (revbox.hidden) return;
+      if (e.key === 'Escape') rbFechar();
+      else if (e.key === 'ArrowLeft') rbMostrar(rbIdx - 1);
+      else if (e.key === 'ArrowRight') rbMostrar(rbIdx + 1);
+      else if (e.key === 'Tab') {
+        var f = revbox.querySelectorAll('button');
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    var rbToque = 0;
+    revbox.addEventListener('touchstart', function (e) { rbToque = e.changedTouches[0].clientX; }, { passive: true });
+    revbox.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - rbToque;
+      if (Math.abs(dx) > 50) rbMostrar(rbIdx + (dx < 0 ? 1 : -1));
+    }, { passive: true });
   }
 
   /* ---------- Carrossel de vantagens (um card por vez) ---------- */
