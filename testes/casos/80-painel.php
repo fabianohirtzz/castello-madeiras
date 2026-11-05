@@ -221,7 +221,7 @@ teste('painel_salvar ignora coluna que nao esta na descricao', function (): void
 
     igual(1, (int) painel_linha('avaliacoes', $id)['ativo'], 'ativo nao pode vir do formulario');
 
-    // Limpa a linha de teste: os casos seguintes contam com as 14 avaliacoes migradas.
+    // Limpa a linha de teste: os casos seguintes contam com as 15 avaliacoes migradas.
     db()->exec('DELETE FROM avaliacoes WHERE id = ' . $id);
 });
 
@@ -276,12 +276,12 @@ teste('painel_estado desativa e reativa sem apagar nada', function (): void {
 
     painel_estado('avaliacoes', $id, 0);
     igual(0, (int) painel_linha('avaliacoes', $id)['ativo']);
-    igual(13, count(avaliacoes()), 'o site deixa de mostrar');
+    igual(14, count(avaliacoes()), 'o site deixa de mostrar');
     verdade(painel_linha('avaliacoes', $id) !== null, 'a linha continua no banco');
 
     painel_estado('avaliacoes', $id, 1);
     igual(1, (int) painel_linha('avaliacoes', $id)['ativo']);
-    igual(14, count(avaliacoes()));
+    igual(15, count(avaliacoes()));
 });
 
 teste('painel_estado recusa tabela fora da descricao', function (): void {

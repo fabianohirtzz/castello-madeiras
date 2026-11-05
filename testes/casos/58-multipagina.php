@@ -106,7 +106,7 @@ teste('a home resume a Casa Pronta e nao traz mais portfolio nem passo a passo',
     contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">No seu ritmo.</span></span>', $html, 'o subtitulo do hero com o realce');
     contem('<a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>', $html, 'o hero leva as duas modalidades');
     contem('<a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>', $html);
-    contem('data-count="71"', $html, '71 avaliacoes');
+    contem('data-count="73"', $html, '73 avaliacoes');
     contem('data-count="19000"', $html, 'mais de 19.000 m2');
     contem('Desde</span> 2014', $html);
     nao_contem('emipront', $html, 'a palavra semipronta saiu do site');

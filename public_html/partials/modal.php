@@ -38,7 +38,7 @@ $modal_videos    = $pagina === 'depoimentos' ? count(videos(0, 'depoimentos')) :
 <?php endif; ?>
         <div class="qmodal__trust">
           <span><strong>5,0 ★</strong> no Google</span>
-          <span><strong>71</strong> avaliações</span>
+          <span><strong>73</strong> avaliações</span>
           <span><strong>Desde 2014</strong> no mercado</span>
         </div>
       </div>

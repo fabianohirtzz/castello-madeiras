@@ -56,7 +56,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Castello Casas de Madeira | Casa Pronta e Castello Flex em Tubarão SC</title>
-  <meta name="description" content="Casas de madeira em Tubarão e região, desde 2014. Casa Pronta, completa em 90 a 120 dias, e Castello Flex, montada e fechada no seu terreno em 45 dias. 5,0 estrelas no Google, 71 avaliações." />
+  <meta name="description" content="Casas de madeira em Tubarão e região, desde 2014. Casa Pronta, completa em 90 a 120 dias, e Castello Flex, montada e fechada no seu terreno em 45 dias. 5,0 estrelas no Google, 73 avaliações." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -78,7 +78,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=45" />
+  <link rel="stylesheet" href="css/style.css?v=46" />
 </head>
 <body>
 
@@ -141,7 +141,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           <div class="proof__label">no Google</div>
         </div>
         <div class="proof__item reveal">
-          <div class="proof__num" data-count="71">0</div>
+          <div class="proof__num" data-count="73">0</div>
           <div class="proof__label">avaliações</div>
         </div>
         <div class="proof__item reveal">
@@ -358,12 +358,12 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
 
     <div class="container">
       <div class="reviews__head">
-        <div class="reviews__score reveal">
+        <a href="<?= e(CASTELLO_MAPA_LINK) ?>" class="reviews__score reveal" target="_blank" rel="noopener" aria-label="5,0 estrelas em 73 avaliações: ver o perfil da Castello no Google">
           <svg class="g-logo reviews__g" aria-hidden="true"><use href="#ico-google" /></svg>
           <span class="reviews__num">5,0</span>
           <span class="reviews__stars">★★★★★</span>
-          <span class="reviews__meta">71 avaliações no Google</span>
-        </div>
+          <span class="reviews__meta">73 avaliações no Google</span>
+        </a>
         <div class="reveal">
           <span class="eyebrow">Quem já construiu com a Castello</span>
           <h2 class="section__title">Sonhos realizados.<br>Histórias que inspiram confiança.</h2>

@@ -8,7 +8,7 @@ $contagens = banco_com_conteudo();
 teste('a migracao insere a quantidade exata de cada tabela', function () use ($contagens): void {
     igual(17, $contagens['modelos'], '12 Casa Pronta e 5 Flex');
     igual(18, $contagens['portfolio'], '6 casas entregues e os 12 projetos da Casa Pronta');
-    igual(14, $contagens['avaliacoes']);
+    igual(15, $contagens['avaliacoes']);
     igual(24, $contagens['videos'], '11 reels da home, 4 videos da Flex e 9 depoimentos');
     igual(12, $contagens['faq'], '7 gerais e 5 da Flex');
     igual(27, $contagens['passos'], '20 etapas da Casa Pronta e 7 da Flex');
@@ -85,19 +85,19 @@ teste('o portfolio trouxe as seis casas entregues e os doze projetos da Casa Pro
     igual('uploads/portfolio/projeto-01-ia.webp', $lista[0]['foto'], 'empate no titulo segue a ordem de cadastro');
 });
 
-teste('as 14 avaliacoes reais do Google chegaram inteiras', function (): void {
+teste('as 15 avaliacoes reais do Google chegaram inteiras', function (): void {
     $lista = avaliacoes();
-    igual(14, count($lista));
-    igual('Joana Lazzaris', $lista[0]['nome']);
-    igual('Lares do Sul', $lista[13]['nome']);
+    igual(15, count($lista));
+    igual('Lucas Siqueira', $lista[0]['nome']);
+    igual('Lares do Sul', $lista[14]['nome']);
 
     foreach ($lista as $a) {
         igual(5, (int) $a['estrelas'], 'toda avaliacao migrada e 5 estrelas');
         verdade(mb_strlen($a['texto']) > 80, 'texto completo, nao cortado: ' . $a['nome']);
     }
 
-    contem('Tivemos uma excelente experiência com a Castello', $lista[0]['texto']);
-    contem('A arquiteta Talita foi super atenciosa', $lista[3]['texto']);
+    contem('Tivemos uma excelente experiência com a Castello', $lista[1]['texto']);
+    contem('A arquiteta Talita foi super atenciosa', $lista[4]['texto']);
 });
 
 teste('os 11 videos migraram com poster e sem o arquivo original de 25 MB', function (): void {
@@ -212,7 +212,7 @@ teste('rodar a migracao de novo nao duplica conteudo', function (): void {
     igual(0, $segunda['modelos']);
     igual(0, $segunda['avaliacoes']);
     igual(12, count(modelos('pronta')));
-    igual(14, count(avaliacoes()));
+    igual(15, count(avaliacoes()));
 });
 
 teste('a atualizacao de outubro de 2026 leva um banco antigo ao conteudo novo, uma vez so', function (): void {
@@ -284,7 +284,7 @@ teste('migrar_usuario cria o acesso do painel uma vez so', function (): void {
 });
 
 teste('conteudo real migrou por inteiro, sem item de portfolio sem alt', function (): void {
-    $esperado = ['modelos' => 17, 'portfolio' => 6, 'avaliacoes' => 14, 'videos' => 11, 'faq' => 7, 'passos' => 25];
+    $esperado = ['modelos' => 17, 'portfolio' => 6, 'avaliacoes' => 15, 'videos' => 11, 'faq' => 7, 'passos' => 25];
     foreach ($esperado as $tabela => $quantos) {
         $tem = (int) db()->query("SELECT COUNT(*) FROM {$tabela} WHERE ativo = 1")->fetchColumn();
         verdade($tem >= $quantos, "{$tabela}: esperado ao menos {$quantos}, tem {$tem}");
@@ -311,4 +311,13 @@ teste('a FAQ revisada em 2026-10-16 chega a um banco antigo, uma vez so', functi
     nao_contem('Vocês cuidam da fundação', implode(' ', array_keys($por)));
     migrar_atualizar_2026_10_faq();
     igual(7, count(faq('geral')), 'rodar de novo nao muda nada');
+});
+
+teste('a avaliacao de novembro entra uma vez so, na frente do carrossel', function (): void {
+    db()->exec("DELETE FROM avaliacoes WHERE nome = 'Lucas Siqueira'");
+    igual(['avaliacao de Lucas Siqueira criada'], migrar_atualizar_2026_11_avaliacao());
+    igual('Lucas Siqueira', avaliacoes()[0]['nome']);
+    igual(['avaliacao de Lucas Siqueira ja existe'], migrar_atualizar_2026_11_avaliacao());
+    igual(15, count(avaliacoes()));
+    contem('três meses de antecedência', avaliacoes()[0]['texto']);
 });

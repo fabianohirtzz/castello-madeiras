@@ -414,7 +414,9 @@ body.drawer-open{overflow:hidden}
 /* head acompanha a largura total e o mesmo padding do trilho */
 .reviews .container{max-width:none;padding-inline:var(--rev-pad)}
 .reviews__head{display:flex;flex-wrap:wrap;gap:32px;align-items:center;justify-content:space-between;margin-bottom:clamp(36px,5vh,56px);max-width:1180px}
-.reviews__score{display:flex;flex-direction:column;align-items:flex-start;background:#fff;border-radius:var(--r-lg);padding:24px 34px;box-shadow:var(--shadow-soft);border:1px solid var(--line)}
+.reviews__score{display:flex;flex-direction:column;align-items:flex-start;background:#fff;border-radius:var(--r-lg);padding:24px 34px;box-shadow:var(--shadow-soft);border:1px solid var(--line);color:inherit;text-decoration:none;transition:box-shadow .25s var(--ease),border-color .25s var(--ease),opacity .7s var(--ease),transform .7s var(--ease)}
+.reviews__score:hover{box-shadow:var(--shadow-card);border-color:var(--red-bright)}
+.reviews__score:focus-visible{outline:3px solid var(--red-bright);outline-offset:4px}
 .reviews__g{width:30px;height:30px;margin-bottom:12px}
 .reviews__num{font-family:var(--font-display);font-weight:800;font-size:3.4rem;line-height:1;color:var(--ink)}
 .reviews__stars{color:#E7A400;font-size:1.3rem;letter-spacing:2px;margin:6px 0}
@@ -469,7 +471,7 @@ body.drawer-open{overflow:hidden}
 .revbox.is-open{opacity:1}
 .revbox__fundo{position:absolute;inset:0;background:rgba(10,10,10,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .revbox__painel{
-  position:relative;width:min(640px,100%);max-height:min(88svh,88vh);display:flex;flex-direction:column;
+  position:relative;width:min(640px,100%);max-height:min(88svh,88vh);display:flex;flex-direction:column;overflow:hidden;
   background:#fff;border-radius:var(--r-lg);box-shadow:0 40px 100px -30px rgba(0,0,0,.7);
   transform:translateY(16px) scale(.98);transition:transform .35s var(--ease);
 }

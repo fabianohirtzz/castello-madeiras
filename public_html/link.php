@@ -34,7 +34,7 @@ $link_atalhos = [
      '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>', false],
     ['index.php#depoimentos', 'Depoimentos', 'Histórias de quem construiu com a gente',
      '<path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Z"/><path d="M8 9h8M8 12.5h5"/>', false],
-    [CASTELLO_MAPA_LINK, 'Avaliações no Google', '5,0 estrelas em 71 avaliações',
+    [CASTELLO_MAPA_LINK, 'Avaliações no Google', '5,0 estrelas em 73 avaliações',
      '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/>', true],
     [CASTELLO_MAPA_ROTA, 'Como chegar', CASTELLO_ENDERECO_RUA . ', Tubarão SC',
      '<path d="M12 21s7-7.8 7-13a7 7 0 0 0-14 0c0 5.2 7 13 7 13Z"/><circle cx="12" cy="8" r="2.5"/>', true],
@@ -71,7 +71,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=45" />
+  <link rel="stylesheet" href="css/style.css?v=46" />
 </head>
 <body class="lk-corpo">
   <main class="lk">
@@ -81,7 +81,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
       <a href="index.php" class="lk__logo-link"><img src="images/logo-vertical-vermelho-branco.png" alt="Castello Casas de Madeira" class="lk__logo" width="512" height="512" /></a>
       <a href="<?= e(CASTELLO_MAPA_LINK) ?>" class="lk__nota" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>
-        <strong>5,0</strong> no Google <span class="lk__nota-sep" aria-hidden="true">·</span> 71 avaliações
+        <strong>5,0</strong> no Google <span class="lk__nota-sep" aria-hidden="true">·</span> 73 avaliações
       </a>
       <p class="lk__lead">Casas de madeira em Tubarão e região desde 2014. Do jeito que você sonhou, no ritmo que faz sentido para você.</p>
     </header>

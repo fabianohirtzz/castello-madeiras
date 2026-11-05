@@ -91,8 +91,22 @@ const MIGRAR_PORTFOLIO = [
     ['Chalé com varanda', 'Na natureza', 'fotos-casas/casa5-ia.webp', 'Casa de madeira com varanda em volta e mata ao fundo'],
 ];
 
+/** A avaliacao de novembro de 2026, na frente do carrossel. */
+const MIGRAR_AVALIACAO_LUCAS = ['Lucas Siqueira', "Nossa experiência com a Castelo Madeiras foi simplesmente excelente! Desde o primeiro contato, antes mesmo da assinatura do contrato, fomos muito bem atendidos. E o que mais nos surpreendeu positivamente foi que essa atenção e esse cuidado não diminuíram após o fechamento do contrato. Pelo contrário, durante toda a execução da obra, recebemos ainda mais suporte, atenção e dedicação.
+
+A obra foi concluída com três meses de antecedência em relação ao prazo previsto em contrato, algo que demonstra o comprometimento, a organização e a seriedade da equipe.
+
+Todos os profissionais foram extremamente educados, organizados, dedicados e atenciosos. O trabalho ficou impecável, exatamente do nosso gosto e do jeito que sonhamos. Sempre que surgia alguma dúvida ou algum problema, a equipe estava pronta para nos atender e encontrar uma solução, transmitindo segurança e tranquilidade durante todo o processo.
+
+Outro ponto que merece destaque é o atendimento após a conclusão da obra, que continuou sendo excelente. Isso demonstra que a Castelo Madeiras não se preocupa apenas em entregar um projeto, mas também em garantir a satisfação de seus clientes em todas as etapas.
+
+Nossa gratidão a toda a equipe da Castelo Madeiras pelo profissionalismo, pela dedicação e por transformar nosso projeto em realidade. Recomendamos de olhos fechados para quem procura qualidade, compromisso, pontualidade e, principalmente, uma empresa que realmente respeita e valoriza seus clientes.
+
+Foi uma experiência muito positiva, e temos a certeza de que fizemos a escolha certa!"];
+
 /** nome, texto. Avaliacoes reais do Google Meu Negocio, 5,0 estrelas. */
 const MIGRAR_AVALIACOES = [
+    MIGRAR_AVALIACAO_LUCAS,
     ['Joana Lazzaris', 'Tivemos uma excelente experiência com a Castello, desde a negociação da compra, modelo da casa, até a entrega dentro do prazo. Tivemos zero dor de cabeça de obra, mesmo sendo um pouco distante da cidade sede da empresa. São muito flexíveis e nos auxiliaram em todas as etapas.'],
     ['Franciely Silva', 'Estou muito satisfeita com a experiência que tive com a Castello. Desde o início, o atendimento foi excelente, sempre prestativo e transparente. A qualidade da construção superou minhas expectativas, com acabamentos bem feitos e um ótimo padrão. Recomendo para quem busca confiança e compromisso em cada detalhe.'],
     ['Luiz Flores', 'A Castello foi uma grata surpresa na nossa vida. Uma entrega com excelência, com negociação online e acompanhamento de obra em todas as etapas. Nunca imaginei ter uma obra de construção sem qualquer problema com o prestador do serviço. Parabéns ao Carlos e ao time da Castello.'],
@@ -789,6 +803,25 @@ function migrar_atualizar_2026_10_depoimentos(): array
     }
     migrar_inserir_videos_depoimentos();
     return ['depoimentos inseridos: ' . count(MIGRAR_VIDEOS_DEPOIMENTOS)];
+}
+
+/**
+ * Rodada de novembro de 2026: a avaliacao nova do Lucas Siqueira entra na frente
+ * do carrossel. Nao duplica se ja existir, nem se alguem a cadastrou no painel.
+ *
+ * @return list<string>
+ */
+function migrar_atualizar_2026_11_avaliacao(): array
+{
+    [$nome, $texto] = MIGRAR_AVALIACAO_LUCAS;
+    $st = db()->prepare('SELECT COUNT(*) FROM avaliacoes WHERE nome = ?');
+    $st->execute([$nome]);
+    if ((int) $st->fetchColumn() > 0) {
+        return ["avaliacao de $nome ja existe"];
+    }
+    db()->prepare('INSERT INTO avaliacoes (nome, texto, estrelas, ativo, ordem) VALUES (?, ?, 5, 1, 0)')
+        ->execute([$nome, $texto]);
+    return ["avaliacao de $nome criada"];
 }
 
 /**

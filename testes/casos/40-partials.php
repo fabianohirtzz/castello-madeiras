@@ -71,7 +71,7 @@ teste('partials/portfolio.php imprime a grade identica a base conferida no naveg
     igual(norm(base_frag('portfolio')), norm(parcial('portfolio')));
 });
 
-teste('partials/avaliacoes.php imprime as 14 avaliacoes identicas ao site atual', function (): void {
+teste('partials/avaliacoes.php imprime as 15 avaliacoes identicas ao site atual', function (): void {
     igual(norm(base_frag('avaliacoes')), norm(parcial('avaliacoes')));
 });
 

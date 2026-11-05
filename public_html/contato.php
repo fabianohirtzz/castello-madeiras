@@ -40,7 +40,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=45" />
+  <link rel="stylesheet" href="css/style.css?v=46" />
 </head>
 <body>
 
@@ -77,7 +77,7 @@ require_once __DIR__ . '/lib/conteudo.php';
             <p>Conta pra gente o que você procura. A Castello volta com uma proposta sob medida.</p>
             <div class="qmodal__trust">
               <span><strong>5,0 ★</strong> no Google</span>
-              <span><strong>71</strong> avaliações</span>
+              <span><strong>73</strong> avaliações</span>
               <span><strong>Desde 2014</strong> no mercado</span>
             </div>
           </div>
