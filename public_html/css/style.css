@@ -1901,3 +1901,16 @@ a.canal:hover{transform:translateY(-4px);box-shadow:var(--shadow-card)}
   .lk-cta::after{display:none}
 }
 @media(min-width:520px){.lk{padding-top:48px}.lk__logo{width:150px}}
+
+/* ---------- Politica de privacidade ---------- */
+.legal{position:relative;padding:calc(var(--sec-pad) + 120px) clamp(18px,5vw,100px) var(--sec-pad)}
+/* faixa escura atras do menu: o menu foi feito para ficar sobre foto */
+.legal::before{content:"";position:absolute;inset:0 0 auto;height:130px;background:var(--ink)}
+.legal__corpo{max-width:760px;margin-inline:auto;color:var(--ink-soft);line-height:1.7}
+.legal__titulo{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.02em;line-height:1.08;color:var(--ink);margin-top:10px}
+.legal__data{color:var(--muted);font-size:.92rem;margin:10px 0 28px}
+.legal__corpo h2{font-family:var(--font-display);font-weight:700;font-size:1.25rem;color:var(--ink);margin:36px 0 10px}
+.legal__corpo p{margin-bottom:12px}
+.legal__corpo ul{margin:0 0 14px;padding-left:22px;list-style:disc}
+.legal__corpo li{margin-bottom:6px}
+.legal__falta{background:#FFE9A8;color:var(--ink);padding:0 4px;border-radius:4px}

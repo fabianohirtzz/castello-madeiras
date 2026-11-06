@@ -35,6 +35,28 @@ const CASTELLO_MAPA_BUSCA      = 'Castello Casas de Madeira, Av. Severiano Albin
 const CASTELLO_MAPA_LINK       = 'https://maps.google.com/?cid=12879021834196049302';
 const CASTELLO_MAPA_ROTA       = 'https://www.google.com/maps/dir/?api=1&destination=-28.4831792,-49.0363265';
 
+/**
+ * Dados da politica de privacidade, a preencher com a Castello. Enquanto faltar
+ * algum, a pagina e rascunho: noindex e sem link no rodape nem no formulario.
+ */
+const CASTELLO_LEGAL_RAZAO       = '';
+const CASTELLO_LEGAL_CNPJ        = '';
+const CASTELLO_LEGAL_ENCARREGADO = '';
+const CASTELLO_LEGAL_EMAIL       = '';
+const CASTELLO_LEGAL_PRAZO       = '';
+
+function legal_pronta(): bool
+{
+    return CASTELLO_LEGAL_RAZAO !== '' && CASTELLO_LEGAL_CNPJ !== '' && CASTELLO_LEGAL_ENCARREGADO !== ''
+        && CASTELLO_LEGAL_EMAIL !== '' && CASTELLO_LEGAL_PRAZO !== '';
+}
+
+/** O valor do campo ou, no rascunho, o nome dele marcado na pagina. */
+function legal_campo(string $valor, string $rotulo): string
+{
+    return $valor !== '' ? e($valor) : '<mark class="legal__falta">[' . e($rotulo) . ']</mark>';
+}
+
 /** URL do mapa embutido, sem chave de API. */
 function mapa_embed(): string
 {

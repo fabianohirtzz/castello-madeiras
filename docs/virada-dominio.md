@@ -71,6 +71,12 @@ Testar a hospedagem nova sem mudar o DNS, com `curl --resolve castellomadeiras.c
 - [ ] Trocar o link da bio do Instagram para `https://castellomadeiras.com.br/link`.
 - [ ] Revisar links de anúncios ativos e de perfis que apontem para o site antigo.
 
+## 7.1 Política de privacidade
+
+- [ ] Preencher as constantes `CASTELLO_LEGAL_*` em `public_html/lib/conteudo.php`: razão social, CNPJ, responsável, e-mail e prazo de guarda. Preenchidas, a página perde o `noindex` e os links do rodapé e do formulário aparecem sozinhos.
+- [ ] Incluir a página no `sitemap.xml`, regenerar as bases (`php testes/gerar-bases.php`) e publicar.
+- [ ] **Antes de colar o ID do pixel:** a Castello ou o jurídico dela revisa o texto e decide se o site precisa de aviso de cookies com consentimento.
+
 ## 8. Depois da virada
 
 - [ ] Manter o subdomínio de teste por alguns dias, com `noindex`, e depois tirar do ar.

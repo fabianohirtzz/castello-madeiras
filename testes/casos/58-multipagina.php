@@ -360,3 +360,12 @@ teste('o htaccess cuida do www, do catalogo antigo e do llms.txt', function (): 
     contem('^llms\.txt$ llms.php', $ht);
 });
 
+teste('a politica de privacidade e rascunho enquanto faltam os dados da empresa', function (): void {
+    falso(legal_pronta());
+    $html = multi_pagina('politica-de-privacidade.php');
+    contem('<meta name="robots" content="noindex" />', $html, 'rascunho nao vai para o Google');
+    contem('legal__falta', $html, 'os campos pendentes aparecem marcados');
+    contem('Agendor', $html);
+    nao_contem('politica-de-privacidade.php"', multi_pagina('index.php'), 'nada aponta para o rascunho');
+});
+
