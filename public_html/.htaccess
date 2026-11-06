@@ -12,6 +12,17 @@ Options -Indexes
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+  # O endereco oficial e sem www.
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+  # Enderecos do site antigo (WordPress) que o Google conhece: catalogo e PDFs.
+  RewriteRule ^catalogo(/.*)?$ /casa-pronta.php [R=301,L,NC]
+  RewriteRule ^wp-content/uploads/.*\.pdf$ /casa-pronta.php [R=301,L,NC]
+
+  # /llms.txt: resumo do negocio para as ferramentas de IA, gerado do banco.
+  RewriteRule ^llms\.txt$ llms.php [L]
+
   # /link: a pagina do link da bio do Instagram (link.php). Com barra no fim,
   # redireciona antes: os caminhos da pagina sao relativos a raiz do site.
   RewriteRule ^link/$ /link [R=301,L]

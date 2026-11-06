@@ -452,7 +452,7 @@ function painel_textos_gravar(array $entrada): int
     return $gravadas;
 }
 
-/** As doze chaves de config que o cliente edita, com rotulo e tipo. */
+/** As catorze chaves de config que o cliente edita, com rotulo e tipo. */
 function painel_config_campos(): array
 {
     return [
@@ -462,6 +462,10 @@ function painel_config_campos(): array
         'email_aviso'    => ['rotulo' => 'E-mail que recebe aviso de pedido novo', 'tipo' => 'texto'],
         'email_dominio'  => ['rotulo' => 'Domínio usado no remetente', 'tipo' => 'texto',
                              'ajuda' => 'Só o domínio, como castellomadeiras.com.br'],
+        'ga4_id'         => ['rotulo' => 'Google Analytics (ID da métrica)', 'tipo' => 'texto',
+                             'ajuda' => 'Começa com G-, como G-ABC123XYZ. Vazio, o site não carrega o Analytics'],
+        'meta_pixel_id'  => ['rotulo' => 'Pixel do Meta (ID)', 'tipo' => 'texto',
+                             'ajuda' => 'Só os números do pixel. Vazio, o site não carrega o pixel'],
         'crm_ativo'      => ['rotulo' => 'Enviar os pedidos para o CRM', 'tipo' => 'sim_nao',
                              'ajuda' => 'Deixe desligado enquanto o CRM não estiver configurado. O pedido continua sendo gravado e enviado por e-mail'],
         'crm_funil'      => ['rotulo' => 'Funil do Agendor', 'tipo' => 'numero',
@@ -520,6 +524,25 @@ function painel_config_validar(array $entrada): array
                 $numero = 10;
             }
             $valores[$chave] = (string) $numero;
+            continue;
+        }
+
+        if ($chave === 'ga4_id') {
+            $id = mb_strtoupper($bruto);
+            if ($id !== '' && !preg_match('/^G-[A-Z0-9]{4,20}$/', $id)) {
+                $erros[$chave] = 'O ID do Analytics começa com G-, como G-ABC123XYZ.';
+                continue;
+            }
+            $valores[$chave] = $id;
+            continue;
+        }
+
+        if ($chave === 'meta_pixel_id') {
+            if ($bruto !== '' && !preg_match('/^\d{6,20}$/', $bruto)) {
+                $erros[$chave] = 'O ID do pixel tem só números.';
+                continue;
+            }
+            $valores[$chave] = $bruto;
             continue;
         }
 

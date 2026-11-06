@@ -129,6 +129,8 @@ const CASTELLO_CONFIG_PADRAO = [
     'videos_na_home'  => '8',
     'email_aviso'     => 'contato@castellomadeiras.com.br',
     'email_dominio'   => 'castellomadeiras.com.br',
+    'ga4_id'          => '',
+    'meta_pixel_id'   => '',
     /* Os ids sao os da conta real da Castello, lidos em 2026-09-10. crm_etapa
        e a SEQUENCIA da etapa Contato, nao o id 3845540: a API pede sequencia.
        crm_base nao aparece no painel; existe para o teste apontar o conector

@@ -17,7 +17,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Depoimentos | Clientes que construíram com a Castello Casas de Madeira</title>
-  <meta name="description" content="Vídeos de clientes que construíram a casa de madeira com a Castello, em Tubarão e região. Histórias reais de quem já mora numa Castello. 5,0 estrelas no Google." />
+  <meta name="description" content="Vídeos de clientes que construíram a casa de madeira com a Castello em Tubarão e região. Histórias reais de quem já mora numa Castello." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -40,6 +40,8 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css?v=46" />
+  <?= schema_pagina('depoimentos') ?>
+<?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
 
@@ -98,6 +100,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=4" defer></script>
+  <script src="js/formulario.js?v=5" defer></script>
 </body>
 </html>

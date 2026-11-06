@@ -15,7 +15,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfólio | Casas de madeira entregues pela Castello em Santa Catarina</title>
-  <meta name="description" content="Casas de madeira reais construídas e entregues pela Castello em Tubarão e região. Sobrados, casas térreas, chalés e casas de campo, desde 2014 e mais de 19.000 m² construídos." />
+  <meta name="description" content="Casas de madeira reais entregues pela Castello em Tubarão e região: sobrados, casas térreas, chalés e casas de campo. Mais de 19.000 m² construídos desde 2014." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -38,6 +38,8 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css?v=46" />
+  <?= schema_pagina('portfolio') ?>
+<?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
 
@@ -120,6 +122,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=4" defer></script>
+  <script src="js/formulario.js?v=5" defer></script>
 </body>
 </html>

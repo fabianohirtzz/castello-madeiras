@@ -17,7 +17,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Casa Pronta | Casa de madeira chave na mão em 90 a 120 dias | Castello</title>
-  <meta name="description" content="Casa Pronta é a casa de madeira completa da Castello: projetos personalizáveis de 36 a 163 m², a partir de R$ 72 mil, com laje, elétrica, hidráulica, cerâmica e vidros inclusos. Chave na mão em 90 a 120 dias." />
+  <meta name="description" content="Casa Pronta Castello: casa de madeira personalizável de 36 a 163 m², a partir de R$ 72 mil, com elétrica, hidráulica e vidros. Chave na mão em 90 a 120 dias." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -40,6 +40,8 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css?v=46" />
+  <?= schema_pagina('pronta') ?>
+<?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
 
@@ -202,6 +204,6 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=4" defer></script>
+  <script src="js/formulario.js?v=5" defer></script>
 </body>
 </html>

@@ -18,7 +18,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contato e orçamento | Castello Casas de Madeira em Tubarão SC</title>
-  <meta name="description" content="Peça seu orçamento de casa de madeira à Castello pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Nossa equipe entra em contato com você com todo o carinho." />
+  <meta name="description" content="Peça o orçamento da sua casa de madeira à Castello pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Nossa equipe retorna para você." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -41,6 +41,8 @@ require_once __DIR__ . '/lib/conteudo.php';
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css?v=46" />
+  <?= schema_pagina('contato') ?>
+<?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
 
@@ -77,7 +79,7 @@ require_once __DIR__ . '/lib/conteudo.php';
             <p>Conta pra gente o que você procura. A Castello volta com uma proposta sob medida.</p>
             <div class="qmodal__trust">
               <span><strong>5,0 ★</strong> no Google</span>
-              <span><strong>73</strong> avaliações</span>
+              <span><strong><?= CASTELLO_GOOGLE_AVALIACOES ?></strong> avaliações</span>
               <span><strong>Desde 2014</strong> no mercado</span>
             </div>
           </div>
@@ -134,6 +136,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/rodape.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=4" defer></script>
+  <script src="js/formulario.js?v=5" defer></script>
 </body>
 </html>

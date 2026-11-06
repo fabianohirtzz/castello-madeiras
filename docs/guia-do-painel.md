@@ -102,6 +102,7 @@ Dois detalhes:
 
 - **E-mail que recebe aviso de pedido novo**: cada pedido de orçamento do site chega neste e-mail, com todos os dados e um link para responder no WhatsApp.
 - **Quantos vídeos aparecem na home**: veja a seção 4.
+- **Google Analytics** e **Pixel do Meta**: os códigos de medição do site. Cole o ID e salve: o site passa a medir as visitas e cada pedido enviado. Vazio, nada é carregado.
 - **CRM**: veja a seção 8.1, logo abaixo. É a parte mais delicada desta tela.
 
 ### 8.1 O CRM (Agendor)

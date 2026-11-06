@@ -307,3 +307,56 @@ teste('a pagina depoimentos mostra todos os videos de depoimento com a tela chei
     contem('aria-current="page"><svg class="nav__ico" viewBox="0 0 24 24" aria-hidden="true"><rect', $html, 'o menu marca Depoimentos');
     nao_contem('uploads/videos/insta-', $html, 'os reels do Instagram ficam so na home');
 });
+
+teste('toda pagina publica traz o schema da empresa em JSON valido', function (): void {
+    foreach (['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'] as $arquivo) {
+        $html = multi_pagina($arquivo);
+        verdade(preg_match('#<script type="application/ld\+json">(.+?)</script>#s', $html, $m) === 1, "schema em $arquivo");
+        $json = json_decode($m[1], true);
+        verdade(is_array($json), "json valido em $arquivo");
+        igual('GeneralContractor', $json['@graph'][0]['@type']);
+        igual('88702-700', $json['@graph'][0]['address']['postalCode']);
+        nao_contem('aggregateRating', $m[1], 'o Google nao aceita nota da empresa marcada no proprio site');
+    }
+});
+
+teste('o schema marca o FAQ uma vez so e os modelos com preco', function (): void {
+    contem('"FAQPage"', multi_pagina('index.php'));
+    nao_contem('"FAQPage"', multi_pagina('casa-pronta.php'), 'o FAQ geral repetido e marcado so na home');
+    contem('"FAQPage"', multi_pagina('flex.php'));
+
+    igual(['@type' => 'AggregateOffer', 'lowPrice' => 108000], array_slice(schema_modelos('pronta', 'casa-pronta.php')['itemListElement'][0]['item']['offers'], 0, 2));
+    igual(43000, schema_modelos('flex', 'flex.php')['itemListElement'][0]['item']['offers']['price']);
+    nao_contem('**', schema_pagina('home'), 'o negrito do painel nao vaza para o schema');
+});
+
+teste('o schema nao deixa o conteudo do painel fechar a tag script', function (): void {
+    db()->prepare("INSERT INTO faq (pergunta, resposta, icone, contexto, ativo, ordem) VALUES (?, ?, 'relogio', 'geral', 1, 99)")
+        ->execute(['Pergunta </script><script>alert(1)</script>', 'Resposta']);
+    nao_contem('<script>alert', schema_pagina('home'));
+    db()->exec("DELETE FROM faq WHERE ordem = 99 AND contexto = 'geral'");
+});
+
+teste('sem ID no painel a pagina nao carrega Analytics nem pixel', function (): void {
+    $html = multi_pagina('index.php');
+    nao_contem('googletagmanager.com', $html);
+    nao_contem('fbevents.js', $html);
+});
+
+teste('com ID no painel a pagina carrega Analytics e pixel', function (): void {
+    config_gravar('ga4_id', 'G-TESTE12345');
+    config_gravar('meta_pixel_id', '123456789012');
+    $html = render(site() . '/index.php');
+    config_gravar('ga4_id', '');
+    config_gravar('meta_pixel_id', '');
+    contem('gtag/js?id=G-TESTE12345', $html);
+    contem("fbq('init','123456789012')", $html);
+});
+
+teste('o htaccess cuida do www, do catalogo antigo e do llms.txt', function (): void {
+    $ht = (string) file_get_contents(dirname(__DIR__, 2) . '/public_html/.htaccess');
+    contem('^www\.(.+)$', $ht);
+    contem('^catalogo(/.*)?$ /casa-pronta.php [R=301', $ht);
+    contem('^llms\.txt$ llms.php', $ht);
+});
+

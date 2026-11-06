@@ -24,6 +24,12 @@ const CASTELLO_URL = 'https://castello.tohospedando.com.br';
 const CASTELLO_ENDERECO_RUA    = 'Av. Severiano Albino Corrêa, 729';
 const CASTELLO_ENDERECO_BAIRRO = 'São João Margem Direita';
 const CASTELLO_ENDERECO_CIDADE = 'Tubarão, Santa Catarina';
+const CASTELLO_ENDERECO_CEP    = '88702-700';
+
+/** Nota e quantidade de avaliacoes da ficha do Google: mudou la, muda so aqui. */
+const CASTELLO_GOOGLE_NOTA       = '5,0';
+const CASTELLO_GOOGLE_AVALIACOES = 73;
+
 /* A ficha do Google Meu Negocio (cid 12879021834196049302), lida em 2026-10-14. */
 const CASTELLO_MAPA_BUSCA      = 'Castello Casas de Madeira, Av. Severiano Albino Corrêa, 729, Tubarão - SC';
 const CASTELLO_MAPA_LINK       = 'https://maps.google.com/?cid=12879021834196049302';
@@ -267,3 +273,5 @@ function galeria_modelo(array $m): array
 
     return $fotos;
 }
+
+require_once __DIR__ . '/schema.php';

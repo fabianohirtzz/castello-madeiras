@@ -312,6 +312,9 @@
       })
       .then(function (r) {
         if (r.http === 200 && r.dados && r.dados.ok === true) {
+          /* medicao: so existe quando o ID esta preenchido no painel */
+          if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead');
+          if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
           /* Restaura o botao antes de esconder o form: quem volta para revisar
              nao pode encontrar "Enviando..." e nem reenviar sem querer. */
           restaurar(rotulo);

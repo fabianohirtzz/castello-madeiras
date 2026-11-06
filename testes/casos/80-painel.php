@@ -358,7 +358,7 @@ teste('painel_textos_gravar atualiza so as chaves que existem em blocos', functi
 
 teste('painel_config_campos cobre as chaves do contrato', function (): void {
     igual(
-        ['videos_na_home', 'email_aviso', 'email_dominio', 'crm_ativo', 'crm_funil',
+        ['videos_na_home', 'email_aviso', 'email_dominio', 'ga4_id', 'meta_pixel_id', 'crm_ativo', 'crm_funil',
          'crm_etapa', 'crm_origem', 'crm_categoria', 'crm_marcador', 'crm_responsavel',
          'crm_timeout', 'reenvio_chave'],
         array_keys(painel_config_campos())
@@ -604,4 +604,11 @@ teste('a validacao da config aceita id numerico e recusa lixo', function (): voi
     verdade(isset($ruim['erros']['crm_funil']), 'funil nao numerico e erro');
     verdade(isset($ruim['erros']['crm_etapa']), 'etapa zero e erro: sequencia comeca em 1');
     verdade(isset($ruim['erros']['crm_marcador']), 'marcador vazio e erro');
+});
+
+teste('o painel recusa ID de medicao fora do formato', function (): void {
+    $base = ['videos_na_home' => '8', 'email_aviso' => 'contato@castellomadeiras.com.br', 'email_dominio' => 'castellomadeiras.com.br'];
+    $r = painel_config_validar($base + ['ga4_id' => "G-1'><script>", 'meta_pixel_id' => 'abc']);
+    verdade(isset($r['erros']['ga4_id']), 'ga4 invalido');
+    verdade(isset($r['erros']['meta_pixel_id']), 'pixel invalido');
 });
