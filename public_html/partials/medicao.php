@@ -10,7 +10,9 @@ require_once __DIR__ . '/../lib/conteudo.php';
 
 $medicao_ga    = trim((string) config_ler('ga4_id', ''));
 $medicao_pixel = trim((string) config_ler('meta_pixel_id', ''));
-
+?>
+<meta name="google-site-verification" content="cZdOXeHcUlHkH_l2egbT9nHjNCqCuAV8679TWxQH0w0" />
+<?php
 if ($medicao_ga !== ''): ?>
   <script async src="https://www.googletagmanager.com/gtag/js?id=<?= e($medicao_ga) ?>"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= e($medicao_ga) ?>');</script>
