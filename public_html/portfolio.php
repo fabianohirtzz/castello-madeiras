@@ -21,7 +21,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Portfólio | Casas de madeira entregues pela Castello" />
   <meta property="og:description" content="Sobrados, casas térreas, chalés e casas de campo entregues pela Castello em Santa Catarina. Desde 2014, mais de 19.000 m² construídos." />
-  <meta property="og:url" content="<?= CASTELLO_URL . '/portfolio.php' ?>" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/portfolio' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-home.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -29,7 +29,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
-  <link rel="canonical" href="<?= CASTELLO_URL . '/portfolio.php' ?>" />
+  <link rel="canonical" href="<?= CASTELLO_URL . '/portfolio' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->

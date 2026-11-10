@@ -24,12 +24,12 @@ $ico = [
 
 /* chave da pagina, href, rotulo, icone, classe extra, etiqueta */
 $menu = [
-    ['home',      'index.php',       'Início',       'inicio',  '',                ''],
-    ['pronta',    'casa-pronta.php', 'Casa Pronta',  'casa',    '',                ''],
-    ['flex',      'flex.php',        'Castello Flex', 'camadas', 'nav__link--flex', 'Novo'],
-    ['portfolio', 'portfolio.php',   'Portfólio',    'foto',    '',                ''],
-    ['depoimentos', 'depoimentos.php', 'Depoimentos', 'video',  '',                ''],
-    ['contato',   'contato.php',     'Contato',      'fone',    '',                ''],
+    ['home',      './',          'Início',       'inicio',  '',                ''],
+    ['pronta',    'casa-pronta', 'Casa Pronta',  'casa',    '',                ''],
+    ['flex',      'flex',        'Castello Flex', 'camadas', 'nav__link--flex', 'Novo'],
+    ['portfolio', 'portfolio',   'Portfólio',    'foto',    '',                ''],
+    ['depoimentos', 'depoimentos', 'Depoimentos', 'video',  '',                ''],
+    ['contato',   'contato',     'Contato',      'fone',    '',                ''],
 ];
 ?>
   <!-- sprite: logo do Google (multicolor) reutilizado nas avaliações -->
@@ -45,7 +45,7 @@ $menu = [
   <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
     <div class="nav__inner container">
-      <a href="index.php" class="nav__logo" aria-label="Castello Casas de Madeira"<?= $pagina === 'home' ? ' aria-current="page"' : '' ?>>
+      <a href="./" class="nav__logo" aria-label="Castello Casas de Madeira"<?= $pagina === 'home' ? ' aria-current="page"' : '' ?>>
         <img src="images/logo-horizontal-branco.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--light" />
         <img src="images/logo-horizontal-colorido.png" alt="Castello Casas de Madeira" class="nav__logo-img nav__logo-img--dark" />
       </a>

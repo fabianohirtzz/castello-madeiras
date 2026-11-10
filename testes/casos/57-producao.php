@@ -23,10 +23,10 @@ teste('CASTELLO_URL e uma origem https sem barra no fim', function (): void {
 /** arquivo => caminho publico */
 const PRODUCAO_PAGINAS = [
     'index.php'       => '/',
-    'casa-pronta.php' => '/casa-pronta.php',
-    'flex.php'        => '/flex.php',
-    'portfolio.php'   => '/portfolio.php',
-    'contato.php'     => '/contato.php',
+    'casa-pronta.php' => '/casa-pronta',
+    'flex.php'        => '/flex',
+    'portfolio.php'   => '/portfolio',
+    'contato.php'     => '/contato',
 ];
 
 teste('metatags de producao estao corretas nas cinco paginas', function (): void {

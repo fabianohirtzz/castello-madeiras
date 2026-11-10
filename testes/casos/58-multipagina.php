@@ -16,12 +16,21 @@ banco_com_conteudo();
 
 /** chave da nav => arquivo */
 const MULTI_PAGINAS = [
-    'home'      => 'index.php',
-    'pronta'    => 'casa-pronta.php',
-    'flex'      => 'flex.php',
-    'portfolio' => 'portfolio.php',
+    'home'        => 'index.php',
+    'pronta'      => 'casa-pronta.php',
+    'flex'        => 'flex.php',
+    'portfolio'   => 'portfolio.php',
     'depoimentos' => 'depoimentos.php',
-    'contato'   => 'contato.php',
+    'contato'     => 'contato.php',
+];
+
+const MENU_HREFS = [
+    'home'        => './',
+    'pronta'      => 'casa-pronta',
+    'flex'        => 'flex',
+    'portfolio'   => 'portfolio',
+    'depoimentos' => 'depoimentos',
+    'contato'     => 'contato',
 ];
 
 function multi_pagina(string $arquivo): string
@@ -53,12 +62,12 @@ teste('a nav de cada pagina tem os quatro links de pagina, o CTA e nenhuma ancor
         preg_match('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
         verdade(isset($m[1]), "$arquivo: bloco nav__links");
         preg_match_all('#<a href="([^"]+)"#', $m[1], $links);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $links[1], "$arquivo: links da nav");
+        igual(['./', 'casa-pronta', 'flex', 'portfolio', 'depoimentos', 'contato'], $links[1], "$arquivo: links da nav");
         contem('class="btn btn--primary nav__cta" data-quote-open', $html, "$arquivo: CTA da nav");
 
         preg_match('#<div class="drawer" id="drawer"[^>]*>(.*?)</div>#s', $html, $g);
         preg_match_all('#<a href="([^"]+)"#', $g[1], $glinks);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $glinks[1], "$arquivo: links da gaveta");
+        igual(['./', 'casa-pronta', 'flex', 'portfolio', 'depoimentos', 'contato'], $glinks[1], "$arquivo: links da gaveta");
         contem('data-quote-open>Pedir orçamento</button>', $g[1], "$arquivo: CTA da gaveta");
 
         // nenhum href com # dentro da nav, da gaveta ou do rodape
@@ -67,7 +76,7 @@ teste('a nav de cada pagina tem os quatro links de pagina, o CTA e nenhuma ancor
         }
         preg_match('#<footer class="footer"(.*?)</footer>#s', $html, $f);
         nao_contem('href="#', $f[1], "$arquivo: ancora no rodape");
-        contem('<a href="index.php" class="nav__logo"', $html, "$arquivo: o logo leva a home");
+        contem('<a href="./" class="nav__logo"', $html, "$arquivo: o logo leva a home");
     }
 });
 
@@ -79,11 +88,11 @@ teste('a pagina atual recebe aria-current="page" e as outras nao', function (): 
             igual(3, substr_count($html, 'aria-current="page"'), 'home: logo, nav e gaveta');
             continue;
         }
-        verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '"[^>]*aria-current="page"[^>]*>#', $html) === 1, "$arquivo: link marcado");
+        verdade(preg_match('#<a href="' . preg_quote(MENU_HREFS[$chave], '#') . '"[^>]*aria-current="page"[^>]*>#', $html) === 1, "$arquivo: link marcado");
         igual(2, substr_count($html, 'aria-current="page"'), "$arquivo: nav e gaveta");
-        foreach (MULTI_PAGINAS as $outra) {
-            if ($outra !== $arquivo) {
-                verdade(preg_match('#<a href="' . preg_quote($outra, '#') . '"[^>]*aria-current#', $html) === 0, "$arquivo: $outra nao pode estar marcada");
+        foreach (MULTI_PAGINAS as $outra => $arqOutra) {
+            if ($outra !== $chave) {
+                verdade(preg_match('#<a href="' . preg_quote(MENU_HREFS[$outra], '#') . '"[^>]*aria-current#', $html) === 0, "$arquivo: $outra nao pode estar marcada");
             }
         }
     }
@@ -93,7 +102,7 @@ teste('a home resume a Casa Pronta e nao traz mais portfolio nem passo a passo',
     $html = multi_pagina('index.php');
     contem('id="casa-pronta"', $html);
     contem('class="prontahome__media', $html, 'a foto do modelo em destaque');
-    contem('<a href="casa-pronta.php" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>', $html);
+    contem('<a href="casa-pronta" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>', $html);
     nao_contem('id="portfolio"', $html);
     nao_contem('id="como-funciona"', $html);
     nao_contem('class="grid grid--models"', $html, 'a grade de modelos mora em casa-pronta.php');
@@ -104,8 +113,8 @@ teste('a home resume a Casa Pronta e nao traz mais portfolio nem passo a passo',
         contem($marca, $html, "home sem $marca");
     }
     contem('<span class="hero__linha" data-hero-etapa="3"><span class="hl">No seu ritmo.</span></span>', $html, 'o subtitulo do hero com o realce');
-    contem('<a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>', $html, 'o hero leva as duas modalidades');
-    contem('<a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>', $html);
+    contem('<a href="casa-pronta" class="btn btn--primary btn--lg">Casa Pronta</a>', $html, 'o hero leva as duas modalidades');
+    contem('<a href="flex" class="btn btn--ghost-light btn--lg">Casa Flex</a>', $html);
     contem('data-count="73"', $html, '73 avaliacoes');
     contem('data-count="19000"', $html, 'mais de 19.000 m2');
     contem('Desde</span> 2014', $html);
@@ -205,7 +214,7 @@ teste('cada pagina tem title, description, canonical e og proprios', function ()
     $titles = $canonicals = $descs = [];
     foreach (MULTI_PAGINAS as $chave => $arquivo) {
         $head = multi_head(multi_pagina($arquivo));
-        $caminho = $chave === 'home' ? '/' : '/' . $arquivo;
+        $caminho = $chave === 'home' ? '/' : '/' . MENU_HREFS[$chave];
 
         verdade(preg_match('#<title>([^<]+)</title>#', $head, $t) === 1, "$arquivo: title");
         verdade(preg_match('#<meta name="description" content="([^"]{50,})" />#', $head, $d) === 1, "$arquivo: description");
@@ -230,7 +239,7 @@ teste('cada pagina tem title, description, canonical e og proprios', function ()
 
 teste('o sitemap lista as seis paginas e o robots continua apontando para ele', function (): void {
     $xml = (string) file_get_contents(site() . '/sitemap.xml');
-    foreach (['/', '/casa-pronta.php', '/flex.php', '/portfolio.php', '/depoimentos.php', '/contato.php'] as $caminho) {
+    foreach (['/', '/casa-pronta', '/flex', '/portfolio', '/depoimentos', '/contato'] as $caminho) {
         contem('<loc>' . CASTELLO_URL . $caminho . '</loc>', $xml, "sitemap sem $caminho");
     }
     igual(6, substr_count($xml, '<url>'));
@@ -281,8 +290,8 @@ teste('a pagina /link abre o formulario em popup e fica fora do Google', functio
     contem('class="lk-cta lk-entra" style="--i:1" data-quote-open', $html, 'o orcamento e o primeiro botao e abre o popup');
     contem('id="quoteModal"', $html, 'o formulario vem junto, na propria pagina');
     nao_contem('id="wppFloat"', $html, 'sem botao flutuante: o orcamento ja esta no topo');
-    contem('href="casa-pronta.php"', $html);
-    contem('href="flex.php"', $html);
+    contem('href="casa-pronta"', $html);
+    contem('href="flex"', $html);
     contem('A partir de R$ 72 mil', $html, 'o menor preco da Casa Pronta, do banco');
     contem('A partir de R$ 43 mil', $html, 'o menor preco da Flex, do banco');
     contem('instagram.com/castellocasasdemadeira', $html);
@@ -291,8 +300,7 @@ teste('a pagina /link abre o formulario em popup e fica fora do Google', functio
     contem('href="https://www.freelainhome.com.br/"', $html);
     nao_contem('wa.me/5548998244494" class', $html);
     $ht = (string) file_get_contents(site() . '/.htaccess');
-    contem('RewriteRule ^link/$ /link [R=301,L]', $ht, 'com barra, redireciona: os caminhos sao da raiz');
-    contem('RewriteRule ^link$ link.php [L]', $ht);
+    contem('RewriteRule ^([a-zA-Z0-9_-]+)$ $1.php [L,QSA]', $ht);
     falso(is_dir(site() . '/link'), 'a pasta antiga /link saiu, senao ela ganha da regra');
     $sitemap = (string) file_get_contents(site() . '/sitemap.xml');
     nao_contem('/link', $sitemap);
@@ -325,8 +333,8 @@ teste('o schema marca o FAQ uma vez so e os modelos com preco', function (): voi
     nao_contem('"FAQPage"', multi_pagina('casa-pronta.php'), 'o FAQ geral repetido e marcado so na home');
     contem('"FAQPage"', multi_pagina('flex.php'));
 
-    igual(['@type' => 'AggregateOffer', 'lowPrice' => 108000], array_slice(schema_modelos('pronta', 'casa-pronta.php')['itemListElement'][0]['item']['offers'], 0, 2));
-    igual(43000, schema_modelos('flex', 'flex.php')['itemListElement'][0]['item']['offers']['price']);
+    igual(['@type' => 'AggregateOffer', 'lowPrice' => 108000], array_slice(schema_modelos('pronta', 'casa-pronta')['itemListElement'][0]['item']['offers'], 0, 2));
+    igual(43000, schema_modelos('flex', 'flex')['itemListElement'][0]['item']['offers']['price']);
     nao_contem('**', schema_pagina('home'), 'o negrito do painel nao vaza para o schema');
 });
 
@@ -356,7 +364,7 @@ teste('com ID no painel a pagina carrega Analytics e pixel', function (): void {
 teste('o htaccess cuida do www, do catalogo antigo e do llms.txt', function (): void {
     $ht = (string) file_get_contents(dirname(__DIR__, 2) . '/public_html/.htaccess');
     contem('^www\.(.+)$', $ht);
-    contem('^catalogo(/.*)?$ /casa-pronta.php [R=301', $ht);
+    contem('^catalogo(/.*)?$ /casa-pronta [R=301', $ht);
     contem('^llms\.txt$ llms.php', $ht);
 });
 
@@ -366,6 +374,6 @@ teste('a politica de privacidade e rascunho enquanto faltam os dados da empresa'
     contem('<meta name="robots" content="noindex" />', $html, 'rascunho nao vai para o Google');
     contem('legal__falta', $html, 'os campos pendentes aparecem marcados');
     contem('Agendor', $html);
-    nao_contem('politica-de-privacidade.php"', multi_pagina('index.php'), 'nada aponta para o rascunho');
+    nao_contem('politica-de-privacidade"', multi_pagina('index.php'), 'nada aponta para o rascunho');
 });
 

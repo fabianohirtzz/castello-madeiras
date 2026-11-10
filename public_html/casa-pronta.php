@@ -23,7 +23,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Casa Pronta | Casa de madeira chave na mão em 90 a 120 dias" />
   <meta property="og:description" content="Projetos personalizáveis a partir de R$ 72 mil, completos: laje, elétrica, hidráulica, cerâmica e vidros. Chave na mão em 90 a 120 dias." />
-  <meta property="og:url" content="<?= CASTELLO_URL . '/casa-pronta.php' ?>" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/casa-pronta' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-home.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -31,7 +31,7 @@ $prazo_pronta = bloco('pronta_prazo', '90 a 120 dias');
   <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
-  <link rel="canonical" href="<?= CASTELLO_URL . '/casa-pronta.php' ?>" />
+  <link rel="canonical" href="<?= CASTELLO_URL . '/casa-pronta' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->

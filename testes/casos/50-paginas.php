@@ -82,8 +82,8 @@ teste('home renderiza com as secoes esperadas e sem prazo fixo no topo', functio
     nao_contem('em até 120 dias', $html, 'prazo fixo continua no topo da home');
     nao_contem('id="modelos"', $html, 'o id antigo #modelos deu lugar a #casa-pronta');
     contem('Casa Pronta e Castello Flex em Tubarão SC</title>', $html);
-    contem('href="flex.php"', $html);
-    contem('href="casa-pronta.php"', $html, 'a home leva a pagina da Casa Pronta');
+    contem('href="flex"', $html);
+    contem('href="casa-pronta"', $html, 'a home leva a pagina da Casa Pronta');
     nao_contem('.html', $html, 'nenhum link para .html sobra na home');
 });
 
@@ -117,7 +117,7 @@ teste('o resumo da Casa Pronta na home usa a foto do modelo em destaque', functi
     contem('uploads/modelos/projeto-07.webp', $html, 'o projeto escolhido no bloco pronta_home_modelo');
     contem('Modelo Projeto 7 · 135 m²', $html);
     contem('<strong>R$ 253.000</strong>', $html);
-    contem('href="casa-pronta.php" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>', $html);
+    contem('href="casa-pronta" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>', $html);
 
     // projeto que nao existe no bloco: vale o destaque; sem destaque, o primeiro
     db()->exec("UPDATE blocos SET valor = 'Projeto 99' WHERE chave = 'pronta_home_modelo'");
@@ -155,7 +155,7 @@ teste('pagina flex renderiza com as secoes esperadas e o prazo', function (): vo
     }
     contem('45 dias', $html, 'pagina flex nao mostra o prazo');
     contem('<title>Castello Flex | Casa de madeira montada e fechada em 45 dias | Castello</title>', $html);
-    contem('href="casa-pronta.php"', $html, 'a Flex aponta para a pagina da Casa Pronta');
+    contem('href="casa-pronta"', $html, 'a Flex aponta para a pagina da Casa Pronta');
     nao_contem('index.php#casa-pronta', $html, 'a ancora antiga da home saiu');
     nao_contem('.html', $html);
     nao_contem('id="reelbox"', $html, 'a Flex nao tem trilha do Instagram, entao nao carrega o lightbox');

@@ -24,7 +24,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Contato e orçamento | Castello Casas de Madeira" />
   <meta property="og:description" content="Peça seu orçamento de casa de madeira pelo formulário. Av. Severiano Albino Corrêa, 729, Tubarão SC. Nossa equipe entra em contato com você com todo o carinho." />
-  <meta property="og:url" content="<?= CASTELLO_URL . '/contato.php' ?>" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/contato' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-home.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -32,7 +32,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
-  <link rel="canonical" href="<?= CASTELLO_URL . '/contato.php' ?>" />
+  <link rel="canonical" href="<?= CASTELLO_URL . '/contato' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->

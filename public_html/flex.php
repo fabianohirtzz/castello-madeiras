@@ -29,7 +29,7 @@ $flex_faq     = faq('flex');
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Castello Flex | Casa de madeira montada e fechada em 45 dias" />
   <meta property="og:description" content="Estrutura montada, coberta e fechada no seu terreno em 45 dias. O acabamento fica no seu ritmo." />
-  <meta property="og:url" content="<?= CASTELLO_URL . '/flex.php' ?>" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/flex' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-flex.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -37,7 +37,7 @@ $flex_faq     = faq('flex');
   <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
-  <link rel="canonical" href="<?= CASTELLO_URL . '/flex.php' ?>" />
+  <link rel="canonical" href="<?= CASTELLO_URL . '/flex' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->
@@ -151,7 +151,7 @@ $flex_faq     = faq('flex');
       </div>
 
       <p class="depois__nota depois__nota--centro reveal">Prefere receber sua casa com os acabamentos concluídos? Conheça a modalidade
-        <a href="casa-pronta.php">Casa Pronta da Castello</a>, uma solução completa para quem deseja receber sua casa pronta para morar.
+        <a href="casa-pronta">Casa Pronta da Castello</a>, uma solução completa para quem deseja receber sua casa pronta para morar.
       </p>
     </div>
   </section>

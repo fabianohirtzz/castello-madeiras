@@ -30,9 +30,9 @@ $link_email  = 'contato@castellomadeiras.com.br';
 
 /* href, titulo, apoio, icone, abre fora do site */
 $link_atalhos = [
-    ['portfolio.php', 'Portfólio', 'Casas que a Castello já entregou',
+    ['portfolio', 'Portfólio', 'Casas que a Castello já entregou',
      '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>', false],
-    ['index.php#depoimentos', 'Depoimentos', 'Histórias de quem construiu com a gente',
+    ['./#depoimentos', 'Depoimentos', 'Histórias de quem construiu com a gente',
      '<path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8.6L4 20.5V5a1 1 0 0 1 1-1Z"/><path d="M8 9h8M8 12.5h5"/>', false],
     [CASTELLO_MAPA_LINK, 'Avaliações no Google', '5,0 estrelas em ' . CASTELLO_GOOGLE_AVALIACOES . ' avaliações',
      '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/>', true],
@@ -97,7 +97,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
     </button>
 
     <section class="lk-modos" aria-label="Modalidades">
-      <a href="casa-pronta.php" class="lk-modo lk-entra" style="--i:2">
+      <a href="casa-pronta" class="lk-modo lk-entra" style="--i:2">
         <img src="fotos-casas/hero-casa-pronta.webp" alt="" loading="eager" />
         <span class="lk-modo__veu" aria-hidden="true"></span>
         <span class="lk-modo__txt">
@@ -108,7 +108,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
 <?php endif; ?>
         </span>
       </a>
-      <a href="flex.php" class="lk-modo lk-entra" style="--i:3">
+      <a href="flex" class="lk-modo lk-entra" style="--i:3">
         <img src="fotos-casas/hero-flex.webp" alt="" loading="eager" />
         <span class="lk-modo__veu" aria-hidden="true"></span>
         <span class="lk-modo__txt">

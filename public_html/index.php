@@ -105,8 +105,8 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
             <span class="hero__linha" data-hero-etapa="2"><?= realce($hero_linha2) ?></span><?php endif; ?>
             <span class="hero__linha" data-hero-etapa="3"><?= realce($hero_linha3) ?></span></h1>
           <div class="hero__actions" data-hero-etapa="3">
-            <a href="casa-pronta.php" class="btn btn--primary btn--lg">Casa Pronta</a>
-            <a href="flex.php" class="btn btn--ghost-light btn--lg">Casa Flex</a>
+            <a href="casa-pronta" class="btn btn--primary btn--lg">Casa Pronta</a>
+            <a href="flex" class="btn btn--ghost-light btn--lg">Casa Flex</a>
           </div>
         </div>
 
@@ -183,7 +183,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
             <li>Execução da obra do início à entrega</li>
             <li>Casa entregue com os acabamentos contratados</li>
           </ul>
-          <a href="casa-pronta.php" class="btn btn--primary">Ver modelos e preços</a>
+          <a href="casa-pronta" class="btn btn--primary">Ver modelos e preços</a>
         </article>
 
         <article class="modalidade modalidade--flex reveal">
@@ -196,7 +196,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
             <li>Cobertura e fechamento externo</li>
             <li>Liberdade para personalizar os acabamentos</li>
           </ul>
-          <a href="flex.php" class="btn btn--primary">Conhecer a Castello Flex</a>
+          <a href="flex" class="btn btn--primary">Conhecer a Castello Flex</a>
         </article>
       </div>
     </div>
@@ -222,7 +222,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
             <li>Projetos a partir de 36 m²</li>
           </ul>
           <div class="prontahome__actions reveal">
-            <a href="casa-pronta.php" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>
+            <a href="casa-pronta" class="btn btn--primary btn--lg">Ver a Casa Pronta</a>
           </div>
         </div>
 
@@ -261,7 +261,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
           </div>
 
           <div class="flexhome__actions reveal">
-            <a href="flex.php" class="btn btn--primary btn--lg">Conhecer a Castello Flex</a>
+            <a href="flex" class="btn btn--primary btn--lg">Conhecer a Castello Flex</a>
             <button type="button" class="btn btn--ghost-light btn--lg" data-quote-open>Pedir orçamento</button>
           </div>
         </div>

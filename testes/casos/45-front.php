@@ -18,13 +18,13 @@ function parcial_costura(string $nome, array $vars = []): string
     return render(site() . '/partials/' . $nome . '.php', $vars);
 }
 
-/** chave da pagina => arquivo */
+/** chave da pagina => link do menu */
 const PAGINAS_NAV = [
-    'home'      => 'index.php',
-    'pronta'    => 'casa-pronta.php',
-    'flex'      => 'flex.php',
-    'portfolio' => 'portfolio.php',
-    'contato'   => 'contato.php',
+    'home'      => './',
+    'pronta'    => 'casa-pronta',
+    'flex'      => 'flex',
+    'portfolio' => 'portfolio',
+    'contato'   => 'contato',
 ];
 
 teste('a nav lista so paginas, sem ancora, e o logo leva a home', function (): void {
@@ -34,14 +34,14 @@ teste('a nav lista so paginas, sem ancora, e o logo leva a home', function (): v
         preg_match_all('#<nav class="nav__links"[^>]*>(.*?)</nav>#s', $html, $m);
         verdade(isset($m[1][0]), "$chave: bloco de links");
         preg_match_all('#href="([^"]+)"#', $m[1][0], $hrefs);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $hrefs[1], "$chave: os seis links de pagina, nesta ordem");
+        igual(['./', 'casa-pronta', 'flex', 'portfolio', 'depoimentos', 'contato'], $hrefs[1], "$chave: os seis links de pagina, nesta ordem");
 
         preg_match_all('#<div class="drawer"[^>]*>(.*?)</div>#s', $html, $g);
         preg_match_all('#href="([^"]+)"#', $g[1][0], $ghrefs);
-        igual(['index.php', 'casa-pronta.php', 'flex.php', 'portfolio.php', 'depoimentos.php', 'contato.php'], $ghrefs[1], "$chave: a gaveta tem os mesmos seis links");
+        igual(['./', 'casa-pronta', 'flex', 'portfolio', 'depoimentos', 'contato'], $ghrefs[1], "$chave: a gaveta tem os mesmos seis links");
 
         nao_contem('href="#', $html, "$chave: nenhuma ancora no menu");
-        contem('href="index.php" class="nav__logo"', $html, "$chave: o logo leva a home");
+        contem('href="./" class="nav__logo"', $html, "$chave: o logo leva a home");
         contem('class="btn btn--primary nav__cta" data-quote-open', $html, "$chave: CTA de orcamento na nav");
         contem('<span class="nav__tag">Novo</span>', $html, "$chave: etiqueta da Flex");
         nao_contem('.html', $html);
@@ -53,7 +53,7 @@ teste('a pagina atual recebe aria-current="page" na nav e na gaveta', function (
         $html = parcial_costura('nav', ['pagina' => $chave]);
         igual($chave === 'home' ? 3 : 2, substr_count($html, 'aria-current="page"'), "$chave: um na nav e um na gaveta (na home, tambem o logo)");
         if ($chave === 'home') {
-            contem('href="index.php" class="nav__logo" aria-label="Castello Casas de Madeira" aria-current="page"', $html);
+            contem('href="./" class="nav__logo" aria-label="Castello Casas de Madeira" aria-current="page"', $html);
         } else {
             verdade(preg_match('#<a href="' . preg_quote($arquivo, '#') . '"[^>]*aria-current="page"#', $html) === 1, "$chave: link da nav marcado");
         }

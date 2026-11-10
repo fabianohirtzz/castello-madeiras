@@ -23,7 +23,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Depoimentos | Clientes que construíram com a Castello" />
   <meta property="og:description" content="Histórias reais de quem já mora numa casa de madeira Castello, contadas pelos próprios clientes." />
-  <meta property="og:url" content="<?= CASTELLO_URL . '/depoimentos.php' ?>" />
+  <meta property="og:url" content="<?= CASTELLO_URL . '/depoimentos' ?>" />
   <meta property="og:image" content="<?= CASTELLO_URL ?>/images/og-home.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -31,7 +31,7 @@ require_once __DIR__ . '/lib/conteudo.php';
   <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:locale" content="pt_BR" />
 
-  <link rel="canonical" href="<?= CASTELLO_URL . '/depoimentos.php' ?>" />
+  <link rel="canonical" href="<?= CASTELLO_URL . '/depoimentos' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->

@@ -17,16 +17,26 @@ Options -Indexes
   RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
   # Enderecos do site antigo (WordPress) que o Google conhece: catalogo e PDFs.
-  RewriteRule ^catalogo(/.*)?$ /casa-pronta.php [R=301,L,NC]
-  RewriteRule ^wp-content/uploads/.*\.pdf$ /casa-pronta.php [R=301,L,NC]
+  RewriteRule ^catalogo(/.*)?$ /casa-pronta [R=301,L,NC]
+  RewriteRule ^wp-content/uploads/.*\.pdf$ /casa-pronta [R=301,L,NC]
 
   # /llms.txt: resumo do negocio para as ferramentas de IA, gerado do banco.
   RewriteRule ^llms\.txt$ llms.php [L]
 
-  # /link: a pagina do link da bio do Instagram (link.php). Com barra no fim,
-  # redireciona antes: os caminhos da pagina sao relativos a raiz do site.
-  RewriteRule ^link/$ /link [R=301,L]
-  RewriteRule ^link$ link.php [L]
+  # Redireciona requisicoes diretas com .php para a versao limpa
+  RewriteCond %{THE_REQUEST} \s/+(casa-pronta|flex|portfolio|depoimentos|contato|politica-de-privacidade|link)\.php[\s?] [NC]
+  RewriteRule ^(casa-pronta|flex|portfolio|depoimentos|contato|politica-de-privacidade|link)\.php$ /%1 [R=301,L,NC]
+
+  # Normaliza URLs com barra no fim (os caminhos da pagina sao relativos a raiz)
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(casa-pronta|flex|portfolio|depoimentos|contato|politica-de-privacidade|link)/$ /$1 [R=301,L,NC]
+
+  # URLs limpas: serve o arquivo .php correspondente
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{DOCUMENT_ROOT}/$1.php -f [OR]
+  RewriteCond %{REQUEST_FILENAME}.php -f
+  RewriteRule ^([a-zA-Z0-9_-]+)$ $1.php [L,QSA]
 </IfModule>
 
 # Nada de servir banco, schema, segredo ou arquivo de ambiente.

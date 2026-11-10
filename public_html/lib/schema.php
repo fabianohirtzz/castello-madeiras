@@ -152,26 +152,26 @@ function schema_pagina(string $pagina): string
             $grafo[] = schema_faq('geral');
             break;
         case 'pronta':
-            $grafo[] = schema_trilha('Casa Pronta', 'casa-pronta.php');
+            $grafo[] = schema_trilha('Casa Pronta', 'casa-pronta');
             $grafo[] = schema_servico('Casa Pronta', 'Construção de casa de madeira chave na mão',
-                'Casa de madeira completa e personalizável, com entrega de 90 a 120 dias.', 'casa-pronta.php');
-            $grafo[] = schema_modelos('pronta', 'casa-pronta.php');
+                'Casa de madeira completa e personalizável, com entrega de 90 a 120 dias.', 'casa-pronta');
+            $grafo[] = schema_modelos('pronta', 'casa-pronta');
             break;
         case 'flex':
-            $grafo[] = schema_trilha('Castello Flex', 'flex.php');
+            $grafo[] = schema_trilha('Castello Flex', 'flex');
             $grafo[] = schema_servico('Castello Flex', 'Construção de casa de madeira montada e fechada',
-                'Casa de madeira em plantas padronizadas, montada, coberta e fechada no terreno do cliente em 45 dias. O acabamento fica por conta do cliente.', 'flex.php');
-            $grafo[] = schema_modelos('flex', 'flex.php');
+                'Casa de madeira em plantas padronizadas, montada, coberta e fechada no terreno do cliente em 45 dias. O acabamento fica por conta do cliente.', 'flex');
+            $grafo[] = schema_modelos('flex', 'flex');
             $grafo[] = schema_faq('flex');
             break;
         case 'portfolio':
-            $grafo[] = schema_trilha('Portfólio', 'portfolio.php');
+            $grafo[] = schema_trilha('Portfólio', 'portfolio');
             break;
         case 'depoimentos':
-            $grafo[] = schema_trilha('Depoimentos', 'depoimentos.php');
+            $grafo[] = schema_trilha('Depoimentos', 'depoimentos');
             break;
         case 'contato':
-            $grafo[] = schema_trilha('Contato', 'contato.php');
+            $grafo[] = schema_trilha('Contato', 'contato');
             break;
     }
 

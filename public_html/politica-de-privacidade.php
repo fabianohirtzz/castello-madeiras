@@ -23,7 +23,7 @@ $pronta = legal_pronta();
 <?php if (!$pronta): ?>
   <meta name="robots" content="noindex" />
 <?php endif; ?>
-  <link rel="canonical" href="<?= CASTELLO_URL . '/politica-de-privacidade.php' ?>" />
+  <link rel="canonical" href="<?= CASTELLO_URL . '/politica-de-privacidade' ?>" />
   <link rel="icon" type="image/png" href="images/icone-colorido.png" />
 
   <!-- Fonts -->
