@@ -15,7 +15,7 @@ require_once __DIR__ . '/db.php';
  * TROCAR NO DEPLOY FINAL: enquanto o dominio definitivo (castellomadeiras.com.br)
  * nao aponta para esta hospedagem, o valor e o subdominio de teste.
  */
-const CASTELLO_URL = 'https://castello.tohospedando.com.br';
+const CASTELLO_URL = 'https://castellomadeiras.com.br';
 
 /**
  * Endereco da Castello, num lugar so: rodape, pagina de contato e /link leem

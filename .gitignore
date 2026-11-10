@@ -40,3 +40,6 @@ public_html/lib/caminho-config.php
 # Manifesto do deploy por FTP
 .deploy-manifesto
 .deploy-manifesto.tmp
+
+# Arquivos e scripts temporarios locais
+scratch/

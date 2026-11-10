@@ -17,7 +17,7 @@ teste('CASTELLO_URL e uma origem https sem barra no fim', function (): void {
     verdade(defined('CASTELLO_URL'), 'lib/conteudo.php precisa definir CASTELLO_URL');
     verdade(str_starts_with(CASTELLO_URL, 'https://'), 'origem https');
     falso(str_ends_with(CASTELLO_URL, '/'), 'sem barra no fim, as paginas acrescentam o caminho');
-    igual('https://castello.tohospedando.com.br', CASTELLO_URL, 'subdominio de teste ate o dominio final existir');
+    igual('https://castellomadeiras.com.br', CASTELLO_URL, 'dominio de producao');
 });
 
 /** arquivo => caminho publico */
