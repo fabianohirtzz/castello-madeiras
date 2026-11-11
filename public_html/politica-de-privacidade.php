@@ -34,6 +34,7 @@ $pronta = legal_pronta();
 <?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
+<?php include __DIR__ . '/partials/medicao-corpo.php'; ?>
 
 <?php $pagina = 'privacidade'; include __DIR__ . '/partials/nav.php'; ?>
 
@@ -73,7 +74,7 @@ $pronta = legal_pronta();
         <li><strong>Hospedagem do site:</strong> onde o site e os pedidos ficam guardados.</li>
         <li><strong>Agendor:</strong> sistema que a nossa equipe comercial usa para acompanhar os pedidos.</li>
         <li><strong>Serviço de e-mail:</strong> a nossa equipe recebe um aviso a cada pedido novo.</li>
-        <li><strong>Google:</strong> mapa e fontes de texto do site e, quando ativo, o Google Analytics.</li>
+        <li><strong>Google:</strong> mapa e fontes de texto do site e, quando ativos, o Google Analytics e o Google Tag Manager.</li>
         <li><strong>Meta:</strong> quando ativo, o pixel que mede os resultados dos anúncios no Facebook e no Instagram.</li>
       </ul>
       <p>Também podemos compartilhar dados quando uma lei ou uma autoridade competente exigir. Alguns desses serviços podem guardar dados fora do Brasil, seguindo as regras da LGPD para transferência internacional.</p>
@@ -120,6 +121,6 @@ $pronta = legal_pronta();
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=5" defer></script>
+  <script src="js/formulario.js?v=6" defer></script>
 </body>
 </html>

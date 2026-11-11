@@ -45,6 +45,7 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
+<?php include __DIR__ . '/partials/medicao-corpo.php'; ?>
 
 <?php $pagina = 'contato'; include __DIR__ . '/partials/nav.php'; ?>
 
@@ -136,6 +137,6 @@ require_once __DIR__ . '/lib/conteudo.php';
 <?php include __DIR__ . '/partials/rodape.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=5" defer></script>
+  <script src="js/formulario.js?v=6" defer></script>
 </body>
 </html>

@@ -452,7 +452,7 @@ function painel_textos_gravar(array $entrada): int
     return $gravadas;
 }
 
-/** As catorze chaves de config que o cliente edita, com rotulo e tipo. */
+/** As quinze chaves de config que o cliente edita, com rotulo e tipo. */
 function painel_config_campos(): array
 {
     return [
@@ -466,6 +466,8 @@ function painel_config_campos(): array
                              'ajuda' => 'Começa com G-, como G-ABC123XYZ. Vazio, o site não carrega o Analytics'],
         'meta_pixel_id'  => ['rotulo' => 'Pixel do Meta (ID)', 'tipo' => 'texto',
                              'ajuda' => 'Só os números do pixel. Vazio, o site não carrega o pixel'],
+        'gtm_id'         => ['rotulo' => 'Google Tag Manager (ID do contêiner)', 'tipo' => 'texto',
+                             'ajuda' => 'Começa com GTM-, como GTM-ABC1234. Vazio, o site não carrega o Tag Manager'],
         'crm_ativo'      => ['rotulo' => 'Enviar os pedidos para o CRM', 'tipo' => 'sim_nao',
                              'ajuda' => 'Deixe desligado enquanto o CRM não estiver configurado. O pedido continua sendo gravado e enviado por e-mail'],
         'crm_funil'      => ['rotulo' => 'Funil do Agendor', 'tipo' => 'numero',
@@ -531,6 +533,16 @@ function painel_config_validar(array $entrada): array
             $id = mb_strtoupper($bruto);
             if ($id !== '' && !preg_match('/^G-[A-Z0-9]{4,20}$/', $id)) {
                 $erros[$chave] = 'O ID do Analytics começa com G-, como G-ABC123XYZ.';
+                continue;
+            }
+            $valores[$chave] = $id;
+            continue;
+        }
+
+        if ($chave === 'gtm_id') {
+            $id = mb_strtoupper($bruto);
+            if ($id !== '' && !preg_match('/^GTM-[A-Z0-9]{4,12}$/', $id)) {
+                $erros[$chave] = 'O ID do Tag Manager começa com GTM-, como GTM-ABC1234.';
                 continue;
             }
             $valores[$chave] = $id;

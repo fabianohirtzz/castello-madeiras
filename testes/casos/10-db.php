@@ -72,7 +72,7 @@ teste('as chaves iniciais de config nascem com os valores do contrato', function
     igual('', config_ler('crm_responsavel'));
     igual('10', config_ler('crm_timeout'));
 
-    igual(15, (int) db()->query('SELECT COUNT(*) FROM config')->fetchColumn());
+    igual(16, (int) db()->query('SELECT COUNT(*) FROM config')->fetchColumn());
 });
 
 teste('reenvio_chave e gerada na instalacao e nao muda depois', function (): void {

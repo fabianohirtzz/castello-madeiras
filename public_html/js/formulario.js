@@ -315,6 +315,7 @@
           /* medicao: so existe quando o ID esta preenchido no painel */
           if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead');
           if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+          if (window.castelloGtm && window.dataLayer) window.dataLayer.push({ event: 'generate_lead' });
           /* Restaura o botao antes de esconder o form: quem volta para revisar
              nao pode encontrar "Enviando..." e nem reenviar sem querer. */
           restaurar(rotulo);

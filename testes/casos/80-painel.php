@@ -358,7 +358,7 @@ teste('painel_textos_gravar atualiza so as chaves que existem em blocos', functi
 
 teste('painel_config_campos cobre as chaves do contrato', function (): void {
     igual(
-        ['videos_na_home', 'email_aviso', 'email_dominio', 'ga4_id', 'meta_pixel_id', 'crm_ativo', 'crm_funil',
+        ['videos_na_home', 'email_aviso', 'email_dominio', 'ga4_id', 'meta_pixel_id', 'gtm_id', 'crm_ativo', 'crm_funil',
          'crm_etapa', 'crm_origem', 'crm_categoria', 'crm_marcador', 'crm_responsavel',
          'crm_timeout', 'reenvio_chave'],
         array_keys(painel_config_campos())
@@ -611,4 +611,8 @@ teste('o painel recusa ID de medicao fora do formato', function (): void {
     $r = painel_config_validar($base + ['ga4_id' => "G-1'><script>", 'meta_pixel_id' => 'abc']);
     verdade(isset($r['erros']['ga4_id']), 'ga4 invalido');
     verdade(isset($r['erros']['meta_pixel_id']), 'pixel invalido');
+    $r = painel_config_validar($base + ['gtm_id' => 'GTM-1"><x']);
+    verdade(isset($r['erros']['gtm_id']), 'gtm invalido');
+    $r = painel_config_validar($base + ['gtm_id' => 'gtm-m2b5qfd9']);
+    igual('GTM-M2B5QFD9', $r['valores']['gtm_id'] ?? null, 'gtm aceito em maiusculas');
 });

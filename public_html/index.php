@@ -83,6 +83,7 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
 <?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
+<?php include __DIR__ . '/partials/medicao-corpo.php'; ?>
 
 <?php $pagina = 'home'; include __DIR__ . '/partials/nav.php'; ?>
 
@@ -448,6 +449,6 @@ if ($pronta_destaque === null && $pronta_modelos !== []) {
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=5" defer></script>
+  <script src="js/formulario.js?v=6" defer></script>
 </body>
 </html>

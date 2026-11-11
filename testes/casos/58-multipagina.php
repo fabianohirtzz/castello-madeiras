@@ -347,6 +347,7 @@ teste('o schema nao deixa o conteudo do painel fechar a tag script', function ()
 
 teste('sem ID no painel a pagina nao carrega Analytics nem pixel', function (): void {
     $html = multi_pagina('index.php');
+    nao_contem('gtm.js', $html);
     nao_contem('googletagmanager.com', $html);
     nao_contem('fbevents.js', $html);
 });
@@ -354,9 +355,14 @@ teste('sem ID no painel a pagina nao carrega Analytics nem pixel', function (): 
 teste('com ID no painel a pagina carrega Analytics e pixel', function (): void {
     config_gravar('ga4_id', 'G-TESTE12345');
     config_gravar('meta_pixel_id', '123456789012');
+    config_gravar('gtm_id', 'GTM-TESTE12');
     $html = render(site() . '/index.php');
     config_gravar('ga4_id', '');
     config_gravar('meta_pixel_id', '');
+    config_gravar('gtm_id', '');
+    contem("'dataLayer','GTM-TESTE12'", $html);
+    contem('ns.html?id=GTM-TESTE12', $html, 'o noscript logo depois do body');
+    verdade(strpos($html, 'ns.html') > strpos($html, '<body'), 'noscript dentro do body');
     contem('gtag/js?id=G-TESTE12345', $html);
     contem("fbq('init','123456789012')", $html);
 });

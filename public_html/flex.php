@@ -50,6 +50,7 @@ $flex_faq     = faq('flex');
 <?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body>
+<?php include __DIR__ . '/partials/medicao-corpo.php'; ?>
 
 <?php $pagina = 'flex'; include __DIR__ . '/partials/nav.php'; ?>
 
@@ -260,6 +261,6 @@ $flex_faq     = faq('flex');
 <?php include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=5" defer></script>
+  <script src="js/formulario.js?v=6" defer></script>
 </body>
 </html>

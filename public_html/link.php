@@ -75,6 +75,7 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
 <?php include __DIR__ . '/partials/medicao.php'; ?>
 </head>
 <body class="lk-corpo">
+<?php include __DIR__ . '/partials/medicao-corpo.php'; ?>
   <main class="lk">
     <div class="lk__brilho" aria-hidden="true"></div>
 
@@ -152,6 +153,6 @@ $seta = '<svg class="lk-seta" viewBox="0 0 24 24" aria-hidden="true"><path d="m9
 <?php $pagina = 'link'; include __DIR__ . '/partials/modal.php'; ?>
 
   <script src="js/main.js?v=25"></script>
-  <script src="js/formulario.js?v=5" defer></script>
+  <script src="js/formulario.js?v=6" defer></script>
 </body>
 </html>

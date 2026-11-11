@@ -1,8 +1,9 @@
 <?php
 /**
- * Google Analytics 4 e pixel do Meta. So imprime o que estiver preenchido em
+ * Google Analytics 4, Google Tag Manager e pixel do Meta. So imprime o que estiver preenchido em
  * Configuracoes, no painel; vazio, a pagina nao carrega script nenhum. O evento
- * de pedido enviado sai do js/formulario.js. Espera: nada.
+ * de pedido enviado sai do js/formulario.js. O <noscript> do Tag Manager
+ * fica em partials/medicao-corpo.php, logo depois do <body>. Espera: nada.
  */
 declare(strict_types=1);
 
@@ -10,9 +11,13 @@ require_once __DIR__ . '/../lib/conteudo.php';
 
 $medicao_ga    = trim((string) config_ler('ga4_id', ''));
 $medicao_pixel = trim((string) config_ler('meta_pixel_id', ''));
+$medicao_gtm   = trim((string) config_ler('gtm_id', ''));
 ?>
 <meta name="google-site-verification" content="cZdOXeHcUlHkH_l2egbT9nHjNCqCuAV8679TWxQH0w0" />
 <?php
+if ($medicao_gtm !== ''): ?>
+  <script>window.castelloGtm=true;(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','<?= e($medicao_gtm) ?>');</script>
+<?php endif;
 if ($medicao_ga !== ''): ?>
   <script async src="https://www.googletagmanager.com/gtag/js?id=<?= e($medicao_ga) ?>"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= e($medicao_ga) ?>');</script>
