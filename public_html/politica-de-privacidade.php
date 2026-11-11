@@ -2,10 +2,9 @@
 declare(strict_types=1);
 
 /**
- * Politica de privacidade. RASCUNHO ate as constantes CASTELLO_LEGAL_* de
- * lib/conteudo.php serem preenchidas: enquanto faltar alguma, a pagina fica
- * com noindex, os campos aparecem marcados e nada no site aponta para ela.
- * Preenchidas, legal_pronta() liga o link do rodape e o do formulario.
+ * Politica de privacidade, com os dados das constantes CASTELLO_LEGAL_* de
+ * lib/conteudo.php. Se faltar alguma, legal_pronta() devolve a pagina a
+ * rascunho: noindex, campos marcados e sem link no rodape e no formulario.
  */
 
 require_once __DIR__ . '/lib/conteudo.php';
@@ -47,8 +46,8 @@ $pronta = legal_pronta();
       <p>A Castello Casas de Madeira respeita a sua privacidade. Este texto explica, de forma direta, quais dados pessoais o nosso site coleta, para que usamos, com quem compartilhamos e como você exerce os seus direitos, conforme a Lei Geral de Proteção de Dados (Lei nº 13.709/2018, a LGPD).</p>
 
       <h2>1. Quem cuida dos seus dados</h2>
-      <p>O controlador dos dados é <?= legal_campo(CASTELLO_LEGAL_RAZAO, 'razão social') ?>, CNPJ <?= legal_campo(CASTELLO_LEGAL_CNPJ, 'CNPJ') ?>, com sede na <?= e(CASTELLO_ENDERECO_RUA) ?>, <?= e(CASTELLO_ENDERECO_BAIRRO) ?>, Tubarão, SC, CEP <?= e(CASTELLO_ENDERECO_CEP) ?>.</p>
-      <p>Para qualquer assunto sobre os seus dados, fale com <?= legal_campo(CASTELLO_LEGAL_ENCARREGADO, 'nome do responsável') ?> pelo e-mail <?= legal_campo(CASTELLO_LEGAL_EMAIL, 'e-mail de contato') ?>.</p>
+      <p>O controlador dos dados é <?= legal_campo(CASTELLO_LEGAL_RAZAO, 'razão social') ?>, CNPJ <?= legal_campo(CASTELLO_LEGAL_CNPJ, 'CNPJ') ?>, com sede na <?= e(CASTELLO_LEGAL_ENDERECO) ?>.</p>
+      <p>Para qualquer assunto sobre os seus dados, fale com <?= CASTELLO_LEGAL_ENCARREGADO !== '' ? e(CASTELLO_LEGAL_ENCARREGADO) : 'a nossa equipe' ?> pelo e-mail <?= legal_campo(CASTELLO_LEGAL_EMAIL, 'e-mail de contato') ?>.</p>
 
       <h2>2. Quais dados coletamos</h2>
       <p><strong>Os que você informa no formulário de orçamento:</strong> nome, WhatsApp, o tipo de casa e o modelo de interesse, a metragem, a garagem, o prazo, a cidade e a mensagem que escrever.</p>

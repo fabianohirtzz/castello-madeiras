@@ -5,5 +5,4 @@ Disallow: /enviar.php
 Disallow: /csrf.php
 Disallow: /reenviar.php
 
-# TROCAR NO DEPLOY FINAL junto com CASTELLO_URL
 Sitemap: https://castellomadeiras.com.br/sitemap.xml

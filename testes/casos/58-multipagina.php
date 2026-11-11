@@ -237,12 +237,12 @@ teste('cada pagina tem title, description, canonical e og proprios', function ()
     igual(6, count(array_unique($canonicals)), 'canonicals diferentes entre si');
 });
 
-teste('o sitemap lista as seis paginas e o robots continua apontando para ele', function (): void {
+teste('o sitemap lista as seis paginas e a politica, e o robots continua apontando para ele', function (): void {
     $xml = (string) file_get_contents(site() . '/sitemap.xml');
-    foreach (['/', '/casa-pronta', '/flex', '/portfolio', '/depoimentos', '/contato'] as $caminho) {
+    foreach (['/', '/casa-pronta', '/flex', '/portfolio', '/depoimentos', '/contato', '/politica-de-privacidade'] as $caminho) {
         contem('<loc>' . CASTELLO_URL . $caminho . '</loc>', $xml, "sitemap sem $caminho");
     }
-    igual(6, substr_count($xml, '<url>'));
+    igual(7, substr_count($xml, '<url>'));
     verdade(simplexml_load_string($xml) !== false, 'sitemap e XML valido');
 
     $robots = (string) file_get_contents(site() . '/robots.txt');
@@ -368,12 +368,14 @@ teste('o htaccess cuida do www, do catalogo antigo e do llms.txt', function (): 
     contem('^llms\.txt$ llms.php', $ht);
 });
 
-teste('a politica de privacidade e rascunho enquanto faltam os dados da empresa', function (): void {
-    falso(legal_pronta());
+teste('a politica de privacidade esta publicada com os dados do CNPJ', function (): void {
+    verdade(legal_pronta());
     $html = multi_pagina('politica-de-privacidade.php');
-    contem('<meta name="robots" content="noindex" />', $html, 'rascunho nao vai para o Google');
-    contem('legal__falta', $html, 'os campos pendentes aparecem marcados');
+    nao_contem('name="robots"', $html, 'publicada, vai para o Google');
+    nao_contem('legal__falta', $html, 'nenhum campo pendente');
+    contem('Castello Casas de Madeira Ltda', $html);
+    contem('19.663.741/0001-80', $html);
+    contem('a nossa equipe', $html, 'sem encarregado nomeado, o canal e o e-mail');
     contem('Agendor', $html);
-    nao_contem('politica-de-privacidade"', multi_pagina('index.php'), 'nada aponta para o rascunho');
+    contem('politica-de-privacidade', multi_pagina('index.php'), 'o rodape aponta para a politica');
 });
-

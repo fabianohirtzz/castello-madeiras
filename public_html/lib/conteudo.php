@@ -36,18 +36,23 @@ const CASTELLO_MAPA_LINK       = 'https://maps.google.com/?cid=12879021834196049
 const CASTELLO_MAPA_ROTA       = 'https://www.google.com/maps/dir/?api=1&destination=-28.4831792,-49.0363265';
 
 /**
- * Dados da politica de privacidade, a preencher com a Castello. Enquanto faltar
- * algum, a pagina e rascunho: noindex e sem link no rodape nem no formulario.
+ * Dados da politica de privacidade, do cartao CNPJ. Se algum ficar vazio, a
+ * pagina volta a rascunho: noindex e sem link no rodape nem no formulario.
  */
-const CASTELLO_LEGAL_RAZAO       = '';
-const CASTELLO_LEGAL_CNPJ        = '';
+const CASTELLO_LEGAL_RAZAO       = 'Castello Casas de Madeira Ltda';
+const CASTELLO_LEGAL_CNPJ        = '19.663.741/0001-80';
+/* Endereco do cadastro do CNPJ, que identifica a empresa na politica. O do
+   site (CASTELLO_ENDERECO_*) e o do Google, onde o cliente e atendido. */
+const CASTELLO_LEGAL_ENDERECO    = 'Rua Mário Mendonça, 729, São João (Margem Direita), Tubarão, SC, CEP 88702-802';
+/* Vazio: a Castello e microempresa e pode atender pelo canal de e-mail sem
+   nomear um encarregado (Resolucao CD/ANPD n. 2/2022). */
 const CASTELLO_LEGAL_ENCARREGADO = '';
-const CASTELLO_LEGAL_EMAIL       = '';
-const CASTELLO_LEGAL_PRAZO       = '';
+const CASTELLO_LEGAL_EMAIL       = 'contato@castellomadeiras.com.br';
+const CASTELLO_LEGAL_PRAZO       = '5 anos';
 
 function legal_pronta(): bool
 {
-    return CASTELLO_LEGAL_RAZAO !== '' && CASTELLO_LEGAL_CNPJ !== '' && CASTELLO_LEGAL_ENCARREGADO !== ''
+    return CASTELLO_LEGAL_RAZAO !== '' && CASTELLO_LEGAL_CNPJ !== '' && CASTELLO_LEGAL_ENDERECO !== ''
         && CASTELLO_LEGAL_EMAIL !== '' && CASTELLO_LEGAL_PRAZO !== '';
 }
 

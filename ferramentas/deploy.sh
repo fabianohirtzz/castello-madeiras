@@ -16,7 +16,7 @@
 #                                        os dois saem do servidor logo depois)
 #
 # Credenciais em .credenciais-deploy (ignorado pelo git):
-#   FTP_HOST, FTP_USER, FTP_PASS, FTP_RAIZ (pasta remota, ex: /castello), URL
+#   FTP_HOST, FTP_USER, FTP_PASS, FTP_RAIZ (pasta remota; vazio em producao), URL
 
 set -euo pipefail
 
@@ -28,7 +28,8 @@ if [[ ! -f .credenciais-deploy ]]; then
   exit 1
 fi
 set -a; . ./.credenciais-deploy; set +a
-: "${FTP_HOST:?}" "${FTP_USER:?}" "${FTP_PASS:?}" "${FTP_RAIZ:?}"
+# FTP_RAIZ pode ser vazio: em producao o FTP ja abre na pasta do site.
+: "${FTP_HOST:?}" "${FTP_USER:?}" "${FTP_PASS:?}" "${FTP_RAIZ?}"
 
 MANIFESTO=".deploy-manifesto"
 MODO="${1:-}"
